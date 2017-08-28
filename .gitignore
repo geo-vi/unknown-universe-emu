@@ -265,6 +265,6 @@ stable/
 sniffs/
 NettyBaseReloadedController/
 NettyBaseReloadedBrowser/
+NettyBaseBrowserLauncher/
 NettyBackupCreator/
-NettyBrowserLauncher/
 NettyBaseMobileController/
