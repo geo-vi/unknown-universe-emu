@@ -1,0 +1,79 @@
+﻿/*
+    public class Old_Destroy_Function
+    {
+        public void Destroy(Character targetCharacter)
+        {
+            if (targetCharacter == null)
+                return;
+
+            //Deselect(targetCharacter);
+            GameClient.SendRangePacket(targetCharacter,
+                netty.commands.old_client.ShipDestroyedCommand.write(targetCharacter.Id, 0), true);
+            GameClient.SendRangePacket(targetCharacter,
+                netty.commands.new_client.ShipDestroyedCommand.write(targetCharacter.Id, 0), true);
+            //Character.Spacemap.CreateShipLoot(targetCharacter.Position, targetCharacter.DropableRewards);
+
+            if (Character is Player)
+            {
+                var player = (Player) Character;
+                player.Stats.Destroy(targetCharacter.Hangar.Ship);
+                targetCharacter.Hangar.Ship.Reward.ParseRewards(player);
+                targetCharacter.Hangar.AddDronePoints(1);
+                player.InstantSave();
+            }
+
+            if (targetCharacter.Moving)
+            {
+                MovementController.Move(targetCharacter, MovementController.ActualPosition(targetCharacter));
+            }
+
+            targetCharacter.CurrentShield = 0;
+            targetCharacter.CurrentHealth = 0;
+            targetCharacter.Controller.Attacking = false;
+
+            targetCharacter.Controller.Dead = true;
+            targetCharacter.Controller.StopController = true;
+
+            if (Character.Spacemap.Entities.ContainsKey(targetCharacter.Id))
+                Character.Spacemap.Entities.Remove(targetCharacter.Id);
+
+            foreach (var user in Character.Spacemap.Entities.Values)
+            {
+                RemoveCharacter(targetCharacter, user);
+            }
+
+            if (targetCharacter is Npc)
+            {
+                var npc = targetCharacter as Npc;
+                npc.Controller.Exit();
+                targetCharacter.Controller.Respawn();
+            }
+            else if (targetCharacter is Player)
+            {
+                targetCharacter.Controller.Respawn();
+                //var localized = new MessageLocalizedWildcardCommand("", new List<MessageWildcardReplacementModule>());
+                //var options = new List<KillScreenOptionModule>
+                //{
+                //    new KillScreenOptionModule(new KillScreenOptionTypeModule(KillScreenOptionTypeModule.BASIC_REPAIR),
+                //        new PriceModule(PriceModule.URIDIUM, 0), true,
+                //        3, localized, localized, localized, localized)
+
+                //    //new KillScreenOptionModule(new KillScreenOptionTypeModule(KillScreenOptionTypeModule.AT_JUMPGATE_REPAIR),
+                //    //    new PriceModule(PriceModule.URIDIUM, 699), true,
+                //    //    6, localized, localized, localized, localized),
+
+                //    //new KillScreenOptionModule(new KillScreenOptionTypeModule(KillScreenOptionTypeModule.AT_DEATHLOCATION_REPAIR),
+                //    //    new PriceModule(PriceModule.URIDIUM, 1699), true,
+                //    //    9, localized, localized, localized, localized)
+
+                //};
+
+                //World.StorageManager.GetGameSession(targetCharacter.Id).Client.Send(KillScreenPostCommand.write("swag", "", "3rd leg",
+                //    new DestructionTypeModule(DestructionTypeModule.PLAYER), options));
+            }
+            else
+            {
+                // TODO: Killed PET
+            }
+        }
+    }*/

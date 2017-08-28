@@ -1,0 +1,401 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BC7A9B59-2FF0-4D00-AE8E-0A9A31359536}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NettyBaseReloaded</RootNamespace>
+    <AssemblyName>NettyBaseReloaded</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Chat\Chat.cs" />
+    <Compile Include="Chat\commands\Command.cs" />
+    <Compile Include="Chat\controllers\AbstractCharacterController.cs" />
+    <Compile Include="Chat\controllers\BotController.cs" />
+    <Compile Include="Chat\controllers\LoginController.cs" />
+    <Compile Include="Chat\controllers\MessageController.cs" />
+    <Compile Include="Chat\controllers\ModeratorController.cs" />
+    <Compile Include="Chat\controllers\PlayerController.cs" />
+    <Compile Include="Chat\managers\DatabaseManager.cs" />
+    <Compile Include="Chat\objects\ChatSession.cs" />
+    <Compile Include="Chat\managers\StorageManager.cs" />
+    <Compile Include="Chat\objects\chat\BannedCharacter.cs" />
+    <Compile Include="Chat\objects\chat\Bot.cs" />
+    <Compile Include="Chat\objects\chat\Character.cs" />
+    <Compile Include="Chat\objects\chat\Moderator.cs" />
+    <Compile Include="Chat\objects\chat\Player.cs" />
+    <Compile Include="Chat\objects\chat\Room.cs" />
+    <Compile Include="Chat\objects\chat\rooms\Announcement.cs" />
+    <Compile Include="Chat\objects\chat\rooms\Global.cs" />
+    <Compile Include="Chat\objects\chat\rooms\Private.cs" />
+    <Compile Include="Chat\objects\chat\rooms\Types.cs" />
+    <Compile Include="Chat\packet\Builder.cs" />
+    <Compile Include="Chat\packet\Constants.cs" />
+    <Compile Include="Chat\packet\Handler.cs" />
+    <Compile Include="Chat\packet\handlers\IHandler.cs" />
+    <Compile Include="Chat\packet\handlers\UserLoginHandler.cs" />
+    <Compile Include="Chat\packet\handlers\UserMessageHandler.cs" />
+    <Compile Include="Chat\packet\Packet.cs" />
+    <Compile Include="ConfigFileReader.cs" />
+    <Compile Include="Game\controllers\AbstractCharacterController.cs" />
+    <Compile Include="Game\controllers\LoginController.cs" />
+    <Compile Include="Game\controllers\MovementController.cs" />
+    <Compile Include="Game\controllers\NpcController.cs" />
+    <Compile Include="Game\controllers\PetController.cs" />
+    <Compile Include="Game\controllers\PlayerController.cs" />
+    <Compile Include="Game\controllers\EventsController.cs" />
+    <Compile Include="Game\netty\commands\new_client\ActivatePortalCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\AddOreCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\AmmunitionTypeModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\AssetCreateCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\AssetTypeModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\AttackHitCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\AttackLaserRunCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\AttackTypeModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\AttributeShieldUpdateCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\AttributeShipSpeedUpdateCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\AudioSettingsModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\BeaconCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\BoxModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\CameraLockToHeroCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\ClanRelationModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\ClientUITooltip.cs" />
+    <Compile Include="Game\netty\commands\new_client\ClientUITooltipTextFormat.cs" />
+    <Compile Include="Game\netty\commands\new_client\commandF5.cs" />
+    <Compile Include="Game\netty\commands\new_client\commandK13.cs" />
+    <Compile Include="Game\netty\commands\new_client\commandKn.cs" />
+    <Compile Include="Game\netty\commands\new_client\commandq1n.cs" />
+    <Compile Include="Game\netty\commands\new_client\commandu1C.cs" />
+    <Compile Include="Game\netty\commands\new_client\commandWw.cs" />
+    <Compile Include="Game\netty\commands\new_client\commandX35.cs" />
+    <Compile Include="Game\netty\commands\new_client\commandY2c.cs" />
+    <Compile Include="Game\netty\commands\new_client\CooldownTypeModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\CreateBoxCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\DestructionTypeModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\DisplaySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\DroneFormationChangeCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\GameplaySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\HitpointInfoCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\JumpgateCreateCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\KillScreenOptionTypeModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\KillScreenOptionModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\KillScreenPostCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\LegacyModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\MapAddPOICommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\MapAssetActionAvailableCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\MessageLocalizedWildcardCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\MoveCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\PetActivationCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\PetInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\PetStatusCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\POIDesignModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\POITypeModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\PriceModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\QualitySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\QuestSettingsModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\EquipReadyCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\AttackAbortLaserRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\AttackLaserRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\AttackRocketRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\AudioSettingsRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\ClickableRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\ItemSelectionRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\LoginRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\MoveRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\PetRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\ShipSelectionRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\requests\UIOpenRequest.cs" />
+    <Compile Include="Game\netty\commands\new_client\ShipCreateCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\ShipDestroyedCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\ShipInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\ShipRemoveCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\ShipSelectionCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\ShipWarpModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\ShipWarpWindowCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\SlotbarCategoryItemModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\SlotbarCategoryItemTimerModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\SlotbarCategoryModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\SlotbarItemStatus.cs" />
+    <Compile Include="Game\netty\commands\new_client\SlotbarQuickslotItem.cs" />
+    <Compile Include="Game\netty\commands\new_client\SlotbarQuickslotModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\SlotbarsCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\StarmapStationCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\TimerState.cs" />
+    <Compile Include="Game\netty\commands\new_client\UserKeyBindingsModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\UserKeyBindingsUpdate.cs" />
+    <Compile Include="Game\netty\commands\new_client\UserSettingsCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\VideoWindowCreateCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\VisualModifierCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\WindowButtonModule.cs" />
+    <Compile Include="Game\netty\commands\new_client\WindowsCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\WindowSettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\AmmunitionCountModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\AmmunitionCountUpdateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AmmunitionTypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\AssetCreateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AssetTypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\AttackHitCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AttackLaserRunCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AttackTypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\AttributeShieldUpdateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AttributeShipSpeedUpdateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AudioSettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\ClanRelationModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\DisplaySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\DroneFormationChangeCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\GameplaySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\HitpointInfoCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\LegacyModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\MapAddPOICommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\MoveCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetActivationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetStatusCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\POIDesignModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\POIReadyCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\POITypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QualitySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\AttackAbortLaserRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\AttackLaserRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\AttackRocketRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\MoveRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\PetRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\SelectBatteryRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\SelectRocketRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\ShipSelectionRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\VersionRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipCreateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipDestroyedCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipRemoveCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipSelectionCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipWarpModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipWarpWindowCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\UserKeyBindingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\UserKeyBindingsUpdate.cs" />
+    <Compile Include="Game\netty\commands\old_client\UserSettingsCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\VideoWindowCreateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\VisualModifierCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\WindowSettingsModule.cs" />
+    <Compile Include="Game\netty\handlers\AttackAbortLaserHandler.cs" />
+    <Compile Include="Game\netty\handlers\AttackLaserHandler.cs" />
+    <Compile Include="Game\netty\handlers\AttackRocketHandler.cs" />
+    <Compile Include="Game\netty\handlers\ClickableHandler.cs" />
+    <Compile Include="Game\netty\handlers\ForceInitHandler.cs" />
+    <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
+    <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
+    <Compile Include="Game\netty\handlers\PetHandler.cs" />
+    <Compile Include="Game\netty\handlers\ShipSelectionHandler.cs" />
+    <Compile Include="Game\netty\handlers\UIOpenHandler.cs" />
+    <Compile Include="Game\netty\handlers\IHandler.cs" />
+    <Compile Include="Game\netty\handlers\ILegacyHandler.cs" />
+    <Compile Include="Game\netty\handlers\MoveHandler.cs" />
+    <Compile Include="Game\netty\handlers\ShipInitalizationHandler.cs" />
+    <Compile Include="Game\netty\Packet.cs" />
+    <Compile Include="Game\netty\packet\Builder.cs" />
+    <Compile Include="Game\netty\packet\Handler.cs" />
+    <Compile Include="Game\netty\commands\ClientCommands.cs" />
+    <Compile Include="Game\netty\commands\Command.cs" />
+    <Compile Include="Game\netty\commands\ServerCommands.cs" />
+    <Compile Include="Game\objects\world\characters\Cooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\EMPCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\InvincibilityCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\ISHCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\LaserCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\NonTargetableCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\RocketCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\RSBCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\SMBCooldown.cs" />
+    <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
+    <Compile Include="Game\objects\world\map\collectables\Ore.cs" />
+    <Compile Include="Game\objects\world\map\collectables\Types.cs" />
+    <Compile Include="Game\objects\world\map\Object.cs" />
+    <Compile Include="Game\objects\world\map\objects\IClickable.cs" />
+    <Compile Include="Game\objects\world\map\objects\Mine.cs" />
+    <Compile Include="Game\objects\world\map\objects\PirateStation.cs" />
+    <Compile Include="Game\objects\world\map\POI.cs" />
+    <Compile Include="Game\objects\world\map\pois\Designs.cs" />
+    <Compile Include="Game\objects\world\map\pois\Shapes.cs" />
+    <Compile Include="Game\objects\world\map\pois\Types.cs" />
+    <Compile Include="Game\objects\world\map\Wave.cs" />
+    <Compile Include="Game\objects\world\map\Zone.cs" />
+    <Compile Include="Game\objects\world\map\zones\DemiZone.cs" />
+    <Compile Include="Game\objects\world\map\zones\NpcZone.cs" />
+    <Compile Include="Game\objects\world\map\zones\ResourceZone.cs" />
+    <Compile Include="Game\objects\world\pets\Gear.cs" />
+    <Compile Include="Game\objects\world\players\GalaxyGate.cs" />
+    <Compile Include="Game\objects\world\players\killscreen\KillscreenOption.cs" />
+    <Compile Include="Game\objects\world\players\settings\Gameplay.cs" />
+    <Compile Include="Game\objects\world\players\settings\Hotkey.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\BuyItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\CpuItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\FormationItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\LaserItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\MineItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\RocketItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\RocketLauncherItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\ShipAbilityItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\SlotbarItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\SpecialItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\new_client_slotbars\TechItem.cs" />
+    <Compile Include="Game\objects\world\players\settings\Slotbar.cs" />
+    <Compile Include="Game\objects\world\players\settings\Window.cs" />
+    <Compile Include="Game\objects\world\players\warp\Warp.cs" />
+    <Compile Include="Game\objects\world\storages\playerStorages\EntitiesStorage.cs" />
+    <Compile Include="Game\objects\world\storages\playerStorages\ItemStorage.cs" />
+    <Compile Include="Game\objects\world\storages\playerStorages\SettingsStorage.cs" />
+    <Compile Include="Game\objects\world\storages\spacemapStorages\EntityStorage.cs" />
+    <Compile Include="Main\commands\Clean.cs" />
+    <Compile Include="Main\commands\Command.cs" />
+    <Compile Include="Main\commands\CreateAsset.cs" />
+    <Compile Include="Main\commands\CreateDemiZone.cs" />
+    <Compile Include="Main\commands\CreatePOI.cs" />
+    <Compile Include="Main\commands\Player.cs" />
+    <Compile Include="Main\commands\Help.cs" />
+    <Compile Include="Main\commands\Spawn.cs" />
+    <Compile Include="Main\commands\Temp.cs" />
+    <Compile Include="Main\ConsoleCommands.cs" />
+    <Compile Include="Main\ConsoleMonitor.cs" />
+    <Compile Include="Main\global_storage\StorageManager.cs" />
+    <Compile Include="Main\interfaces\ITick.cs" />
+    <Compile Include="Game\managers\DatabaseManager.cs" />
+    <Compile Include="Game\managers\StorageManager.cs" />
+    <Compile Include="Main\global_managers\TickManager.cs" />
+    <Compile Include="Game\objects\GameSession.cs" />
+    <Compile Include="Game\objects\world\Character.cs" />
+    <Compile Include="Game\objects\world\Enumrations.cs" />
+    <Compile Include="Game\objects\world\Hangar.cs" />
+    <Compile Include="Game\objects\world\map\objects\Asset.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\ClanBattleStation.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\QuestGiver.cs" />
+    <Compile Include="Game\objects\world\map\Collectable.cs" />
+    <Compile Include="Game\objects\world\map\objects\Jumpgate.cs" />
+    <Compile Include="Game\objects\world\map\objects\Station.cs" />
+    <Compile Include="Game\objects\world\Npc.cs" />
+    <Compile Include="Game\objects\world\Pet.cs" />
+    <Compile Include="Game\objects\world\Player.cs" />
+    <Compile Include="Game\objects\world\players\Ability.cs" />
+    <Compile Include="Game\objects\world\players\Ammo.cs" />
+    <Compile Include="Game\objects\world\players\Booster.cs" />
+    <Compile Include="Game\objects\world\players\Cargo.cs" />
+    <Compile Include="Game\objects\world\players\Configuration.cs" />
+    <Compile Include="Game\objects\world\players\Drone.cs" />
+    <Compile Include="Game\objects\world\players\Group.cs" />
+    <Compile Include="Game\objects\world\players\Item.cs" />
+    <Compile Include="Game\objects\world\players\Level.cs" />
+    <Compile Include="Game\objects\world\players\Quest.cs" />
+    <Compile Include="Game\objects\world\players\Reward.cs" />
+    <Compile Include="Game\objects\world\players\RocketLauncher.cs" />
+    <Compile Include="Game\objects\world\players\Settings.cs" />
+    <Compile Include="Game\objects\world\players\ship\Cargo.cs" />
+    <Compile Include="Game\objects\world\players\ship\Laboratory.cs" />
+    <Compile Include="Game\objects\world\Ship.cs" />
+    <Compile Include="Game\objects\world\Spacemap.cs" />
+    <Compile Include="Game\objects\world\storages\playerStorages\CooldownStorage.cs" />
+    <Compile Include="Game\objects\world\storages\playerStorages\PlayerStorage.cs" />
+    <Compile Include="Game\objects\world\storages\playerStorages\QuestStorage.cs" />
+    <Compile Include="Game\objects\world\storages\playerStorages\StatsStorage.cs" />
+    <Compile Include="Game\objects\world\Vector.cs" />
+    <Compile Include="Game\World.cs" />
+    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Logger\managers\FileManager.cs" />
+    <Compile Include="Logger\managers\ReadingManager.cs" />
+    <Compile Include="Logger\managers\WritingManager.cs" />
+    <Compile Include="Main\Global.cs" />
+    <Compile Include="Main\global_managers\MySQLManager.cs" />
+    <Compile Include="Main\global_managers\QueryManager.cs" />
+    <Compile Include="Main\objects\Clan.cs" />
+    <Compile Include="Main\objects\State.cs" />
+    <Compile Include="Networking\ChatClient.cs" />
+    <Compile Include="Networking\GameClient.cs" />
+    <Compile Include="Networking\PolicyClient.cs" />
+    <Compile Include="Networking\Server.cs" />
+    <Compile Include="Networking\SocketClient.cs" />
+    <Compile Include="Networking\XSocket.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Chat.cs" />
+    <Compile Include="Properties\Game.cs" />
+    <Compile Include="Properties\Main.cs" />
+    <Compile Include="Properties\Server.cs" />
+    <Compile Include="Socketty\Constants.cs" />
+    <Compile Include="Socketty\handlers\BackupRequestHandler.cs" />
+    <Compile Include="Socketty\handlers\IHandler.cs" />
+    <Compile Include="Socketty\handlers\MessageRequestHandler.cs" />
+    <Compile Include="Socketty\handlers\RefreshRequestHandler.cs" />
+    <Compile Include="Socketty\handlers\RestartRequestHandler.cs" />
+    <Compile Include="Socketty\PacketHandler.cs" />
+    <Compile Include="Unused_Codes\Looping_through_constants.cs" />
+    <Compile Include="Unused_Codes\Old_Destroy_Function.unused" />
+    <Compile Include="Utils\Bytes.cs" />
+    <Compile Include="Utils\Draw.cs" />
+    <Compile Include="Utils\Encode.cs" />
+    <Compile Include="Utils\Out.cs" />
+    <Compile Include="Utils\Random.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\How2Netty\NettyBase\NettyBase\bin\Debug\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\How2Netty\NettyBase\NettyBase\bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Unused_Codes\Old_Program_cs.unused" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Client\" />
+    <Folder Include="Game\objects\world\map\objects\mines\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

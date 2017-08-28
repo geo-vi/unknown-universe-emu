@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using NettyBaseReloaded.Chat.objects.chat;
+using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Main.global_managers;
+
+namespace NettyBaseReloaded.Chat.managers
+{
+    class DatabaseManager
+    {
+        public bool QueryRunning = false;
+
+        public void LoadAll()
+        {
+            LoadGames();
+            LoadInstances();
+            LoadLanguages();
+            LoadRooms();
+            LoadRoomSectors();
+            LoadBadWords();
+            LoadBlockedUsers();
+            LoadModeratorLevels();
+            LoadModerators();
+            LoadSupportMessages();
+            LoadTextModules();
+            LoadProjects();
+        }
+
+        public void LoadGames()
+        {
+            Chat.StorageManager.Games.Add(0, new objects.chat.Game(0, "UnknownUniverse", "UU", 0));
+        }
+
+        public void LoadInstances()
+        {
+            Chat.StorageManager.Instances.Add(0, new Instance(0, "INST", "INSTANCE", 0));
+        }
+
+        public void LoadLanguages()
+        {
+            Chat.StorageManager.Languages.Add(0, new Language(0, "English", "ENG", 0, new []{"Global", "Test"}));
+        }
+
+        public void LoadRooms()
+        {
+            Chat.StorageManager.Rooms.Add(0, new Room(0, 0, Chat.StorageManager.Games[0], Chat.StorageManager.Instances[0], Chat.StorageManager.Languages[0], -1, 0, RoomType.NORMAL_ROOM, false, false, 0, 0, 100, 500));
+//            Chat.StorageManager.Rooms.Add(1, new Room(1, 1, Chat.StorageManager.Games[0], Chat.StorageManager.Instances[0], Chat.StorageManager.Languages[0], -1, 0, RoomType.NORMAL_ROOM, false, false, 0, 0, 50, 150));
+        }
+
+        public void LoadRoomSectors()
+        {
+            
+        }
+
+        public void LoadBadWords()
+        {
+            Chat.StorageManager.BadWords.Add(0, new BadWord(0, "yolo", 1, Chat.StorageManager.Languages[0], 0, "swag", new []{0}));
+        }
+
+        public void LoadBlockedUsers()
+        {
+           
+        }
+
+        public void LoadModeratorLevels()
+        {
+            Chat.StorageManager.ModeratorLevels.Add(0,
+                new ModeratorLevel(0, ModeratorLevel.Levels.DEVELOPER, "DEV", true, true, true, true, true, true, true,
+                    true, true, true, true, true,
+                    true, true, true, true, true, true, true, true, true, true, true, true, true));
+        }
+
+        public void LoadModerators()
+        {
+            Chat.StorageManager.Moderators.Add(0, new Moderator(0, "System", new Clan(0, "BETA TESTERS", "BETA"), new Dictionary<int, Room>(), "en", Chat.StorageManager.ModeratorLevels[0], 0, new Dictionary<int, Room> { { 0, Chat.StorageManager.Rooms[0] }}, new Dictionary<int, Room> { { 0, Chat.StorageManager.Rooms[0] } }, "FF0000",
+                DateTime.Now, DateTime.Now, false, false, false, "Unknown", "Universe", DateTime.Now)); 
+        }
+
+        public void LoadSupportMessages()
+        {
+              
+        }
+
+        public void LoadTextModules()
+        {
+            Chat.StorageManager.TextModules.Add(0, new TextModule(0, "test", "test"));
+        }
+
+        public void LoadProjects()
+        {
+            Chat.StorageManager.Projects.Add(0, new Project(0, Chat.StorageManager.Games[0], Chat.StorageManager.Instances[0]));
+        }
+    }
+}

@@ -1,0 +1,6 @@
+﻿namespace NettyBaseReloaded
+{
+    class ExceptionLog
+    {
+    }
+}

@@ -1,0 +1,139 @@
+package net.bigpoint.darkorbit.net.netty.commands
+{
+   import §_-K1A§.§_-y3M§;
+   import §_-Q3V§.ICommand;
+   import §_-e2e§.DirectionalLight;
+   import §_-e2e§.PointLight;
+   import §_-f2e§.Settings3D;
+   import §_-q4F§.§_-a2O§;
+   import §_-z2a§.§_-WS§;
+   import flash.utils.Dictionary;
+   import flash.utils.IDataInput;
+   import flash.utils.IDataOutput;
+   import net.bigpoint.darkorbit.§_-x4f§;
+   
+   public class §_-E17§ implements ICommand
+   {
+      
+      public static const CIRCLE:uint = 0;
+      
+      public static const §_-k3D§:uint = 1;
+      
+      public static const §_-42D§:uint = 2;
+      
+      public static const ID:int = 20986;
+       
+      
+      public var §_-c35§:§_-nf§;
+      
+      public var §_-X3m§:String = "";
+      
+      public var active:Boolean = false;
+      
+      public var §_-63e§:String = "";
+      
+      public var §_-12b§:Boolean = false;
+      
+      public var §_-I4O§:Vector.<int>;
+      
+      public var design:§_-TA§;
+      
+      public var shape:uint = 0;
+      
+      public function §_-E17§(param1:String = "", param2:§_-nf§ = null, param3:String = "", param4:§_-TA§ = null, param5:uint = 0, param6:Vector.<int> = null, param7:Boolean = false, param8:Boolean = false)
+      {
+         super();
+         this.§_-X3m§ = param1;
+         if(param2 == null)
+         {
+            this.§_-c35§ = new §_-nf§();
+         }
+         else
+         {
+            this.§_-c35§ = param2;
+         }
+         this.§_-63e§ = param3;
+         if(param4 == null)
+         {
+            this.design = new §_-TA§();
+         }
+         else
+         {
+            this.design = param4;
+         }
+         this.shape = param5;
+         if(param6 == null)
+         {
+            this.§_-I4O§ = new Vector.<int>();
+         }
+         else
+         {
+            this.§_-I4O§ = param6;
+         }
+         this.§_-12b§ = param7;
+         this.active = param8;
+      }
+      
+      public function §_-f4r§() : int
+      {
+         return ID;
+      }
+      
+      public function §_-r3R§() : int
+      {
+         return 10;
+      }
+      
+      public function read(param1:IDataInput) : void
+      {
+         var _loc4_:* = 0;
+         this.§_-c35§ = §_-pH§.getInstance().createInstance(param1.readShort()) as §_-nf§;
+         this.§_-c35§.read(param1);
+         this.§_-X3m§ = param1.readUTF();
+         this.active = param1.readBoolean();
+         this.§_-63e§ = param1.readUTF();
+         this.§_-12b§ = param1.readBoolean();
+         var _loc2_:uint = 0;
+         var _loc3_:uint = 0;
+         while(this.§_-I4O§.length > 0)
+         {
+            this.§_-I4O§.pop();
+         }
+         _loc2_ = 0;
+         _loc3_ = param1.readInt();
+         while(_loc2_ < _loc3_)
+         {
+            _loc4_ = int(param1.readInt());
+            _loc4_ = int(param1.readInt()) << 5 | _loc4_ >>> 27;
+            this.§_-I4O§.push(_loc4_);
+            _loc2_++;
+         }
+         this.design = §_-pH§.getInstance().createInstance(param1.readShort()) as §_-TA§;
+         this.design.read(param1);
+         this.shape = param1.readShort();
+      }
+      
+      public function write(param1:IDataOutput) : void
+      {
+         param1.writeShort(ID);
+         this.§_-O3n§(param1);
+      }
+      
+      protected function §_-O3n§(param1:IDataOutput) : void
+      {
+         var _loc2_:int = 0;
+         this.§_-c35§.write(param1);
+         param1.writeUTF(this.§_-X3m§);
+         param1.writeBoolean(this.active);
+         param1.writeUTF(this.§_-63e§);
+         param1.writeBoolean(this.§_-12b§);
+         param1.writeInt(this.§_-I4O§.length);
+         for each(_loc2_ in this.§_-I4O§)
+         {
+            param1.writeInt(_loc2_ >>> 5 | _loc2_ << 27);
+         }
+         this.design.write(param1);
+         param1.writeShort(this.shape);
+      }
+   }
+}

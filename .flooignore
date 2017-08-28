@@ -1,0 +1,11 @@
+extern
+node_modules
+tmp
+vendor
+.idea/workspace.xml
+.idea/misc.xml
+/NettyBaseReloadedBrowser\bin\x86\Debug/*
+/NettyBaseReloadedBrowser\bin\Release\x64/*
+/NettyBaseReloadedBrowser\bin\Release\x86/*
+/NettyBaseReloadedBrowser\bin\Debug\x64/*
+/NettyBaseReloadedBrowser\bin\x86\Release/*
