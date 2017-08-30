@@ -57,8 +57,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     if (candidatePlayer == null)
                     {
                         var _player = (Player) player.Value;
-                        if (!_player.InDemiZone ||
-                            _player.RangeObjects.Count(x => x.Value is Asteroid || x.Value is ClanBattleStation) == 0)
+                        if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.InDemiZone)
                             candidatePlayer = _player;
                     }
                     else
@@ -80,35 +79,38 @@ namespace NettyBaseReloaded.Game.controllers.npc
             var target = Controller.Npc.Selected as Player;
             var npc = Controller.Npc;
 
-            if (!npc.Spacemap.Entities.ContainsKey(target.Id) || target.InDemiZone ||
-                target.RangeObjects.Count(x => x.Value is Asteroid || x.Value is ClanBattleStation) > 0)
+            if (target != null)
             {
-                Exit();
-                return;
+                if (target.InDemiZone)
+                {
+                    Exit();
+                    return;
+                }
+
+                if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
+                    MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
+
             }
-
-            if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
-                MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
-
-            //if (Controller.Npc.RangeEntities.Count(x => x.Value is Player) > 1)
-            //{
-            //    var players = Controller.Npc.RangeEntities.Where(x => x.Value is Player);
-            //    foreach (var player in players)
-            //    {
-            //        if (((Player) player.Value).AttachedNpcs.Count >
-            //            ((Player) Controller.Npc.Selected).AttachedNpcs.Count && player.Value.Position.DistanceTo(Controller.Npc.Position) < 500)
-            //        {
-            //            Exit();
-            //            Controller.Npc.Selected = player.Value;
-            //            ((Player)player.Value).AttachedNpcs.Add(Controller.Npc);
-            //        }
-            //    }
-            //}
+            if (Controller.Npc.RangeEntities.Count(x => x.Value is Player) > 1)
+            {
+                var players = Controller.Npc.RangeEntities.Where(x => x.Value is Player);
+                foreach (var player in players)
+                {
+                    if (((Player)player.Value).AttachedNpcs.Count >
+                        ((Player)Controller.Npc.Selected).AttachedNpcs.Count && player.Value.Position.DistanceTo(Controller.Npc.Position) < 500)
+                    {
+                        Exit();
+                        Controller.Npc.Selected = player.Value;
+                        ((Player)player.Value).AttachedNpcs.Add(Controller.Npc);
+                    }
+                }
+            }
         }
 
         public void Exit()
         {
-            var selectedPlayer = (Player) Controller.Npc.Selected;
+            Console.WriteLine("Performed an exit");
+            var selectedPlayer = (Player)Controller.Npc.Selected;
             selectedPlayer?.AttachedNpcs.Remove(Controller.Npc);
             Controller.Npc.Selected = null;
         }

@@ -38,7 +38,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             NewClientCommands.Add(commands.new_client.requests.commandHF.ID, new command42JHandler());
             OldClientCommands.Add(commands.old_client.requests.CollectBoxRequest.ID, new CollectBoxHandler());
             NewClientCommands.Add(commands.new_client.requests.CollectBoxRequest.ID, new CollectBoxHandler());
-
+            LegacyCommands.Add(ClientCommands.PORTAL_JUMP, new JumpRequestHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

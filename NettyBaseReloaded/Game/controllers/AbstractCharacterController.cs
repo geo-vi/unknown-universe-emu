@@ -715,6 +715,7 @@ namespace NettyBaseReloaded.Game.controllers
                 if (target is Player)
                 {
                     var pTarget = (Player) target;
+                    
                     if (pTarget.UsingNewClient)
                     {
                         var options = new List<netty.commands.new_client.KillScreenOptionModule>
@@ -745,6 +746,8 @@ namespace NettyBaseReloaded.Game.controllers
             //Remove from the spacemap
             if (Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.Entities.Remove(Character.Id);
+
+            
             StopAll();
         }
 
@@ -759,6 +762,11 @@ namespace NettyBaseReloaded.Game.controllers
             if (targetCharacter is Player)
             {
                 var player = (Player)targetCharacter;
+                foreach (var attached in player.AttachedNpcs)
+                {
+                    attached.Selected = null;
+                }
+                player.AttachedNpcs.Clear();
                 player.InstantSave();
             }
 

@@ -215,7 +215,7 @@ namespace NettyBaseReloaded.Game.managers
                         }
                         if (spacemap.Key == 12)
                         {
-                            //spacemap.Value.CreateAsteroid("Show bobs", new Vector(17000, 4000));
+                            spacemap.Value.CreateAsteroid("Show bobs", new Vector(17000, 4000));
                             //spacemap.Value.CreatePOI(new POI("", Types.NO_ACCESS,Designs.SCRAP, Shapes.RECTANGLE, new List<Vector>{new Vector(6000, 4000), new Vector(16500, 4000), new Vector(16500, 5000), new Vector(6000, 5000)}));
                             //spacemap.Value.CreatePirateStation(new Vector(7000, 7000));
                         }

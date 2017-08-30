@@ -519,13 +519,17 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.AttackHitCommand.write(
+                if (damage == 0)
+                    gameSession.Client.Send(commands.new_client.AttackMissedCommand.write(new commands.new_client.AttackTypeModule(effect), target.Id, 0).Bytes);
+                else gameSession.Client.Send(commands.new_client.AttackHitCommand.write(
                     new commands.new_client.AttackTypeModule(effect), attacker.Id,
                     target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AttackHitCommand.write(
+                if (damage == 0)
+                    gameSession.Client.Send(commands.old_client.AttackMissedCommand.write(new commands.old_client.AttackTypeModule(effect), target.Id, 0).Bytes);
+                else gameSession.Client.Send(commands.old_client.AttackHitCommand.write(
                     new commands.old_client.AttackTypeModule(effect), attacker.Id,
                     target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true).Bytes);
             }

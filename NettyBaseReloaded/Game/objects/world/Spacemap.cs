@@ -187,11 +187,8 @@ namespace NettyBaseReloaded.Game.objects.world
             int npcSpawned = 0;
             foreach (var entry in Npcs)
             {
-                for (int i = 0; i <= entry.Count; i++)
-                {
-                    CreateNpcs(entry);
-                    npcSpawned++;
-                }
+                CreateNpcs(entry);
+                npcSpawned += entry.Count;
             }
 
             Out.WriteLine("Successfully spawned " + npcSpawned + " npcs on spacemap " + Name);

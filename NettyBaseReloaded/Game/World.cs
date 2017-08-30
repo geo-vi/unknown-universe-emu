@@ -8,6 +8,7 @@ using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map;
+using NettyBaseReloaded.Game.objects.world.map.collectables;
 
 namespace NettyBaseReloaded.Game
 {
@@ -29,8 +30,13 @@ namespace NettyBaseReloaded.Game
             foreach (var map in StorageManager.Spacemaps)
             {
                 map.Value.LoadObjects();
-                //map.Value.SpawnNpcs();
                 CreateHashes(map.Value);
+                if (map.Key == 12)
+                {
+                    for (int i = 0; i < 150; i++)
+                        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(1000, 19800, 1000, 11800));
+                }
+                map.Value.SpawnNpcs();
             }
             if (Properties.Server.DEBUG)
                 Log.Write("Loaded World");

@@ -108,6 +108,7 @@
     <Compile Include="Game\netty\commands\new_client\AssetTypeModule.cs" />
     <Compile Include="Game\netty\commands\new_client\AttackHitCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AttackLaserRunCommand.cs" />
+    <Compile Include="Game\netty\commands\new_client\AttackMissedCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AttackTypeModule.cs" />
     <Compile Include="Game\netty\commands\new_client\AttributeShieldUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AttributeShipSpeedUpdateCommand.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Game\netty\commands\old_client\AssetTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackHitCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackLaserRunCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AttackMissedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AttributeShieldUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttributeShipSpeedUpdateCommand.cs" />
@@ -252,6 +254,7 @@
     <Compile Include="Game\netty\handlers\command42JHandler.cs" />
     <Compile Include="Game\netty\handlers\ForceInitHandler.cs" />
     <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
+    <Compile Include="Game\netty\handlers\JumpRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
     <Compile Include="Game\netty\handlers\PetHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSelectionHandler.cs" />
