@@ -113,6 +113,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             var selectedPlayer = (Player)Controller.Npc.Selected;
             selectedPlayer?.AttachedNpcs.Remove(Controller.Npc);
             Controller.Npc.Selected = null;
+            MovementController.Move(Controller.Npc, Vector.Random(0, 20800, 0, 12800));
         }
     }
 }
