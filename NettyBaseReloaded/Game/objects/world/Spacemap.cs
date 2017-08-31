@@ -221,7 +221,33 @@ namespace NettyBaseReloaded.Game.objects.world
                     new Dictionary<string, Item>()),
                 0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
                 ship.Damage));
+            Console.WriteLine("Created NPC on " + position.X + " " + position.Y);
+        }
 
+        public void CreateNpc(Ship ship, AILevels ai)
+        {
+            var id = GetNextAvailableId();
+            ship.AI = (int)ai;
+            var position = Vector.Random(1000, 20000, 1000, 12000);
+            CreateNpc(new Npc(id, ship.Name,
+                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
+                    new Dictionary<string, Item>()),
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
+                ship.Damage));
+            Console.WriteLine("Created NPC on " + position.X + " " + position.Y);
+        }
+
+        public int CreateNpc(Ship ship, AILevels ai, Npc motherShip)
+        {
+            var id = GetNextAvailableId();
+            ship.AI = (int) ai;
+            var position = motherShip.Position;
+            CreateNpc(new Npc(id, ship.Name,
+                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
+                    new Dictionary<string, Item>()),
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
+                ship.Damage, motherShip));
+            return id;
         }
 
         public void CreateNpc(Npc npc)

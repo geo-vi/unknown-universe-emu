@@ -215,6 +215,7 @@
     <Compile Include="Game\netty\commands\old_client\LegacyModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MapAddPOICommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MoveCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\NpcUndockCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\OreTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PetActivationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetInitializationCommand.cs" />

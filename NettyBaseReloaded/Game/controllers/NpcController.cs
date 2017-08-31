@@ -38,6 +38,9 @@ namespace NettyBaseReloaded.Game.controllers
                 case AILevels.MOTHERSHIP:
                     CurrentNpc = new Mothership(this);
                     break;
+                case AILevels.DAUGHTER:
+                    CurrentNpc = new Daughter(this);
+                    break;
             }
             Active = true;
             Tick();

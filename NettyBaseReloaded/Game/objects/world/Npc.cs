@@ -40,15 +40,15 @@ namespace NettyBaseReloaded.Game.objects.world
         
         //public int Damage { get; set; }
 
-        public int motherShipId { get; set; }
+        public Npc MotherShip { get; set; }
 
         public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, DropableRewards dropableRewards,
-            int maxShield, int damage)
+            int maxShield, int damage, Npc motherShip = null)
             : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, dropableRewards)
         {
             //Id - 10000 as base Id for Npcs
             Damage = damage;
-            motherShipId = 0;
+            MotherShip = motherShip;
         }
 
         public new void Tick()
