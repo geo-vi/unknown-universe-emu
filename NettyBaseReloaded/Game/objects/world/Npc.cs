@@ -37,9 +37,6 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        
-        //public int Damage { get; set; }
-
         public Npc MotherShip { get; set; }
 
         public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, DropableRewards dropableRewards,
@@ -48,6 +45,8 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             //Id - 10000 as base Id for Npcs
             Damage = damage;
+            CurrentShield = maxShield;
+            MaxShield = maxShield;
             MotherShip = motherShip;
         }
 

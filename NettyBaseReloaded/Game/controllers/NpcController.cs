@@ -36,7 +36,7 @@ namespace NettyBaseReloaded.Game.controllers
                     CurrentNpc = new Aggressive(this);
                     break;
                 case AILevels.MOTHERSHIP:
-                    CurrentNpc = new Mothership(this);
+                    CurrentNpc = new Mothership(this, World.StorageManager.Ships[81]);
                     break;
                 case AILevels.DAUGHTER:
                     CurrentNpc = new Daughter(this);

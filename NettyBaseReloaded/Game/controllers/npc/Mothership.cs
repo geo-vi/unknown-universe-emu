@@ -15,9 +15,15 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         private bool Opened = false;
 
-        public Mothership(NpcController controller)
+        public Ship DaughterType { get; }
+
+        public int DaughterSpawnCount { get; set; }
+
+        public Mothership(NpcController controller, Ship daughterType, int daughterSpawnCount = 20)
         {
             Controller = controller;
+            DaughterType = daughterType;
+            DaughterSpawnCount = daughterSpawnCount;
         }
 
         public void Tick()
@@ -30,11 +36,12 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Active()
         {
             GameClient.SendRangePacket(Controller.Npc, netty.commands.old_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
+            GameClient.SendRangePacket(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
             Opened = true;
 
-            for (int i = 0; i <= 20; i++)
+            for (int i = 0; i <= DaughterSpawnCount; i++)
             {
-                var minionId = Controller.Npc.Spacemap.CreateNpc(World.StorageManager.Ships[81], AILevels.DAUGHTER, Controller.Npc);
+                var minionId = Controller.Npc.Spacemap.CreateNpc(DaughterType, AILevels.DAUGHTER, Controller.Npc);
                 GameClient.SendRangePacket(Controller.Npc, netty.commands.old_client.NpcUndockCommand.write(Controller.Npc.Id, minionId));
             }
             LastActiveTime = DateTime.Now;
@@ -55,7 +62,12 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Paused()
         {
             if (LastActiveTime.AddSeconds(5) <= DateTime.Now)
-                GameClient.SendRangePacket(Controller.Npc, netty.commands.old_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
+            {
+                GameClient.SendRangePacket(Controller.Npc,
+                    netty.commands.old_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
+                GameClient.SendRangePacket(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
+
+            }
         }
 
         public void Exit()
