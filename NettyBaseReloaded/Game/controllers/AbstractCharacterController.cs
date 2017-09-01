@@ -650,18 +650,10 @@ namespace NettyBaseReloaded.Game.controllers
             switch (healType)
             {
                 case HealType.HEALTH:
-                    if (Character.CurrentHealth + amount > Character.MaxHealth)
-                    {
-                        newAmount = (Character.CurrentHealth + amount) - Character.MaxHealth;
-                    }
+                    newAmount = Character.CurrentHealth + amount;
                     Character.CurrentHealth += newAmount;
                     break;
                 case HealType.SHIELD:
-                    if (Character.CurrentShield + amount > Character.MaxShield)
-                    {
-                        newAmount = (Character.CurrentShield + amount) - Character.MaxShield;
-                    }
-                    Character.CurrentShield += newAmount;
                     break;
             }
 
@@ -716,21 +708,24 @@ namespace NettyBaseReloaded.Game.controllers
                 {
                     var pTarget = (Player) target;
                     
-                    if (pTarget.UsingNewClient)
-                    {
-                        var options = new List<netty.commands.new_client.KillScreenOptionModule>
-                        {
-                            new KillscreenOption(KillscreenOption.NEAREST_BASE).Object
-                        };
+                    //if (pTarget.UsingNewClient)
+                    //{
+                    //    var options = new List<netty.commands.new_client.KillScreenOptionModule>
+                    //    {
+                    //        new KillscreenOption(KillscreenOption.NEAREST_BASE).Object
+                    //    };
 
-                        World.StorageManager.GetGameSession(target.Id)
-                            .Client.Send(
-                                KillScreenPostCommand.write(Character.Name, "", Character.Hangar.Ship.LootId, new DestructionTypeModule(DestructionTypeModule.USER), options).Bytes);
-                    }
+                    //    World.StorageManager.GetGameSession(target.Id)
+                    //        .Client.Send(
+                    //            KillScreenPostCommand.write(Character.Name, "", Character.Hangar.Ship.LootId, new DestructionTypeModule(DestructionTypeModule.USER), options).Bytes);
+                    //}
                 }
 
-                Attacking = false;
-                Character.Selected = null;
+                if (Character.Selected != target)
+                {
+                    Attacking = false;
+                    Character.Selected = null;
+                }
             }
         }
 
@@ -747,8 +742,9 @@ namespace NettyBaseReloaded.Game.controllers
             if (Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.Entities.Remove(Character.Id);
 
-            
             StopAll();
+
+            Respawn();
         }
 
         public void Remove(Character targetCharacter)
@@ -811,15 +807,14 @@ namespace NettyBaseReloaded.Game.controllers
             StopController = false;
             Attacking = false;
 
-            if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
-                Character.Spacemap.Entities.Add(Character.Id, Character);
+            Vector newPos = null;
 
             if (Character is Npc)
             {
                 var npc = (Npc)Character;
                 npc.CurrentHealth = npc.MaxHealth;
                 npc.CurrentShield = npc.MaxShield;
-                npc.Position = Vector.Random(1000, 28000, 1000, 12000);
+                newPos = Vector.Random(1000, 28000, 1000, 12000);
 
                 npc.Controller.Restart();
             }
@@ -834,14 +829,27 @@ namespace NettyBaseReloaded.Game.controllers
                 player.Controller.Start();
 
                 var closestStation = player.GetClosestStation();
-                player.Position = player.Destination = closestStation.Item1;
+                newPos = player.Destination = closestStation.Item1;
                 player.Spacemap = closestStation.Item2;
 
                 player.Refresh();
                 player.Update();
+                player.CleanStorage();
             }
 
+            Character.Position = newPos;
+            Character.Destination = newPos;
+            Character.Direction = newPos;
+
+            if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
+                Character.Spacemap.Entities.Add(Character.Id, Character);
+
+            Character.RangeObjects.Clear();
             Character.RangeEntities.Clear();
+            Character.RangeZones.Clear();
+            Character.RangeCollectables.Clear();
+
+            MovementController.Move(Character, MovementController.ActualPosition(Character));
         }
 
         #endregion

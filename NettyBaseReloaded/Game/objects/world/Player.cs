@@ -372,6 +372,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void Refresh()
         {
             Packet.Builder.ShipInitializationCommand(World.StorageManager.GetGameSession(Id));
+            Packet.Builder.DronesCommand(World.StorageManager.GetGameSession(Id), this);
         }
 
         public DateTime LastDbRefreshTime = new DateTime(2017, 1, 13, 0, 0, 0);
@@ -550,20 +551,52 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Tuple<Vector, Spacemap> GetClosestStation()
         {
+            Spacemap map = null;
             if (Properties.Game.PVP_MODE)
             {
-                var map = World.StorageManager.Spacemaps[16];
-                var stations = map.Objects.Values.Where(x => x is Station);
-                foreach (var station in stations)
+                map = World.StorageManager.Spacemaps[16];
+            }
+            else {if (Spacemap.Id < 16)
+            {
+                switch (FactionId)
                 {
-                    var pStation = station as Station;
-                    if (pStation.Faction == FactionId)
-                    {
-                        return new Tuple<Vector, Spacemap>(pStation.Position, map);
-                    }
+                    case Faction.MMO:
+                        map = World.StorageManager.Spacemaps[1];
+                        break;
+                    case Faction.EIC:
+                        map = World.StorageManager.Spacemaps[5];
+                        break;
+                    case Faction.VRU:
+                        map = World.StorageManager.Spacemaps[9];
+                        break;
                 }
             }
-            throw new NotImplementedException();
+            else
+            {
+                switch (FactionId)
+                {
+                    case Faction.MMO:
+                        map = World.StorageManager.Spacemaps[20];
+                        break;
+                    case Faction.EIC:
+                        map = World.StorageManager.Spacemaps[24];
+                        break;
+                    case Faction.VRU:
+                        map = World.StorageManager.Spacemaps[28];
+                        break;
+                }
+            }
+            }
+            var stations = map.Objects.Values.Where(x => x is Station);
+            foreach (var station in stations)
+            {
+                var pStation = station as Station;
+                if (pStation.Faction == FactionId)
+                {
+                    return new Tuple<Vector, Spacemap>(pStation.Position, map);
+                }
+            }
+            return null;
         }
 
         public void CleanRange()
@@ -591,9 +624,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void SetPosition(Vector targetPosition)
         {
-            if (Moving)
-                MovementController.Move(this, MovementController.ActualPosition(this));
+            Destination = targetPosition;
             Position = targetPosition;
+            Direction = targetPosition;
             MovementController.Move(this, MovementController.ActualPosition(this));
         }
     }

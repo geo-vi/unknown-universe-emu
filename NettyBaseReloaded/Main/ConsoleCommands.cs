@@ -16,6 +16,7 @@ namespace NettyBaseReloaded.Main
             Commands.Add("temp", new Temp());
             Commands.Add("createdemizone", new CreateDemiZone());
             Commands.Add("debug", new Debug());
+            Commands.Add("destroy", new Destroy());
         }
 
         public static void Handle(string txt)

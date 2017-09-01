@@ -334,6 +334,7 @@
     <Compile Include="Main\commands\CreateDemiZone.cs" />
     <Compile Include="Main\commands\CreatePOI.cs" />
     <Compile Include="Main\commands\Debug.cs" />
+    <Compile Include="Main\commands\Destroy.cs" />
     <Compile Include="Main\commands\Player.cs" />
     <Compile Include="Main\commands\Help.cs" />
     <Compile Include="Main\commands\Spawn.cs" />
