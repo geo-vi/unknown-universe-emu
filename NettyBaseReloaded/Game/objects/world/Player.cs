@@ -251,6 +251,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Cargo Cargo { get; set; }
 
+        public players.Utils Utils => new players.Utils(this);
+
         /// <summary>
         /// This is a for the multi-client support.
         /// - Work in progress -
@@ -578,72 +580,6 @@ namespace NettyBaseReloaded.Game.objects.world
             EntitiesStorage.LoadedPOI.Clear();
         }
 
-        public void LoadObject(Object obj)
-        {
-            if (obj is Station) LoadStation(obj as Station);
-            else if (obj is Jumpgate) LoadPortal(obj as Jumpgate);
-            else if (obj is Asteroid) LoadAsteroid(obj as Asteroid);
-            else if (obj is Asset) LoadAsset(obj as Asset);
-            else if (obj is Collectable) LoadCollectable(obj as Collectable);
-            else if (obj is Ore) LoadResource(obj as Ore);
-        }
-
-        public void LoadPOI(POI poi)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedPOI.Add(poi.Id, poi);
-            Packet.Builder.MapAddPOICommand(gameSession, poi);
-        }
-
-        private void LoadStation(Station station)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(station.Id, station);
-            Packet.Builder.StationCreateCommand(gameSession, station);
-        }
-
-        private void LoadPortal(Jumpgate portal)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(portal.Id, portal);
-            Packet.Builder.JumpgateCreateCommand(gameSession,portal);
-        }
-
-        public void LoadAsteroid(Asteroid asteroid)
-        {
-            LoadAsset(asteroid);
-            Packet.Builder.BattleStationNoClanUiInitializationCommand(World.StorageManager.GetGameSession(Id), asteroid);
-        }
-
-        public void LoadAsset(Asset asset)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(asset.Id, asset);
-            Packet.Builder.AssetCreateCommand(gameSession, asset);
-        }
-
-        public void LoadCollectable(Collectable collectable)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(collectable.Id, collectable);
-            Packet.Builder.CreateBoxCommand(gameSession, collectable);
-        }
-
-        public void LoadResource(Ore ore)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(ore.Id, ore);
-            Packet.Builder.AddOreCommand(gameSession, ore);
-        }
-
-        public void SetPosition(Vector targetPosition)
-        {
-            if (Moving)
-                MovementController.Move(this, MovementController.ActualPosition(this));
-            Position = targetPosition;
-            Refresh();
-        }
-
         public void ClickableCheck(Object obj)
         {
             if (obj is IClickable)
@@ -651,6 +587,14 @@ namespace NettyBaseReloaded.Game.objects.world
                 var active = Vector.IsInRange(Position, obj.Position, 1000);
                 Packet.Builder.MapAssetActionAvailableCommand(World.StorageManager.GetGameSession(Id), obj, active);
             }
+        }
+
+        public void SetPosition(Vector targetPosition)
+        {
+            if (Moving)
+                MovementController.Move(this, MovementController.ActualPosition(this));
+            Position = targetPosition;
+            MovementController.Move(this, MovementController.ActualPosition(this));
         }
     }
 }

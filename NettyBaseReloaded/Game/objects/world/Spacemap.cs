@@ -105,7 +105,7 @@ namespace NettyBaseReloaded.Game.objects.world
                         foreach (var differance in diff.ToList())
                         {
                             if (Objects.ContainsKey(differance.Key))
-                                player.LoadObject(differance.Value);
+                                player.Utils.LoadObject(differance.Value);
                             else
                                 player.EntitiesStorage.LoadedObjects.Remove(differance.Key);
                         }
@@ -119,7 +119,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
                         foreach (var differance in diff)
                         {
-                            player.LoadPOI(differance.Value);
+                            player.Utils.LoadPOI(differance.Value);
                         }
                     }
                 }

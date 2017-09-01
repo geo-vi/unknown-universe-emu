@@ -314,6 +314,7 @@
     <Compile Include="Game\objects\world\players\settings\new_client_slotbars\TechItem.cs" />
     <Compile Include="Game\objects\world\players\settings\Slotbar.cs" />
     <Compile Include="Game\objects\world\players\settings\Window.cs" />
+    <Compile Include="Game\objects\world\players\Utils.cs" />
     <Compile Include="Game\objects\world\players\warp\Warp.cs" />
     <Compile Include="Game\objects\world\storages\playerStorages\EntitiesStorage.cs" />
     <Compile Include="Game\objects\world\storages\playerStorages\ItemStorage.cs" />
