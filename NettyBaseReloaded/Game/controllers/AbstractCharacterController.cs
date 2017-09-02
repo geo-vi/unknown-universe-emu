@@ -654,6 +654,8 @@ namespace NettyBaseReloaded.Game.controllers
                     Character.CurrentHealth += newAmount;
                     break;
                 case HealType.SHIELD:
+                    newAmount = Character.CurrentHealth + amount;
+                    Character.CurrentShield = newAmount;
                     break;
             }
 
