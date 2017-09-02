@@ -813,16 +813,30 @@ namespace NettyBaseReloaded.Game.controllers
 
             if (Character is Npc)
             {
-                var npc = (Npc)Character;
+                var npc = (Npc) Character;
+
+                if (npc.MotherShip != null)
+                {
+                    npc.Controller.StopController = true;
+                    return;
+                }
+
                 npc.CurrentHealth = npc.MaxHealth;
                 npc.CurrentShield = npc.MaxShield;
-                newPos = Vector.Random(1000, 28000, 1000, 12000);
+
+                if (npc.RespawnTime == 0)
+                    newPos = Vector.Random(1000, 28000, 1000, 12000);
+                else
+                {
+                    npc.Controller.DelayedRestart();
+                    return;
+                }
 
                 npc.Controller.Restart();
             }
             else if (Character is Player)
             {
-                var player = (Player)Character;
+                var player = (Player) Character;
                 player.CurrentHealth = 1000;
 
                 if (player.Controller == null)
@@ -839,9 +853,7 @@ namespace NettyBaseReloaded.Game.controllers
                 player.CleanStorage();
             }
 
-            Character.Position = newPos;
-            Character.Destination = newPos;
-            Character.Direction = newPos;
+            Character.SetPosition(newPos);
 
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.Entities.Add(Character.Id, Character);

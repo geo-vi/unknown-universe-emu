@@ -35,6 +35,9 @@ namespace NettyBaseReloaded.Main.commands
                     case "id":
                         World.StorageManager.GetGameSession(targetId)?.Player.Controller.Kill();
                         break;
+                    case "selected":
+                        World.StorageManager.GetGameSession(targetId)?.Player.Selected?.Controller.Kill();
+                        break;
                 }
             }
             catch (Exception)

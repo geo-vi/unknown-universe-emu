@@ -289,5 +289,16 @@ namespace NettyBaseReloaded.Game.objects.world
                 Console.WriteLine(e.StackTrace);
             }
         }
+
+        public void SetPosition(Vector targetPosition)
+        {
+            Destination = targetPosition;
+            Position = targetPosition;
+            OldPosition = targetPosition;
+            Direction = targetPosition;
+            Moving = false;
+
+            MovementController.Move(this, MovementController.ActualPosition(this));
+        }
     }
 }

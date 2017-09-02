@@ -17,6 +17,9 @@ namespace NettyBaseReloaded.Game.controllers
         private INpc CurrentNpc { get; set; }
 
         private bool Active { get; set; }
+
+        private DateTime RespawnTimer { get; set; }
+
         public NpcController(Character character) : base(character)
         {
             Npc = (Npc) character;
@@ -68,6 +71,15 @@ namespace NettyBaseReloaded.Game.controllers
                 await Task.Delay(5000);
             }
             Tick();
+        }
+
+        public void DelayedRestart()
+        {
+            // TODO
+            //RespawnTimer = DateTime.Now.AddSeconds(Npc.RespawnTime);
+            //if (!StopController) return;
+            //StopController = false;
+            //Sleep();
         }
 
         public void Restart()

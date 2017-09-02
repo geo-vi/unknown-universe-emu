@@ -39,8 +39,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Npc MotherShip { get; set; }
 
+        public int RespawnTime { get; set; }
+
         public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, DropableRewards dropableRewards,
-            int maxShield, int damage, Npc motherShip = null)
+            int maxShield, int damage, int respawnTime = 0, Npc motherShip = null)
             : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, dropableRewards)
         {
             //Id - 10000 as base Id for Npcs
@@ -48,6 +50,7 @@ namespace NettyBaseReloaded.Game.objects.world
             CurrentShield = maxShield;
             MaxShield = maxShield;
             MotherShip = motherShip;
+            RespawnTime = respawnTime;
         }
 
         public new void Tick()

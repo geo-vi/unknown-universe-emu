@@ -224,7 +224,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Console.WriteLine("Created NPC on " + position.X + " " + position.Y);
         }
 
-        public void CreateNpc(Ship ship, AILevels ai)
+        public void CreateNpc(Ship ship, AILevels ai, int respawnTime)
         {
             var id = GetNextAvailableId();
             ship.AI = (int)ai;
@@ -233,7 +233,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
                 0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
-                ship.Damage));
+                ship.Damage, respawnTime));
             Console.WriteLine("Created NPC on " + position.X + " " + position.Y);
         }
 
@@ -246,7 +246,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
                 0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
-                ship.Damage, motherShip));
+                ship.Damage, 0, motherShip));
             return id;
         }
 

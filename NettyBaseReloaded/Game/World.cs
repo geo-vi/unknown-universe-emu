@@ -38,7 +38,7 @@ namespace NettyBaseReloaded.Game
                     {
                         map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(1000, 19800, 1000, 11800));
                     }
-                    map.Value.CreateNpc(StorageManager.Ships[80], AILevels.MOTHERSHIP);
+                    map.Value.CreateNpc(StorageManager.Ships[80], AILevels.MOTHERSHIP, 30);
                 }
             }
             if (Properties.Server.DEBUG)

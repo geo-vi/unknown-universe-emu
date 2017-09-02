@@ -621,13 +621,5 @@ namespace NettyBaseReloaded.Game.objects.world
                 Packet.Builder.MapAssetActionAvailableCommand(World.StorageManager.GetGameSession(Id), obj, active);
             }
         }
-
-        public void SetPosition(Vector targetPosition)
-        {
-            Destination = targetPosition;
-            Position = targetPosition;
-            Direction = targetPosition;
-            MovementController.Move(this, MovementController.ActualPosition(this));
-        }
     }
 }

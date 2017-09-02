@@ -24,11 +24,6 @@ namespace NettyBaseReloaded.Game.controllers
             //sends the movement to the rest of the players in range if both are on the same map
             GameClient.SendToSpacemap(character.Spacemap, netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime));
             GameClient.SendToSpacemap(character.Spacemap, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime));
-
-            //but the this is fucked up what? the way I send commands? yap yeah its only for range / selected commands the rest I send thru packet builder
-            //alright but you're movement controller class looks good, well done =3 I did some hard work on this emulator even the objects
-            // how is it going w/ UberOrbit?
-            // i'm not working on uo anymore oh :c btw take a quick look on my objects
         }
 
         public static int GetTime(Character character, Vector destination)
