@@ -45,10 +45,11 @@ namespace NettyBaseReloaded.Game.objects.world
             int maxShield, int damage, int respawnTime = 0, Npc motherShip = null)
             : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, dropableRewards)
         {
-            //Id - 10000 as base Id for Npcs
             Damage = damage;
             CurrentShield = maxShield;
             MaxShield = maxShield;
+            ShieldAbsorption = 0.8;
+            ShieldPenetration = 0;
             MotherShip = motherShip;
             RespawnTime = respawnTime;
         }

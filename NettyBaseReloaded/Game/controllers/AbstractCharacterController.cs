@@ -526,15 +526,17 @@ namespace NettyBaseReloaded.Game.controllers
 
                 if (target.CurrentShield > 0)
                 {
-                    if (absDamage > 0)
-                    {
-                        target.CurrentShield -= absDamage;
-                        Character.CurrentShield += absDamage;
-                    }
-
                     //For example => Target has 80% abs but you' have moth (+20% penetration) :> damage * 0.6
 
                     var totalAbs = Math.Abs(Character.ShieldPenetration - target.ShieldAbsorption);
+
+                    if (absDamage > 0)
+                    {
+                        var _absDmg = (int)(absDamage * totalAbs);
+                        target.CurrentShield -= _absDmg;
+                        Character.CurrentShield += _absDmg;
+                    }
+
                     var shieldDamage = damage * totalAbs;
 
                     var healthDamage = 0;
@@ -735,6 +737,8 @@ namespace NettyBaseReloaded.Game.controllers
         {
             GameClient.SendRangePacket(Character, ShipDestroyedCommand.write(Character.Id, 0), true);
             GameClient.SendRangePacket(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 0), true);
+
+            Deselect(Character);
 
             Attacking = false;
             Character.Selected = null;

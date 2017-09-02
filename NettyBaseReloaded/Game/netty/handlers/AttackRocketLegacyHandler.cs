@@ -1,21 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
-    class AttackRocketHandler : IHandler
+    class AttackRocketLegacyHandler : ILegacyHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, string[] param)
         {
             if (gameSession == null) return;
-            var targetId = 0;
+            var targetId = Int32.Parse(param[1]);
 
-            if (gameSession.Player.UsingNewClient)
-            {
-                var cmd = new commands.new_client.requests.AttackRocketRequest();
-                cmd.readCommand(bytes);
-                targetId = cmd.targetId;
-            }
 
             // Get if targetId is valid
             var player = gameSession.Player;
