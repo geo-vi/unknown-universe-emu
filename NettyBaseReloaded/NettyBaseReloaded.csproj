@@ -223,12 +223,18 @@
     <Compile Include="Game\netty\commands\old_client\AudioSettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\BattleStationNoClanUiInitializationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ClanRelationModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\DestructionTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DisplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationChangeCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\GameplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\HitpointInfoCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\KillScreenOptionModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\KillScreenOptionTypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\KillScreenPostCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LegacyModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MapAddPOICommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\MessageLocalizedWildcardCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\MessageWildcardReplacementModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MoveCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\NpcUndockCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\OreTypeModule.cs" />
@@ -238,6 +244,7 @@
     <Compile Include="Game\netty\commands\old_client\POIDesignModule.cs" />
     <Compile Include="Game\netty\commands\old_client\POIReadyCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\POITypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\PriceModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QualitySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackAbortLaserRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackLaserRequest.cs" />
