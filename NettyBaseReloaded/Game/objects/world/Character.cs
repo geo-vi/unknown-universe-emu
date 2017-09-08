@@ -30,7 +30,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public Hangar Hangar { get; set; }
         public Faction FactionId { get; set; }
         public Reward Reward { get; }
-        public DropableRewards DropableRewards { get; }
+        public CargoDrop CargoDrop { get; }
 
         public virtual AbstractCharacterController Controller
         {
@@ -129,7 +129,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public List<Cooldown> Cooldowns { get; set; }
 
         protected Character(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap,
-            int currentHealth, int currentNanoHull, Reward rewards, DropableRewards dropableRewards)
+            int currentHealth, int currentNanoHull, Reward rewards, CargoDrop cargoDrop)
         {
             Id = id;
             Name = name;
@@ -140,7 +140,7 @@ namespace NettyBaseReloaded.Game.objects.world
             CurrentHealth = currentHealth;
             CurrentNanoHull = currentNanoHull;
             Reward = rewards;
-            DropableRewards = dropableRewards;
+            CargoDrop = cargoDrop;
 
             //Default initialization
             Moving = false;
@@ -235,7 +235,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
                 else
                 {
-                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now || Controller.Attacked ||
+                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now || Controller.Attack.Attacked ||
                         CurrentShield >= MaxShield)
                         return;
 

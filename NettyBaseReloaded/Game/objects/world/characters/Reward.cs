@@ -1,0 +1,127 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects.world.players.equipment;
+
+namespace NettyBaseReloaded.Game.objects.world.characters
+{
+    class Reward
+    {
+        public List<object> Rewards = new List<object>();
+
+        public Reward(RewardType type, int amount)
+        {
+            Rewards.Add((short) 0);
+            Rewards.Add(type);
+            Rewards.Add(amount);
+        }
+
+        public Reward(RewardType type, Item item, int amount)
+        {
+            Rewards.Add((short) 0);
+            Rewards.Add(type);
+            Rewards.Add(item);
+            Rewards.Add(amount);
+        }
+
+        public Reward(Dictionary<RewardType, int> rewards)
+        {
+            short count = (short) Rewards.Count;
+            foreach (var row in rewards)
+            {
+                Rewards.Add(count);
+                Rewards.Add(row.Key);
+                Rewards.Add(row.Value);
+                count++;
+            }
+        }
+
+        public void ParseRewards(Player player)
+        {
+            int paramNum = 0;
+            RewardType rewardType;
+            Item item;
+            int amount = 0;
+            foreach (var reward in Rewards)
+            {
+                if (reward is short)
+                {
+                    rewardType = (RewardType) Rewards[paramNum + 1];
+                    if (Rewards[paramNum + 2] is Item)
+                    {
+                        item = (Item) Rewards[paramNum + 2];
+                        amount = (int) Rewards[paramNum + 3];
+                        RewardPlayer(player, rewardType, item, amount);
+                    }
+                    else
+                    {
+                        amount = (int) Rewards[paramNum + 2];
+                        RewardPlayer(player, rewardType, amount);
+                    }
+                }
+                paramNum++;
+            }
+        }
+
+        public void RewardPlayer(Player player, RewardType type, int amount)
+        {
+            switch (type)
+            {
+                case RewardType.CREDITS:
+                    amount = RewardMultiplyer(type, amount, player);
+                    player.Information.Credits.Add(amount);
+                    Console.WriteLine("0|LM|ST|CRE|" + amount + "|" + player.Information.Credits.Get());
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                        "0|LM|ST|CRE|" + amount + "|" + player.Information.Credits.Get());
+                    break;
+                case RewardType.URIDIUM:
+                    amount = RewardMultiplyer(type, amount, player);
+                    player.Information.Uridium.Add(amount);
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                        "0|LM|ST|URI|" + amount + "|" + player.Information.Uridium.Get());
+                    break;
+                case RewardType.EXPERIENCE:
+                    amount = RewardMultiplyer(type, amount, player);
+                    player.Information.Experience.Add(amount);
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                        "0|LM|ST|EP|" + amount + "|" + player.Information.Experience.Get() + "|" + player.Information.Level.Id);
+                    break;
+                case RewardType.HONOR:
+                    amount = RewardMultiplyer(type, amount, player);
+                    player.Information.Honor.Add(amount);
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                        "0|LM|ST|HON|" + amount + "|" + player.Information.Honor.Get());
+                    break;
+                case RewardType.ORE:
+                    break;
+                case RewardType.GALAXY_GATES_ENERGY:
+                    amount = RewardMultiplyer(type, amount, player);
+                    break;
+                case RewardType.AMMO:
+                    break;
+                case RewardType.BOOSTER:
+                    // amount => hours
+                    break;
+            }
+        }
+
+        public int RewardMultiplyer(RewardType type, int amount, Player player)
+        {
+            if (type == RewardType.GALAXY_GATES_ENERGY)
+            {
+                if (player.Information.Level.Id < 20) return amount * 2;
+                return amount;
+            }
+            return amount * 1; // TODO: Reward levels
+        }
+
+        public void RewardPlayer(Player player, RewardType type, Item item, int amount)
+        {
+
+        }
+    }
+}
+

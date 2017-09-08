@@ -46,15 +46,15 @@ namespace NettyBaseReloaded.Game.controllers
                     break;
             }
             Active = true;
-            Tick();
+            ActiveTick();
         }
 
-        private async void Tick()
+        private async void ActiveTick()
         {
             while (Active)
             {
-                if (Attacking)
-                    LaserAttack();
+                if (Attack.Attacking)
+                    Attack.LaserAttack();
                 if (Dead || StopController)
                     Active = false; 
                 else CurrentNpc.Tick();
@@ -70,7 +70,7 @@ namespace NettyBaseReloaded.Game.controllers
                 if (StopController) return;
                 await Task.Delay(5000);
             }
-            Tick();
+            ActiveTick();
         }
 
         public void DelayedRestart()
@@ -87,7 +87,7 @@ namespace NettyBaseReloaded.Game.controllers
             Active = true;
             if (!StopController) return;
             StopController = false;
-            Tick();
+            ActiveTick();
         }
     }
 }

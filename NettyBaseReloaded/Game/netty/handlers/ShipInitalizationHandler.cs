@@ -23,7 +23,8 @@ namespace NettyBaseReloaded.Game.netty.handlers
             client.UserId = userId;
             if (!ValidateSession(userId, sessionId)) return;
 
-            Player = World.DatabaseManager.GetAccount(userId);
+            //TODO: GetAcc from DB
+            //Player = World.DatabaseManager.GetAccount(userId);
             Player.UsingNewClient = newClient;
 
             if (Player != null) GameSession = CreateSession(client, Player);

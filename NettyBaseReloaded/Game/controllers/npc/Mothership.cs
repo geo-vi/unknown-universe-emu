@@ -50,11 +50,11 @@ namespace NettyBaseReloaded.Game.controllers.npc
         private Tuple<DateTime, Character> TickAttacked = null;
         public void Inactive()
         {
-            if (Controller.Attacked)
+            if (Controller.Attack.Attacked)
             {
                 if (TickAttacked == null)
-                    TickAttacked = new Tuple<DateTime, Character>(DateTime.Now, Controller.GetAttacker());
-                if (TickAttacked.Item1.AddSeconds(1) < DateTime.Now && Controller.Attacked)
+                    TickAttacked = new Tuple<DateTime, Character>(DateTime.Now, Controller.Attack.GetAttacker());
+                if (TickAttacked.Item1.AddSeconds(1) < DateTime.Now && Controller.Attack.Attacked)
                     Active();
             }
         }

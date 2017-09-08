@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                     gameSession.Player.Controller.Miscs.UseItem("equipment_extra_cpu_ish-01");
                     break;
                 case ClientCommands.ROBOT:
-                    gameSession.Player.Controller.Miscs.UseItem(gameSession.Player.GetRobot());
+                    gameSession.Player.Controller.Miscs.UseItem(gameSession.Player.Equipment.GetRobot());
                     break;
                 case ClientCommands.CONFIGURATION:
                     gameSession.Player.Controller.Miscs.ChangeConfig();

@@ -6,12 +6,12 @@ namespace NettyBaseReloaded.Game.netty.handlers
     {
         public void execute(GameSession gameSession, byte[] bytes)
         {
-            gameSession.Player.Controller.Attacking = false;
+            gameSession.Player.Controller.Attack.Attacking = false;
         }
 
         public void execute(GameSession gameSession, string[] packet)
         {
-            gameSession.Player.Controller.Attacking = false;
+            gameSession.Player.Controller.Attack.Attacking = false;
         }
     }
 }

@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects.world.players.settings;
-using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
-    class Settings
+    class Settings : PlayerBaseClass
     {
         public Slotbar Slotbar { get; set; }
         public Window Window { get; set; }
@@ -27,7 +25,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public string CurrentRocket { get; set; }
 
-        public Settings()
+        public Settings(Player player) : base(player)
         {
             Slotbar = new Slotbar();
             Window = new Window();

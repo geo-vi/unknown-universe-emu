@@ -37,14 +37,14 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 {
                     if (entry.Value is Player)
                     {
-                        if (!entry.Value.Controller.Targetable)
+                        if (!entry.Value.Controller.Attack.Targetable)
                         {
                             Packet.Builder.LegacyModule(gameSession, "0|A|STM|msg_own_targeting_harmed");
                             return;
                         }
                     }
-                    if (gameSession.Player.Controller.Attacking)
-                        gameSession.Player.Controller.Attacking = false;
+                    if (gameSession.Player.Controller.Attack.Attacking)
+                        gameSession.Player.Controller.Attack.Attacking = false;
                     gameSession.Player.Selected = entry.Value;
                     Packet.Builder.ShipSelectionCommand(gameSession, entry.Value);
                     return;

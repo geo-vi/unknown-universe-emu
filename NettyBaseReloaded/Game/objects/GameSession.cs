@@ -46,24 +46,7 @@ namespace NettyBaseReloaded.Game.objects
 
         private void SilentDisconnect()
         {
-            if (Global.TickManager.Exists(this))
-                Global.TickManager.Remove(this);
-
-            if (Player.Controller != null)
-            {
-                if (Global.TickManager.Exists(Player.Controller))
-                {
-                    Global.TickManager.Remove(Player.Controller);
-                }
-                Player.Controller.Remove(Player);
-            }
-
-            if (Global.TickManager.Exists(Player))
-                Global.TickManager.Remove(Player);
-
-            Player.Spacemap.Entities.Remove(Player.Id);
-
-            Client.Disconnect();
+            
         }
 
         public void Close()

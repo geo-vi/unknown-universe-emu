@@ -21,7 +21,6 @@ namespace NettyBaseReloaded.Game
         public static void InitiateManagers()
         {
             Packet.Handler.AddCommands();
-            DatabaseManager.BasicLoads();
             InitiateWorld();
         }
 

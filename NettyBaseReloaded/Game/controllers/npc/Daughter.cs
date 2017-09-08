@@ -33,7 +33,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 Controller.Npc.Selected = null;
                 return;
             }
-            Controller.Attacking = true;
+            Controller.Attack.Attacking = true;
             LastActiveTime = DateTime.Now;
         }
 
@@ -44,7 +44,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 Exit();
             }
 
-            var attacker = Controller.Npc.MotherShip.Controller.GetAttacker();
+            var attacker = Controller.Npc.MotherShip.Controller.Attack.GetAttacker();
             if (attacker == null)
             {
                 var rangePlayers = Controller.Npc.RangeEntities.ToList().Where(x => x.Value is Player);

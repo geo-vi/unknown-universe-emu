@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty.commands.new_client;
-using NettyBaseReloaded.Game.objects.world.players.settings.new_client_slotbars;
 using AmmunitionTypeModule = NettyBaseReloaded.Game.netty.commands.old_client.AmmunitionTypeModule;
 using NettyBaseReloaded.Game.netty.commands;
+using NettyBaseReloaded.Game.objects.world.players.settings.slotbars;
 
 namespace NettyBaseReloaded.Game.objects.world.players.settings
 {
@@ -103,7 +103,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
         public List<SlotbarQuickslotItem> QuickslotItems = new List<SlotbarQuickslotItem>();
         public List<SlotbarQuickslotItem> PremiumQuickslotItems = new List<SlotbarQuickslotItem>();
 
-        public Dictionary<string, SlotbarItem> _items = new Dictionary<string,SlotbarItem>();
+        public Dictionary<string, SlotbarItem> _items = new Dictionary<string, SlotbarItem>();
 
         public Slotbar()
         {
@@ -124,7 +124,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.CounterValue = 1500;
 
@@ -143,7 +143,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.Create();
                 items.Add(item.Object);
@@ -160,7 +160,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.Create();
                 items.Add(item.Object);
@@ -177,7 +177,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.CounterValue = 100;
 
@@ -196,7 +196,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.Create();
                 items.Add(item.Object);
@@ -210,13 +210,13 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             foreach (var itemId in Items.CpusIds)
             {
                 var item = new CpuItem(
-                        itemId,
-                        counterValue,
-                        maxCounter,
-                        null,
-                        1,
-                        false,
-                        false
+                    itemId,
+                    counterValue,
+                    maxCounter,
+                    null,
+                    1,
+                    false,
+                    false
                 );
 
                 item.Create();
@@ -234,7 +234,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.Create();
                 items.Add(item.Object);
@@ -251,7 +251,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.Create();
                 items.Add(item.Object);
@@ -268,7 +268,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.Create();
                 items.Add(item.Object);
@@ -285,7 +285,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     itemId,
                     counterValue,
                     maxCounter
-                    );
+                );
 
                 item.Create();
                 items.Add(item.Object);

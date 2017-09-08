@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Tick()
         {
-            Controller.Checkers();
+            Controller.Checkers.Tick();
             if (Controller.Npc.Selected == null)
                 Inactive();
             else Paused();
@@ -29,14 +29,14 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Active()
         {
             // TODO: If npc is throwing rockets etc define here
-            Controller.Attacking = true;
+            Controller.Attack.Attacking = true;
         }
 
         private DateTime LastMovedTime = new DateTime();
 
         public void Inactive()
         {
-            Controller.Attacking = false;
+            Controller.Attack.Attacking = false;
             if (LastMovedTime.AddSeconds(45) <= DateTime.Now || Controller.Npc.RangeObjects.Count > 0)
             {
                 newDest:
@@ -57,7 +57,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     if (candidatePlayer == null)
                     {
                         var _player = (Player) player.Value;
-                        if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.InDemiZone)
+                        if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone)
                             candidatePlayer = _player;
                     }
                     else
@@ -70,7 +70,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     candidatePlayer.AttachedNpcs.Add(Controller.Npc);
                 }
             }
-            if (Controller.Attacked || !Controller.Npc.Hangar.Ship.IsNeutral && Controller.Npc.Selected != null)
+            if (Controller.Attack.Attacked || !Controller.Npc.Hangar.Ship.IsNeutral && Controller.Npc.Selected != null)
                 Active();
         }
 
@@ -81,7 +81,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
             if (target != null)
             {
-                if (target.InDemiZone)
+                if (target.State.InDemiZone)
                 {
                     Exit();
                     return;

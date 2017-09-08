@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.netty.commands.new_client;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.map.zones;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
@@ -96,30 +98,30 @@ namespace NettyBaseReloaded.Game.objects.world
                 var player = entity.Value as Player;
                 if (player != null)
                 {
-                    if (player.EntitiesStorage.LoadedObjects.Count != Objects.Count)
+                    if (player.Storage.LoadedObjects.Count != Objects.Count)
                     {
-                        var dicOne = player.EntitiesStorage.LoadedObjects;
+                        var dicOne = player.Storage.LoadedObjects;
                         var dicTwo = Objects;
                         var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
 
                         foreach (var differance in diff.ToList())
                         {
                             if (Objects.ContainsKey(differance.Key))
-                                player.Utils.LoadObject(differance.Value);
+                                player.LoadObject(differance.Value);
                             else
-                                player.EntitiesStorage.LoadedObjects.Remove(differance.Key);
+                                player.Storage.LoadedObjects.Remove(differance.Key);
                         }
                     }
 
-                    if (player.EntitiesStorage.LoadedPOI.Count != POIs.Count)
+                    if (player.Storage.LoadedPOI.Count != POIs.Count)
                     {
-                        var dicOne = player.EntitiesStorage.LoadedPOI;
+                        var dicOne = player.Storage.LoadedPOI;
                         var dicTwo = POIs;
                         var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
 
                         foreach (var differance in diff)
                         {
-                            player.Utils.LoadPOI(differance.Value);
+                            player.Storage.LoadPOI(differance.Value);
                         }
                     }
                 }
@@ -207,7 +209,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 CreateNpc(new Npc(id, ship.Name,
                     new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                         new Dictionary<string, Item>()),
-                    0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
+                    0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
                     ship.Damage));
             }
         }
@@ -219,7 +221,7 @@ namespace NettyBaseReloaded.Game.objects.world
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
                 ship.Damage));
             Console.WriteLine("Created NPC on " + position.X + " " + position.Y);
         }
@@ -232,7 +234,7 @@ namespace NettyBaseReloaded.Game.objects.world
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
                 ship.Damage, respawnTime));
             Console.WriteLine("Created NPC on " + position.X + " " + position.Y);
         }
@@ -245,7 +247,7 @@ namespace NettyBaseReloaded.Game.objects.world
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.DropableRewards, ship.Shield,
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
                 ship.Damage, 0, motherShip));
             return id;
         }
@@ -367,7 +369,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Objects.Add(id, box);
         }
 
-        public void CreateShipLoot(Vector position, DropableRewards content)
+        public void CreateShipLoot(Vector position, CargoDrop content)
         {
             throw new NotImplementedException();
         }

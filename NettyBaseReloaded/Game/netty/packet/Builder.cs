@@ -179,7 +179,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.MaxShield,
                         player.CurrentHealth,
                         player.MaxHealth,
-                        player.Cargo.Free(player.Hangar.Ship.Cargo), //freeCargo
+                        player.Hangar.Ship.Cargo, //freeCargo
                         player.Hangar.Ship.Cargo, //maxCargo
                         player.CurrentNanoHull,
                         player.MaxNanoHull,
@@ -187,18 +187,18 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Position.Y,
                         player.Spacemap.Id,
                         (int) player.FactionId,
-                        player.Clan.Id, //idk
-                        player.LaserCount(), //idk
-                        player.Premium,
-                        player.Experience,
-                        player.Honor,
-                        player.Level.Id,
-                        player.Credits,
-                        player.Uridium,
-                        player.Jackpot,
+                        0, //clan
+                        player.Equipment.LaserCount(), //idk
+                        player.Information.Premium,
+                        player.Information.Experience.Get(),
+                        player.Information.Honor.Get(),
+                        player.Information.Level.Id,
+                        player.Information.Credits.Get(),
+                        player.Information.Uridium.Get(),
+                        0,//Jackpot
                         (int) player.RankId,
-                        player.Clan.Tag, //clanTag
-                        player.Rings,
+                        "", //clanTag
+                        0, // player GG rings
                         true,
                         false, //cloaked
                         true,
@@ -215,7 +215,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.MaxShield,
                         player.CurrentHealth,
                         player.MaxHealth,
-                        player.Cargo.Free(player.Hangar.Ship.Cargo),
+                        player.Hangar.Ship.Cargo,
                         player.Hangar.Ship.Cargo,
                         player.CurrentNanoHull,
                         player.MaxNanoHull,
@@ -223,20 +223,20 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Position.Y,
                         player.Spacemap.Id,
                         (int) player.FactionId,
-                        player.Clan.Id,
                         0,
                         0,
-                        player.LaserCount(),
-                        player.Premium,
-                        player.Experience,
-                        player.Honor,
-                        player.Level.Id,
-                        player.Credits,
-                        player.Uridium,
-                        player.Jackpot,
+                        0,
+                        player.Equipment.LaserCount(),
+                        player.Information.Premium,
+                        player.Information.Experience.Get(),
+                        player.Information.Honor.Get(),
+                        player.Information.Level.Id,
+                        player.Information.Credits.Get(),
+                        player.Information.Uridium.Get(),
+                        0,
                         (int) player.RankId,
-                        player.Clan.Tag,
-                        player.Rings,
+                        "",
+                        0,
                         true,
                         false,
                         new List<commands.old_client.VisualModifierCommand>()).Bytes);
@@ -267,9 +267,9 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.new_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.Ship.ToStringLoot(), pChar.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
+                        pChar.Hangar.Ship.ToStringLoot(), pChar.Equipment.LaserCount(), "", pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
-                        (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
+                        (int) pChar.FactionId, 0, (int) pChar.RankId, false,
                         new commands.new_client.ClanRelationModule(0), 0,
                         false, false, false, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
@@ -295,9 +295,9 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.old_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.Ship.Id, pChar.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
+                        pChar.Hangar.Ship.Id, pChar.Equipment.LaserCount(), "", pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
-                        (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
+                        (int) pChar.FactionId, 0, (int) pChar.RankId, false,
                         new commands.old_client.ClanRelationModule(0), 0,
                         false, false, false, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
@@ -610,13 +610,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
-                (short)pet.FactionId, pet.GetOwner().Clan.Id, (short)pet.Level.Id, pet.GetOwner().Clan.Tag, new commands.new_client.ClanRelationModule(0),
+                (short)pet.FactionId, 0, (short)pet.Level.Id, "", new commands.new_client.ClanRelationModule(0),
                 pet.Position.X, pet.Position.Y, pet.Speed, true, true, new commands.new_client.commandK13(0)).Bytes);
             }
             else
             {
                 gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
-                    (short)pet.FactionId, pet.GetOwner().Clan.Id, (short)pet.Level.Id, pet.GetOwner().Clan.Tag, new commands.old_client.ClanRelationModule(0),
+                    (short)pet.FactionId, 0, (short)pet.Level.Id, "", new commands.old_client.ClanRelationModule(0),
                     pet.Position.X, pet.Position.Y, pet.Speed, true, true).Bytes);
             }
         }
@@ -665,13 +665,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.BeaconCommand.write(0,0,0,0,
-                    player.InDemiZone, player.Controller.Repairing, player.Controller.Repairing, player.GetRobot(), player.InRadiationArea).Bytes);
+                    player.State.InDemiZone, player.Controller.Repairing, player.Controller.Repairing, player.Equipment.GetRobot(), player.State.InRadiationArea).Bytes);
             }
             else
             {
-                LegacyModule(gameSession, "0|" + commands.ServerCommands.BEACON + "|0|0|" + Convert.ToInt32(player.InDemiZone) + "|0|"
-                                          + Convert.ToInt32(player.InTradeArea) + "|"
-                                          + Convert.ToInt32(player.InRadiationArea) + "|" + Convert.ToInt32(player.InPortalArea) + "|0");
+                LegacyModule(gameSession, "0|" + commands.ServerCommands.BEACON + "|0|0|" + Convert.ToInt32(player.State.InDemiZone) + "|0|"
+                                          + Convert.ToInt32(player.State.InTradeArea) + "|"
+                                          + Convert.ToInt32(player.State.InRadiationArea) + "|" + Convert.ToInt32(player.State.InPortalArea) + "|0");
                 LegacyModule(gameSession, "0|A|RS|S|" + player.Controller.Repairing);
             }
         }
@@ -759,24 +759,25 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void ShipWarpWindowCreateCommand(GameSession gameSession)
         {
-            var player = gameSession.Player;
-            var hangars = World.DatabaseManager.GetHangars(player);
-            if (gameSession.Player.UsingNewClient)
-            {
-                var ships = new List<commands.new_client.ShipWarpModule>();
+            // TODO: Fix SQL
+            //var player = gameSession.Player;
+            //var hangars = World.DatabaseManager.GetHangars(player);
+            //if (gameSession.Player.UsingNewClient)
+            //{
+            //    var ships = new List<commands.new_client.ShipWarpModule>();
 
-                int i = 0;
-                foreach (var hangar in hangars)
-                {
-                    ships.Add(new commands.new_client.ShipWarpModule(hangar.Ship.Id, hangar.Ship.LootId, hangar.Ship.Name ,0, 0, i, hangar.Ship.Name));
-                }
+            //    int i = 0;
+            //    foreach (var hangar in hangars)
+            //    {
+            //        ships.Add(new commands.new_client.ShipWarpModule(hangar.Ship.Id, hangar.Ship.LootId, hangar.Ship.Name ,0, 0, i, hangar.Ship.Name));
+            //    }
 
-                gameSession.Client.Send(commands.new_client.ShipWarpWindowCommand.write(0, (int)player.Uridium, gameSession.Player.InEquipmentArea, ships).Bytes);
-            }
-            else
-            {
+            //    gameSession.Client.Send(commands.new_client.ShipWarpWindowCommand.write(0, (int)player.Uridium, gameSession.Player.InEquipmentArea, ships).Bytes);
+            //}
+            //else
+            //{
 
-            }
+            //}
         }
         #endregion
         

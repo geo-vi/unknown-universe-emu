@@ -43,13 +43,13 @@ namespace NettyBaseReloaded.Game.controllers
         {
             var player = _gameSession.Player;
 
-            World.DatabaseManager.BasicRefresh(player);
-            player.Hangar = World.DatabaseManager.LoadHangar(player);
-            player.Hangar.Configurations = World.DatabaseManager.LoadConfig(player);
-            player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
-            //player.CurrentAmmo = World.DatabaseManager.LoadAmmo(player);
-            //player.Pet = new Pet(player.Id, player.Id, "Test", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), player.FactionId, new Level(1, 1000), 0, 1000, new List<Gear>());
-            player.UserStorage.State = State.LOADED;
+            //World.DatabaseManager.BasicRefresh(player);
+            //player.Hangar = World.DatabaseManager.LoadHangar(player);
+            //player.Hangar.Configurations = World.DatabaseManager.LoadConfig(player);
+            //player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
+            ////player.CurrentAmmo = World.DatabaseManager.LoadAmmo(player);
+            ////player.Pet = new Pet(player.Id, player.Id, "Test", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), player.FactionId, new Level(1, 1000), 0, 1000, new List<Gear>());
+            //player.UserStorage.State = State.LOADED;
         }
 
         private void CheckPos()
@@ -109,7 +109,6 @@ namespace NettyBaseReloaded.Game.controllers
         private void LoadTicks()
         {
             Global.TickManager.Add(_gameSession.Player);
-            Global.TickManager.Add(_gameSession.Player.Controller);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players;
 
 namespace NettyBaseReloaded.Game.objects.world
@@ -41,9 +42,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int RespawnTime { get; set; }
 
-        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, DropableRewards dropableRewards,
+        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, CargoDrop cargoDrop,
             int maxShield, int damage, int respawnTime = 0, Npc motherShip = null)
-            : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, dropableRewards)
+            : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, cargoDrop)
         {
             Damage = damage;
             CurrentShield = maxShield;

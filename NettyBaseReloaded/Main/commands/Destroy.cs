@@ -29,14 +29,14 @@ namespace NettyBaseReloaded.Main.commands
                         foreach (var entity in World.StorageManager.Spacemaps[targetId].Entities.ToList())
                         {
                             if (entity.Value is Npc)
-                                entity.Value.Controller.Kill();
+                                entity.Value.Controller.Destruction.Kill();
                         }
                         break;
                     case "id":
-                        World.StorageManager.GetGameSession(targetId)?.Player.Controller.Kill();
+                        World.StorageManager.GetGameSession(targetId)?.Player.Controller.Destruction.Kill();
                         break;
                     case "selected":
-                        World.StorageManager.GetGameSession(targetId)?.Player.Selected?.Controller.Kill();
+                        World.StorageManager.GetGameSession(targetId)?.Player.Selected?.Controller.Destruction.Kill();
                         break;
                 }
             }

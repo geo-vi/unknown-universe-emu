@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.controllers.implementable;
+using NettyBaseReloaded.Game.controllers.pet;
+using NettyBaseReloaded.Game.controllers.pet.gears;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main;
@@ -13,23 +16,22 @@ namespace NettyBaseReloaded.Game.controllers
     class PetController : AbstractCharacterController
     {
         private Pet Pet { get; }
-        private Gears _gears { get; }
+        private List<IGear> Gears { get; }
 
         public PetController(Character character) : base(character)
         {
             Pet = Character as Pet;
-            _gears = new Gears();
+            Gears = new List<IGear>();
         }
 
         void AddGears()
         {
-            _gears.GearList.Add(new Gears.Guard(this));
+            Gears.Add(new Guard(this));
         }
 
         public void Start()
         {
             AddGears();
-            Global.TickManager.Add(this);
         }
 
         public void Exit()
@@ -39,7 +41,6 @@ namespace NettyBaseReloaded.Game.controllers
 
         public new void Tick()
         {
-            Checkers();
             Follow();
         }
 
@@ -75,40 +76,6 @@ namespace NettyBaseReloaded.Game.controllers
                 MovementController.Move(Pet, Vector.GetPosOnCircle(Pet.GetOwner().Position, 250));
             }
             LastTimeMoved = DateTime.Now;
-        }
-
-        public class Gears
-        {
-            public abstract class IGear : IChecker
-            {
-                public PetController baseController { get; }
-
-                public IGear(PetController controller)
-                {
-                    baseController = controller;
-                }
-
-                public abstract void Activate();
-
-                public abstract void Check();
-            }
-            
-            public List<IGear> GearList = new List<IGear>();
-
-            public class Guard : IGear
-            {
-                internal Guard(PetController controller) : base(controller) { }
-
-                public override void Activate()
-                {
-
-                }
-
-                public override void Check()
-                {
-
-                }
-            }
         }
     }
 }

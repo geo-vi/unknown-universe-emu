@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players;
 
 namespace NettyBaseReloaded.Game.objects.world
@@ -45,12 +46,12 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Reward Reward { get; set; }
 
-        public DropableRewards DropableRewards { get; set; }
+        public CargoDrop CargoDrop { get; set; }
 
         public int AI { get; set; }
 
         public Ship(int id, string name, string lootId, int health, int nanohull, int speed, int shield, double shieldAbsorb, int minDamage, int maxDamage, bool neutral, int laserColor,
-            int batteries, int rockets, int cargo, Reward reward, DropableRewards dropableRewards, int ai)
+            int batteries, int rockets, int cargo, Reward reward, CargoDrop cargoDrop, int ai)
         {
             Id = id;
             Name = name;
@@ -68,7 +69,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Rockets = rockets;
             Cargo = cargo;
             Reward = reward;
-            DropableRewards = dropableRewards;
+            CargoDrop = cargoDrop;
             AI = ai;
             Damage = CalculateDamage();
         }
@@ -83,7 +84,7 @@ namespace NettyBaseReloaded.Game.objects.world
             switch (LootId)
             {
                 case "ship_leonov":
-                    if (player.IsOnHomeMaps())
+                    if (player.State.IsOnHomeMap())
                         return 2.0;
                     break;
             }
@@ -95,7 +96,7 @@ namespace NettyBaseReloaded.Game.objects.world
             switch (LootId)
             {
                 case "ship_leonov":
-                    if (player.IsOnHomeMaps())
+                    if (player.State.IsOnHomeMap())
                         return 2.0;
                     break;
             }
@@ -107,7 +108,7 @@ namespace NettyBaseReloaded.Game.objects.world
             switch (LootId)
             {
                 case "ship_leonov":
-                    if (player.IsOnHomeMaps())
+                    if (player.State.IsOnHomeMap())
                         return 2.0;
                     break;
             }
@@ -119,7 +120,7 @@ namespace NettyBaseReloaded.Game.objects.world
             switch (LootId)
             {
                 case "ship_leonov":
-                    if (player.IsOnHomeMaps())
+                    if (player.State.IsOnHomeMap())
                         return 2.0;
                     break;
             }
@@ -131,7 +132,7 @@ namespace NettyBaseReloaded.Game.objects.world
             switch (LootId)
             {
                 case "ship_leonov":
-                    if (player.IsOnHomeMaps())
+                    if (player.State.IsOnHomeMap())
                         return 2.0;
                     break;
             }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.players;
 
@@ -38,7 +39,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Pet(int id,int ownerId, string name, Hangar hangar, Faction factionId,
             Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap, hangar.Health, hangar.Nanohull,
-            new Reward(0,0), new DropableRewards(0,0,0,0,0,0,0,0))
+            new Reward(0,0), new CargoDrop())
         {
             OwnerId = ownerId;
             Level = level;

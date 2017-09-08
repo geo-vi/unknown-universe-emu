@@ -39,7 +39,6 @@ namespace NettyBaseReloaded.Game.controllers.login
 
             Packet.Builder.ShipInitializationCommand(GameSession);
             Packet.Builder.DronesCommand(GameSession, GameSession.Player);
-            player.UserStorage.State = State.READY;
         }
 
         public void AddCBS()

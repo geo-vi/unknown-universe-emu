@@ -70,7 +70,6 @@ namespace NettyBaseReloaded.Main
         public static void SaveAll()
         {
             QueryManager.SaveAll();
-            World.DatabaseManager.SaveAll();
         }
     }
 }
