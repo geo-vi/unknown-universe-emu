@@ -223,7 +223,6 @@ namespace NettyBaseReloaded.Game.objects.world
                     new Dictionary<string, Item>()),
                 0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
                 ship.Damage));
-            Console.WriteLine("Created NPC on " + position.X + " " + position.Y);
         }
 
         public void CreateNpc(Ship ship, AILevels ai, int respawnTime)
@@ -236,7 +235,6 @@ namespace NettyBaseReloaded.Game.objects.world
                     new Dictionary<string, Item>()),
                 0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
                 ship.Damage, respawnTime));
-            Console.WriteLine("Created NPC on " + position.X + " " + position.Y);
         }
 
         public int CreateNpc(Ship ship, AILevels ai, Npc motherShip)
@@ -266,6 +264,7 @@ namespace NettyBaseReloaded.Game.objects.world
             npc.Controller = new NpcController(npc);
             if (Id == 12 || Id == 11 || Id == 10 || Id == 9)
                 npc.Controller.Initiate();
+            World.Log.Write("Created NPC[" + npc.Id + ", " + npc.Hangar.Ship.ToStringLoot() + "] on mapId " + Id);
         }
 
         #endregion
@@ -293,7 +292,8 @@ namespace NettyBaseReloaded.Game.objects.world
             foreach (var portal in PortalBase)
             {
                 CreatePortal(portal.Map, portal.x, portal.y, portal.newX, portal.newY);
-            }            
+            }
+            World.Log.Write("Loaded objects on mapId " + Id);
         }
 
         public void CreatePortal(int map, int x, int y, int newX, int newY)
@@ -303,6 +303,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
             var zoneId = GetNextZoneId();
             Zones.Add(zoneId, new DemiZone(zoneId, new Vector(x - 500, y + 500), new Vector(x + 500, y - 500)));
+            World.Log.Write("Created Portal on mapId " + Id);
         }
 
         public void CreateStation(Faction faction, Vector position)
@@ -327,24 +328,28 @@ namespace NettyBaseReloaded.Game.objects.world
 
             var zoneId = GetNextZoneId();
             Zones.Add(zoneId, new DemiZone(zoneId, new Vector(position.X - 1000, position.Y + 1000), new Vector(position.X + 1000, position.Y - 1000)));
+            World.Log.Write("Created Station on mapId " + Id);
         }
 
         public void CreatePirateStation(Vector vector)
         {
             var id = GetNextObjectId();
             Objects.Add(id, new PirateStation(id, vector));
+            World.Log.Write("Created Pirate Station on mapId " + Id);
         }
 
         public void CreateQuestGiver(Faction faction, Vector pos)
         {
             var id = GetNextObjectId();
             Objects.Add(id, new QuestGiver(id, faction, pos));
+            World.Log.Write("Created Quest Giver on mapId " + Id);
         }
 
         public void CreateAsteroid(string name, Vector pos)
         {
             var id = GetNextObjectId();
             Objects.Add(id, new Asteroid(id, name, pos));
+            World.Log.Write("Created Asteroid on mapId " + Id);
         }
 
         #endregion
@@ -358,6 +363,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var box = new Ore(id, hash, type, pos);
             HashedObjects[hash] = box;
             Objects.Add(id, box);
+            World.Log.Write("Created Ore["+type+"] on mapId " + Id);
         }
 
         public void CreateBox(Types type, Vector pos)
@@ -367,10 +373,12 @@ namespace NettyBaseReloaded.Game.objects.world
             var box = new BonusBox(id, hash, pos);
             HashedObjects[hash] = box;
             Objects.Add(id, box);
+            World.Log.Write("Created Box[" + type + "] on mapId " + Id);
         }
 
         public void CreateShipLoot(Vector position, CargoDrop content)
         {
+            World.Log.Write("NotImplentedException");
             throw new NotImplementedException();
         }
 

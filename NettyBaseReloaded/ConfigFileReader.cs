@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NettyBaseReloaded.Game;
-using NettyBaseReloaded.Game.managers;
-using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.global_managers;
 
 namespace NettyBaseReloaded
@@ -57,6 +50,7 @@ namespace NettyBaseReloaded
                     }
                 }
             }
+            Program.Log.Write("Finished reading server.cfg");
         }
 
         public static void ReadGameConfig()
@@ -80,6 +74,7 @@ namespace NettyBaseReloaded
                     }
                 }
             }
+            Program.Log.Write("Finished reading game.cfg");
         }
 
         public static void ReadMySQLConfig()
@@ -97,21 +92,22 @@ namespace NettyBaseReloaded
                         switch (paramSplit[0])
                         {
                             case "SERVER":
-                                MySQLManager.SERVER = paramSplit[1];
+                                SqlDatabaseManager.SERVER = paramSplit[1];
                                 break;
                             case "UID":
-                                MySQLManager.UID = paramSplit[1];
+                                SqlDatabaseManager.UID = paramSplit[1];
                                 break;
                             case "PWD":
-                                MySQLManager.PWD = paramSplit[1];
+                                SqlDatabaseManager.PWD = paramSplit[1];
                                 break;
                             case "DB":
-                                MySQLManager.DB = paramSplit[1];
+                                SqlDatabaseManager.DB = paramSplit[1];
                                 break;
                         }
                     }
                 }
             }
+            Program.Log.Write("Finished reading mysql.cfg");
         }
     }
 }

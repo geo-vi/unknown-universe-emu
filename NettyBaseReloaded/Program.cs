@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Properties;
 using NettyBaseReloaded.Utils;
@@ -34,6 +35,8 @@ namespace NettyBaseReloaded
 
         public static string SERVER_SESSION = "";
 
+        public static DebugLog Log;
+
         public static void Main(string[] args)
         {
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
@@ -46,7 +49,7 @@ namespace NettyBaseReloaded
             Draw.Logo();
 
             InitiateSession();
-            //ConsoleUpdater();
+            ConsoleUpdater();
             ConsoleCommands.Add();
             KeepAlive();
             
@@ -59,6 +62,7 @@ namespace NettyBaseReloaded
         /// <param name="e"></param>
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
+            new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
             // TODO: Save everything and then fuck up
         }
 
@@ -119,6 +123,7 @@ namespace NettyBaseReloaded
         /// </summary>
         static void LookForConfigFiles()
         {
+            Log.Write("Looking for config files");
             if (File.Exists(Directory.GetCurrentDirectory() + "/server.cfg")) ConfigFileReader.ReadServerConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/game.cfg")) ConfigFileReader.ReadGameConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/mysql.cfg")) ConfigFileReader.ReadMySQLConfig();
@@ -138,21 +143,26 @@ namespace NettyBaseReloaded
         {
             if (ServerUp) return;
             Console.WriteLine("Initiating..");
+            LoadLogger();
             LookForConfigFiles();
-            if (Server.LOGGING)
-                CreateLogger();
             Global.Start();
             ServerUp = true;
         }
 
-        static void CreateLogger()
+        public static void CloseForMaintenance()
         {
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION);
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/debug");
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/errors");
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/executables");
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/players");
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/tasks");
+            Console.WriteLine("Entering critical mode (Over 100 exceptions recorded)");
+            Properties.Server.DEBUG = true;
+        }
+
+        static void LoadLogger()
+        {
+            if (!Server.LOGGING) return;
+
+            Creator.InitializeSession();
+            Log = new DebugLog("core");
+            Log.Write("Logger succesfully loaded.");
+            Log.Write("Testing... 1 2 3");
         }
     }
 }

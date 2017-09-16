@@ -20,7 +20,13 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Level Level { get; set; }
 
+        public Title Title { get; set; }
+
         public bool Premium { get; set; }
+
+        public DateTime RegisteredTime { get; set; }
+
+        public int Ranking { get; set; }
 
         public Information(Player player) : base(player)
         {

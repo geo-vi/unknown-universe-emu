@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
@@ -19,6 +20,8 @@ namespace NettyBaseReloaded.Networking
     {
         private XSocket XSocket;
         public int UserId { get; set; }
+
+        public IPAddress IPAddress => XSocket.RemoteHost;
 
         public GameClient(XSocket gameSocket)
         {
@@ -59,9 +62,7 @@ namespace NettyBaseReloaded.Networking
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Connected?");
-                Debug.WriteLine(e.StackTrace);
-                Debug.WriteLine(e.Message);
+                new ExceptionLog("socket", "Unable to send packet / Connected?", e);
             }
         }
         public void Send(string packet)

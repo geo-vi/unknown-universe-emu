@@ -1,5 +1,6 @@
 ﻿using NettyBaseReloaded.Logger;
 using System;
+using System.IO;
 
 namespace NettyBaseReloaded
 {
@@ -14,12 +15,12 @@ namespace NettyBaseReloaded
 
         public override void Initialize(string fileName)
         {
-            Writer = new Writer(BASE_DIR + SUB_DIR + fileName);
+            Writer = new Writer(Directory.GetCurrentDirectory() + BASE_DIR + "/$SERVER_SESSION$" + SUB_DIR + fileName);
         }
 
         public void Write(string message)
         {
-            Writer.Write(DateTime.Now + " - " + message);
+            Writer.Write(DateTime.Now + " - " + "(" + Out.GetCaller() + ") " + message);
         }
     }
 }

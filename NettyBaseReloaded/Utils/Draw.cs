@@ -32,7 +32,6 @@ namespace NettyBaseReloaded.Utils
 
                                                         ";
             Console.WriteLine(logo);
-            Console.WriteLine(" Version = {0} / Current time = {1} / Errors = {2} / Online = {3}", 0,0,0,0);
             Console.ForegroundColor = oldColor;
         }
     }

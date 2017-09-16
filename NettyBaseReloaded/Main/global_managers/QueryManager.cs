@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
+using System.Threading;
 using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Main.global_managers
 {
     class QueryManager
     {
-
         public void Load()
         {
             if (!CheckConnection())
@@ -26,12 +21,28 @@ namespace NettyBaseReloaded.Main.global_managers
         /// <returns>If connection is established</returns>
         public bool CheckConnection()
         {
-            var mySql = new MySQLManager();
-            var connection = mySql.Connection();
-            connection.Open();
-            var ping = connection.Ping();
-            connection.Close();
-            return ping;
+            int tries = 0;
+            TRY:
+            try
+            {
+                SqlDatabaseManager.Initialize();
+                SqlDatabaseManager.Log.Write("Successfully connected to database");
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("MYSQL Connection failed.");
+                SqlDatabaseManager.Log.Write("MySQL Connection failed");
+                new ExceptionLog("mysql", "MYSQL Connection failed", e);
+                if (tries < 6)
+                {
+                    Console.WriteLine("Trying to reconnect in .. " + tries + " seconds.");
+                    Thread.Sleep(tries * 1000);
+                    tries++;
+                    goto TRY;
+                }
+            }
+            return false;
         }
 
         public void LoadClans()
@@ -41,7 +52,7 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public void SaveAll()
         {
-            
+
         }
     }
 }

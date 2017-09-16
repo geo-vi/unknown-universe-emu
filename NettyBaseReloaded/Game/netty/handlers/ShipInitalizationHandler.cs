@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.netty.handlers
@@ -21,10 +22,14 @@ namespace NettyBaseReloaded.Game.netty.handlers
                                                "]");
 
             client.UserId = userId;
-            if (!ValidateSession(userId, sessionId)) return;
 
             //TODO: GetAcc from DB
-            //Player = World.DatabaseManager.GetAccount(userId);
+            Player = World.DatabaseManager.GetAccount(userId);
+            if (Player.SessionId != sessionId)
+            {
+                ExecuteWrongSession();
+                return; // Wrong session ID
+            }
             Player.UsingNewClient = newClient;
 
             if (Player != null) GameSession = CreateSession(client, Player);
@@ -32,9 +37,9 @@ namespace NettyBaseReloaded.Game.netty.handlers
             execute();
         }
 
-        private bool ValidateSession(int userId, string sessionId)
+        private void ExecuteWrongSession()
         {
-            return true;
+            Global.Log.Write($"{GameSession.Client.IPAddress} tried breaching into {GameSession.Client.UserId}'s account");
         }
 
         private GameSession CreateSession(GameClient client, Player player)

@@ -34,8 +34,7 @@ namespace NettyBaseReloaded.Main
         static void InitiateGlobalQueries()
         {
             QueryManager.Load();
-            if (Properties.Server.DEBUG)           
-                Log.Write("Global-Queries loaded!");
+            Log.Write("Global-Queries loaded!");
         }
 
         static void InitiateChat()
@@ -44,8 +43,7 @@ namespace NettyBaseReloaded.Main
             new Server(Server.CHAT_PORT);
 
             Out.WriteLine("Chat-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
-            if (Properties.Server.DEBUG)
-                Log.Write("Chat-Server started.");
+            Log.Write("Chat-Server started.");
         }
 
         static void InitiatePolicy()
@@ -53,8 +51,7 @@ namespace NettyBaseReloaded.Main
             new Server(Server.POLICY_PORT);
 
             Out.WriteLine("Policy-Server started successfully!", "SUCCESS", ConsoleColor.DarkGreen);
-            if (Properties.Server.DEBUG)
-                Log.Write("Policy-Server started.");
+            Log.Write("Policy-Server started.");
         }
         
         static void InitiateGame()
@@ -63,8 +60,7 @@ namespace NettyBaseReloaded.Main
             new Server(Server.GAME_PORT);
 
             Out.WriteLine("Game-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
-            if (Properties.Server.DEBUG)
-                Log.Write("Game-Server started.");
+            Log.Write("Game-Server started.");
         }
 
         public static void SaveAll()

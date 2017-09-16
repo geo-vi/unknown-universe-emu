@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Main
@@ -8,7 +11,8 @@ namespace NettyBaseReloaded.Main
     {
         public static void Check()
         {
-
+            if (ExceptionLog.ERRORS_RECORDED > 100 && !Properties.Server.DEBUG)
+                Program.CloseForMaintenance();
         }
 
         public static void Update()
@@ -25,7 +29,7 @@ namespace NettyBaseReloaded.Main
             var oldColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.SetCursorPosition(0, 17);
-            Console.WriteLine("\r Version = {0} / Current time = {1} / Errors = {2} / Online = {3}", Program.GetVersion(), DateTime.Now.ToLongTimeString(), Global.StorageManager.Errors.Count,0);
+            Console.WriteLine("\r Version = {0} // Errors = {1} / Online = {2}", Program.GetVersion(), ExceptionLog.ERRORS_RECORDED, "W:" + World.StorageManager.GameSessions.Count + "/C:" + Chat.Chat.StorageManager.ChatSessions.Count);
             Console.SetCursorPosition(oldCursorPosX, oldCursorPosY);
             Console.ForegroundColor = oldColor;
         }

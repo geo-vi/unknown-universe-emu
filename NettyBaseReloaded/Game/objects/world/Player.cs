@@ -47,6 +47,16 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public State State { get; private set; }
 
+        public new Hangar Hangar
+        {
+            get
+            {
+                if (Equipment.Hangars?[Equipment.ActiveHangar] != null)
+                    return Equipment.Hangars[Equipment.ActiveHangar];
+                return Hangar;
+            }
+        }
+
         /*********
          * EXTRA *
          *********/
@@ -215,11 +225,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Drone> Drones => Hangar.Drones;
 
-        protected Player(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, CargoDrop cargoDrop, string sessionId, Rank rankId, PlayerController controller, bool usingNewClient) : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, cargoDrop)
+        public Player(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, CargoDrop cargoDrop, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, cargoDrop)
         {
             SessionId = sessionId;
             RankId = rankId;
-            Controller = controller;
             UsingNewClient = usingNewClient;
             InitializeClasses();
         }

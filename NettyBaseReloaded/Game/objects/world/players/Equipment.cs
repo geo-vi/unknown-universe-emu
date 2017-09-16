@@ -9,6 +9,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
 {
     class Equipment : PlayerBaseClass
     {
+        public int ActiveHangar = 0;
+
+        public Dictionary<int, Hangar> Hangars { get; set; }
+
         public Equipment(Player player) : base(player)
         {
         }

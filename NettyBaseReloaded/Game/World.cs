@@ -21,6 +21,7 @@ namespace NettyBaseReloaded.Game
         public static void InitiateManagers()
         {
             Packet.Handler.AddCommands();
+            DatabaseManager.Initiate();
             InitiateWorld();
         }
 
@@ -40,8 +41,7 @@ namespace NettyBaseReloaded.Game
                     map.Value.CreateNpc(StorageManager.Ships[80], AILevels.MOTHERSHIP, 30);
                 }
             }
-            if (Properties.Server.DEBUG)
-                Log.Write("Loaded World");
+            Log.Write("Loaded World");
         }
 
         private static void CreateHashes(Spacemap map)
