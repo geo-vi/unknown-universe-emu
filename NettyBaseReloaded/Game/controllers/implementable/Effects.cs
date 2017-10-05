@@ -19,7 +19,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Tick()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override void Stop()

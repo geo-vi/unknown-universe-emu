@@ -25,6 +25,14 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             //TODO: GetAcc from DB
             Player = World.DatabaseManager.GetAccount(userId);
+            if (Player != null) GameSession = CreateSession(client, Player);
+            else
+            {
+                Console.WriteLine(">>?");
+                return;
+            }
+
+            Player.Log.Write($"Session received: {sessionId}->Database session: {Player.SessionId}");
             if (Player.SessionId != sessionId)
             {
                 ExecuteWrongSession();
@@ -32,14 +40,13 @@ namespace NettyBaseReloaded.Game.netty.handlers
             }
             Player.UsingNewClient = newClient;
 
-            if (Player != null) GameSession = CreateSession(client, Player);
-
             execute();
         }
 
         private void ExecuteWrongSession()
         {
-            Global.Log.Write($"{GameSession.Client.IPAddress} tried breaching into {GameSession.Client.UserId}'s account");
+            Console.WriteLine($"{GameSession.Client.IPAddress} tried breaching into {GameSession.Client.UserId}'s account");
+            Player.Log.Write($"Breach attempt by {GameSession.Client.IPAddress}");
         }
 
         private GameSession CreateSession(GameClient client, Player player)

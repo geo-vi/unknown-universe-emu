@@ -38,6 +38,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void AddCharacter(Character main, Character entity)
         {
+
             if (!main.RangeEntities.ContainsKey(entity.Id))
             {
                 main.RangeEntities.Add(entity.Id, entity);
@@ -57,7 +58,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 //Send movement
                 var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
-                Packet.Builder.MoveCommand(gameSession, entity, (int)(entity.MovementTime - timeElapsed));
+                Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
 
             }
         }

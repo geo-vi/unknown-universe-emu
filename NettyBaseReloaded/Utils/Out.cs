@@ -68,6 +68,19 @@ namespace NettyBaseReloaded
         {
             //TODO: Log this shit
             Writer.WriteLine(text);
+            ProcessForLog(text);
+        }
+
+        public void ProcessForLog(string text)
+        {
+            if (Program.Log == null) return;
+
+            if ((text.Contains("----") && text.Contains("We are awesome!") && text.Contains("---")) ||
+                (text.Contains("Version") && text.Contains("Errors") && text.Contains("Online") &&
+                 text.Count(x => x == Char.Parse("/")) == 4))
+                return;
+
+            Program.Log.Write(text);
         }
     }
 }

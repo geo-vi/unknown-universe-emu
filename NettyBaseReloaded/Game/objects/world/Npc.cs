@@ -22,6 +22,7 @@ namespace NettyBaseReloaded.Game.objects.world
     }
     class Npc : Character
     {
+        public static DebugLog Log = new DebugLog("npc");
         /**********
          * BASICS *
          **********/
@@ -44,8 +45,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, CargoDrop cargoDrop,
             int maxShield, int damage, int respawnTime = 0, Npc motherShip = null)
-            : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, cargoDrop)
+            : base(id, name, hangar, factionId, position, spacemap, rewards, cargoDrop)
         {
+            CurrentHealth = currentHealth;
+            CurrentNanoHull = currentNanoHull;
             Damage = damage;
             CurrentShield = maxShield;
             MaxShield = maxShield;

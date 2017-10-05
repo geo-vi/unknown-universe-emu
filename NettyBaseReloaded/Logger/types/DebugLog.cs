@@ -20,7 +20,14 @@ namespace NettyBaseReloaded
 
         public void Write(string message)
         {
-            Writer.Write(DateTime.Now + " - " + "(" + Out.GetCaller() + ") " + message);
+            try
+            {
+                Writer.Write(DateTime.Now + " - " + "(" + Out.GetCaller() + ") " + message);
+            }
+            catch (Exception)
+            {
+                
+            }
         }
     }
 }

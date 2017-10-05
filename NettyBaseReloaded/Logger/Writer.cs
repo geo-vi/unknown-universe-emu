@@ -19,9 +19,16 @@ namespace NettyBaseReloaded.Logger
 
         public async void Write(string message)
         {
-            StreamWriter writer = new StreamWriter(FilePath, true);
-            await writer.WriteLineAsync(message);
-            writer.Dispose();
+            try
+            {
+                StreamWriter writer = new StreamWriter(FilePath, true);
+                await writer.WriteLineAsync(message);
+                writer.Dispose();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Log writer failed / {e.GetType()}, {FilePath}");
+            }
         }
     }
 }

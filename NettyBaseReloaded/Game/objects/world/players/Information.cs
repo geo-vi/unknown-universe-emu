@@ -30,7 +30,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Information(Player player) : base(player)
         {
-            Experience = new Experience(player);
+            Experience = new Exp(player);
             Honor = new Honor(player);
             Credits = new Credits(player);
             Uridium = new Uridium(player);
@@ -44,6 +44,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Honor.Refresh();
             Credits.Refresh();
             Uridium.Refresh();
+            Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
         }
     }
 }

@@ -32,16 +32,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.new_client.UserSettingsCommand.write(qs, asm, ws, gm, z9, ds).Bytes);
             }
             else
-            {            //    new QualitySettingsModule(false, 3, 3, 3, true, 3, 3, 3, 3, 3, 3),
-                         //    new DisplaySettingsModule(false, true, true, true, true, true, false, true, true, true, true, true, true,
-                         //        true, true, true),
-                         //    new AudioSettingsModule(false, false, false),
-                         //    new WindowSettingsModule(false, 1,
-                         //        "0,444,-1,0,1,1057,329,1,20,39,530,0,3,1021,528,1,5,-10,-6,0,24,463,15,0,10,101,307,0,36,100,400,0,13,315,122,0,23,1067,132,0",
-                         //        "5,240,150,20,300,150,36,260,175,", 11, "313,480", "23,0,24,0,25,1,26,0,27,0", "313,451", "0",
-                         //        "313,500", "0"),
-                         //    new GameplaySettingsModule(false, true, true, true, true, true, true, true),
-
+            {
                 var qs = new commands.old_client.QualitySettingsModule(false, 3, 3, 3, true, 3, 3, 3, 3, 3, 3);
                 var asm = new commands.old_client.AudioSettingsModule(false, false, false);
                 var ws = new commands.old_client.WindowSettingsModule(false, 1,
@@ -167,7 +158,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         public void ShipInitializationCommand(GameSession gameSession)
         {
             var player = gameSession.Player;
-
+            
             if (gameSession.Player.UsingNewClient)
                 gameSession.Client.Send(
                     commands.new_client.ShipInitializationCommand.write(
@@ -235,7 +226,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Information.Uridium.Get(),
                         0,
                         (int) player.RankId,
-                        "",
+                        "", 
                         0,
                         true,
                         false,
@@ -761,7 +752,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             // TODO: Fix SQL
             //var player = gameSession.Player;
-            //var hangars = World.DatabaseManager.GetHangars(player);
+            //var hangars = World.DatabaseManager.LoadHangars(player);
             //if (gameSession.Player.UsingNewClient)
             //{
             //    var ships = new List<commands.new_client.ShipWarpModule>();

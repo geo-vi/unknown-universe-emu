@@ -47,13 +47,24 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public State State { get; private set; }
 
-        public new Hangar Hangar
+        private Hangar _hangar;
+        public override Hangar Hangar
         {
             get
             {
-                if (Equipment.Hangars?[Equipment.ActiveHangar] != null)
+                if (Equipment?.Hangars?[Equipment.ActiveHangar] != null)
+                {
                     return Equipment.Hangars[Equipment.ActiveHangar];
-                return Hangar;
+                }
+                return _hangar;
+            }
+            set
+            {
+                if (Equipment?.Hangars?[Equipment.ActiveHangar] != null)
+                {
+                    Equipment.Hangars[Equipment.ActiveHangar] = value;
+                }
+                _hangar = value;
             }
         }
 
@@ -91,6 +102,9 @@ namespace NettyBaseReloaded.Game.objects.world
                         value = (int) (value * 1.2); // +20%
                         break;
                 }
+                Console.WriteLine(Hangar.Ship.GetHealthBonus(this).ToString());
+                Console.WriteLine((value * Hangar.Ship.GetHealthBonus(this)).ToString());
+                Console.WriteLine(((int)(value * Hangar.Ship.GetHealthBonus(this))).ToString());
                 value = (int) (value * Hangar.Ship.GetHealthBonus(this));
 
                 return value;
@@ -163,7 +177,11 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override int Speed
         {
-            get { return Hangar.Ship.Speed + Hangar.Configurations[CurrentConfig - 1].Speed; }
+            get
+            {
+                Console.WriteLine(Hangar.Configurations[CurrentConfig - 1].ToString());
+                return Hangar.Configurations[CurrentConfig - 1].Speed;
+            }
         }
 
         public override int Damage
@@ -187,6 +205,7 @@ namespace NettyBaseReloaded.Game.objects.world
                         break;
 
                 }
+
                 value = (int) (value * Hangar.Ship.GetDamageBonus(this));
                 return value;
             }
@@ -225,18 +244,26 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Drone> Drones => Hangar.Drones;
 
-        public Player(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, CargoDrop cargoDrop, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, cargoDrop)
+        public Player(int id, string name, Hangar hangar, int currentHealth, int currentNano, Faction factionId, Vector position, Spacemap spacemap, Reward rewards, CargoDrop cargoDrop, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position, spacemap, rewards, cargoDrop)
         {
+            InitializeClasses();
             SessionId = sessionId;
             RankId = rankId;
             UsingNewClient = usingNewClient;
-            InitializeClasses();
+            CurrentConfig = 1;
+            CurrentHealth = currentHealth;
+            CurrentNanoHull = currentNano;
         }
 
+        public new void Tick()
+        {
+            // TODO -> Added ticked processes
+        }
+        
         private void InitializeClasses()
         {
             Equipment = new Equipment(this);
-            Statistics = new Statistics(this);
+            Statistics = World.DatabaseManager.LoadStatistics(this);
             Information = new Information(this);
             //Ammunition = new Ammunition(this); < TODO Add
             Settings = new Settings(this);

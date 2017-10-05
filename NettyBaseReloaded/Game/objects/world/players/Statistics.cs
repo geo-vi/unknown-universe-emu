@@ -45,12 +45,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Statistics(Player player) : base(player)
         {
-            LoadInfos();
-        }
-
-        private void LoadInfos()
-        {
-            // TODO: LOAD FROM MYSQL
         }
     }
 }

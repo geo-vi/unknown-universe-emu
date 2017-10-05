@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
+using NettyBaseReloaded.Main;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
@@ -13,8 +15,25 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Dictionary<int, Hangar> Hangars { get; set; }
 
+        protected Player Player { get; }
+
         public Equipment(Player player) : base(player)
         {
+            Player = player;
+            RefreshHangars();
+        }
+
+        public void RefreshHangars()
+        {
+            Hangars = World.DatabaseManager.LoadHangars(Player);
+            for (int hangarId = 0; hangarId < Hangars.Count; hangarId++)
+            {
+                if (Hangars[hangarId].Active)
+                {
+                    ActiveHangar = hangarId;
+                    break;
+                }
+            }
         }
 
         public string GetConsumablesPacket()

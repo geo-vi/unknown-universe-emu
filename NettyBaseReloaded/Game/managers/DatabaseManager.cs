@@ -6,7 +6,9 @@ using MySql.Data.MySqlClient;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map.objects;
+using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
+using NettyBaseReloaded.Game.objects.world.players.informations;
 using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.global_managers;
@@ -219,6 +221,7 @@ namespace NettyBaseReloaded.Game.managers
                     var mapId = intConv(queryRow["SHIP_MAP_ID"]);
                     var hp = intConv(queryRow["SHIP_HP"]);
                     var nano = intConv(queryRow["SHIP_NANO"]);
+
                     hangar = new Hangar(ship, null, pos, World.StorageManager.Spacemaps[mapId], hp, nano,
                         new Dictionary<string, Item>());
 
@@ -312,44 +315,47 @@ namespace NettyBaseReloaded.Game.managers
 
         public Player GetAccount(int playerId)
         {
+            Player player = null;
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    string sql = "SELECT * FROM player_data, player_extra_data, player_hangar WHERE player_hangar.PLAYER_ID = player_data.PLAYER_ID AND player_extra_data.PLAYER_ID = player_data.PLAYER_ID AND player_hangar.ACTIVE=1 AND player_data.PLAYER_ID = @playerId";
-                    mySqlClient.SetParameter("@playerId", playerId);
-                    var executed = mySqlClient.ExecuteQueryRow(sql);
+                    string sql =
+                        "SELECT * FROM player_data, player_extra_data, player_hangar WHERE player_hangar.PLAYER_ID = player_data.PLAYER_ID AND player_extra_data.PLAYER_ID = player_data.PLAYER_ID AND player_hangar.ACTIVE=1 AND player_data.PLAYER_ID = " +
+                        playerId;
+                    var querySet = mySqlClient.ExecuteQueryReader(sql);
 
-                    //var querySet =
-                    //    mySqlClient.ExecuteQueryRow(
-                    //        "SELECT * FROM player_data, player_extra_data, player_hangar WHERE player_hangar.PLAYER_ID = player_data.PLAYER_ID AND player_extra_data.PLAYER_ID = player_data.PLAYER_ID AND player_hangar.ACTIVE=1 AND player_data.PLAYER_ID = " +
-                    //        playerId);
+                    while (querySet.Read())
+                    {
+                        var name = stringConv(querySet["PLAYER_NAME"]);
+                        var shipId = intConv(querySet["SHIP_DESIGN"]);
+                        var ship = World.StorageManager.Ships[shipId];
+                        var position = new Vector(intConv(querySet["SHIP_X"]), intConv(querySet["SHIP_Y"]));
+                        var mapId = intConv(querySet["SHIP_MAP_ID"]);
+                        var spacemap = World.StorageManager.Spacemaps[mapId];
+                        var currentHealth = intConv(querySet["SHIP_HP"]);
+                        var currentNanohull = intConv(querySet["SHIP_NANO"]);
+                        var hangar = new Hangar(ship, new List<Drone>(), position, spacemap, currentHealth, currentNanohull, new Dictionary<string, Item>());
+                        var factionId = (Faction) intConv(querySet["FACTION_ID"]);
+                        var levelId = intConv(querySet["LVL"]);
+                        var rank = (Rank)(intConv(querySet["RANK"]));
+                        var sessionId = stringConv(querySet["SESSION_ID"]);
 
-                    //var name = "";
-                    //Hangar hangar = null;
-                    //var shipId = intConv(queryRow["SHIP_DESIGN"]);
-                    //var factionId = (Faction)intConv(queryRow["FACTION_ID"]);
-                    //var mapId = intConv(queryRow["SHIP_MAP_ID"]);
-                    //var levelId = intConv(queryRow["LVL"]);
-                    //var position = new Vector(intConv(queryRow["SHIP_X"]),intConv(queryRow["SHIP_Y"]));
-                    //var spacemap = World.StorageManager.Spacemaps[mapId];
-                    //var currentHealth = 0;
-                    //var currentNanohull = 0;
-                    //var rank = Rank.ADMINISTRATOR;
-                    //var sessionId = stringConv(queryRow["SESSION_ID"]);
+                        if (!World.StorageManager.Spacemaps.ContainsKey(mapId))
+                        {
+                            Console.WriteLine("PROBLEM -> MAPID " + mapId + " DOESN'T EXIST!");
+                            return null;
+                        }
 
-                    //if (!World.StorageManager.Spacemaps.ContainsKey(mapId))
-                    //{
-                    //    Console.WriteLine("PROBLEM -> MAPID " + mapId + " DOESN'T EXIST!");
-                    //    return null;
-                    //}
+                        if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(levelId))
+                        {
+                            Console.WriteLine("PROBLEM -> LEVELID " + levelId + " DOESN'T EXIST!");
+                            return null;
+                        }
 
-                    //if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(levelId))
-                    //{
-                    //    Console.WriteLine("PROBLEM -> LEVELID " + levelId + " DOESN'T EXIST!");
-                    //    return null;
-                    //}
-                    //return new Player(playerId, name, hangar, factionId, position, spacemap, currentHealth, currentNanohull, null, null, sessionId, rank, false);
+                        querySet.Dispose();
+                        player = new Player(playerId, name, hangar,currentHealth,currentNanohull, factionId, position, spacemap, null, null, sessionId, rank, false);
+                    }
                 }
 
             }
@@ -357,10 +363,10 @@ namespace NettyBaseReloaded.Game.managers
             {
                 new ExceptionLog("dbmanager", "Failed getting player account [ID: " + playerId + "]", e);
             }
-            return null;
+            return player;
         }
 
-        public Dictionary<int,Hangar> GetHangars(Player player)
+        public Dictionary<int,Hangar> LoadHangars(Player player)
         {
             Dictionary<int, Hangar> hangars = new Dictionary<int, Hangar>();
             try
@@ -382,6 +388,8 @@ namespace NettyBaseReloaded.Game.managers
                             bool active = Convert.ToBoolean(reader["ACTIVE"]);
                             int mapId = Convert.ToInt32(reader["SHIP_MAP_ID"]);
 
+                            Console.WriteLine("Added hangar");
+
                             hangars.Add(id, new Hangar(World.StorageManager.Ships[shipId], player.Drones, new Vector(x, y),
                                 World.StorageManager.Spacemaps[mapId], hp, nano, new Dictionary<string, Item>(),
                                 active));
@@ -395,6 +403,47 @@ namespace NettyBaseReloaded.Game.managers
                 new ExceptionLog("dbmanager", "Error loading hangars for player [ID: " + player.Id + "]", e);
             }
             return hangars;
+        }
+
+        public Statistics LoadStatistics(Player player)
+        {
+            return null;
+        }
+
+        public BaseInfo LoadInfo(Player player, BaseInfo baseInfo)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var getName = baseInfo.GetType().Name?.ToUpper();
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT " + getName + " FROM player_data WHERE PLAYER_ID=" + player.Id);
+                    baseInfo.SyncedValue = longConv(queryRow[getName].ToString());
+                    baseInfo.LastTimeSynced = DateTime.Now;
+                }
+            }
+            catch (Exception e)
+            {
+                
+            }
+            return baseInfo;
+        }
+
+        public int LoadInfo(Player player, string row)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT " + row + " FROM player_data WHERE PLAYER_ID=" + player.Id);
+                    return intConv(queryRow[row]);
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            return 0;
         }
 
         public void BasicSave(Player player)

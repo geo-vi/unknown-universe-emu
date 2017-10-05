@@ -27,7 +27,30 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int Id { get; }
         public string Name { get; set; }
-        public Hangar Hangar { get; set; }
+
+        public Hangar _hangar;
+        public virtual Hangar Hangar
+        {
+            get
+            {
+                if (this is Player)
+                {
+                    var temp = (Player) this;
+                    return temp.Hangar;
+                }
+                return _hangar;
+            }
+            set
+            {
+                if (this is Player)
+                {
+                    var temp = (Player)this;
+                    temp.Hangar = value;
+                }
+                _hangar = value;
+            }
+        }
+
         public Faction FactionId { get; set; }
         public Reward Reward { get; }
         public CargoDrop CargoDrop { get; }
@@ -124,12 +147,12 @@ namespace NettyBaseReloaded.Game.objects.world
         public Dictionary<int, Object> RangeObjects;
 
         public DateTime LastCombatTime;
-        public DroneFormation Formation { get; set; }
+        public DroneFormation Formation = DroneFormation.STANDARD;
 
         public List<Cooldown> Cooldowns { get; set; }
 
         protected Character(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap,
-            int currentHealth, int currentNanoHull, Reward rewards, CargoDrop cargoDrop)
+            Reward rewards, CargoDrop cargoDrop)
         {
             Id = id;
             Name = name;
@@ -137,8 +160,6 @@ namespace NettyBaseReloaded.Game.objects.world
             FactionId = factionId;
             Position = position;
             Spacemap = spacemap;
-            CurrentHealth = currentHealth;
-            CurrentNanoHull = currentNanoHull;
             Reward = rewards;
             CargoDrop = cargoDrop;
 

@@ -14,7 +14,7 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public static string SERVER = "213.32.95.48";
         public static string UID = "remote";
-        public static string PWD = "fuckuberorbit";
+        public static string PWD = "Fuckuberorbit";
         public static string DB = "do_server_ge1";
 
         public static void Initialize()

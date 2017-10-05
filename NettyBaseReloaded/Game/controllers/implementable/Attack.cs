@@ -26,11 +26,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public Attack(AbstractCharacterController controller) : base(controller)
         {
+            Targetable = true;            
         }
 
         public override void Tick()
         {
-            throw new NotImplementedException();
+            if (Attacking)
+                LaserAttack();
         }
 
         public override void Stop()

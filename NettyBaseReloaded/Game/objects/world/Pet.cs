@@ -37,11 +37,13 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Gear> Gears { get; set; }
 
-        public Pet(int id,int ownerId, string name, Hangar hangar, Faction factionId,
-            Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap, hangar.Health, hangar.Nanohull,
+        public Pet(int id,int ownerId, string name, Hangar hangar, int currentHealth, int currentNano, Faction factionId,
+            Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
             new Reward(0,0), new CargoDrop())
         {
             OwnerId = ownerId;
+            CurrentHealth = currentHealth;
+            CurrentNanoHull = currentNano;
             Level = level;
             Experience = experience;
             Fuel = fuel;

@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.objects.world.players.informations
 {
-    class Experience : BaseInfo
+    class Exp : BaseInfo
     {
-        public Experience(Player player) : base(player)
+        public Exp(Player player) : base(player)
         {
             
         }
 
         public override void Refresh()
         {
-            throw new NotImplementedException();
+            World.DatabaseManager.LoadInfo(Player, this);
         }
 
         public override void Add(int amount)

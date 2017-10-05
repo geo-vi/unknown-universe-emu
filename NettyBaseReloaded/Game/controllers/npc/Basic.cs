@@ -20,10 +20,18 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Tick()
         {
-            Controller.Checkers.Tick();
-            if (Controller.Npc.Selected == null)
-                Inactive();
-            else Paused();
+            try
+            {
+                Controller.Checkers.Tick();
+                if (Controller.Npc.Selected == null)
+                    Inactive();
+                else Paused();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.GetType().ToString());
+                Console.WriteLine(e.Message);
+            }
         }
 
         public void Active()
@@ -50,24 +58,33 @@ namespace NettyBaseReloaded.Game.controllers.npc
             }
             if (Controller.Npc.RangeEntities.Count(x => x.Value is Player) > 0)
             {
-                var players = Controller.Npc.RangeEntities.Where(x => x.Value is Player);
-                Player candidatePlayer = null;
-                foreach (var player in players)
+                try
                 {
-                    if (candidatePlayer == null)
+                    var players = Controller.Npc.RangeEntities.Where(x => x.Value is Player);
+                    Player candidatePlayer = null;
+                    foreach (var player in players)
                     {
-                        var _player = (Player) player.Value;
-                        if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone)
-                            candidatePlayer = _player;
+                        if (candidatePlayer == null)
+                        {
+                            var _player = (Player) player.Value;
+                            if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone)
+                                candidatePlayer = _player;
+                        }
+                        else
+                            candidatePlayer =
+                                Controller.Npc.Position.GetCloserCharacter(candidatePlayer, player.Value) as Player;
                     }
-                    else
-                        candidatePlayer =
-                            Controller.Npc.Position.GetCloserCharacter(candidatePlayer, player.Value) as Player;
+                    if (candidatePlayer != null)
+                    {
+                        Controller.Npc.Selected = candidatePlayer;
+                        candidatePlayer.AttachedNpcs.Add(Controller.Npc);
+                    }
                 }
-                if (candidatePlayer != null)
+                catch (Exception e)
                 {
-                    Controller.Npc.Selected = candidatePlayer;
-                    candidatePlayer.AttachedNpcs.Add(Controller.Npc);
+                    Console.WriteLine(Controller.Npc.RangeEntities.ToString());
+                    Console.WriteLine(e);
+                    Console.WriteLine(e.Message);
                 }
             }
             if (Controller.Attack.Attacked || !Controller.Npc.Hangar.Ship.IsNeutral && Controller.Npc.Selected != null)

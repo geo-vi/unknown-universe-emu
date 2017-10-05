@@ -8,9 +8,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 {
     abstract class BaseInfo : PlayerBaseClass
     {
-        internal int Value { get; set; }
+        internal long Value { get; set; }
 
-        internal int SyncedValue { get; set; }
+        internal long SyncedValue { get; set; }
 
         public DateTime LastTimeSynced { get; set; }
 
@@ -27,7 +27,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public abstract void Set(int value);
 
-        public int Get()
+        public long Get()
         {
             return Value;
         }

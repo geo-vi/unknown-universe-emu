@@ -25,8 +25,9 @@ namespace NettyBaseReloaded.Game.controllers
             Npc = (Npc) character;
         }
 
-        public void Initiate()
+        public new void Initiate()
         {
+            Console.WriteLine("I got called");
             var ai = (AILevels) Npc.Hangar.Ship.AI;
             switch (ai)
             {
@@ -46,6 +47,7 @@ namespace NettyBaseReloaded.Game.controllers
                     break;
             }
             Active = true;
+            Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) Setted AI to {ai}");
             ActiveTick();
         }
 
@@ -53,13 +55,12 @@ namespace NettyBaseReloaded.Game.controllers
         {
             while (Active)
             {
-                if (Attack.Attacking)
-                    Attack.LaserAttack();
                 if (Dead || StopController)
                     Active = false; 
                 else CurrentNpc.Tick();
                 await Task.Delay(500);
             }
+            Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) NPC went inactive");
             Sleep();
         }
 

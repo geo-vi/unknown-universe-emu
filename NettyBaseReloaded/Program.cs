@@ -49,7 +49,7 @@ namespace NettyBaseReloaded
             Draw.Logo();
 
             InitiateSession();
-            ConsoleUpdater();
+            //ConsoleUpdater();
             ConsoleCommands.Add();
             KeepAlive();
             

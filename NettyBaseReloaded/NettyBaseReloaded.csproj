@@ -310,6 +310,7 @@
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
     <Compile Include="Game\objects\world\characters\CargoDrop.cs" />
     <Compile Include="Game\objects\world\characters\Cooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\ConfigCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\EMPCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\InvincibilityCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\ISHCooldown.cs" />
@@ -354,7 +355,7 @@
     <Compile Include="Game\objects\world\players\Information.cs" />
     <Compile Include="Game\objects\world\players\informations\BaseInfo.cs" />
     <Compile Include="Game\objects\world\players\informations\Credits.cs" />
-    <Compile Include="Game\objects\world\players\informations\Experience.cs" />
+    <Compile Include="Game\objects\world\players\informations\Exp.cs" />
     <Compile Include="Game\objects\world\players\informations\Honor.cs" />
     <Compile Include="Game\objects\world\players\informations\Premium.cs" />
     <Compile Include="Game\objects\world\players\informations\Title.cs" />

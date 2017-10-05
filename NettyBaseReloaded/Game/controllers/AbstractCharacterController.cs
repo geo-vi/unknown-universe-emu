@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
@@ -14,6 +15,8 @@ namespace NettyBaseReloaded.Game.controllers
 {
     class AbstractCharacterController
     {
+        public Character Character { get; }
+
         public Checkers Checkers { get; }
 
         public Attack Attack { get; }
@@ -21,8 +24,6 @@ namespace NettyBaseReloaded.Game.controllers
         public Destruction Destruction { get; }
 
         public Effects Effects { get; }
-
-        public Character Character { get; }
 
         public bool Dead { get; set; }
 
@@ -51,7 +52,7 @@ namespace NettyBaseReloaded.Game.controllers
             Tick();
         }
 
-        public void Tick()
+        public async void Tick()
         {
             while (Active)
             {
@@ -68,6 +69,7 @@ namespace NettyBaseReloaded.Game.controllers
                     var pet = (Pet) Character;
                     pet.Controller.Tick();
                 }
+                await Task.Delay(100);
             }
         }
 

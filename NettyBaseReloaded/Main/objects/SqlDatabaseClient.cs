@@ -57,6 +57,17 @@ namespace NettyBaseReloaded.Main.objects
             return Affected;
         }
 
+        public MySqlDataReader ExecuteQueryReader(string CommandText)
+        {
+            mCommand.CommandText = CommandText;
+            mCommand.Connection = mConnection;
+
+            MySqlDataAdapter adap = new MySqlDataAdapter(mCommand);
+            DataSet set = new DataSet();
+
+            return mCommand.ExecuteReader();
+        }
+
         public DataSet ExecuteQuerySet(string CommandText)
         {
             DataSet DataSet = new DataSet();

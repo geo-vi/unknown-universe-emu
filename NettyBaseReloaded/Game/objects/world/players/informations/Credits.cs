@@ -15,7 +15,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public override void Refresh()
         {
-            throw new NotImplementedException();
+            World.DatabaseManager.LoadInfo(Player, this);
         }
 
         public override void Add(int amount)
