@@ -15,23 +15,25 @@ namespace NettyBaseReloaded.Game.controllers
 {
     class PetController : AbstractCharacterController
     {
-        private Pet Pet { get; }
-        private List<IGear> Gears { get; }
+        public Pet Pet { get; }
+        private Gear Gear { get; set; }
 
         public PetController(Character character) : base(character)
         {
             Pet = Character as Pet;
-            Gears = new List<IGear>();
         }
 
-        void AddGears()
+        private void Start()
         {
-            Gears.Add(new Guard(this));
+            LoadGears();
+            Initiate();
         }
 
-        public void Start()
+        private void LoadGears()
         {
-            AddGears();
+            Pet.Gears.Add(new Passive(this));
+            Pet.Gears.Add(new Guard(this));
+            Gear = Pet.Gears[0];
         }
 
         public void Exit()
@@ -41,12 +43,22 @@ namespace NettyBaseReloaded.Game.controllers
 
         public new void Tick()
         {
-            Follow();
+            foreach (var gear in Pet.Gears)
+            {
+                gear.Check();
+            }
         }
 
         public void Activate()
         {
-            Pet.Spacemap.Entities.Add(Pet.Id, Pet);
+            // TODO Fix PetActivation & PetHero
+
+            Pet.Position = Pet.GetOwner().Position;
+            Pet.Spacemap = Pet.GetOwner().Spacemap;
+
+            if (!Pet.Spacemap.Entities.ContainsKey(Pet.Id))
+                Pet.Spacemap.Entities.Add(Pet.Id, Pet);
+
             Packet.Builder.PetStatusCommand(World.StorageManager.GetGameSession(Pet.GetOwner().Id), Pet);
             Console.WriteLine("PET {0} spawned at {1}", Pet.Id, Pet.Position);
             MovementController.Move(Pet, Vector.GetPosOnCircle(Pet.GetOwner().Position, 250));
@@ -61,21 +73,6 @@ namespace NettyBaseReloaded.Game.controllers
         public void Repair()
         {
             
-        }
-
-        private DateTime LastTimeMoved = new DateTime(2017, 3, 6, 0, 0,0);
-        void Follow()
-        {
-            if (LastTimeMoved.AddMilliseconds(500) > DateTime.Now) return;
-            if (Pet.GetOwner().Moving)
-            {
-                MovementController.Move(Pet, Pet.GetOwner().Position);
-            }
-            else if (Pet.Position.DistanceTo(Pet.GetOwner().Position) > 300)
-            {
-                MovementController.Move(Pet, Vector.GetPosOnCircle(Pet.GetOwner().Position, 250));
-            }
-            LastTimeMoved = DateTime.Now;
         }
     }
 }

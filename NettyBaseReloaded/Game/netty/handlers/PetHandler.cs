@@ -13,7 +13,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             switch (petRequest.petRequestType)
             {
                 case PetRequest.LAUNCH:
-                    //gameSession.Player.Pet.Controller.Activate();
+                    gameSession.Player.Pet.Controller.Activate();
                     break;
                 case PetRequest.DEACTIVATE:
                     //gameSession.Player.Pet.Controller.DeActivate();

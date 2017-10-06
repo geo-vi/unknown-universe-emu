@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.controllers.pet.gears
 {
-    class Guard : Gear
+    class Passive : Gear
     {
-        internal Guard(PetController controller) : base(controller) { }
+        internal Passive(PetController controller) : base(controller) { }
 
         public override void Activate()
         {

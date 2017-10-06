@@ -265,10 +265,10 @@ namespace NettyBaseReloaded.Game.netty.packet
                         false, false, false, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
-                else if (character is Pet)
-                {
-                    PetActivationCommand(gameSession, character as Pet);
-                }
+                //else if (character is Pet)
+                //{
+                //    PetActivationCommand(gameSession, character as Pet);
+                //}
                 else
                 {
                     bytes = commands.new_client.ShipCreateCommand.write(character.Id,
@@ -292,10 +292,10 @@ namespace NettyBaseReloaded.Game.netty.packet
                         new commands.old_client.ClanRelationModule(0), 0,
                         false, false, false, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
-                else if (character is Pet)
-                {
-                    PetActivationCommand(gameSession, character as Pet);
-                }
+                //else if (character is Pet)
+                //{
+                //    PetActivationCommand(gameSession, character as Pet);
+                //}
                 else
                 {
                     bytes = commands.old_client.ShipCreateCommand.write(character.Id,
@@ -582,6 +582,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void PetInitializationCommand(GameSession gameSession, Pet pet)
         {
+            if (pet == null) return;
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.PetInitializationCommand.write(true, pet.HasFuel(), !pet.Controller.Dead).Bytes);

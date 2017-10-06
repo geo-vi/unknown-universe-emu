@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.players.settings.slotbars;
 
@@ -52,16 +53,18 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         public void ChangeConfig(int targetConfigId = 0)
         {
-            //                if (!baseController.CooldownStorage.Finished(objects.world.storages.playerStorages.CooldownStorage.CONFIG_COOLDOWN)) return;
-            //                baseController.CooldownStorage.ConfigCooldownEnd = DateTime.Now.AddSeconds(3);
-            //
-            //                targetConfigId = baseController.Player.CurrentConfig == 2 ? 1 : 2;
-            //
-            //                baseController.Player.CurrentConfig = targetConfigId;
-            //
-            //                baseController.Player.Update();
+            if (baseController.Character.Cooldowns.Exists(x => x is ConfigCooldown)) return;
 
-            //World.StorageManager.GetGameSession(baseController.Player.Id).Client?.Send(Builder.LegacyModule("0|A|CC|" + baseController.Player.CurrentConfig).Bytes);
+            baseController.Character.Cooldowns.Add(new ConfigCooldown());
+
+            targetConfigId = baseController.Player.CurrentConfig == 2 ? 1 : 2;
+
+            baseController.Player.CurrentConfig = targetConfigId;
+
+            baseController.Player.Update();
+
+            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(baseController.Player.Id)
+                , "0|A|CC|" + baseController.Player.CurrentConfig);
         }
 
         private class jClass
@@ -125,7 +128,6 @@ namespace NettyBaseReloaded.Game.controllers.player
                     baseController.Player.Position = TargetPosition;
                     baseController.Destruction.Remove(baseController.Player);
                     Reset();
-                    Console.WriteLine("Faking test");
                     World.StorageManager.GetGameSession(baseController.Player.Id).Disconnect();
                 }
             }

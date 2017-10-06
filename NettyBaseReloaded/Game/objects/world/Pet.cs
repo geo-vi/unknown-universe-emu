@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
+using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.objects.world.characters;
-using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.players;
+using Gear = NettyBaseReloaded.Game.controllers.pet.Gear;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -28,6 +29,8 @@ namespace NettyBaseReloaded.Game.objects.world
                 return 300;
             }
         }
+
+        public override int MaxHealth => Hangar.Ship.Health;
 
         public int Fuel { get; set; }
 

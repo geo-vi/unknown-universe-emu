@@ -29,6 +29,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             Slotbar = new Slotbar();
             Window = new Window();
+
+            CurrentAmmo = "ammunition_laser_lcb-10";
+            CurrentRocket = "ammunition_rocket_r-310";
         }
     }
 }

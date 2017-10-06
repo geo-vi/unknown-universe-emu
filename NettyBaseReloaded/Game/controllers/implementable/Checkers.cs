@@ -38,7 +38,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void AddCharacter(Character main, Character entity)
         {
-
             if (!main.RangeEntities.ContainsKey(entity.Id))
             {
                 main.RangeEntities.Add(entity.Id, entity);
@@ -46,7 +45,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 //if (entity is Pet)
                 //{
                 //    var pet = (Pet)entity;
-                //    if (main.Id == pet.OwnerId)
+                //    if (main.Id == pet.GetOwner().Id)
                 //        return;
                 //}
 
@@ -77,7 +76,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 //if (main is Pet)
                 //{
                 //    var pet = (Pet)main;
-                //    if (entity.Id == pet.OwnerId)
+                //    if (entity.Id == pet.GetOwner().Id)
                 //        return;
                 //}
 

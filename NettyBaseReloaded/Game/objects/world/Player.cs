@@ -14,7 +14,6 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
-using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Main;
@@ -71,6 +70,8 @@ namespace NettyBaseReloaded.Game.objects.world
         /*********
          * EXTRA *
          *********/
+
+        public Pet Pet { get; set; }
 
         public Ammunition Ammunition { get; private set; }
 

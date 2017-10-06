@@ -124,7 +124,8 @@
     <Compile Include="Game\controllers\npc\Mothership.cs" />
     <Compile Include="Game\controllers\PetController.cs" />
     <Compile Include="Game\controllers\pet\gears\Guard.cs" />
-    <Compile Include="Game\controllers\pet\IGear.cs" />
+    <Compile Include="Game\controllers\pet\gears\Passive.cs" />
+    <Compile Include="Game\controllers\pet\Gear.cs" />
     <Compile Include="Game\controllers\PlayerController.cs" />
     <Compile Include="Game\controllers\EventsController.cs" />
     <Compile Include="Game\controllers\player\CPU.cs" />
@@ -339,7 +340,6 @@
     <Compile Include="Game\objects\world\map\Zone.cs" />
     <Compile Include="Game\objects\world\map\zones\DemiZone.cs" />
     <Compile Include="Game\objects\world\map\zones\NpcZone.cs" />
-    <Compile Include="Game\objects\world\pets\Gear.cs" />
     <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
     <Compile Include="Game\objects\world\players\Ammunition.cs" />
     <Compile Include="Game\objects\world\players\Equipment.cs" />

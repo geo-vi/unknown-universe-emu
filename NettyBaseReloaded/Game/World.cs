@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Game
             {
                 map.Value.LoadObjects();
                 CreateHashes(map.Value);
-                map.Value.SpawnNpcs();
+                //map.Value.SpawnNpcs();
                 if (map.Key == 12)
                 {
                     for (int i = 0; i < 150; i++)

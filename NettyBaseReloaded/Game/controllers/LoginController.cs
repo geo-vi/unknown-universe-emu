@@ -5,15 +5,17 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.login;
+using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.map.objects;
-using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
 using Newtonsoft.Json;
@@ -46,8 +48,8 @@ namespace NettyBaseReloaded.Game.controllers
             var config = World.DatabaseManager.LoadConfig(player);;
             player.Hangar.Configurations = config;
             player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
+            player.Pet = new Pet(player.Id, player.Id, "JustAnotherPet", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), 1000, 0, player.FactionId, new Level(1, 1000), 500, 1000, new List<Gear>());
             ////player.CurrentAmmo = World.DatabaseManager.LoadAmmo(player);
-            ////player.Pet = new Pet(player.Id, player.Id, "Test", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), player.FactionId, new Level(1, 1000), 0, 1000, new List<Gear>());
         }
 
         private void CheckPos()
@@ -86,12 +88,10 @@ namespace NettyBaseReloaded.Game.controllers
             var player = _gameSession.Player;
             if (player.Controller == null)
                 player.Controller = new PlayerController(player);
+            if (player.Pet != null && player.Pet.Controller == null)
+                player.Pet.Controller = new PetController(player.Pet);
             player.Controller.Start();
             player.Controller.Initiate();
-            //if (player.Pet != null)
-            //{
-            //    player.Pet.Controller = new PetController(player.Pet);
-            //}
         }
 
         private void GetLoginType()

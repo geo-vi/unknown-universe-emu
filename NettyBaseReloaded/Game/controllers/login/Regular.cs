@@ -8,7 +8,6 @@ using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map.objects;
-using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Main.objects;
 
@@ -36,6 +35,8 @@ namespace NettyBaseReloaded.Game.controllers.login
                 player.Spacemap.Entities.Add(player.Id, player);
             }
             else { Out.WriteLine("Player #" + player.Id + " already exists on the Spacemap (LoginController)", "ERROR", ConsoleColor.Red); }
+
+            player.Controller.Miscs.ChangeConfig();
 
             Packet.Builder.ShipInitializationCommand(GameSession);
             Packet.Builder.DronesCommand(GameSession, GameSession.Player);
