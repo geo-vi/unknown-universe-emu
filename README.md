@@ -7,7 +7,7 @@
  Fully recoded version of the emulator with well more documented source and complete different and more modern C# syntax used.
  Server's usage is low, stable & solid.
  
-# Current stage: Stable / BETA
+## Current stage: Stable / BETA
  
 # Coding syntax
  I've simplifed absolutely everything as much as possible and most of the server is dynamic.
