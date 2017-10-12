@@ -8,9 +8,9 @@
  Server's usage is low, stable & solid.
  
 #### Branch state:
-##### (master) BETA 1.0 STABLE
-##### (dev) BETA 1.1 UNSTABLE
-##### (dev_reconstruction) BETA 2.0 UNSTABLE
+##### **(master)** BETA 1.0 STABLE
+##### **(dev)** BETA 1.1 UNSTABLE
+##### **(dev_reconstruction)** BETA 2.0 UNSTABLE
  
 ##### Coding syntax
  I've simplifed absolutely everything as much as possible and most of the server is dynamic.
