@@ -7,13 +7,13 @@
  Fully recoded version of the emulator with well more documented source and complete different and more modern C# syntax used.
  Server's usage is low, stable & solid.
  
- ##### Current stage: Stable / BETA
+# Current stage: Stable / BETA
  
- ### Coding syntax
+# Coding syntax
  I've simplifed absolutely everything as much as possible and most of the server is dynamic.
  As of now it takes no more than 1 line to add an asset / object / npc or whatsoever to the map.
  
- #### Developers of NettyBase
+# Developers of NettyBase
  Currently only me / Shock.
  
 I've organized this Github Repo for anyone that joins to work with me and so you'll be able to understand what I've actually coded and the reason of me to do so. Also you might find a better solution for my code & improve it this way =)
