@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.pets;
 
 namespace NettyBaseReloaded.Game.controllers.pet
 {
@@ -12,9 +13,20 @@ namespace NettyBaseReloaded.Game.controllers.pet
     {
         public PetController baseController { get; }
 
-        public Gear(PetController controller)
+        public GearType Type { get; internal set; }
+
+        public int Level { get; set; }
+
+        public int Amount { get; set; }
+
+        public bool Enabled { get; set; }
+
+        public Gear(PetController controller, bool enabled, int level, int amount = 1)
         {
             baseController = controller;
+            Enabled = enabled;
+            Level = level;
+            Amount = amount;
         }
 
         public abstract void Activate();

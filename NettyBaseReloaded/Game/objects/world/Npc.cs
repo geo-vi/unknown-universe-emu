@@ -39,6 +39,16 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public sealed override int Damage { get; set; }
+
+        public sealed override int CurrentShield { get; set; }
+
+        public sealed override int MaxShield { get; set; }
+
+        public sealed override double ShieldAbsorption { get; set; }
+
+        public sealed override double ShieldPenetration { get; set; }
+
         public Npc MotherShip { get; set; }
 
         public int RespawnTime { get; set; }

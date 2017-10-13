@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using NettyBaseReloaded.Chat.objects.chat.rooms;
+using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
@@ -9,6 +11,7 @@ using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players.settings;
+using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
 namespace NettyBaseReloaded.Game.netty.packet
@@ -178,7 +181,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Position.Y,
                         player.Spacemap.Id,
                         (int) player.FactionId,
-                        0, //clan
+                        player.Clan.Id, //clan
                         player.Equipment.LaserCount(), //idk
                         player.Information.Premium,
                         player.Information.Experience.Get(),
@@ -188,7 +191,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Information.Uridium.Get(),
                         0,//Jackpot
                         (int) player.RankId,
-                        "", //clanTag
+                        player.Clan.Tag, //clanTag
                         0, // player GG rings
                         true,
                         false, //cloaked
@@ -214,7 +217,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Position.Y,
                         player.Spacemap.Id,
                         (int) player.FactionId,
-                        0,
+                        player.Clan.Id,
                         0,
                         0,
                         player.Equipment.LaserCount(),
@@ -226,7 +229,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Information.Uridium.Get(),
                         0,
                         (int) player.RankId,
-                        "", 
+                        player.Clan.Tag, 
                         0,
                         true,
                         false,
@@ -258,24 +261,24 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.new_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.Ship.ToStringLoot(), pChar.Equipment.LaserCount(), "", pChar.Name, pChar.Position.X,
+                        pChar.Hangar.Ship.ToStringLoot(), pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
                         (int) pChar.FactionId, 0, (int) pChar.RankId, false,
-                        new commands.new_client.ClanRelationModule(0), 0,
+                        new commands.new_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
                         false, false, false, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
-                //else if (character is Pet)
-                //{
-                //    PetActivationCommand(gameSession, character as Pet);
-                //}
+                else if (character is Pet)
+                {
+                    PetActivationCommand(gameSession, character as Pet);
+                }
                 else
                 {
                     bytes = commands.new_client.ShipCreateCommand.write(character.Id,
-                        character.Hangar.Ship.ToStringLoot(), 0, "", character.Name, character.Position.X,
+                        character.Hangar.Ship.ToStringLoot(), 0, character.Clan.Tag, character.Name, character.Position.X,
                         character.Position.Y,
-                        (int)character.FactionId, 0, 0, false,
-                        new commands.new_client.ClanRelationModule(0), 0,
+                        (int)character.FactionId, character.Clan.Id, 0, false,
+                        new commands.new_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
                         false, true, false, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
@@ -286,23 +289,23 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.old_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.Ship.Id, pChar.Equipment.LaserCount(), "", pChar.Name, pChar.Position.X,
+                        pChar.Hangar.Ship.Id, pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
-                        (int) pChar.FactionId, 0, (int) pChar.RankId, false,
-                        new commands.old_client.ClanRelationModule(0), 0,
+                        (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
+                        new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
                         false, false, false, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
-                //else if (character is Pet)
-                //{
-                //    PetActivationCommand(gameSession, character as Pet);
-                //}
+                else if (character is Pet)
+                {
+                    PetActivationCommand(gameSession, character as Pet);
+                }
                 else
                 {
                     bytes = commands.old_client.ShipCreateCommand.write(character.Id,
-                        character.Hangar.Ship.Id, 0, "", character.Name, character.Position.X,
+                        character.Hangar.Ship.Id, 0, character.Clan.Tag, character.Name, character.Position.X,
                         character.Position.Y,
-                        (int) character.FactionId, 0, 0, false,
-                        new commands.old_client.ClanRelationModule(0), 0,
+                        (int) character.FactionId, character.Clan.Id, 0, false,
+                        new commands.old_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
                         false, true, false, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
             }
@@ -602,18 +605,33 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
-                (short)pet.FactionId, 0, (short)pet.Level.Id, "", new commands.new_client.ClanRelationModule(0),
-                pet.Position.X, pet.Position.Y, pet.Speed, true, true, new commands.new_client.commandK13(0)).Bytes);
+                (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.new_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
+                pet.Position.X, pet.Position.Y, pet.Speed, false, true, new commands.new_client.commandK13(0)).Bytes);
             }
             else
             {
                 gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
-                    (short)pet.FactionId, 0, (short)pet.Level.Id, "", new commands.old_client.ClanRelationModule(0),
-                    pet.Position.X, pet.Position.Y, pet.Speed, true, true).Bytes);
+                    (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
+                    pet.Position.X, pet.Position.Y, pet.Speed, false, true).Bytes);
             }
         }
 
         #endregion
+
+        #region PetHeroActivationCommand
+
+        public void PetHeroActivationCommand(GameSession gameSession, Pet pet)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetHeroActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name, (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, pet.Position.X, pet.Position.Y, pet.Speed).Bytes);
+            }
+        }
+#endregion
 
         #region PetStatusCommand
 
@@ -856,6 +874,39 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.AddOreCommand.write(ore.Hash, new commands.old_client.OreTypeModule((short)ore.Type), ore.Position.X, ore.Position.Y).Bytes);
             }
         }
+        #endregion
+
+        #region PetGearAddCommand
+
+        public void PetGearAddCommand(GameSession gameSession, Gear gear)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                Console.WriteLine("Gear->" + gear.Type.ToString());
+                gameSession.Client.Send(netty.commands.old_client.PetGearAddCommand.write(new commands.old_client.PetGearTypeModule((short)gear.Type), gear.Level, gear.Amount, gear.Enabled).Bytes);
+            }
+        }
+        #endregion
+
+        #region PetGearSelectCommand
+
+        public void PetGearSelectCommand(GameSession gameSession, Gear gear)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                Console.WriteLine("Select Gear->" + gear.Type.ToString());
+                gameSession.Client.Send(commands.old_client.PetGearSelectCommand.write(new commands.old_client.PetGearTypeModule((short)gear.Type), new List<int>()).Bytes);
+            }
+        }
+
         #endregion
     }
 }

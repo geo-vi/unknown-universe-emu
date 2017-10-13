@@ -38,27 +38,28 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void AddCharacter(Character main, Character entity)
         {
-            if (!main.RangeEntities.ContainsKey(entity.Id))
+            try
             {
-                main.RangeEntities.Add(entity.Id, entity);
-                if (!(main is Player)) return;
-                //if (entity is Pet)
-                //{
-                //    var pet = (Pet)entity;
-                //    if (main.Id == pet.GetOwner().Id)
-                //        return;
-                //}
+                if (!main.RangeEntities.ContainsKey(entity.Id))
+                {
+                    main.RangeEntities.Add(entity.Id, entity);
+                    if (!(main is Player)) return;
+                    var gameSession = World.StorageManager.GameSessions[main.Id];
 
-                var gameSession = World.StorageManager.GameSessions[main.Id];
+                    //Draws the entity ship for character
+                    Packet.Builder.ShipCreateCommand(gameSession, entity);
+                    Packet.Builder.DronesCommand(gameSession, entity);
 
-                //Draws the entity ship for character
-                Packet.Builder.ShipCreateCommand(gameSession, entity);
-                Packet.Builder.DronesCommand(gameSession, entity);
+                    //Send movement
+                    var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
+                    Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
 
-                //Send movement
-                var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
-                Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
-
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Range Error Occured - Add/ Players: {main.Id}, {entity.Id}");
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -69,25 +70,26 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         /// <param name="entity"></param>
         private void RemoveCharacter(Character main, Character entity)
         {
-            if (entity.RangeEntities.ContainsKey(main.Id))
+            try
             {
-                entity.RangeEntities.Remove(main.Id);
-                if (!(entity is Player)) return;
-                //if (main is Pet)
-                //{
-                //    var pet = (Pet)main;
-                //    if (entity.Id == pet.GetOwner().Id)
-                //        return;
-                //}
-
-                var gameSession = World.StorageManager.GameSessions[entity.Id];
-
-                Packet.Builder.ShipRemoveCommand(gameSession, main);
-                if (main.Selected != null && main.Selected.Id == entity.Id)
+                if (entity.RangeEntities.ContainsKey(main.Id))
                 {
-                    Packet.Builder.ShipSelectionCommand(gameSession, null);
-                    main.Selected = null;
+                    entity.RangeEntities.Remove(main.Id);
+                    if (!(entity is Player)) return;
+                    var gameSession = World.StorageManager.GameSessions[entity.Id];
+
+                    Packet.Builder.ShipRemoveCommand(gameSession, main);
+                    if (main.Selected != null && main.Selected.Id == entity.Id)
+                    {
+                        Packet.Builder.ShipSelectionCommand(gameSession, null);
+                        main.Selected = null;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Range Error Occured - Remove/ Players: {main.Id}, {entity.Id}");
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -96,8 +98,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             foreach (var entry in Character.Spacemap.Entities.ToList())
             {
                 var entity = entry.Value;
-
                 UpdateEntity(entity);
+
+                if (entity is Pet)
+                    if (((Pet) entity).GetOwner().Id == Character.Id)
+                        return;
+
+                if (GetForSelection(entity))
+                    return;
+
                 //If i have the entity in range
                 if (Character.InRange(entity))
                 {
@@ -119,6 +128,22 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     RemoveCharacter(entity, Character);
                 }
             }
+        }
+
+        private bool GetForSelection(Character entity)
+        {
+            if (Character.Spacemap.Entities.ContainsKey(entity.Id))
+            {
+                if (entity.Selected == Character || Character.Selected == entity)
+                {
+                    if (!Character.RangeEntities.ContainsKey(entity.Id))
+                        Character.RangeEntities.Add(entity.Id, entity);
+                    if (!entity.RangeEntities.ContainsKey(Character.Id))
+                        entity.RangeEntities.Add(Character.Id, Character);
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void ZoneChecker()

@@ -51,6 +51,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Experience = experience;
             Fuel = fuel;
             Gears = gears;
+            Clan = GetOwner().Clan;
         }
 
         /// <summary>

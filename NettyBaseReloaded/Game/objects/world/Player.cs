@@ -245,7 +245,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Drone> Drones => Hangar.Drones;
 
-        public Player(int id, string name, Hangar hangar, int currentHealth, int currentNano, Faction factionId, Vector position, Spacemap spacemap, Reward rewards, CargoDrop cargoDrop, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position, spacemap, rewards, cargoDrop)
+        private List<LogMessage> LogMessages = new List<LogMessage>();
+
+        public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano, Faction factionId, Vector position, Spacemap spacemap, Reward rewards, CargoDrop cargoDrop, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position, spacemap, rewards, cargoDrop, clan)
         {
             InitializeClasses();
             SessionId = sessionId;
@@ -360,6 +362,16 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
             }
             return null;
+        }
+
+        public void SendLogMessage(string logMsg)
+        {
+            if (LogMessages.Any(x => x.TimeSent > DateTime.Now.AddSeconds(1) && x.Key == logMsg))
+            {
+                return;
+            }
+            LogMessages.Add(new LogMessage(logMsg));
+            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|STM|" + logMsg + "");
         }
     }
 }

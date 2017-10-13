@@ -12,7 +12,9 @@ using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
+using NettyBaseReloaded.Main.objects;
 using NettyBaseReloaded.Networking;
 using Newtonsoft.Json;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
@@ -54,6 +56,8 @@ namespace NettyBaseReloaded.Game.objects.world
         public Faction FactionId { get; set; }
         public Reward Reward { get; }
         public CargoDrop CargoDrop { get; }
+
+        public Clan Clan { get; set; }
 
         public virtual AbstractCharacterController Controller
         {
@@ -152,7 +156,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public List<Cooldown> Cooldowns { get; set; }
 
         protected Character(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap,
-            Reward rewards, CargoDrop cargoDrop)
+            Reward rewards, CargoDrop cargoDrop, Clan clan = null)
         {
             Id = id;
             Name = name;
@@ -162,6 +166,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Spacemap = spacemap;
             Reward = rewards;
             CargoDrop = cargoDrop;
+            Clan = clan;
 
             //Default initialization
             Moving = false;
@@ -181,6 +186,11 @@ namespace NettyBaseReloaded.Game.objects.world
             LastCombatTime = DateTime.Now;
 
             Cooldowns = new List<Cooldown>();
+
+            if (clan == null)
+            {
+                Clan = Global.StorageManager.Clans[0];
+            }
         }
 
         public void Tick()

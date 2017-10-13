@@ -69,11 +69,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (!Character.InRange(enemy, AttackRange))
             {
                 var pCharacter = Character as Player;
-                if (pCharacter != null)
-                {
-                    var gameSession = World.StorageManager.GetGameSession(pCharacter.Id);
-                    Packet.Builder.LegacyModule(gameSession, "0|A|STM|outofrange");
-                }
+                pCharacter?.SendLogMessage("outofrange");
                 return;
             }
 
