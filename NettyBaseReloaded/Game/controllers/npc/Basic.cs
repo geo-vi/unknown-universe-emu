@@ -20,18 +20,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Tick()
         {
-            try
-            {
-                Controller.Checkers.Tick();
-                if (Controller.Npc.Selected == null)
-                    Inactive();
-                else Paused();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.GetType().ToString());
-                Console.WriteLine(e.Message);
-            }
+            if (Controller.Npc.Selected == null)
+                Inactive();
+            else Paused();
         }
 
         public void Active()
@@ -58,33 +49,24 @@ namespace NettyBaseReloaded.Game.controllers.npc
             }
             if (Controller.Npc.RangeEntities.Count(x => x.Value is Player) > 0)
             {
-                try
+                var players = Controller.Npc.RangeEntities.Where(x => x.Value is Player);
+                Player candidatePlayer = null;
+                foreach (var player in players)
                 {
-                    var players = Controller.Npc.RangeEntities.Where(x => x.Value is Player);
-                    Player candidatePlayer = null;
-                    foreach (var player in players)
+                    if (candidatePlayer == null)
                     {
-                        if (candidatePlayer == null)
-                        {
-                            var _player = (Player) player.Value;
-                            if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone)
-                                candidatePlayer = _player;
-                        }
-                        else
-                            candidatePlayer =
-                                Controller.Npc.Position.GetCloserCharacter(candidatePlayer, player.Value) as Player;
+                        var _player = (Player) player.Value;
+                        if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone)
+                            candidatePlayer = _player;
                     }
-                    if (candidatePlayer != null)
-                    {
-                        Controller.Npc.Selected = candidatePlayer;
-                        candidatePlayer.AttachedNpcs.Add(Controller.Npc);
-                    }
+                    else
+                        candidatePlayer =
+                            Controller.Npc.Position.GetCloserCharacter(candidatePlayer, player.Value) as Player;
                 }
-                catch (Exception e)
+                if (candidatePlayer != null)
                 {
-                    Console.WriteLine(Controller.Npc.RangeEntities.ToString());
-                    Console.WriteLine(e);
-                    Console.WriteLine(e.Message);
+                    Controller.Npc.Selected = candidatePlayer;
+                    candidatePlayer.AttachedNpcs.Add(Controller.Npc);
                 }
             }
             if (Controller.Attack.Attacked || !Controller.Npc.Hangar.Ship.IsNeutral && Controller.Npc.Selected != null)
@@ -126,7 +108,6 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Exit()
         {
-            Console.WriteLine("Performed an exit");
             var selectedPlayer = (Player)Controller.Npc.Selected;
             selectedPlayer?.AttachedNpcs.Remove(Controller.Npc);
             Controller.Npc.Selected = null;

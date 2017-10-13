@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Game
             {
                 map.Value.LoadObjects();
                 CreateHashes(map.Value);
-                //map.Value.SpawnNpcs();
+                map.Value.SpawnNpcs();
                 if (map.Key == 10)
                 {
                     map.Value.CreateNpc(StorageManager.Ships[84]);

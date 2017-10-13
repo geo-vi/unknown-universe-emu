@@ -46,7 +46,7 @@ namespace NettyBaseReloaded.Game.objects
 
         private void SilentDisconnect()
         {
-            
+            //Player.Save();
         }
 
         public void Close()

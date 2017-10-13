@@ -181,11 +181,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.Entities.Add(Character.Id, Character);
 
-            Character.RangeObjects.Clear();
-            Character.RangeEntities.Clear();
-            Character.RangeZones.Clear();
-            Character.RangeCollectables.Clear();
-
+            Character.ClearRange();
             MovementController.Move(Character, MovementController.ActualPosition(Character));
         }
     }

@@ -124,11 +124,14 @@ namespace NettyBaseReloaded.Game.controllers.player
 
                 if (DateTime.Now > JumpEndTime)
                 {
+                    var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
+                    Packet.Builder.MapChangeCommand(gameSession);
                     baseController.Player.Spacemap = TargetMap;
                     baseController.Player.Position = TargetPosition;
+                    baseController.Player.Save();
                     baseController.Destruction.Remove(baseController.Player);
                     Reset();
-                    World.StorageManager.GetGameSession(baseController.Player.Id).Disconnect();
+                    gameSession.Disconnect();
                 }
             }
 

@@ -390,8 +390,6 @@ namespace NettyBaseReloaded.Game.managers
                             bool active = Convert.ToBoolean(reader["ACTIVE"]);
                             int mapId = Convert.ToInt32(reader["SHIP_MAP_ID"]);
 
-                            Console.WriteLine("Added hangar");
-
                             hangars.Add(id, new Hangar(World.StorageManager.Ships[shipId], player.Drones, new Vector(x, y),
                                 World.StorageManager.Spacemaps[mapId], hp, nano, new Dictionary<string, Item>(),
                                 active));
@@ -448,9 +446,25 @@ namespace NettyBaseReloaded.Game.managers
             return 0;
         }
 
-        public void BasicSave(Player player)
+        public void SavePlayer(Player player)
         {
-
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_data, player_extra_data, player_hangar SET LVL={player.Information.Level.Id}, EXP={player.Information.Experience.Value}, HONOR={player.Information.Honor.Value}, " +
+                                                               $"URIDIUM={player.Information.Uridium.Value}, CREDITS={player.Information.Credits.Value}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, " +
+                                                               $"SHIP_MAP_ID={player.Spacemap.Id}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y}, IN_EQUIPMENT_ZONE={intConv(player.State.InEquipmentArea)}, " +
+                                                               $"{(player.UsingNewClient ? "SETTINGS_GAMEPLAY_NEW=" + JsonConvert.SerializeObject(player.Settings.NewClientUserSettingsCommand) : "SETTINGS_GAMEPLAY_OLD=" + JsonConvert.SerializeObject(player.Settings.OldClientUserSettingsCommand))}, " +
+                                                               $"CLIENT_VERSION={intConv(player.UsingNewClient)} " +
+                                                               $"WHERE player_hangar.PLAYER_ID = player_data.PLAYER_ID AND player_extra_data.PLAYER_ID = player_data.PLAYER_ID AND player_hangar.ACTIVE=1 AND player_data.PLAYER_ID = {player.Id}"  
+                                                               );
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed executing player save");
+            }
         }
 
         public void BasicRefresh(Player player)

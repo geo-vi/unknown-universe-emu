@@ -40,6 +40,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             NewClientCommands.Add(commands.new_client.requests.CollectBoxRequest.ID, new CollectBoxHandler());
             LegacyCommands.Add(ClientCommands.PORTAL_JUMP, new JumpRequestHandler());
             LegacyCommands.Add(ServerCommands.ROCKET_ATTACK, new AttackRocketLegacyHandler());
+            OldClientCommands.Add(commands.old_client.requests.ShipWarpWindowRequest.ID, new ShipWarpWindowHandler()); 
         }
 
         public void LookUp(byte[] bytes, GameClient client)

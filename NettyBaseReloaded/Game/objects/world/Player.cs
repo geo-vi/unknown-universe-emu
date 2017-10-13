@@ -77,9 +77,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Settings Settings { get; private set; }
 
-        public List<Npc> AttachedNpcs { get; set; }
-
         public Storage Storage { get; private set; }
+
+        public PlayerLog Log { get; private set; }
 
         /*********
          * STATS *
@@ -103,9 +103,6 @@ namespace NettyBaseReloaded.Game.objects.world
                         value = (int) (value * 1.2); // +20%
                         break;
                 }
-                Console.WriteLine(Hangar.Ship.GetHealthBonus(this).ToString());
-                Console.WriteLine((value * Hangar.Ship.GetHealthBonus(this)).ToString());
-                Console.WriteLine(((int)(value * Hangar.Ship.GetHealthBonus(this))).ToString());
                 value = (int) (value * Hangar.Ship.GetHealthBonus(this));
 
                 return value;
@@ -180,7 +177,6 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             get
             {
-                Console.WriteLine(Hangar.Configurations[CurrentConfig - 1].ToString());
                 return Hangar.Configurations[CurrentConfig - 1].Speed;
             }
         }
@@ -241,11 +237,12 @@ namespace NettyBaseReloaded.Game.objects.world
         /// </summary>
         public bool UsingNewClient { get; set; }
 
-        public PlayerLog Log { get; private set; }
-
+        /// <summary>
+        /// Lists
+        /// </summary>
         public List<Drone> Drones => Hangar.Drones;
-
         private List<LogMessage> LogMessages = new List<LogMessage>();
+        public List<Npc> AttachedNpcs = new List<Npc>();
 
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano, Faction factionId, Vector position, Spacemap spacemap, Reward rewards, CargoDrop cargoDrop, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position, spacemap, rewards, cargoDrop, clan)
         {
@@ -296,7 +293,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void Save()
         {
-            // TODO: SAVE
+            World.DatabaseManager.SavePlayer(this);
         }
 
         public void Refresh()
@@ -366,7 +363,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void SendLogMessage(string logMsg)
         {
-            if (LogMessages.Any(x => x.TimeSent > DateTime.Now.AddSeconds(1) && x.Key == logMsg))
+            if (LogMessages.Any(x => x.TimeSent.AddSeconds(1) > DateTime.Now && x.Key == logMsg))
             {
                 return;
             }

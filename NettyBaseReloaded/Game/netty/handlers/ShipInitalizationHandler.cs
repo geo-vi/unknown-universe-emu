@@ -28,7 +28,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (Player != null) GameSession = CreateSession(client, Player);
             else
             {
-                Console.WriteLine(">>?");
+                Console.WriteLine("Failed loading user ship / ShipInitializationHandler ERROR");
                 return;
             }
 

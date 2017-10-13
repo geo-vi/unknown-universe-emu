@@ -300,6 +300,14 @@ namespace NettyBaseReloaded.Game.objects.world
                    Position.DistanceTo(character.Position) <= range;
         }
 
+        public void ClearRange()
+        {
+            RangeObjects.Clear();
+            RangeEntities.Clear();
+            RangeZones.Clear();
+            RangeCollectables.Clear();
+        }
+
         public void TickCooldowns()
         {
             try

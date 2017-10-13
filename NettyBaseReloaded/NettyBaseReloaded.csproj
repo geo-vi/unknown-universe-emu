@@ -277,6 +277,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\SelectBatteryRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\SelectRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipSelectionRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\ShipWarpWindowRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\VersionRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipCreateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipDestroyedCommand.cs" />
@@ -304,6 +305,7 @@
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
     <Compile Include="Game\netty\handlers\PetHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSelectionHandler.cs" />
+    <Compile Include="Game\netty\handlers\ShipWarpWindowHandler.cs" />
     <Compile Include="Game\netty\handlers\UIOpenHandler.cs" />
     <Compile Include="Game\netty\handlers\IHandler.cs" />
     <Compile Include="Game\netty\handlers\ILegacyHandler.cs" />

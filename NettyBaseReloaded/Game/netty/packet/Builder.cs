@@ -769,25 +769,28 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void ShipWarpWindowCreateCommand(GameSession gameSession)
         {
-            // TODO: Fix SQL
-            //var player = gameSession.Player;
-            //var hangars = World.DatabaseManager.LoadHangars(player);
-            //if (gameSession.Player.UsingNewClient)
-            //{
-            //    var ships = new List<commands.new_client.ShipWarpModule>();
+            if (gameSession.Player.UsingNewClient)
+            {
+                var ships = new List<commands.new_client.ShipWarpModule>();
 
-            //    int i = 0;
-            //    foreach (var hangar in hangars)
-            //    {
-            //        ships.Add(new commands.new_client.ShipWarpModule(hangar.Ship.Id, hangar.Ship.LootId, hangar.Ship.Name ,0, 0, i, hangar.Ship.Name));
-            //    }
+                foreach (var hangar in gameSession.Player.Equipment.Hangars)
+                {
+                    ships.Add(new commands.new_client.ShipWarpModule(hangar.Value.Ship.Id, hangar.Value.Ship.ToStringLoot(), hangar.Value.Ship.Name, 0, 0, hangar.Key, hangar.Value.Ship.Name));
+                }
 
-            //    gameSession.Client.Send(commands.new_client.ShipWarpWindowCommand.write(0, (int)player.Uridium, gameSession.Player.InEquipmentArea, ships).Bytes);
-            //}
-            //else
-            //{
+                gameSession.Client.Send(commands.new_client.ShipWarpWindowCommand.write(0, (int)gameSession.Player.Information.Uridium.Get(), gameSession.Player.State.InEquipmentArea, ships).Bytes);
+            }
+            else
+            {
+                var ships = new List<commands.old_client.ShipWarpModule>();
 
-            //}
+                foreach (var hangar in gameSession.Player.Equipment.Hangars)
+                {
+                    ships.Add(new commands.old_client.ShipWarpModule(hangar.Value.Ship.Id, hangar.Value.Ship.Id, hangar.Value.Ship.Name, 0, 0, hangar.Key, hangar.Value.Ship.Name));
+                }
+
+                gameSession.Client.Send(commands.old_client.ShipWarpWindowCommand.write(0, (int)gameSession.Player.Information.Uridium.Get(), gameSession.Player.State.InEquipmentArea, ships).Bytes);
+            }
         }
         #endregion
         
@@ -908,5 +911,16 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
+        #region MapChangeCommand
+
+        public void MapChangeCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+                throw new NotImplementedException();
+            else
+                LegacyModule(gameSession, "0|z");
+        }
+#endregion
     }
 }
