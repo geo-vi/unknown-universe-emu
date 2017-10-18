@@ -49,6 +49,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Active = true;
             StopController = false;
+            Checkers.Start();
             Tick();
         }
 
@@ -56,7 +57,12 @@ namespace NettyBaseReloaded.Game.controllers
         {
             while (Active)
             {
-                if (StopController) return;
+                if (StopController)
+                {
+                    StopAll();
+                    return;
+                }
+
                 TickClasses();
 
                 if (this is PlayerController)
@@ -75,7 +81,6 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void TickClasses()
         {
-            Checkers.Tick();
             Attack.Tick();
             Destruction.Tick();
             Effects.Tick();

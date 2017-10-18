@@ -24,21 +24,24 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void LoadPOI(POI poi)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
-            LoadedPOI.Add(poi.Id, poi);
+            if (!LoadedPOI.ContainsKey(poi.Id))
+                LoadedPOI.Add(poi.Id, poi);
             Packet.Builder.MapAddPOICommand(gameSession, poi);
         }
 
         public void LoadStation(Station station)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
-            LoadedObjects.Add(station.Id, station);
+            if (!LoadedObjects.ContainsKey(station.Id))
+                LoadedObjects.Add(station.Id, station);
             Packet.Builder.StationCreateCommand(gameSession, station);
         }
 
         public void LoadPortal(Jumpgate portal)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
-            LoadedObjects.Add(portal.Id, portal);
+            if (!LoadedObjects.ContainsKey(portal.Id))
+                LoadedObjects.Add(portal.Id, portal);
             Packet.Builder.JumpgateCreateCommand(gameSession, portal);
         }
 
@@ -51,21 +54,24 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void LoadAsset(Asset asset)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
-            LoadedObjects.Add(asset.Id, asset);
+            if (!LoadedObjects.ContainsKey(asset.Id))
+                LoadedObjects.Add(asset.Id, asset);
             Packet.Builder.AssetCreateCommand(gameSession, asset);
         }
 
         public void LoadCollectable(Collectable collectable)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
-            LoadedObjects.Add(collectable.Id, collectable);
+            if (!LoadedObjects.ContainsKey(collectable.Id))
+                LoadedObjects.Add(collectable.Id, collectable);
             Packet.Builder.CreateBoxCommand(gameSession, collectable);
         }
 
         public void LoadResource(Ore ore)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
-            LoadedObjects.Add(ore.Id, ore);
+            if (!LoadedObjects.ContainsKey(ore.Id))
+                LoadedObjects.Add(ore.Id, ore);
             Packet.Builder.AddOreCommand(gameSession, ore);
         }
 

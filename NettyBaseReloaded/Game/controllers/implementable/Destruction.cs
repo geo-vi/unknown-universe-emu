@@ -47,12 +47,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     //            KillScreenPostCommand.write(Character.Name, "", Character.Hangar.Ship.LootId, new DestructionTypeModule(DestructionTypeModule.USER), options).Bytes);
                     //}
                 }
-
-                if (Character.Selected != target)
-                {
-                    target.Controller.Attack.Attacking = false;
-                    Character.Selected = null;
-                }
             }
         }
 
@@ -92,6 +86,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     attached.Selected = null;
                 }
                 player.AttachedNpcs.Clear();
+                player.Storage.Clean();
+                player.ClearRange();
                 player.Save();
             }
 

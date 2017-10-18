@@ -94,49 +94,39 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             if (LastTimeTickedPlayers.AddSeconds(2) > DateTime.Now) return;
 
-
             foreach (var entity in Entities.ToList())
             {
                 var player = entity.Value as Player;
-                try
+                if (player != null)
                 {
-                    if (player != null)
+                    if (player.Storage.LoadedObjects.ToList().Count != Objects.ToList().Count)
                     {
-                        if (player.Storage.LoadedObjects.ToList().Count != Objects.ToList().Count)
-                        {
-                            var dicOne = player.Storage.LoadedObjects;
-                            var dicTwo = Objects;
-                            var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
+                        var dicOne = player.Storage.LoadedObjects.ToList();
+                        var dicTwo = Objects.ToList();
+                        var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
 
-                            foreach (var differance in diff)
-                            {
-                                if (Objects.ContainsKey(differance.Key))
-                                    player.LoadObject(differance.Value);
-                                else if (player.Storage.LoadedObjects.ContainsKey(differance.Key))
-                                    player.Storage.LoadedObjects.Remove(differance.Key);
-                            }
+                        foreach (var differance in diff)
+                        {
+                            if (Objects.ContainsKey(differance.Key))
+                                player.LoadObject(differance.Value);
+                            else if (player.Storage.LoadedObjects.ContainsKey(differance.Key))
+                                player.Storage.LoadedObjects.Remove(differance.Key);
                         }
+                    }
 
-                        if (player.Storage.LoadedPOI.Count != POIs.Count)
+                    if (player.Storage.LoadedPOI.Count != POIs.Count)
+                    {
+                        var dicOne = player.Storage.LoadedPOI;
+                        var dicTwo = POIs;
+                        var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
+
+                        foreach (var differance in diff)
                         {
-                            var dicOne = player.Storage.LoadedPOI;
-                            var dicTwo = POIs;
-                            var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
-
-                            foreach (var differance in diff)
-                            {
-                                player.Storage.LoadPOI(differance.Value);
-                            }
+                            player.Storage.LoadPOI(differance.Value);
                         }
                     }
                 }
-                catch (Exception e)
-                {
-                    // TODO fix
-                    new ExceptionLog("spacemap_ticker", "Entities", e);
-                }
             }
-
             LastTimeTickedPlayers = DateTime.Now;
         }
 

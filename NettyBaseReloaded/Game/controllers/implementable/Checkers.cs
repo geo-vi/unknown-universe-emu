@@ -5,14 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Main;
+using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
-    class Checkers : IAbstractCharacter
+    class Checkers : IAbstractCharacter, ITick
     {
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
+        }
+
+        public void Start()
+        {
+            Global.TickManager.Add(this);
         }
 
         public override void Tick()
@@ -38,118 +45,92 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void AddCharacter(Character main, Character entity)
         {
-            try
+            if (!main.RangeEntities.ContainsKey(entity.Id))
             {
-                if (!main.RangeEntities.ContainsKey(entity.Id))
-                {
-                    main.RangeEntities.Add(entity.Id, entity);
-                    if (!(main is Player)) return;
-                    var gameSession = World.StorageManager.GameSessions[main.Id];
+                main.RangeEntities.Add(entity.Id, entity);
+                if (!(main is Player)) return;
+                var gameSession = World.StorageManager.GameSessions[main.Id];
 
-                    //Draws the entity ship for character
-                    Packet.Builder.ShipCreateCommand(gameSession, entity);
-                    Packet.Builder.DronesCommand(gameSession, entity);
+                Packet.Builder.LegacyModule(gameSession, "0|A|STD|AddCharacter");
+                //Draws the entity ship for character
+                Packet.Builder.ShipCreateCommand(gameSession, entity);
+                Packet.Builder.DronesCommand(gameSession, entity);
 
-                    //Send movement
-                    var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
-                    Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
-
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Range Error Occured - Add/ Players: {main.Id}, {entity.Id}");
-                Console.WriteLine(e.Message);
+                //Send movement
+                var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
+                Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
             }
         }
 
-        /// <summary>
-        /// Removes entity for main character
-        /// </summary>
-        /// <param name="main"></param>
-        /// <param name="entity"></param>
         private void RemoveCharacter(Character main, Character entity)
         {
-            try
+            if (entity.RangeEntities.ContainsKey(main.Id))
             {
-                if (entity.RangeEntities.ContainsKey(main.Id))
-                {
-                    entity.RangeEntities.Remove(main.Id);
-                    if (!(entity is Player)) return;
-                    var gameSession = World.StorageManager.GameSessions[entity.Id];
+                entity.RangeEntities.Remove(main.Id);
+                if (!(entity is Player)) return;
+                var gameSession = World.StorageManager.GameSessions[entity.Id];
 
-                    Packet.Builder.ShipRemoveCommand(gameSession, main);
-                    if (main.Selected != null && main.Selected.Id == entity.Id)
-                    {
-                        Packet.Builder.ShipSelectionCommand(gameSession, null);
-                        main.Selected = null;
-                    }
+                Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
+                Packet.Builder.ShipRemoveCommand(gameSession, main);
+                if (main.Selected != null && main.Selected.Id == entity.Id)
+                {
+                    Packet.Builder.ShipSelectionCommand(gameSession, null);
+                    main.Selected = null;
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Range Error Occured - Remove/ Players: {main.Id}, {entity.Id}");
-                Console.WriteLine(e.Message);
             }
         }
 
         public void CharacterChecker()
         {
-            try
+            foreach (var entry in Character.Spacemap.Entities.ToList())
             {
-                foreach (var entry in Character.Spacemap.Entities.ToList())
-                {
-                    var entity = entry.Value;
-                    UpdateEntity(entity);
+                var entity = entry.Value;
+                UpdateEntity(entity);
 
-                    if (entity is Pet)
-                        if (((Pet) entity).GetOwner().Id == Character.Id)
-                            return;
-
-                    if (GetForSelection(entity))
+                if (entity is Pet)
+                    if (((Pet) entity).GetOwner().Id == Character.Id)
                         return;
 
-                    //If i have the entity in range
-                    if (Character.InRange(entity))
-                    {
-                        AddCharacter(Character, entity);
-                    }
-                    else
-                    {
-                        RemoveCharacter(Character, entity);
-                    }
+                if (GetForSelection(entity))
+                    return;
 
-                    //If the entity has me in range
-                    if (entity.InRange(Character))
-                    {
-                        AddCharacter(entity, Character);
-                    }
-                    else
-                    {
-                        //remove
-                        RemoveCharacter(entity, Character);
-                    }
+                //If i have the entity in range
+                if (Character.InRange(entity))
+                {
+                    AddCharacter(Character, entity);
+                }
+                else
+                {
+                    RemoveCharacter(entity, Character);
+                }
+
+                //If the entity has me in range
+                if (entity.InRange(Character))
+                {
+                    AddCharacter(entity, Character);
+                }
+                else
+                {
+                    //remove
+                    RemoveCharacter(Character, entity);
                 }
             }
-            catch (Exception e)
-            {
-                new ExceptionLog("checkers", "Character Checker", e);
-            }
+
         }
 
         private bool GetForSelection(Character entity)
         {
-            if (Character.Spacemap.Entities.ContainsKey(entity.Id))
-            {
-                if (entity.Selected == Character || Character.Selected == entity)
-                {
-                    if (!Character.RangeEntities.ContainsKey(entity.Id))
-                        Character.RangeEntities.Add(entity.Id, entity);
-                    if (!entity.RangeEntities.ContainsKey(Character.Id))
-                        entity.RangeEntities.Add(Character.Id, Character);
-                    return true;
-                }
-            }
+            //if (Character.Spacemap.Entities.ContainsKey(entity.Id))
+            //{
+            //    if (entity.Selected == Character || Character.Selected == entity)
+            //    {
+            //        if (!Character.RangeEntities.ContainsKey(entity.Id))
+            //            Character.RangeEntities.Add(entity.Id, entity);
+            //        if (!entity.RangeEntities.ContainsKey(Character.Id))
+            //            entity.RangeEntities.Add(Character.Id, Character);
+            //        return true;
+            //    }
+            //}
             return false;
         }
 
