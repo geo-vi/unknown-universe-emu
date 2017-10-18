@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Logger;
 using Range = NettyBaseReloaded.Game.controllers.player.Range;
 
 namespace NettyBaseReloaded.Game.controllers
@@ -49,12 +51,19 @@ namespace NettyBaseReloaded.Game.controllers
 
         private void AddClasses()
         {
-            CPUs = new CPU(this);
-            CheckedClasses.Add(CPUs);
-            Ranges = new Range(this);
-            CheckedClasses.Add(Ranges);
-            Miscs = new Misc(this);
-            CheckedClasses.Add(Miscs);
+            try
+            {
+                CPUs = new CPU(this);
+                CheckedClasses.Add(CPUs);
+                Ranges = new Range(this);
+                CheckedClasses.Add(Ranges);
+                Miscs = new Misc(this);
+                CheckedClasses.Add(Miscs);
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("playercontroller", "AddClasses, CheckedClasses", e);
+            }
         }
 
         public void Start()
@@ -64,10 +73,24 @@ namespace NettyBaseReloaded.Game.controllers
 
         public new void Tick()
         {
-            foreach (var _class in CheckedClasses)
+            try
             {
-                _class.Check();
+                foreach (var _class in CheckedClasses)
+                {
+                    _class.Check();
+                }
             }
+            catch (Exception e)
+            {
+                new ExceptionLog("playercontroller", "Tick, CheckedClasses", e);
+            }
+        }
+
+        public void Exit()
+        {
+            Active = false;
+            StopController = true;
+            Player.Storage.Clean();
         }
     }
 }

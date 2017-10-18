@@ -95,38 +95,45 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void CharacterChecker()
         {
-            foreach (var entry in Character.Spacemap.Entities.ToList())
+            try
             {
-                var entity = entry.Value;
-                UpdateEntity(entity);
+                foreach (var entry in Character.Spacemap.Entities.ToList())
+                {
+                    var entity = entry.Value;
+                    UpdateEntity(entity);
 
-                if (entity is Pet)
-                    if (((Pet) entity).GetOwner().Id == Character.Id)
+                    if (entity is Pet)
+                        if (((Pet) entity).GetOwner().Id == Character.Id)
+                            return;
+
+                    if (GetForSelection(entity))
                         return;
 
-                if (GetForSelection(entity))
-                    return;
+                    //If i have the entity in range
+                    if (Character.InRange(entity))
+                    {
+                        AddCharacter(Character, entity);
+                    }
+                    else
+                    {
+                        RemoveCharacter(Character, entity);
+                    }
 
-                //If i have the entity in range
-                if (Character.InRange(entity))
-                {
-                    AddCharacter(Character, entity);
+                    //If the entity has me in range
+                    if (entity.InRange(Character))
+                    {
+                        AddCharacter(entity, Character);
+                    }
+                    else
+                    {
+                        //remove
+                        RemoveCharacter(entity, Character);
+                    }
                 }
-                else
-                {
-                    RemoveCharacter(Character, entity);
-                }
-
-                //If the entity has me in range
-                if (entity.InRange(Character))
-                {
-                    AddCharacter(entity, Character);
-                }
-                else
-                {
-                    //remove
-                    RemoveCharacter(entity, Character);
-                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("checkers", "Character Checker", e);
             }
         }
 
@@ -148,30 +155,36 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void ZoneChecker()
         {
-            foreach (var zone in Character.Spacemap.Zones.Values)
+            try
             {
-                if ((Character.Position.X >= zone.TopLeft.X && Character.Position.X <= zone.BottomRight.X) &&
-                    (Character.Position.Y <= zone.TopLeft.Y && Character.Position.Y >= zone.BottomRight.Y))
+                foreach (var zone in Character.Spacemap.Zones.Values.ToList())
                 {
-                    if (!Character.RangeZones.ContainsKey(zone.Id))
+                    if ((Character.Position.X >= zone.TopLeft.X && Character.Position.X <= zone.BottomRight.X) &&
+                        (Character.Position.Y <= zone.TopLeft.Y && Character.Position.Y >= zone.BottomRight.Y))
                     {
-                        Character.RangeZones.Add(zone.Id, zone);
+                        if (!Character.RangeZones.ContainsKey(zone.Id))
+                        {
+                            Character.RangeZones.Add(zone.Id, zone);
+                        }
+                    }
+                    else
+                    {
+                        if (Character.RangeZones.ContainsKey(zone.Id)) Character.RangeZones.Remove(zone.Id);
                     }
                 }
-                else
-                {
-                    if (Character.RangeZones.ContainsKey(zone.Id)) Character.RangeZones.Remove(zone.Id);
-                }
             }
-
+            catch (Exception e)
+            {
+                new ExceptionLog("checkers", "Zone Checker", e);
+            }
         }
 
         private void ObjectChecker()
         {
             if (!(Character is Player)) return;
-            foreach (var obj in Character.Spacemap.Objects.Values)
+            try
             {
-                try
+                foreach (var obj in Character.Spacemap.Objects.Values.ToList())
                 {
                     if (Vector.IsInRange(obj.Position, Character.Position, obj.Range))
                     {
@@ -192,10 +205,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         }
                     }
                 }
-                catch (Exception)
-                {
-
-                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("checkers", "Object Checker", e);
             }
         }
     }

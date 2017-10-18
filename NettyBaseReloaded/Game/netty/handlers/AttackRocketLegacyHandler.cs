@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 return;
             }
 
-            player.Controller.Attack.LaunchMissle(player.Settings.CurrentRocket);
+            player.Controller.Attack.LaunchMissle(player.Settings.CurrentRocket.LootId);
         }
     }
 }

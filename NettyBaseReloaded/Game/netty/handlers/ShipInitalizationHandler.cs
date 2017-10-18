@@ -66,7 +66,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 World.StorageManager.GameSessions.Add(Player.Id, GameSession);
             else
             {
-                World.StorageManager.GameSessions[Player.Id].Disconnect();
+                World.StorageManager.GameSessions[Player.Id].Disconnect(GameSession.DisconnectionType.NORMAL);
                 World.StorageManager.GameSessions[Player.Id] = GameSession;
             }
 

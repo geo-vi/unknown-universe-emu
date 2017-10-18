@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.ammo;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.informations;
 using NettyBaseReloaded.Logger;
@@ -366,6 +368,31 @@ namespace NettyBaseReloaded.Game.managers
                 new ExceptionLog("dbmanager", "Failed getting player account [ID: " + playerId + "]", e);
             }
             return player;
+        }
+
+        internal Dictionary<string, Ammunition> LoadAmmunition(Player player)
+        {
+            var ammoDictionary = new Dictionary<string, Ammunition>();
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_ammo WHERE PLAYER_ID=" + player.Id);
+
+                    ammoDictionary.Add("ammunition_laser_lcb-10", new Ammunition(player, "ammunition_laser_lcb-10", intConv(queryRow["LCB_10"])));
+                    ammoDictionary.Add("ammunition_laser_mcb-25", new Ammunition(player, "ammunition_laser_mcb-25", intConv(queryRow["MCB_25"])));
+                    ammoDictionary.Add("ammunition_laser_mcb-50", new Ammunition(player, "ammunition_laser_mcb-50", intConv(queryRow["MCB_50"])));
+                    ammoDictionary.Add("ammunition_laser_ucb-100", new Ammunition(player, "ammunition_laser_ucb-100", intConv(queryRow["UCB_100"])));
+                    ammoDictionary.Add("ammunition_laser_sab-50", new Ammunition(player, "ammunition_laser_sab-50", intConv(queryRow["SAB_50"])));
+                    ammoDictionary.Add("ammunition_rocket_r-310", new Ammunition(player, "ammunition_rocket_r-310", intConv(queryRow["R_310"])));
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager", "Failed getting player ammuntion [ID: " + player.Id + "]", e);
+                World.StorageManager.GetGameSession(player.Id)?.Disconnect(GameSession.DisconnectionType.ERROR);
+            }
+            return ammoDictionary;
         }
 
         public Dictionary<int,Hangar> LoadHangars(Player player)

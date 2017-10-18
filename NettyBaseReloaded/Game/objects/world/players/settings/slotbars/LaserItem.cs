@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                 }
             }
 
-            player.Settings.CurrentAmmo = ItemId;
+            player.Settings.CurrentAmmo = player.Information.Ammunitions[ItemId];
             Selected = true;
 
             if (player.Controller.Attack.Attacking && ItemId.Equals("ammunition_laser_rsb-75"))

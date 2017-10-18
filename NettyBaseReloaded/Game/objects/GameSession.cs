@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.global_managers;
@@ -14,6 +15,14 @@ namespace NettyBaseReloaded.Game.objects
 {
     class GameSession : ITick
     {
+        public enum DisconnectionType
+        {
+            NORMAL,
+            INACTIVITY,
+            ADMIN,
+            ERROR
+        }
+
         public Player Player { get; set; }
 
         public GameClient Client { get; set; }
@@ -29,29 +38,18 @@ namespace NettyBaseReloaded.Game.objects
         public void Tick()
         {
             if (LastActiveTime >= DateTime.Now.AddMinutes(5))
-                Inactivity();
+                Disconnect(DisconnectionType.INACTIVITY);
         }
 
-        public void Inactivity()
+        public void Relog()
         {
-            Player.Log.Write("User got disconnected by inactivity");
-            SilentDisconnect();
+            Player.Controller.Exit();
+            LoginController.Initiate(this);
         }
 
-        public void Disconnect()
+        public void Disconnect(DisconnectionType dcType)
         {
-            Player.Log.Write("User disconnected");
-            SilentDisconnect();
-        }
-
-        private void SilentDisconnect()
-        {
-            //Player.Save();
-        }
-
-        public void Close()
-        {
-            Player.Log.Write("Session closed for User");
+            Player.Log.Write($"User disconnected (Disconnection Type: {dcType})");
             Client.Disconnect();
         }
     }

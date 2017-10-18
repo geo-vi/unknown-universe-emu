@@ -28,23 +28,29 @@ namespace NettyBaseReloaded.Game.controllers.player
         {
             if (LastTimeCheckedZones.AddMilliseconds(250) > DateTime.Now) return;
 
-            if (baseController.Player.RangeZones.Values.Count(x => x is DemiZone) > 0)
+            try
             {
-                if (!baseController.Player.State.InDemiZone && !baseController.Attack.Attacking)
+                if (baseController.Player.RangeZones.Values.Count(x => x is DemiZone) > 0)
                 {
-                    baseController.Player.State.InDemiZone = true;
-                    UpdatePlayer();
+                    if (!baseController.Player.State.InDemiZone && !baseController.Attack.Attacking)
+                    {
+                        baseController.Player.State.InDemiZone = true;
+                        UpdatePlayer();
+                    }
+                }
+                else
+                {
+                    if (baseController.Player.State.InDemiZone)
+                    {
+                        baseController.Player.State.InDemiZone = false;
+                        UpdatePlayer();
+                    }
                 }
             }
-            else
+            catch (Exception e)
             {
-                if (baseController.Player.State.InDemiZone)
-                {
-                    baseController.Player.State.InDemiZone = false;
-                    UpdatePlayer();
-                }
+                new ExceptionLog("player_range", "Range Zones", e);
             }
-
             LastTimeCheckedZones = DateTime.Now;
         }
 

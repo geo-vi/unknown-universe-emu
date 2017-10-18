@@ -165,15 +165,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (player.Controller == null)
                     player.Controller = new PlayerController(Character);
 
-                player.Controller.Start();
-
                 var closestStation = player.GetClosestStation();
                 newPos = player.Destination = closestStation.Item1;
                 player.Spacemap = closestStation.Item2;
 
                 player.Refresh();
                 player.Update();
-                player.Storage.Clean();
             }
 
             Character.SetPosition(newPos);

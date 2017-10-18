@@ -73,8 +73,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Pet Pet { get; set; }
 
-        public Ammunition Ammunition { get; private set; }
-
         public Settings Settings { get; private set; }
 
         public Storage Storage { get; private set; }
@@ -265,7 +263,6 @@ namespace NettyBaseReloaded.Game.objects.world
             Equipment = new Equipment(this);
             Statistics = World.DatabaseManager.LoadStatistics(this);
             Information = new Information(this);
-            //Ammunition = new Ammunition(this); < TODO Add
             Settings = new Settings(this);
             State = new State(this);
             Storage = new Storage(this);
@@ -293,7 +290,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void Save()
         {
-            World.DatabaseManager.SavePlayer(this);
+            Console.WriteLine("Attempt to save player");
+            //World.DatabaseManager.SavePlayer(this);
         }
 
         public void Refresh()

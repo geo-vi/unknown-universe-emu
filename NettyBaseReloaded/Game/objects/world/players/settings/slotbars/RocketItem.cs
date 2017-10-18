@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                 }
             }
 
-            player.Settings.CurrentRocket = ItemId;
+            player.Settings.CurrentRocket = player.Information.Ammunitions[ItemId];
 
             Selected = true;
 

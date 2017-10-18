@@ -22,6 +22,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Title Title { get; set; }
 
+        public Dictionary<string, Ammunition> Ammunitions { get; set; }
+
         public bool Premium { get; set; }
 
         public DateTime RegisteredTime { get; set; }
@@ -45,6 +47,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Credits.Refresh();
             Uridium.Refresh();
             Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
+            Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
         }
     }
 }

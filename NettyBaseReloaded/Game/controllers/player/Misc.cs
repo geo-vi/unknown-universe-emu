@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.map.objects;
@@ -131,7 +132,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                     baseController.Player.Save();
                     baseController.Destruction.Remove(baseController.Player);
                     Reset();
-                    gameSession.Disconnect();
+                    gameSession.Relog();
                 }
             }
 

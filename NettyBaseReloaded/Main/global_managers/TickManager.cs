@@ -24,12 +24,14 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public void Add(ITick tick)
         {
-            PendingToBeAdded.Add(tick);
+            if (!Tickables.Contains(tick))
+                PendingToBeAdded.Add(tick);
         }
 
         public void Remove(ITick tick)
         {
-            PendingRemoval.Remove(tick);
+            if (Tickables.Contains(tick))
+                PendingRemoval.Remove(tick);
         }
 
         public bool Exists(ITick tickable)

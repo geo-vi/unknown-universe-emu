@@ -285,6 +285,7 @@
     <Compile Include="Game\netty\commands\old_client\ShipRemoveCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipSelectionCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipWarpNotAllowedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpWindowCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\UserKeyBindingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\UserKeyBindingsUpdate.cs" />

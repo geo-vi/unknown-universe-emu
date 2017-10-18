@@ -96,7 +96,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 }
 
                 bool isRsb = false;
-                switch (gameSession.Player.Settings.CurrentAmmo)
+                switch (gameSession.Player.Settings.CurrentAmmo.LootId)
                 {
                     case "ammunition_laser_mcb-25":
                         damage *= 2;

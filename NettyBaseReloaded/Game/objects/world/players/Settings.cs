@@ -21,17 +21,17 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         #endregion
 
-        public string CurrentAmmo { get; set; }
+        public Ammunition CurrentAmmo { get; set; }
 
-        public string CurrentRocket { get; set; }
+        public Ammunition CurrentRocket { get; set; }
 
         public Settings(Player player) : base(player)
         {
             Slotbar = new Slotbar();
             Window = new Window();
 
-            CurrentAmmo = "ammunition_laser_lcb-10";
-            CurrentRocket = "ammunition_rocket_r-310";
+            CurrentAmmo = Player.Information.Ammunitions["ammunition_laser_lcb-10"];
+            CurrentRocket = Player.Information.Ammunitions["ammunition_rocket_r-310"];
         }
     }
 }

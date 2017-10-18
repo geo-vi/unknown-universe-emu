@@ -71,8 +71,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public void Clean()
         {
-            LoadedObjects.Clear();
-            LoadedPOI.Clear();
+            LoadedObjects = new Dictionary<int, Object>();
+            LoadedPOI = new Dictionary<string, POI>();
         }
     }
 }
