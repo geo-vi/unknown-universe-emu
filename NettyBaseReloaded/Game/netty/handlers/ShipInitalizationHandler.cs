@@ -23,8 +23,15 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             client.UserId = userId;
 
-            //TODO: GetAcc from DB
-            Player = World.DatabaseManager.GetAccount(userId);
+            var tempSession = World.StorageManager.GetGameSession(userId);
+            if (tempSession != null && tempSession.InProcessOfReconection)
+            {
+                Player = tempSession.Player;
+                Console.WriteLine("User relogged successfully");
+                World.StorageManager.GameSessions.Remove(userId);
+            }
+
+            Player = GetAccount(userId);
             if (Player != null) GameSession = CreateSession(client, Player);
             else
             {
@@ -41,6 +48,12 @@ namespace NettyBaseReloaded.Game.netty.handlers
             Player.UsingNewClient = newClient;
 
             execute();
+        }
+
+        private Player GetAccount(int userId)
+        {
+            if (Player != null) return Player;
+            return World.DatabaseManager.GetAccount(userId);
         }
 
         private void ExecuteWrongSession()

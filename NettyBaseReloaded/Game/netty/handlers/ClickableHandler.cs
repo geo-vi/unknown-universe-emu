@@ -15,7 +15,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
         {
             var cmd = new ClickableRequest();
             cmd.readCommand(bytes);
-            var obj = gameSession.Player.RangeObjects[cmd.clickableId];
+            var obj = gameSession.Player.Range.Objects[cmd.clickableId];
             (obj as IClickable)?.click(gameSession.Player);
         }
     }

@@ -99,6 +99,11 @@ namespace NettyBaseReloaded.Game.objects.world
                 var player = entity.Value as Player;
                 if (player != null)
                 {
+                    if (player.Spacemap != this)
+                    {
+                        Entities.Remove(player.Id);
+                        continue;
+                    }
                     if (player.Storage.LoadedObjects.ToList().Count != Objects.ToList().Count)
                     {
                         var dicOne = player.Storage.LoadedObjects.ToList();
@@ -262,6 +267,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
             Entities.Add(id, npc);
 
+            if (!Global.TickManager.Exists(npc))
+                Global.TickManager.Add(npc);
             npc.Controller = new NpcController(npc);
             if (Id == 12 || Id == 11 || Id == 10 || Id == 9)
                 npc.Controller.Initiate();

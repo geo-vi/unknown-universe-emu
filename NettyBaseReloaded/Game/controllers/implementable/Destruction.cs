@@ -81,14 +81,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (targetCharacter is Player)
             {
                 var player = (Player)targetCharacter;
-                foreach (var attached in player.AttachedNpcs)
+                foreach (var rangeEntity in targetCharacter.Range.Entities.ToList())
                 {
-                    attached.Selected = null;
+                    if (rangeEntity.Value.Selected == targetCharacter) rangeEntity.Value.Selected = null;
+                    rangeEntity.Value.Controller.Checkers.CharacterChecker();
                 }
                 player.AttachedNpcs.Clear();
                 player.Storage.Clean();
-                player.ClearRange();
-                player.Save();
+                player.Range.Clear();
             }
 
             targetCharacter.Controller.StopController = true;
@@ -174,7 +174,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.Entities.Add(Character.Id, Character);
 
-            Character.ClearRange();
+            Character.Range.Clear();
             MovementController.Move(Character, MovementController.ActualPosition(Character));
         }
     }

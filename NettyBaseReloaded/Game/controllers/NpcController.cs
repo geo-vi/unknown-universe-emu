@@ -47,7 +47,6 @@ namespace NettyBaseReloaded.Game.controllers
             }
             Active = true;
             Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) Setted AI to {ai}");
-            Checkers.Start();
             ActiveTick();
         }
 
@@ -60,6 +59,7 @@ namespace NettyBaseReloaded.Game.controllers
                 else
                 {
                     TickClasses();
+                    Checkers.Tick();
                     CurrentNpc.Tick();
                 }
                 await Task.Delay(500);
@@ -89,10 +89,9 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Restart()
         {
-            Active = true;
             if (!StopController) return;
             StopController = false;
-            ActiveTick();
+            Initiate();
         }
     }
 }

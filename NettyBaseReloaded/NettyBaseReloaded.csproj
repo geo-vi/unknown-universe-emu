@@ -330,6 +330,7 @@
     <Compile Include="Game\objects\world\characters\cooldowns\RSBCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\SMBCooldown.cs" />
     <Compile Include="Game\objects\world\characters\Level.cs" />
+    <Compile Include="Game\objects\world\characters\Range.cs" />
     <Compile Include="Game\objects\world\characters\Reward.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\Types.cs" />

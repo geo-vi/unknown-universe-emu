@@ -36,7 +36,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Inactive()
         {
             Controller.Attack.Attacking = false;
-            if (LastMovedTime.AddSeconds(45) <= DateTime.Now || Controller.Npc.RangeObjects.Count > 0)
+            if (LastMovedTime.AddSeconds(45) <= DateTime.Now || Controller.Npc.Range.Objects.Count > 0)
             {
                 newDest:
                 var dest = Vector.Random(0, 20800, 0, 12800);
@@ -47,9 +47,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 MovementController.Move(Controller.Npc, dest);
                 LastMovedTime = DateTime.Now;
             }
-            if (Controller.Npc.RangeEntities.Count(x => x.Value is Player) > 0)
+            if (Controller.Npc.Range.Entities.ToList().Count(x => x.Value is Player) > 0)
             {
-                var players = Controller.Npc.RangeEntities.Where(x => x.Value is Player);
+                var players = Controller.Npc.Range.Entities.ToList().Where(x => x.Value is Player);
                 Player candidatePlayer = null;
                 foreach (var player in players)
                 {
@@ -90,9 +90,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
 
             }
-            if (Controller.Npc.RangeEntities.Count(x => x.Value is Player) > 1)
+            if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1)
             {
-                var players = Controller.Npc.RangeEntities.Where(x => x.Value is Player);
+                var players = Controller.Npc.Range.Entities.ToList().Where(x => x.Value is Player);
                 foreach (var player in players)
                 {
                     if (((Player)player.Value).AttachedNpcs.Count >

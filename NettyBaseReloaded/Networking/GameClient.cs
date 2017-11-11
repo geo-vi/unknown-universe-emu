@@ -52,10 +52,12 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                if (World.StorageManager.GetGameSession(UserId) != null)
+                var gameSession = World.StorageManager.GetGameSession(UserId);
+                if (gameSession != null)
                 {
-                    if (World.StorageManager.GameSessions[UserId].Player.Controller != null)
-                        World.StorageManager.GameSessions[UserId].LastActiveTime = DateTime.Now;
+                    if (gameSession.InProcessOfReconection) return;
+                    if (gameSession.Player.Controller != null)
+                        gameSession.LastActiveTime = DateTime.Now;
                 }
 
                 XSocket.Write(bytes);

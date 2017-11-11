@@ -125,14 +125,8 @@ namespace NettyBaseReloaded.Game.controllers.player
 
                 if (DateTime.Now > JumpEndTime)
                 {
-                    var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
-                    Packet.Builder.MapChangeCommand(gameSession);
-                    baseController.Player.Spacemap = TargetMap;
-                    baseController.Player.Position = TargetPosition;
-                    baseController.Player.Save();
-                    baseController.Destruction.Remove(baseController.Player);
+                    baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition);
                     Reset();
-                    gameSession.Relog();
                 }
             }
 
@@ -153,6 +147,15 @@ namespace NettyBaseReloaded.Game.controllers.player
         public void Jump(int targetMapId, Vector targetPos, int portalId = -1)
         {
             JClass.Initiate(targetMapId, targetPos, portalId);
+        }
+
+        public void ForceChangeMap(Spacemap targetMap, Vector targetPosition)
+        {
+            if (baseController.Player.Spacemap == targetMap) return;
+            var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
+            Packet.Builder.MapChangeCommand(gameSession);
+            gameSession.Relog(targetMap, targetPosition);
+            baseController.Player.Save();
         }
 
         public void ChangeDroneFormation(DroneFormation targetFormation)

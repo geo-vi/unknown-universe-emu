@@ -13,7 +13,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
         public void execute(GameSession gameSession, string[] args)
         {
             var player = gameSession.Player;
-            var portals = gameSession.Player.RangeObjects.ToList().Where(x => x.Value is Jumpgate);
+            var portals = gameSession.Player.Range.Objects.ToList().Where(x => x.Value is Jumpgate);
             if (portals.Count() > 1)
             {
                 Jumpgate closestJumpgate = null;

@@ -42,7 +42,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public Character GetAttacker()
         {
-            foreach (var entity in Character.RangeEntities.Values)
+            foreach (var entity in Character.Range.Entities.Values.ToList())
             {
                 if (entity.Controller.Dead) return null;
                 if (entity.Selected == Character && entity.Controller.Attack.Attacking)

@@ -90,7 +90,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Active = false;
             StopController = true;
-            Player.Storage.Clean();
+            CheckedClasses.Clear();
         }
     }
 }

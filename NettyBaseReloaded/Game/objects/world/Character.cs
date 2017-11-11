@@ -145,11 +145,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int VirtualWorldId { get; set; }
 
-        public Dictionary<int, Character> RangeEntities;
-        public Dictionary<string, Collectable> RangeCollectables;
-        public Dictionary<string, Ore> RangeResources;
-        public Dictionary<int, Zone> RangeZones;
-        public Dictionary<int, Object> RangeObjects;
+        public Range Range = new Range();
 
         public DateTime LastCombatTime;
         public DroneFormation Formation = DroneFormation.STANDARD;
@@ -178,12 +174,6 @@ namespace NettyBaseReloaded.Game.objects.world
             MovementTime = 0;
             RenderRange = 2000;
 
-            RangeEntities = new Dictionary<int, Character>();
-            RangeCollectables = new Dictionary<string, Collectable>();
-            RangeResources = new Dictionary<string, Ore>();
-            RangeZones = new Dictionary<int, Zone>();
-            RangeObjects = new Dictionary<int, Object>();
-
             LastCombatTime = DateTime.Now;
 
             Cooldowns = new List<Cooldown>();
@@ -196,6 +186,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void Tick()
         {
+            Range.Tick();
             if (this is Npc)
             {
                 //((Npc) this).Tick();
@@ -208,7 +199,6 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 ((Pet) this).Tick();
             }
-
             //Update();
             Regenerate();
             TickCooldowns();
@@ -295,20 +285,12 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool InRange(Character character, int range = 2000)
         {
-            if (character == null) throw new NotImplementedException();
+            if (character == null) return false;
             if (range == -1) return true;
             return character.Id != Id && character.Spacemap.Id == Spacemap.Id &&
                    Position.DistanceTo(character.Position) <= range;
         }
-
-        public void ClearRange()
-        {
-            RangeObjects.Clear();
-            RangeEntities.Clear();
-            RangeZones.Clear();
-            RangeCollectables.Clear();
-        }
-
+        
         public void TickCooldowns()
         {
             try

@@ -8,7 +8,8 @@ using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map;
-using NettyBaseReloaded.Game.objects.world.map.collectables;
+using NettyBaseReloaded.Game.objects.world.map.pois;
+using Types = NettyBaseReloaded.Game.objects.world.map.collectables.Types;
 
 namespace NettyBaseReloaded.Game
 {
@@ -44,6 +45,13 @@ namespace NettyBaseReloaded.Game
                 //    }
                 //    map.Value.CreateNpc(StorageManager.Ships[80], AILevels.MOTHERSHIP, 30);
                 //}
+                if (map.Key == 9)
+                {
+                    map.Value.CreateStation(Faction.VRU, new Vector(19200, 11800));
+                    map.Value.CreatePirateStation(new Vector(2000, 5650));
+                    map.Value.CreateAsteroid("Metroid", new Vector(5000, 2500));
+                    map.Value.CreatePOI(new POI("Poi1", objects.world.map.pois.Types.NO_ACCESS, Designs.ASTEROIDS_MIXED_WITH_SCRAP, Shapes.RECTANGLE, new List<Vector> { new Vector(7680, 9216), new Vector(8192, 9216), new Vector(8192, 9728), new Vector(7680, 9728) }));
+                }
             }
             Log.Write("Loaded World");
         }

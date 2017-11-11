@@ -68,8 +68,8 @@ namespace NettyBaseReloaded.Game.controllers
             if (!Pet.Spacemap.Entities.ContainsKey(Pet.Id))
                 Pet.Spacemap.Entities.Add(Pet.Id, Pet);
 
-            if (!Pet.GetOwner().RangeEntities.ContainsKey(Pet.Id))
-                Pet.GetOwner().RangeEntities.Add(Pet.Id, Pet);
+            if (!Pet.GetOwner().Range.Entities.ContainsKey(Pet.Id))
+                Pet.GetOwner().Range.AddEntity(Pet);
 
             var session = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             Packet.Builder.PetHeroActivationCommand(session, Pet);

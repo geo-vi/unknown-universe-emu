@@ -30,7 +30,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             try
             {
-                if (baseController.Player.RangeZones.Values.Count(x => x is DemiZone) > 0)
+                if (baseController.Player.Range.Zones.Values.Count(x => x is DemiZone) > 0)
                 {
                     if (!baseController.Player.State.InDemiZone && !baseController.Attack.Attacking)
                     {
