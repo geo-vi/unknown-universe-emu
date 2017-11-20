@@ -30,7 +30,17 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public override int MaxHealth => Hangar.Ship.Health;
+        public sealed override int MaxHealth { get; set; }
+
+        public sealed override int Damage { get; set; }
+
+        public sealed override int CurrentShield { get; set; }
+
+        public sealed override int MaxShield { get; set; }
+
+        public sealed override double ShieldAbsorption { get; set; }
+
+        public sealed override double ShieldPenetration { get; set; }
 
         public int Fuel { get; set; }
 
@@ -40,13 +50,18 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Gear> Gears { get; set; }
 
-        public Pet(int id,int ownerId, string name, Hangar hangar, int currentHealth, int currentNano, Faction factionId,
+        public Pet(int id,int ownerId, string name, Hangar hangar, int currentHealth, Faction factionId,
             Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
             new Reward(0,0), new CargoDrop())
         {
             OwnerId = ownerId;
-            CurrentHealth = currentHealth;
-            CurrentNanoHull = currentNano;
+            MaxHealth = 10000;
+            CurrentHealth = 10000;
+            Damage = 1000;
+            CurrentShield = 1000;
+            MaxShield = 1000;
+            ShieldAbsorption = 0.8;
+            ShieldPenetration = 0;
             Level = level;
             Experience = experience;
             Fuel = fuel;

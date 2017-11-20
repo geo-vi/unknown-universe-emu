@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NettyBaseReloaded.Game.controllers.implementable;
+﻿using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.controllers.pet.gears;
 using NettyBaseReloaded.Game.netty;
@@ -12,6 +7,12 @@ using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.global_managers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using PetGearTypeModule = NettyBaseReloaded.Game.netty.commands.old_client.PetGearTypeModule;
 
 namespace NettyBaseReloaded.Game.controllers
 {
@@ -47,7 +48,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Exit()
         {
-
+            StopAll();
         }
 
         public new void Tick()
@@ -60,8 +61,6 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Activate()
         {
-            // TODO Fix PetActivation & PetHero
-
             Pet.Position = Pet.GetOwner().Position;
             Pet.Spacemap = Pet.GetOwner().Spacemap;
 
@@ -74,19 +73,33 @@ namespace NettyBaseReloaded.Game.controllers
             var session = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             Packet.Builder.PetHeroActivationCommand(session, Pet);
             Packet.Builder.PetStatusCommand(session, Pet);
-            Console.WriteLine("PET {0} spawned at {1}", Pet.Id, Pet.Position);
             MovementController.Move(Pet, Vector.GetPosOnCircle(Pet.GetOwner().Position, 250));
             Start();
         }
 
-        public void DeActivate()
+        public void Deactivate()
         {
-            
+            var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
+            Packet.Builder.PetDeactivationCommand(ownerSession, Pet);
+            Exit();
+            Pet.Spacemap = null;
+            Pet.Position = null;
+            Pet.GetOwner().Spacemap.Entities.Remove(Pet.Id);
         }
 
         public void Repair()
         {
             
+        }
+
+        public void SwitchGear(short gearType, int optParam)
+        {
+            var gearIndex = Pet.Gears.FindIndex(x => (short) x.Type == gearType);
+            if (gearIndex != 0)
+            {
+                Gear = Pet.Gears[gearIndex];
+                Gear.Activate();
+            }
         }
     }
 }

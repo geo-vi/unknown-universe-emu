@@ -921,6 +921,18 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
                 LegacyModule(gameSession, "0|z");
         }
-#endregion
+        #endregion
+
+        #region PetDeactivationCommand
+
+        public void PetDeactivationCommand(GameSession gameSession, Pet pet)
+        {
+            if (gameSession.Player.UsingNewClient)
+                throw new NotImplementedException();
+            else
+                gameSession.Client.Send(commands.old_client.PetDeactivationCommand.write(pet.Id).Bytes);
+        }
+
+        #endregion
     }
 }

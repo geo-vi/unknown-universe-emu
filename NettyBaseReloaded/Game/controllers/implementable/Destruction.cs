@@ -91,6 +91,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 player.Range.Clear();
             }
 
+            if (targetCharacter is Pet)
+            {
+                var pet = (Pet) targetCharacter;
+                
+            }
             targetCharacter.Controller.StopController = true;
         }
 

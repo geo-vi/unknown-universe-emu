@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.pets;
 
 namespace NettyBaseReloaded.Game.controllers.pet.gears
@@ -16,7 +17,13 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
 
         public override void Activate()
         {
-
+            var ownerSelection = baseController.Pet.GetOwner().Selected as Npc;
+            if (ownerSelection != null)
+            {
+                baseController.Pet.Selected = ownerSelection;
+                baseController.Attack.Attacking = true;
+                baseController.Attack.LaserAttack();
+            }
         }
 
         public override void Check()

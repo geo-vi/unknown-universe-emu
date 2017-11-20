@@ -74,7 +74,11 @@ namespace NettyBaseReloaded.Game.objects.world
                     var temp = (Npc) this;
                     return temp.Controller;
                 }
-
+                if (this is Pet)
+                {
+                    var temp = (Pet) this;
+                    return temp.Controller;
+                }
                 return null;
             }
         }
@@ -145,7 +149,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int VirtualWorldId { get; set; }
 
-        public Range Range = new Range();
+        public Range Range { get; }
 
         public DateTime LastCombatTime;
         public DroneFormation Formation = DroneFormation.STANDARD;
@@ -172,7 +176,9 @@ namespace NettyBaseReloaded.Game.objects.world
             Direction = new Vector(0, 0);
             MovementStartTime = new DateTime();
             MovementTime = 0;
+
             RenderRange = 2000;
+            Range = new Range {Character = this};
 
             LastCombatTime = DateTime.Now;
 

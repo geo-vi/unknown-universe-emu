@@ -11,6 +11,14 @@ namespace NettyBaseReloaded.Game.controllers.npc
 {
     class Basic : INpc
     {
+        // TODO: FIX BUG
+        /// <summary>
+        /// Unknown position (null)
+        /// Unknown spacemap (null)
+        /// Suspected error in AttachedNpcs
+        /// Error in Vector (position = null)
+        /// Suspected problem in Range Entities (npc)
+        /// </summary>
         private NpcController Controller { get; set; }
 
         public Basic(NpcController controller)
@@ -35,42 +43,50 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Inactive()
         {
-            Controller.Attack.Attacking = false;
-            if (LastMovedTime.AddSeconds(45) <= DateTime.Now || Controller.Npc.Range.Objects.Count > 0)
+            try
             {
-                newDest:
-                var dest = Vector.Random(0, 20800, 0, 12800);
-                if (Controller.Npc.Spacemap.Objects.Count(x => x.Value?.Position.DistanceTo(dest) < 1000) > 0)
+                Controller.Attack.Attacking = false;
+                if (LastMovedTime.AddSeconds(45) <= DateTime.Now || Controller.Npc.Range.Objects.Count > 0)
                 {
-                    goto newDest;
-                }
-                MovementController.Move(Controller.Npc, dest);
-                LastMovedTime = DateTime.Now;
-            }
-            if (Controller.Npc.Range.Entities.ToList().Count(x => x.Value is Player) > 0)
-            {
-                var players = Controller.Npc.Range.Entities.ToList().Where(x => x.Value is Player);
-                Player candidatePlayer = null;
-                foreach (var player in players)
-                {
-                    if (candidatePlayer == null)
+                    newDest:
+                    var dest = Vector.Random(0, 20800, 0, 12800);
+                    if (Controller.Npc.Spacemap.Objects.Count(x => x.Value?.Position.DistanceTo(dest) < 1000) > 0)
                     {
-                        var _player = (Player) player.Value;
-                        if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone)
-                            candidatePlayer = _player;
+                        goto newDest;
                     }
-                    else
-                        candidatePlayer =
-                            Controller.Npc.Position.GetCloserCharacter(candidatePlayer, player.Value) as Player;
+                    MovementController.Move(Controller.Npc, dest);
+                    LastMovedTime = DateTime.Now;
                 }
-                if (candidatePlayer != null)
+                if (Controller.Npc.Range.Entities.ToList().Count(x => x.Value is Player) > 0)
                 {
-                    Controller.Npc.Selected = candidatePlayer;
-                    candidatePlayer.AttachedNpcs.Add(Controller.Npc);
+                    var players = Controller.Npc.Range.Entities.ToList().Where(x => x.Value is Player);
+                    Player candidatePlayer = null;
+                    foreach (var player in players)
+                    {
+                        if (candidatePlayer == null)
+                        {
+                            var _player = (Player) player.Value;
+                            if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone)
+                                candidatePlayer = _player;
+                        }
+                        else
+                            candidatePlayer =
+                                Controller.Npc.Position.GetCloserCharacter(candidatePlayer, player.Value) as Player;
+                    }
+                    if (candidatePlayer != null)
+                    {
+                        Controller.Npc.Selected = candidatePlayer;
+                        candidatePlayer.AttachedNpcs.Add(Controller.Npc);
+                    }
                 }
+                if (Controller.Attack.Attacked || !Controller.Npc.Hangar.Ship.IsNeutral &&
+                    Controller.Npc.Selected != null)
+                    Active();
             }
-            if (Controller.Attack.Attacked || !Controller.Npc.Hangar.Ship.IsNeutral && Controller.Npc.Selected != null)
-                Active();
+            catch (Exception e)
+            {
+                new ExceptionLog("npc_inactive_crash", "NPC Crashed", e);
+            }
         }
 
         public void Paused()
@@ -78,31 +94,39 @@ namespace NettyBaseReloaded.Game.controllers.npc
             var target = Controller.Npc.Selected as Player;
             var npc = Controller.Npc;
 
-            if (target != null)
+            try
             {
-                if (target.State.InDemiZone)
+                if (target != null)
                 {
-                    Exit();
-                    return;
-                }
-
-                if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
-                    MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
-
-            }
-            if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1)
-            {
-                var players = Controller.Npc.Range.Entities.ToList().Where(x => x.Value is Player);
-                foreach (var player in players)
-                {
-                    if (((Player)player.Value).AttachedNpcs.Count >
-                        ((Player)Controller.Npc.Selected).AttachedNpcs.Count && player.Value.Position.DistanceTo(Controller.Npc.Position) < 500)
+                    if (target.State.InDemiZone)
                     {
                         Exit();
-                        Controller.Npc.Selected = player.Value;
-                        ((Player)player.Value).AttachedNpcs.Add(Controller.Npc);
+                        return;
+                    }
+
+                    if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
+                        MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
+
+                }
+                if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1)
+                {
+                    var players = Controller.Npc.Range.Entities.ToList().Where(x => x.Value is Player);
+                    foreach (var player in players)
+                    {
+                        if (((Player) player.Value).AttachedNpcs.Count >
+                            ((Player) Controller.Npc.Selected).AttachedNpcs.Count &&
+                            player.Value.Position.DistanceTo(Controller.Npc.Position) < 500)
+                        {
+                            Exit();
+                            Controller.Npc.Selected = player.Value;
+                            ((Player) player.Value).AttachedNpcs.Add(Controller.Npc);
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("npc_paused_crash", "", e);
             }
         }
 

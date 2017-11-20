@@ -9,6 +9,7 @@ using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.netty.packet;
+using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.global_managers;
@@ -33,8 +34,9 @@ namespace NettyBaseReloaded.Networking
 
         private void XSocketOnConnectionClosedEvent(object sender, EventArgs eventArgs)
         {         
-            //var gameSess = World.StorageManager.GetGameSession(UserId);
-            //gameSess?.Disconnect();
+            var gameSess = World.StorageManager.GetGameSession(UserId);
+            if (!gameSess.InProcessOfReconection)
+                gameSess.Disconnect(GameSession.DisconnectionType.NORMAL);
         }
 
         private void XSocketOnOnReceive(object sender, EventArgs eventArgs)

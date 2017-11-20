@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Networking;
@@ -64,6 +65,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 Attacking = false;
                 return;
             }
+
 
             if (LastLaserLoop.AddSeconds(1) > DateTime.Now) return;
             if (!Character.InRange(enemy, AttackRange))
@@ -148,6 +150,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     Character.Cooldowns.Add(newCooldown);
                 }
             }
+            else if (Character is Pet)
+            {
+                
+            }
 
             damage = RandomizeDamage(damage);
             GameClient.SendRangePacket(Character,
@@ -156,6 +162,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             GameClient.SendRangePacket(Character,
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
                     true), true);
+
             Damage(enemy, absDamage, damage, 1);
 
             enemy.Controller.Attack.Attacked = true;
@@ -261,6 +268,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (target.Controller.Dead || Character.Controller.Dead) return;
             var attackerSession = (Character is Player) ? World.StorageManager.GetGameSession(Character.Id) : null;
             var targetSession = (target is Player) ? World.StorageManager.GetGameSession(target.Id) : null;
+            var pairedSessions = new List<GameSession>();
+            if (attackerSession != null) pairedSessions.Add(attackerSession);
+            if (targetSession != null) pairedSessions.Add(targetSession);
+
+            foreach (var entry in target.Range.Entities.Where(x => x.Value.Selected == target && x.Value is Player))
+            {
+                pairedSessions.Add(World.StorageManager.GetGameSession(entry.Key));
+            }
 
             target.LastCombatTime = DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
 
@@ -339,10 +354,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 absDamage = -1;
             }
 
-            if (attackerSession != null)
-                Packet.Builder.AttackHitCommand(attackerSession, Character, target, damage + absDamage, damageEffect);
-            if (targetSession != null)
-                Packet.Builder.AttackHitCommand(targetSession, Character, target, damage + absDamage, damageEffect);
+            foreach (var session in pairedSessions)
+                Packet.Builder.AttackHitCommand(session, Character, target, damage + absDamage, damageEffect);
 
             if (target.CurrentHealth <= 0 && !target.Controller.Dead)
             {

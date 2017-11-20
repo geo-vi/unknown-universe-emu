@@ -273,7 +273,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             if (obj is IClickable)
             {
-                var active = Vector.IsInRange(Position, obj.Position, 1000);
+                var active = Vector.IsInRange(Position, obj.Position, obj.Range);
                 Packet.Builder.MapAssetActionAvailableCommand(World.StorageManager.GetGameSession(Id), obj, active);
             }
         }

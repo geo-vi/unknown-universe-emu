@@ -257,6 +257,7 @@
     <Compile Include="Game\netty\commands\old_client\NpcUndockCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\OreTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PetActivationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetDeactivationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearAddCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearSelectCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearTypeModule.cs" />
@@ -273,6 +274,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\AttackRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\CollectBoxRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\MoveRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\PetGearActivationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\SelectBatteryRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\SelectRocketRequest.cs" />
@@ -304,6 +306,7 @@
     <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\JumpRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
+    <Compile Include="Game\netty\handlers\PetGearActivationHandler.cs" />
     <Compile Include="Game\netty\handlers\PetHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipWarpWindowHandler.cs" />

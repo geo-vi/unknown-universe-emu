@@ -211,11 +211,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void ObjectChecker()
         {
-            if (!(Character is Player)) return;
+            //if (!(Character is Player)) return;
             try
             {
                 foreach (var obj in Character.Spacemap.Objects.Values.ToList())
                 {
+                    if (obj == null) continue;
                     if (Vector.IsInRange(obj.Position, Character.Position, obj.Range))
                     {
                         if (!Character.Range.Objects.ContainsKey(obj.Id))
@@ -230,8 +231,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         if (Character.Range.Objects.ContainsKey(obj.Id))
                         {
                             Character.Range.Objects.Remove(obj.Id);
-                            var player = Character as Player;
-                            player?.ClickableCheck(obj);
+                            (Character as Player)?.ClickableCheck(obj);
                         }
                     }
                 }

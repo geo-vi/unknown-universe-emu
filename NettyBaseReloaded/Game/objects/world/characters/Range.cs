@@ -17,6 +17,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public Dictionary<int, Zone> Zones = new Dictionary<int, Zone>();
         public Dictionary<int, Object> Objects = new Dictionary<int, Object>();
 
+        public Character Character { get; set; }
+
         public Character GetEntity(int id)
         {
             return Entities.ContainsKey(id) ? Entities[id] : null;
@@ -42,7 +44,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             return false;
         }
 
-        private void UpdateEntities()
+        /// <summary>
+        /// Updates the dictionary
+        /// Adds / Removes pendings
+        /// </summary>
+        private void UpdateDictionary()
         {
             if (EntitiesPendingToBeAdded.Count > 0)
             {
@@ -64,9 +70,28 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             }
         }
 
+        /// <summary>
+        /// Validates if the spacemap in range are actually on the same map
+        /// </summary>
+        public void ValidateDictionary()
+        {
+            foreach (var entity in Entities.ToList())
+            {
+                if (entity.Value?.Spacemap == null)
+                {
+                    EntitiesPendingRemoval.Add(entity.Key, entity.Value);
+                    continue;
+                }
+
+                if (entity.Value.Spacemap != Character.Spacemap) // TODO->Add Virtual Worlds
+                    Character.Controller.Checkers.Update(entity.Value);
+            }
+        }
+
         public void Tick()
         {
-            UpdateEntities();
+            UpdateDictionary();
+            ValidateDictionary();
         }
 
         public void Clear()
