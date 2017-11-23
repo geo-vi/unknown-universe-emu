@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
@@ -31,21 +32,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (target.CurrentHealth <= 0 && !target.Controller.Dead)
             {
                 target.Controller.Destruction.Kill();
+
+                if (Character is Player)
+                {
+                    var player = Character as Player;
+                    target.Hangar.Ship.Reward.ParseRewards(player);
+                }
                 if (target is Player)
                 {
-                    var pTarget = (Player)target;
-
-                    //if (pTarget.UsingNewClient)
-                    //{
-                    //    var options = new List<netty.commands.new_client.KillScreenOptionModule>
-                    //    {
-                    //        new KillscreenOption(KillscreenOption.NEAREST_BASE).Object
-                    //    };
-
-                    //    World.StorageManager.GetGameSession(target.Id)
-                    //        .Client.Send(
-                    //            KillScreenPostCommand.write(Character.Name, "", Character.Hangar.Ship.LootId, new DestructionTypeModule(DestructionTypeModule.USER), options).Bytes);
-                    //}
+                    // TODO: Send killscreen to target
                 }
             }
         }
@@ -61,13 +56,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.Selected = null;
             Controller.Dead = true;
 
-            //Remove from the spacemap
-            if (Character.Spacemap.Entities.ContainsKey(Character.Id))
-                Character.Spacemap.Entities.Remove(Character.Id);
+            Remove(Character);
+
+            if (Character is Player)
+            {
+                var player = Character as Player;
+                player.Pet?.Controller?.Deactivate();
+            }
 
             Controller.StopAll();
-
             Respawn();
+            //new Killscreen(Character as Player);
         }
 
         public void Remove(Character targetCharacter)
@@ -133,6 +132,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Controller.StopController = false;
             Controller.Attack.Attacking = false;
 
+            Character.Range.Clear();
+
             Vector newPos = null;
 
             if (Character is Npc)
@@ -164,7 +165,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 player.CurrentHealth = 1000;
 
                 if (player.Controller == null)
+                {
                     player.Controller = new PlayerController(Character);
+                }
+                player.Controller.Start();
+                player.Controller.Initiate();
 
                 var closestStation = player.GetClosestStation();
                 newPos = player.Destination = closestStation.Item1;
@@ -174,13 +179,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 player.Update();
             }
 
-            Character.SetPosition(newPos);
-
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.Entities.Add(Character.Id, Character);
 
-            Character.Range.Clear();
-            MovementController.Move(Character, MovementController.ActualPosition(Character));
+            Character.SetPosition(newPos);
         }
     }
 }

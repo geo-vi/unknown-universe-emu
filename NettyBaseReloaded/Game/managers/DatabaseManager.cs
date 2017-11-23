@@ -6,6 +6,7 @@ using MySql.Data.MySqlClient;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.ammo;
@@ -28,6 +29,7 @@ namespace NettyBaseReloaded.Game.managers
             LoadShips();
             LoadSpacemaps();
             LoadLevels();
+            LoadCollectableRewards();
         }
 
         public void SaveAll()
@@ -206,6 +208,40 @@ namespace NettyBaseReloaded.Game.managers
 
         }
 
+        public void LoadCollectableRewards()
+        {
+            try
+            {
+                using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_collectables");
+
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow row in queryTable.Rows)
+                        {
+                            var id = intConv(row["ID"]);
+                            var rewards = JsonConvert.DeserializeObject<List<Tuple<string, int>>>(row["REWARDS"].ToString());
+                            var spawn_count = intConv(row["SPAWN_COUNT"]);
+                            var pvp_spawn_count = intConv(row["PVP_SPAWN_COUNT"]);
+                            switch (id)
+                            {
+                                case 2:
+                                    BonusBox.REWARDS = rewards;
+                                    BonusBox.SPAWN_COUNT = spawn_count;
+                                    BonusBox.PVP_SPAWN_COUNT = pvp_spawn_count;
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager", "Error loading collectables", e);
+            }
+        }
+
         //"SELECT * FROM player_hangar WHERE PLAYER_ID=" + player.Id + " AND ACTIVE=1"
         public Hangar LoadHangar(Player player)
         {
@@ -334,16 +370,7 @@ namespace NettyBaseReloaded.Game.managers
                         var ship = World.StorageManager.Ships[shipId];
                         var position = new Vector(intConv(querySet["SHIP_X"]), intConv(querySet["SHIP_Y"]));
                         var mapId = intConv(querySet["SHIP_MAP_ID"]);
-                        var spacemap = World.StorageManager.Spacemaps[mapId];
-                        var currentHealth = intConv(querySet["SHIP_HP"]);
-                        var currentNanohull = intConv(querySet["SHIP_NANO"]);
-                        var hangar = new Hangar(ship, new List<Drone>(), position, spacemap, currentHealth, currentNanohull, new Dictionary<string, Item>());
-                        var factionId = (Faction) intConv(querySet["FACTION_ID"]);
                         var levelId = intConv(querySet["LVL"]);
-                        var rank = (Rank)(intConv(querySet["RANK"]));
-                        var sessionId = stringConv(querySet["SESSION_ID"]);
-                        //var clan = Global.StorageManager.Clans[0];
-                        var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
 
                         if (!World.StorageManager.Spacemaps.ContainsKey(mapId))
                         {
@@ -356,6 +383,16 @@ namespace NettyBaseReloaded.Game.managers
                             Console.WriteLine("PROBLEM -> LEVELID " + levelId + " DOESN'T EXIST!");
                             return null;
                         }
+
+                        var spacemap = World.StorageManager.Spacemaps[mapId];
+                        var currentHealth = intConv(querySet["SHIP_HP"]);
+                        var currentNanohull = intConv(querySet["SHIP_NANO"]);
+                        var hangar = new Hangar(ship, new List<Drone>(), position, spacemap, currentHealth, currentNanohull, new Dictionary<string, Item>());
+                        var factionId = (Faction) intConv(querySet["FACTION_ID"]);
+                        var rank = (Rank)(intConv(querySet["RANK"]));
+                        var sessionId = stringConv(querySet["SESSION_ID"]);
+                        //var clan = Global.StorageManager.Clans[0];
+                        var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
 
                         querySet.Dispose();
                         player = new Player(playerId, name, clan, hangar,currentHealth,currentNanohull, factionId, position, spacemap, null, null, sessionId, rank, false);
@@ -384,7 +421,17 @@ namespace NettyBaseReloaded.Game.managers
                     ammoDictionary.Add("ammunition_laser_mcb-50", new Ammunition(player, "ammunition_laser_mcb-50", intConv(queryRow["MCB_50"])));
                     ammoDictionary.Add("ammunition_laser_ucb-100", new Ammunition(player, "ammunition_laser_ucb-100", intConv(queryRow["UCB_100"])));
                     ammoDictionary.Add("ammunition_laser_sab-50", new Ammunition(player, "ammunition_laser_sab-50", intConv(queryRow["SAB_50"])));
+                    ammoDictionary.Add("ammunition_laser_cbo-100", new Ammunition(player, "ammunition_laser_rsb-75", intConv(queryRow["RSB_75"])));
+                    ammoDictionary.Add("ammunition_laser_rsb-75", new Ammunition(player, "ammunition_laser_cbo-100", intConv(queryRow["CBO_100"])));
+                    ammoDictionary.Add("ammunition_laser_job-100", new Ammunition(player, "ammunition_laser_job-100", intConv(queryRow["JOB_100"])));
                     ammoDictionary.Add("ammunition_rocket_r-310", new Ammunition(player, "ammunition_rocket_r-310", intConv(queryRow["R_310"])));
+                    ammoDictionary.Add("ammunition_rocket_plt-2026", new Ammunition(player, "ammunition_rocket_plt-2026", intConv(queryRow["PLT_2026"])));
+                    ammoDictionary.Add("ammunition_rocket_plt-2021", new Ammunition(player, "ammunition_rocket_plt-2021", intConv(queryRow["PLT_2021"])));
+                    ammoDictionary.Add("ammunition_rocket_plt-3030", new Ammunition(player, "ammunition_rocket_plt-3030", intConv(queryRow["PLT_3030"])));
+                    ammoDictionary.Add("ammunition_specialammo_pld-8", new Ammunition(player, "ammunition_specialammo_pld-8", intConv(queryRow["PLD_8"])));
+                    ammoDictionary.Add("ammunition_specialammo_dcr-250", new Ammunition(player, "ammunition_specialammo_dcr-250", intConv(queryRow["DCR_250"])));
+                    ammoDictionary.Add("ammunition_specialammo_wiz-x", new Ammunition(player, "ammunition_specialammo_wiz-x", intConv(queryRow["WIZ_X"])));
+                    ammoDictionary.Add("ammunition_rocket_bdr-1211", new Ammunition(player, "ammunition_rocket_bdr-1211", intConv(queryRow["BDR_1211"])));
                 }
             }
             catch (Exception e)
@@ -471,6 +518,62 @@ namespace NettyBaseReloaded.Game.managers
 
             }
             return 0;
+        }
+
+        public void UpdateInfo(Player player, BaseInfo baseInfo, long amount_change)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var getName = baseInfo.GetType().Name?.ToUpper();
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_data SET {getName}={getName}+{amount_change} WHERE PLAYER_ID={player.Id}");
+                    baseInfo.SyncedValue = baseInfo.SyncedValue + amount_change;
+                    baseInfo.LastTimeSynced = DateTime.Now;
+                }
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+
+        public void UpdateInfo(Player player, string row, long amount_change)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery(
+                        $"UPDATE player_data SET {row}={row}+{amount_change} WHERE PLAYER_ID={player.Id}");
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        public int UpdateAmmo(Ammunition ammunition, int ammo_change)
+        {
+            try
+            {
+                var row = Converter.AmmoToDbString(ammunition.LootId);
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery(
+                        $"UPDATE player_ammo SET {row}={row}-{ammo_change} WHERE PLAYER_ID={ammunition.Player.Id}");
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT " + row + " FROM player_ammo WHERE PLAYER_ID=" + ammunition.Player.Id);
+                    return intConv(queryRow[row]);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+            return -1;
         }
 
         public void SavePlayer(Player player)

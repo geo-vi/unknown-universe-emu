@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -7,10 +8,12 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Properties;
 using NettyBaseReloaded.Utils;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded
 {
@@ -48,11 +51,60 @@ namespace NettyBaseReloaded
 
             Draw.Logo();
 
+            //RewardBuilder();
             InitiateSession();
             //ConsoleUpdater();
             ConsoleCommands.Add();
             KeepAlive();
             
+        }
+
+        public static void RewardBuilder()
+        {
+            Console.WriteLine("Entered reward builder mode..");
+            Console.WriteLine("Start adding items");
+            var itemDictionary = new List<Tuple<string, int>>(); // lootid - amount
+            while (true)
+            {
+                var l = Console.ReadLine();
+                if (l != "")
+                {
+                    // ADD ITEM
+                    var itemId = l;
+                    int amount = 0;
+                    if (l.Contains(' ') && int.TryParse(l.Split(' ')[1], out amount))
+                    {
+                        itemId = l.Split(' ')[0];
+                    }
+                    else amount = int.Parse(Console.ReadLine());
+                    Console.WriteLine("ItemId: " + itemId);
+                    Console.WriteLine("Amount: " + amount);
+                    Console.WriteLine("Add?");
+                    var readKey = Console.ReadKey();
+                    if (readKey.Key == ConsoleKey.Enter)
+                    {
+                        itemDictionary.Add(new Tuple<string, int>(itemId, amount));
+                        Console.WriteLine("Added item to dictionary");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Finished?");
+                    var readKey = Console.ReadKey();
+                    if (readKey.Key == ConsoleKey.Enter)
+                    {
+                        var result = JsonConvert.SerializeObject(itemDictionary);
+                        Console.WriteLine("Result:\n" + result);
+                        Console.WriteLine("Copy to clipboard?");
+                        readKey = Console.ReadKey();
+                        if (readKey.Key == ConsoleKey.Enter)
+                        {
+                            Clipboard.SetText(result);
+                        }
+                        Environment.Exit(0);
+                    }
+                }
+            }
         }
 
         /// <summary>

@@ -21,11 +21,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public abstract void Refresh();
 
-        public abstract void Add(int amount);
+        public abstract void Add(long amount);
 
-        public abstract void Remove(int amount);
+        public abstract void Remove(long amount);
 
-        public abstract void Set(int value);
+        public abstract void Set(long value);
 
         public long Get()
         {

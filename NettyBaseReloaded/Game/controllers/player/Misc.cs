@@ -39,7 +39,6 @@ namespace NettyBaseReloaded.Game.controllers.player
         {
             var player = (Player)baseController.Player;
 
-            //Console.WriteLine(itemId);
             if (player.Settings.Slotbar._items.ContainsKey(itemId))
             {
                 var item = player.Settings.Slotbar._items[itemId];

@@ -49,5 +49,12 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
             Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
         }
+
+        public void LevelUp(Level targetLevel)
+        {
+            var amountChange = targetLevel.Id - Level.Id;
+            Level = targetLevel;
+            World.DatabaseManager.UpdateInfo(Player, "LVL", amountChange);
+        }
     }
 }

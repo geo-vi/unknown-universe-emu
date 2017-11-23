@@ -36,6 +36,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Pet.Gears.Add(new Passive(this));
             Pet.Gears.Add(new Guard(this));
+            Pet.Gears.Add(new AutoLoot(this));
             Gear = Pet.Gears[0];
             var owner = Pet.GetOwner();
             var gameSession = World.StorageManager.GetGameSession(owner.Id);
@@ -49,6 +50,7 @@ namespace NettyBaseReloaded.Game.controllers
         public void Exit()
         {
             StopAll();
+            Pet.Gears.Clear();
         }
 
         public new void Tick()
@@ -95,11 +97,9 @@ namespace NettyBaseReloaded.Game.controllers
         public void SwitchGear(short gearType, int optParam)
         {
             var gearIndex = Pet.Gears.FindIndex(x => (short) x.Type == gearType);
-            if (gearIndex != 0)
-            {
-                Gear = Pet.Gears[gearIndex];
-                Gear.Activate();
-            }
+            Gear = Pet.Gears[gearIndex];
+            Gear.Activate();
+
         }
     }
 }

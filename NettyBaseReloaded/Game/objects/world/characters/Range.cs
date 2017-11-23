@@ -50,23 +50,30 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         /// </summary>
         private void UpdateDictionary()
         {
-            if (EntitiesPendingToBeAdded.Count > 0)
+            try
             {
-                foreach (var entity in EntitiesPendingToBeAdded.ToList())
+                if (EntitiesPendingToBeAdded.Count > 0)
                 {
-                    if (!Entities.ContainsKey(entity.Key))
-                        Entities.Add(entity.Key, entity.Value);
+                    foreach (var entity in EntitiesPendingToBeAdded.ToList())
+                    {
+                        if (!Entities.ContainsKey(entity.Key))
+                            Entities.Add(entity.Key, entity.Value);
+                    }
+                    EntitiesPendingToBeAdded.Clear();
                 }
-                EntitiesPendingToBeAdded.Clear();
+                if (EntitiesPendingRemoval.Count > 0)
+                {
+                    foreach (var entity in EntitiesPendingRemoval.ToList())
+                    {
+                        if (Entities.ContainsKey(entity.Key))
+                            Entities.Remove(entity.Key);
+                    }
+                    EntitiesPendingRemoval.Clear();
+                }
             }
-            if (EntitiesPendingRemoval.Count > 0)
+            catch (Exception e)
             {
-                foreach (var entity in EntitiesPendingRemoval.ToList())
-                {
-                    if (Entities.ContainsKey(entity.Key))
-                        Entities.Remove(entity.Key);
-                }
-                EntitiesPendingRemoval.Clear();
+                new ExceptionLog("range_update", "Failed updating dictionaries", e);
             }
         }
 

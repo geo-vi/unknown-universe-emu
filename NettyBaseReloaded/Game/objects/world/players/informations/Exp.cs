@@ -16,24 +16,22 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
         public override void Refresh()
         {
             World.DatabaseManager.LoadInfo(Player, this);
-            if (SyncedValue != Value)
-            {
-                Value = SyncedValue + Value;
-            }
-            else Value = SyncedValue;
+            Value = SyncedValue;
         }
 
-        public override void Add(int amount)
+        public override void Add(long amount)
         {
-            throw new NotImplementedException();
+            World.DatabaseManager.UpdateInfo(Player, this, amount);
+            Value = SyncedValue;
         }
 
-        public override void Remove(int amount)
+        public override void Remove(long amount)
         {
-            throw new NotImplementedException();
+            World.DatabaseManager.UpdateInfo(Player, this, -amount);
+            Value = SyncedValue;
         }
 
-        public override void Set(int value)
+        public override void Set(long value)
         {
             throw new NotImplementedException();
         }

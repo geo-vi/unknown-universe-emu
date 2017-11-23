@@ -256,6 +256,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public new void Tick()
         {
             // TODO -> Added ticked processes
+            LevelChecker();
         }
         
         private void InitializeClasses()
@@ -367,6 +368,33 @@ namespace NettyBaseReloaded.Game.objects.world
             }
             LogMessages.Add(new LogMessage(logMsg));
             Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|STM|" + logMsg + "");
+        }
+
+        public void LevelChecker()
+        {
+            if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(Information.Level.Id + 1))
+                return;
+
+            foreach (var level in World.StorageManager.Levels.PlayerLevels)
+            {
+                if (Information.Experience.Get() > level.Value.Experience && level.Key > Information.Level.Id)
+                    LevelUp();
+            }
+        }
+
+        public void LevelUp()
+        {
+            if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(Information.Level.Id + 1))
+                return;
+            var lvl = World.StorageManager.Levels.PlayerLevels[Information.Level.Id + 1];
+            if (Information.Experience.Get() < lvl.Experience)
+                Information.Experience.Add(lvl.Experience - Information.Experience.Get() + 1);
+
+            Information.LevelUp(lvl);
+            var gameSession = World.StorageManager.GetGameSession(Id);
+            //Packet.Builder.LegacyModule(gameSession, "0|A|LUP|" + Information.Level.Id + "|" + World.StorageManager.Levels.PlayerLevels[Information.Level.Id + 1].Experience);
+            Packet.Builder.LevelUpCommand(gameSession);
+            Refresh();
         }
     }
 }

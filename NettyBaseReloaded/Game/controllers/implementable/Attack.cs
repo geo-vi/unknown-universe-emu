@@ -89,6 +89,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     Packet.Builder.LegacyModule(gameSession, "0|A|STM|no_lasers_on_board");
                     return;
                 }
+                if (gameSession.Player.Settings.CurrentAmmo.Shoot() == 0)
+                {
+                    // NOTHING TO SHOOT
+                    Packet.Builder.LegacyModule(gameSession, "0|A|STD|No more ammo (todo: find a proper STM message)");
+                    Attacking = false;
+                    return;
+                }
 
                 var pEnemy = enemy as Player;
                 if (pEnemy != null)
@@ -177,14 +184,27 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (enemy == null)
                 return;
 
+            var player = Character as Player;
+            GameSession gameSession = null;
+            if (player != null) gameSession = World.StorageManager.GetGameSession(player.Id);
             if (!Character.InRange(enemy, AttackRange))
             {
-                var pCharacter = Character as Player;
-                if (pCharacter != null && LastMissleLoop.AddSeconds(1) < DateTime.Now)
+                if (player != null)
                 {
-                    var gameSession = World.StorageManager.GetGameSession(pCharacter.Id);
-                    Packet.Builder.LegacyModule(gameSession, "0|A|STM|outofrange");
+                    if (LastMissleLoop.AddSeconds(1) < DateTime.Now)
+                    {
+                        Packet.Builder.LegacyModule(gameSession, "0|A|STM|outofrange");
+                    }
                 }
+                return;
+            }
+
+            if (player?.Settings.CurrentRocket.Shoot() == 0)
+            {
+                // NOTHING TO SHOOT
+                Packet.Builder.LegacyModule(gameSession,
+                    "0|A|STD|No more ammo (todo: find a proper STM message)");
+                Attacking = false;
                 return;
             }
 
@@ -220,7 +240,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Character.Cooldowns.Exists(cooldown => cooldown is RocketCooldown)) return;
 
             var newCooldown = new RocketCooldown();
-            var player = Character as Player;
             if (player != null) newCooldown.Send(World.StorageManager.GetGameSession(player.Id));
             Character.Cooldowns.Add(newCooldown);
 

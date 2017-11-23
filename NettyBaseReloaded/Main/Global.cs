@@ -26,6 +26,7 @@ namespace NettyBaseReloaded.Main
             InitiatePolicy();
             InitiateChat();
             InitiateGame();
+            InitiateRandomResetTimer();
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
             TickManager.Tick();
@@ -61,6 +62,11 @@ namespace NettyBaseReloaded.Main
 
             Out.WriteLine("Game-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("Game-Server started.");
+        }
+
+        static void InitiateRandomResetTimer()
+        {
+            TickManager.Add(new Random());
         }
 
         public static void SaveAll()

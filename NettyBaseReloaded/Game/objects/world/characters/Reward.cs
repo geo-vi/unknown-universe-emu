@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects.world.players.ammo;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
+using NettyBaseReloaded.Game.objects.world.players.settings;
 
 namespace NettyBaseReloaded.Game.objects.world.characters
 {
@@ -73,7 +75,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 case RewardType.CREDITS:
                     amount = RewardMultiplyer(type, amount, player);
                     player.Information.Credits.Add(amount);
-                    Console.WriteLine("0|LM|ST|CRE|" + amount + "|" + player.Information.Credits.Get());
                     Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
                         "0|LM|ST|CRE|" + amount + "|" + player.Information.Credits.Get());
                     break;
@@ -100,8 +101,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 case RewardType.GALAXY_GATES_ENERGY:
                     amount = RewardMultiplyer(type, amount, player);
                     break;
-                case RewardType.AMMO:
-                    break;
                 case RewardType.BOOSTER:
                     // amount => hours
                     break;
@@ -120,7 +119,28 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public void RewardPlayer(Player player, RewardType type, Item item, int amount)
         {
-
+            switch (type)
+            {
+                case RewardType.AMMO:
+                    // BAT / ROK
+                    if (item.LootId.Contains("ammunition_laser"))
+                    {
+                        amount = RewardMultiplyer(type, amount, player);
+                        player.Information.Ammunitions[item.LootId].Add(amount);
+                        Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                            "0|LM|ST|BAT|" + Converter.GetLootAmmoId(item.LootId) + "|" + amount);
+                    }
+                    else if (item.LootId.Contains("ammunition_rocket"))
+                    {
+                        amount = RewardMultiplyer(type, amount, player);
+                        player.Information.Ammunitions[item.LootId].Add(amount);
+                        Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                            "0|LM|ST|ROK|" + Converter.GetLootAmmoId(item.LootId) + "|" + amount);
+                    }
+                    break;
+                case RewardType.ITEM:
+                    break;
+            }
         }
     }
 }

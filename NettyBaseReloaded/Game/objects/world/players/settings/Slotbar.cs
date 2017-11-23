@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             {
                 "ammunition_rocket_r-310", "ammunition_rocket_plt-2026", "ammunition_rocket_plt-2021",
                 "ammunition_rocket_plt-3030", "ammunition_specialammo_pld-8", "ammunition_specialammo_dcr-250",
-                "ammunition_specialammo_wiz-x", "ammunition_rocket_bdr-1211", "ammunition_rocket_bdr-1212"
+                "ammunition_specialammo_wiz-x", "ammunition_rocket_bdr-1211"
             };
 
             public static string[] RocketLauncherIds =

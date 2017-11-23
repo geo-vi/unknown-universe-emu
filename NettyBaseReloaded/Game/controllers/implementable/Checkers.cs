@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
@@ -28,6 +30,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             CharacterChecker();
             ZoneChecker();
             ObjectChecker();
+            CollectableChecker();
         }
 
         public override void Stop()
@@ -240,6 +243,40 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 if (Character.Position == null || Character.Spacemap == null) return;
                 new ExceptionLog("checkers", "Object Checker", e);
+                //Error in checkers->Disconnecting player
+                World.StorageManager.GetGameSession(Character.Id).Disconnect(GameSession.DisconnectionType.ERROR);
+            }
+        }
+
+        private void CollectableChecker()
+        {
+            try
+            {
+                foreach (Collectable collectable in Character.Spacemap.HashedObjects.Values.ToList())
+                {
+                    if (collectable == null) continue;
+                    if (Vector.IsInRange(collectable.Position, Character.Position, collectable.Range))
+                    {
+                        if (!Character.Range.Collectables.ContainsKey(collectable.Hash))
+                        {
+                            Character.Range.Collectables.Add(collectable.Hash, collectable);
+                        }
+                    }
+                    else
+                    {
+                        if (Character.Range.Collectables.ContainsKey(collectable.Hash))
+                        {
+                            Character.Range.Collectables.Remove(collectable.Hash);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                if (Character.Position == null || Character.Spacemap == null) return;
+                new ExceptionLog("checkers", "Collectable Checker", e);
+                //Error in checkers->Disconnecting player
+                World.StorageManager.GetGameSession(Character.Id).Disconnect(GameSession.DisconnectionType.ERROR);
             }
         }
     }

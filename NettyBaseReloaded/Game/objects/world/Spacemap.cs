@@ -48,8 +48,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Dictionary<string, Object> HashedObjects = new Dictionary<string, Object>();
 
-        public Dictionary<string, Collectable> Collectables = new Dictionary<string, Collectable>();
-
         public Dictionary<string, POI> POIs = new Dictionary<string, POI>();
 
         //Used to store all the entities of the map

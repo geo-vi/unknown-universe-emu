@@ -58,7 +58,8 @@ namespace NettyBaseReloaded.Game.objects
         {
             Player.Pet?.Controller?.Deactivate();
             Player.Controller.Exit();
-            Player.Spacemap.Entities.Remove(Player.Id);
+            Player.Controller.Destruction.Remove(Player);
+            //Player.Spacemap.Entities.Remove(Player.Id);
             //Player.Spacemap = null; // Moves out of Spacemap
             //Player.Position = null; // Position goes to null
             Player.Storage.Clean(); // Cleans storage of Objects & so on

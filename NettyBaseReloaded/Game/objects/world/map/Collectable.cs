@@ -22,13 +22,19 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Position = pos;
         }
 
-        public abstract void Reward();
+        public abstract void Collect(Player player);
+
+        protected abstract void Reward(Player player);
 
         public abstract void Dispose(Spacemap map);
 
         protected void Respawn(Spacemap map)
         {
 
+        }
+
+        public override void execute(Character character)
+        {
         }
     }
 }

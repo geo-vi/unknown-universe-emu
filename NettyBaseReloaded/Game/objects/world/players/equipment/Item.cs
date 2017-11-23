@@ -20,5 +20,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             LootId = lootId;
             Amount = amount;
         }
+
+        public Item(string lootId, int amount)
+        {
+            Id = -1;
+            LootId = lootId;
+            Amount = amount;
+        }
     }
 }

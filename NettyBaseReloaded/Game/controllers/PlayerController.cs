@@ -68,7 +68,8 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Start()
         {
-            AddClasses();    
+            if (CheckedClasses.Count == 0)
+                AddClasses();    
         }
 
         public new void Tick()
