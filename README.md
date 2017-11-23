@@ -10,7 +10,7 @@
 #### Branch state:
 * **(master)** Beta 1.0 _STABLE_
 * **(dev)** Beta 1.1 _UNSTABLE_
-* **(dev_reconstruction)** Beta 2.0 _UNSTABLE_
+* **(dev_reconstruction)** Beta 2.1 _STABLE_ 
  
 ##### Coding syntax
  I've simplifed absolutely everything as much as possible and most of the server is dynamic.
