@@ -32,7 +32,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             var player = GameSession.Player;
             if (!player.Spacemap.Entities.ContainsKey(player.Id))
             {
-                player.Spacemap.Entities.Add(player.Id, player);
+                player.Spacemap.AddEntity(player);
             }
             else { Out.WriteLine("Player #" + player.Id + " already exists on the Spacemap (LoginController)", "ERROR", ConsoleColor.Red); }
 

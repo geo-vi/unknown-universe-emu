@@ -76,7 +76,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             try
             {
-                foreach (var _class in CheckedClasses)
+                foreach (var _class in CheckedClasses.ToList())
                 {
                     _class.Check();
                 }
@@ -91,6 +91,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Active = false;
             StopController = true;
+            Checkers.Stop();
             CheckedClasses.Clear();
         }
     }

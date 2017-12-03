@@ -33,7 +33,7 @@ namespace NettyBaseReloaded.Networking
         }
 
         private void XSocketOnConnectionClosedEvent(object sender, EventArgs eventArgs)
-        {         
+        {
             var gameSess = World.StorageManager.GetGameSession(UserId); // TODO: Fix regular connection drop - player still stays in range even after disconnection
             if (!gameSess.InProcessOfReconection)
                 gameSess.Disconnect(GameSession.DisconnectionType.NORMAL);
@@ -57,7 +57,7 @@ namespace NettyBaseReloaded.Networking
                 var gameSession = World.StorageManager.GetGameSession(UserId);
                 if (gameSession != null)
                 {
-                    if (gameSession.InProcessOfReconection) return;
+                    if (gameSession.InProcessOfReconection || gameSession.InProcessOfDisconnection) return;
                     if (gameSession.Player.Controller != null)
                         gameSession.LastActiveTime = DateTime.Now;
                 }
@@ -66,7 +66,7 @@ namespace NettyBaseReloaded.Networking
             }
             catch (Exception e)
             {
-                new ExceptionLog("socket", "Unable to send packet / Connected?", e);
+                //new ExceptionLog("socket", "Unable to send packet / Connected?", e);
             }
         }
         public void Send(string packet)
@@ -79,7 +79,7 @@ namespace NettyBaseReloaded.Networking
             if (character == null) return;
             try
             {
-                foreach (var entry in character.Spacemap.Entities.ToList())
+                foreach (var entry in character.Spacemap.Entities)
                 {
                     var entity = entry.Value as Player;
 
@@ -114,7 +114,7 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                foreach (var entry in character.Spacemap.Entities.ToList())
+                foreach (var entry in character.Spacemap.Entities)
                 {
                     var entity = entry.Value;
 
@@ -140,10 +140,10 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                foreach (var entry in spacemap.Entities.ToList())
+                foreach (var entry in spacemap.Entities)
                 {
                     var entity = entry.Value as Player;
-                    if (entity != null)
+                    if (entity != null && (entity.Spacemap != null || entity.Position != null))
                     {
                         if (entity.UsingNewClient && command.IsNewClient)
                         {
@@ -163,6 +163,7 @@ namespace NettyBaseReloaded.Networking
 
             }
         }
+
 
         public void Disconnect()
         {

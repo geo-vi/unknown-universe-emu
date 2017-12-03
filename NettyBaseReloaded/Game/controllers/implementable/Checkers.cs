@@ -30,7 +30,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             CharacterChecker();
             ZoneChecker();
             ObjectChecker();
-            CollectableChecker();
         }
 
         public override void Stop()
@@ -122,10 +121,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             try
             {
-                foreach (var entry in Character.Spacemap.Entities.ToList())
+                foreach (var entry in Character.Spacemap.Entities)
                 {
                     var entity = entry.Value;
-                    if (entity.Position == null || entity.Spacemap == null)
+                    if (entity.Position == null || entity.Spacemap != Character.Spacemap)
                     {
                         RemoveCharacter(entity, Character);
                         continue;
@@ -135,6 +134,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                     if (entity is Pet)
                         if (((Pet) entity).GetOwner().Id == Character.Id)
+                            continue;
+                    if (Character is Pet)
+                        if (entity == ((Pet) Character).GetOwner())
                             continue;
 
                     if (GetForSelection(entity))
@@ -161,11 +163,24 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         RemoveCharacter(Character, entity);
                     }
                 }
+                if (Character.Range.Entities.Count != Character.Spacemap.Entities.Count)
+                {
+                    var diff = Character.Range.Entities.Except(Character.Spacemap.Entities).Concat(Character.Spacemap.Entities.Except(Character.Range.Entities));
+                    foreach (var playerDifferance in diff)
+                    {
+                        if (playerDifferance.Value == null) continue;
+                        if (playerDifferance.Value.Spacemap != Character.Spacemap ||
+                            playerDifferance.Value.Position == null)
+                        {
+                            RemoveCharacter(playerDifferance.Value, Character);
+                        }
+                    }
+                }
             }
             catch (Exception)
             {
-                if (Character.Position == null || Character.Spacemap == null)
-                     Stop();
+                //if (Character.Position == null || Character.Spacemap == null)
+                //     Stop();
             }
         }
 
@@ -217,14 +232,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             //if (!(Character is Player)) return;
             try
             {
-                foreach (var obj in Character.Spacemap.Objects.Values.ToList())
+                foreach (var obj in Character.Spacemap.Objects.Values)
                 {
                     if (obj == null) continue;
                     if (Vector.IsInRange(obj.Position, Character.Position, obj.Range))
                     {
                         if (!Character.Range.Objects.ContainsKey(obj.Id))
                         {
-                            Character.Range.Objects.Add(obj.Id, obj);
+                            Character.Range.AddObject(obj);
                             obj.execute(Character);
                             (Character as Player)?.ClickableCheck(obj);
                         }
@@ -233,8 +248,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     {
                         if (Character.Range.Objects.ContainsKey(obj.Id))
                         {
-                            Character.Range.Objects.Remove(obj.Id);
+                            Character.Range.RemoveObject(obj);
                             (Character as Player)?.ClickableCheck(obj);
+                        }
+                    }
+                }
+                if (Character.Range.Objects.Count != Character.Spacemap.Objects.Count)
+                {
+                    var diff = Character.Range.Objects.Except(Character.Spacemap.Objects).Concat(Character.Spacemap.Objects.Except(Character.Range.Objects));
+                    foreach (var objDiff in diff)
+                    {
+                        if (objDiff.Value == null) continue;
+                        if (objDiff.Value.Position == null)
+                        {
+                            Character.Range.RemoveObject(objDiff.Value);
+                            (Character as Player)?.ClickableCheck(objDiff.Value);
                         }
                     }
                 }
@@ -243,38 +271,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 if (Character.Position == null || Character.Spacemap == null) return;
                 new ExceptionLog("checkers", "Object Checker", e);
-                //Error in checkers->Disconnecting player
-                World.StorageManager.GetGameSession(Character.Id).Disconnect(GameSession.DisconnectionType.ERROR);
-            }
-        }
-
-        private void CollectableChecker()
-        {
-            try
-            {
-                foreach (Collectable collectable in Character.Spacemap.HashedObjects.Values.ToList())
-                {
-                    if (collectable == null) continue;
-                    if (Vector.IsInRange(collectable.Position, Character.Position, collectable.Range))
-                    {
-                        if (!Character.Range.Collectables.ContainsKey(collectable.Hash))
-                        {
-                            Character.Range.Collectables.Add(collectable.Hash, collectable);
-                        }
-                    }
-                    else
-                    {
-                        if (Character.Range.Collectables.ContainsKey(collectable.Hash))
-                        {
-                            Character.Range.Collectables.Remove(collectable.Hash);
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                if (Character.Position == null || Character.Spacemap == null) return;
-                new ExceptionLog("checkers", "Collectable Checker", e);
                 //Error in checkers->Disconnecting player
                 World.StorageManager.GetGameSession(Character.Id).Disconnect(GameSession.DisconnectionType.ERROR);
             }

@@ -11,6 +11,28 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client
     {
         public const short ID = 11343;
 
+        public QualitySettingsModule QualitySettingsModule { get; set; }
+        public DisplaySettingsModule DisplaySettingsModule { get; set; }
+        public AudioSettingsModule AudioSettingsModule { get; set; }
+        public WindowSettingsModule WindowSettingsModule { get; set; }
+        public GameplaySettingsModule GameplaySettingsModule { get; set; }
+
+        public UserSettingsCommand(QualitySettingsModule qualitySettingsModule, DisplaySettingsModule displaySettingsModule, AudioSettingsModule audioSettingsModule,
+            WindowSettingsModule windowSettingsModule, GameplaySettingsModule gameplaySettingsModule)
+        {
+            QualitySettingsModule = qualitySettingsModule;
+            DisplaySettingsModule = displaySettingsModule;
+            AudioSettingsModule = audioSettingsModule;
+            WindowSettingsModule = windowSettingsModule;
+            GameplaySettingsModule = gameplaySettingsModule;
+        }
+
+        public Command write()
+        {
+            return write(QualitySettingsModule, DisplaySettingsModule, AudioSettingsModule, WindowSettingsModule,
+                GameplaySettingsModule);
+        }
+
         public static Command write(QualitySettingsModule qualitySettingsModule, DisplaySettingsModule displaySettingsModule, AudioSettingsModule audioSettingsModule,
             WindowSettingsModule windowSettingsModule, GameplaySettingsModule gameplaySettingsModule)
         {

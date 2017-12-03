@@ -22,16 +22,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         {
             GameClient.SendToSpacemap(map, netty.commands.new_client.DisposeBoxCommand.write(Hash, true));
             GameClient.SendToSpacemap(map, netty.commands.old_client.LegacyModule.write("0|2|" + Hash));
-            map.Objects.Remove(Id);
-
+            map.RemoveObject(this);
+            Disposed = true;
             if (Respawning)
                 Respawn(map);
-        }
-
-        public override void Collect(Player player)
-        {
-            Dispose(player.Spacemap);
-            Reward(player);
         }
 
         protected override void Reward(Player player)
@@ -51,7 +45,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
             {
                if (lootId.Contains("ammunition"))
                     type = RewardType.AMMO;
-               reward = new Reward(type, new Item(lootId, amount), amount);
+               reward = new Reward(type, new Item(-1, lootId, amount), amount);
             }
             reward.ParseRewards(player);
         }

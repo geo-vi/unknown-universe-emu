@@ -12,6 +12,7 @@ using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.ammo;
+using NettyBaseReloaded.Game.objects.world.players.extra;
 using NettyBaseReloaded.Game.objects.world.players.settings;
 using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
@@ -34,7 +35,8 @@ namespace NettyBaseReloaded.Game.netty.packet
                 var z9 = new commands.new_client.QuestSettingsModule(false, true, true, false, false, false);
                 var ds = new commands.new_client.DisplaySettingsModule(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, 3, 4, 4, 3, 3, 4, 3, 3, true, true, true, true);
 
-                gameSession.Client.Send(commands.new_client.UserSettingsCommand.write(qs, asm, ws, gm, z9, ds).Bytes);
+                //TODO: Integrate it into the Settings 
+                //gameSession.Client.Send(commands.new_client.UserSettingsCommand.write(qs, asm, ws, gm, z9, ds).Bytes);
             }
             else
             {
@@ -47,7 +49,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 var gm = new commands.old_client.GameplaySettingsModule(false, true, true, true, true, true, true, true);
                 var ds = new commands.old_client.DisplaySettingsModule(false, true, true, true, true, true, false, true, true, true, true, true, true, true, true, true);
 
-                gameSession.Client.Send(commands.old_client.UserSettingsCommand.write(qs, ds, asm, ws, gm).Bytes);
+                gameSession.Client.Send(player.Settings.OldClientUserSettingsCommand.write().Bytes);
             }
         }
         #endregion
@@ -979,5 +981,38 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
         #endregion
 
+        #region AttributeBoosterUpdateCommand
+
+        public void AttributeBoosterUpdateCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                try
+                {
+                    var boostList = new List<commands.old_client.BoosterUpdateModule>();
+                    if (gameSession.Player.BoostedDamage > 0)
+                        boostList.Add(new commands.old_client.BoosterUpdateModule(
+                            new commands.old_client.BoostedAttributeTypeModule((short) Booster.Types.DAMAGE),
+                            Convert.ToSingle(gameSession.Player.BoostedDamage * 100),
+                            new List<commands.old_client.BoosterTypeModule>()));
+                    var pBoosterList = gameSession.Player.Boosters.Concat(gameSession.Player.InheritedBoosters.Values);
+                    foreach (var booster in pBoosterList)
+                    {
+                        boostList.Find(x => x.attributeType.typeValue == (short) booster.Type).boosterTypes
+                            .Add(new commands.old_client.BoosterTypeModule((short) booster.BoosterType));
+                    }
+                    gameSession.Client.Send(commands.old_client.AttributeBoosterUpdateCommand.write(boostList).Bytes);
+                }
+                catch (Exception)
+                {
+                    //TODO: FIX
+                }
+            }
+        }
+#endregion
     }
 }

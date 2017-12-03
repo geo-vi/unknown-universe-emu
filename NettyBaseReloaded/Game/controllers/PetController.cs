@@ -50,15 +50,14 @@ namespace NettyBaseReloaded.Game.controllers
         public void Exit()
         {
             StopAll();
+            Checkers.Stop();
             Pet.Gears.Clear();
+            Gear = null;
         }
 
         public new void Tick()
         {
-            foreach (var gear in Pet.Gears)
-            {
-                gear.Check();
-            }
+            Gear.Check();
         }
 
         public void Activate()
@@ -67,7 +66,7 @@ namespace NettyBaseReloaded.Game.controllers
             Pet.Spacemap = Pet.GetOwner().Spacemap;
 
             if (!Pet.Spacemap.Entities.ContainsKey(Pet.Id))
-                Pet.Spacemap.Entities.Add(Pet.Id, Pet);
+                Pet.Spacemap.AddEntity(Pet);
 
             if (!Pet.GetOwner().Range.Entities.ContainsKey(Pet.Id))
                 Pet.GetOwner().Range.AddEntity(Pet);
@@ -84,9 +83,7 @@ namespace NettyBaseReloaded.Game.controllers
             var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             Packet.Builder.PetDeactivationCommand(ownerSession, Pet);
             Exit();
-            Pet.Spacemap = null;
-            Pet.Position = null;
-            Pet.GetOwner().Spacemap.Entities.Remove(Pet.Id);
+            Destruction.Remove(Pet);
         }
 
         public void Repair()

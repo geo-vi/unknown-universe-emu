@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Main.commands
                 switch (whomst)
                 {
                     case "npcs":
-                        foreach (var entity in World.StorageManager.Spacemaps[targetId].Entities.ToList())
+                        foreach (var entity in World.StorageManager.Spacemaps[targetId].Entities)
                         {
                             if (entity.Value is Npc)
                                 entity.Value.Controller.Destruction.Kill();

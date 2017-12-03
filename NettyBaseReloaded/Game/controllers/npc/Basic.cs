@@ -57,12 +57,13 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     MovementController.Move(Controller.Npc, dest);
                     LastMovedTime = DateTime.Now;
                 }
-                if (Controller.Npc.Range.Entities.ToList().Count(x => x.Value is Player) > 0)
+                if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 0)
                 {
-                    var players = Controller.Npc.Range.Entities.ToList().Where(x => x.Value is Player);
+                    var players = Controller.Npc.Range.Entities.Where(x => x.Value is Player);
                     Player candidatePlayer = null;
                     foreach (var player in players)
                     {
+                        if (player.Value == null || player.Value.Controller.Dead) continue;
                         if (candidatePlayer == null)
                         {
                             var _player = (Player) player.Value;
@@ -96,9 +97,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
             try
             {
-                if (target != null)
+                if (target?.Position != null && target.Spacemap != null)
                 {
-                    if (target.State.InDemiZone)
+                    if (target.State.InDemiZone || target.Controller.Dead)
                     {
                         Exit();
                         return;
@@ -110,9 +111,10 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 }
                 if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1)
                 {
-                    var players = Controller.Npc.Range.Entities.ToList().Where(x => x.Value is Player);
+                    var players = Controller.Npc.Range.Entities.Where(x => x.Value is Player);
                     foreach (var player in players)
                     {
+                        if (player.Value?.Position == null || player.Value.Spacemap == null) continue;
                         if (((Player) player.Value).AttachedNpcs.Count >
                             ((Player) Controller.Npc.Selected).AttachedNpcs.Count &&
                             player.Value.Position.DistanceTo(Controller.Npc.Position) < 500)
@@ -126,7 +128,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             }
             catch (Exception e)
             {
-                new ExceptionLog("npc_paused_crash", "", e);
+                //new ExceptionLog("npc_paused_crash", "", e);
             }
         }
 

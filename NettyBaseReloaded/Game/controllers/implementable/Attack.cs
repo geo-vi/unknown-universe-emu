@@ -43,7 +43,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public Character GetAttacker()
         {
-            foreach (var entity in Character.Range.Entities.Values.ToList())
+            foreach (var entity in Character.Range.Entities.Values)
             {
                 if (entity.Controller.Dead) return null;
                 if (entity.Selected == Character && entity.Controller.Attack.Attacking)
@@ -105,15 +105,18 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 }
 
                 bool isRsb = false;
+                var laserTypes = gameSession.Player.Equipment.LaserTypes();
                 switch (gameSession.Player.Settings.CurrentAmmo.LootId)
                 {
                     case "ammunition_laser_mcb-25":
                         damage *= 2;
-                        laserColor = 1;
+                        if (laserTypes == 3)
+                            laserColor = 1;
                         break;
                     case "ammunition_laser_mcb-50":
                         damage *= 3;
-                        laserColor = 2;
+                        if (laserTypes == 3)
+                            laserColor = 2;
                         break;
                     case "ammunition_laser_ucb-100":
                         damage *= 4;
@@ -165,10 +168,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             damage = RandomizeDamage(damage);
             GameClient.SendRangePacket(Character,
                 netty.commands.old_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
-                    true), true);
+                    Character.Skills.HasFatLasers()), true);
             GameClient.SendRangePacket(Character,
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
-                    true), true);
+                    Character.Skills.HasFatLasers()), true);
 
             Damage(enemy, absDamage, damage, 1);
 
@@ -392,7 +395,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             if (distance == 0) distance = AttackRange;
 
-            foreach (var entry in Character.Spacemap.Entities.ToList())
+            foreach (var entry in Character.Spacemap.Entities)
             {
                 if (Character.Position.DistanceTo(entry.Value.Position) > distance) return;
                 if (Character.Id == entry.Value.Id) continue;
@@ -429,7 +432,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 case HealType.HEALTH:
                     newAmount = Character.CurrentHealth + amount;
-                    Character.CurrentHealth += newAmount;
+                    Character.CurrentHealth = newAmount;
                     break;
                 case HealType.SHIELD:
                     newAmount = Character.CurrentHealth + amount;
@@ -438,11 +441,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
 
             if (Character is Player && healType == HealType.HEALTH)
-                Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Character.Id), "0|A|HL|" + healerId + "|" + Character.Id + "|HPT|" + oldHp + "|" +
-                                                                                               newAmount);
+                Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Character.Id), "0|A|HL|" + healerId + "|" + Character.Id + "|HPT|" + Character.CurrentHealth + "|" +
+                                                                                               amount);
             else if (Character is Player && healType == HealType.SHIELD)
-                Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Character.Id), "0|A|HL|" + healerId + "|" + Character.Id + "|SHD|" + oldShd + "|" +
-                                                                                               newAmount);
+                Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Character.Id), "0|A|HL|" + healerId + "|" + Character.Id + "|SHD|" + Character.CurrentShield + "|" +
+                                                                                               amount);
 
             Character.Update();
         }

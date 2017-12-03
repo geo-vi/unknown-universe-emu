@@ -50,14 +50,14 @@ namespace NettyBaseReloaded.Game.controllers
             Active = true;
             StopController = false;
             Checkers.Start();
-            Tick();
+            Task.Factory.StartNew(Tick);
         }
 
         public async void Tick()
         {
             while (Active)
             {
-                if (StopController)
+                if (StopController || Dead)
                 {
                     StopAll();
                     return;

@@ -19,7 +19,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                 case "equipment_extra_repbot_rep-2":
                 case "equipment_extra_repbot_rep-3":
                 case "equipment_extra_repbot_rep-4":
-                    Console.WriteLine("AD");
                     player.Controller.Repairing = true;
                     break;
             }

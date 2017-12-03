@@ -57,7 +57,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                     GameClient.SendRangePacket(player, netty.commands.new_client.LegacyModule.write("0|UI|MM|NOISE|1|1"));
 
                     //I can't use GameHandler.SendSelectedPacket because i need to set Selected to null
-                    foreach (var entry in player.Spacemap.Entities.ToList())
+                    foreach (var entry in player.Spacemap.Entities)
                     {
                         var entity = entry.Value;
 

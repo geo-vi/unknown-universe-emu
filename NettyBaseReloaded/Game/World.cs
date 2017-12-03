@@ -46,6 +46,14 @@ namespace NettyBaseReloaded.Game
                 //    }
                 //    map.Value.CreateNpc(StorageManager.Ships[80], AILevels.MOTHERSHIP, 30);
                 //}
+                if (map.Key == 1)
+                {
+                    map.Value.CreateStation(Faction.MMO, new Vector(1000, 1000));
+                }
+                if (map.Key == 6)
+                {
+                    map.Value.CreateStation(Faction.EIC, new Vector(19200, 1000));
+                }
                 if (map.Key == 9)
                 {
                     map.Value.CreateStation(Faction.VRU, new Vector(19200, 11800));
@@ -85,7 +93,7 @@ namespace NettyBaseReloaded.Game
                 var hash = new String(stringChars);
                 if (map.HashedObjects.ContainsKey(hash))
                     goto NEWHASH;
-                map.HashedObjects.Add(hash, null);
+                map.HashedObjects.TryAdd(hash, null);
             }
             Console.WriteLine($"Created {HASHES-1} hashes.");
         }

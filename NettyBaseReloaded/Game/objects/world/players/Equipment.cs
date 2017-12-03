@@ -138,5 +138,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             return Player.Hangar.Configurations[Player.CurrentConfig - 1].LaserCount;
         }
+
+        public int LaserTypes()
+        {
+            return Player.Hangar.Configurations[Player.CurrentConfig - 1].LaserTypes;
+        }
     }
 }

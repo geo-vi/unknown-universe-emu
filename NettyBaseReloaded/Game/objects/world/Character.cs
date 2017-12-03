@@ -151,6 +151,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Range Range { get; }
 
+        public Skilltree Skills { get; set; }
+
         public DateTime LastCombatTime;
         public DroneFormation Formation = DroneFormation.STANDARD;
 
@@ -180,6 +182,8 @@ namespace NettyBaseReloaded.Game.objects.world
             RenderRange = 2000;
             Range = new Range {Character = this};
 
+            Skills = new Skilltree {Character = this};
+
             LastCombatTime = DateTime.Now;
 
             Cooldowns = new List<Cooldown>();
@@ -192,7 +196,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void Tick()
         {
-            Range.Tick();
             if (this is Npc)
             {
                 //((Npc) this).Tick();

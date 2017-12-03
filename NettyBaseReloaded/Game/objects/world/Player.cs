@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
@@ -16,8 +18,11 @@ using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
+using NettyBaseReloaded.Game.objects.world.players.extra;
+using NettyBaseReloaded.Game.objects.world.players.extra.boosters;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
+using ClanRelationModule = NettyBaseReloaded.Game.netty.commands.new_client.ClanRelationModule;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using State = NettyBaseReloaded.Game.objects.world.players.State;
 
@@ -47,6 +52,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public State State { get; private set; }
 
         private Hangar _hangar;
+
         public override Hangar Hangar
         {
             get
@@ -78,6 +84,10 @@ namespace NettyBaseReloaded.Game.objects.world
         public Storage Storage { get; private set; }
 
         public PlayerLog Log { get; private set; }
+
+        public List<Booster> Boosters { get; set; }
+
+        public ConcurrentDictionary<Player, Booster> InheritedBoosters = new ConcurrentDictionary<Player, Booster>();
 
         /*********
          * STATS *
@@ -139,7 +149,8 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             get
             {
-                var value = Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation;
+                var value = 0.8;
+                //var value = Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation;
                 switch (Formation)
                 {
                     case DroneFormation.CRAB:
@@ -173,12 +184,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override int Speed
         {
-            get
-            {
-                return Hangar.Configurations[CurrentConfig - 1].Speed;
-            }
+            get { return Hangar.Configurations[CurrentConfig - 1].Speed; }
         }
 
+        public double BoostedDamage = 0;
         public override int Damage
         {
             get
@@ -201,7 +210,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
                 }
 
-                value = (int) (value * Hangar.Ship.GetDamageBonus(this));
+                if (BoostedDamage > 0)
+                    value = (int) (value * Hangar.Ship.GetDamageBonus(this) * (1 * BoostedDamage));
+                else value = (int) (value * Hangar.Ship.GetDamageBonus(this));
                 return value;
             }
         }
@@ -239,10 +250,14 @@ namespace NettyBaseReloaded.Game.objects.world
         /// Lists
         /// </summary>
         public List<Drone> Drones => Hangar.Drones;
+
         private List<LogMessage> LogMessages = new List<LogMessage>();
         public List<Npc> AttachedNpcs = new List<Npc>();
 
-        public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano, Faction factionId, Vector position, Spacemap spacemap, Reward rewards, CargoDrop cargoDrop, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position, spacemap, rewards, cargoDrop, clan)
+        public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
+            Faction factionId, Vector position, Spacemap spacemap, Reward rewards, CargoDrop cargoDrop,
+            string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
+            spacemap, rewards, cargoDrop, clan)
         {
             InitializeClasses();
             SessionId = sessionId;
@@ -257,8 +272,10 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             // TODO -> Added ticked processes
             LevelChecker();
+            Storage.Tick();
+            TickBoosters();
         }
-        
+
         private void InitializeClasses()
         {
             Equipment = new Equipment(this);
@@ -268,6 +285,10 @@ namespace NettyBaseReloaded.Game.objects.world
             State = new State(this);
             Storage = new Storage(this);
             Log = new PlayerLog(SessionId);
+            Skills = World.DatabaseManager.LoadSkilltree(this);
+            Boosters = new List<Booster> { new DMGBO2(this, DateTime.Now.AddHours(10)) }; // TODO: Load from SQL
+            Range.EntityAdded += CharacterEnteredRange;
+            Range.EntityRemoved += CharacterExitedRange;
         }
 
         public void ClickableCheck(Object obj)
@@ -291,8 +312,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void Save()
         {
-            Console.WriteLine("Attempt to save player");
-            //World.DatabaseManager.SavePlayer(this);
+            World.DatabaseManager.SavePlayerPos(this);
         }
 
         public void Refresh()
@@ -348,13 +368,14 @@ namespace NettyBaseReloaded.Game.objects.world
                     }
                 }
             }
+
             var stations = map.Objects.Values.Where(x => x is Station);
             foreach (var station in stations)
             {
                 var pStation = station as Station;
-                if (pStation.Faction == FactionId)
+                if (pStation?.Faction == FactionId)
                 {
-                    return new Tuple<Vector, Spacemap>(pStation.Position, map);
+                    return new Tuple<Vector, Spacemap>(pStation?.Position, map);
                 }
             }
             return null;
@@ -395,6 +416,145 @@ namespace NettyBaseReloaded.Game.objects.world
             //Packet.Builder.LegacyModule(gameSession, "0|A|LUP|" + Information.Level.Id + "|" + World.StorageManager.Levels.PlayerLevels[Information.Level.Id + 1].Experience);
             Packet.Builder.LevelUpCommand(gameSession);
             Refresh();
+        }
+
+        public string GetConsumablesPacket()
+        {
+            bool rep = false;
+            bool droneRep = false;
+            bool ammoBuy = false;
+            bool cloak = false;
+            bool tradeDrone = false;
+            bool smb = false;
+            bool ish = false;
+            bool aim = false;
+            bool autoRocket = false;
+            bool autoRocketLauncer = false;
+            bool rocketBuy = false;
+            bool jump = false;
+            bool petRefuel = false;
+            bool jumpToBase = false;
+
+            var currConfig = Hangar.Configurations[CurrentConfig - 1];
+            if (currConfig.Consumables != null &&
+                currConfig.Consumables.Count > 0)
+            {
+                foreach (var item in currConfig.Consumables)
+                {
+                    var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
+                    if (slotbarItem != null)
+                    {
+                        slotbarItem.CounterValue = item.Value.Amount;
+                        slotbarItem.Visible = true;
+                        if (UsingNewClient)
+                        {
+                            World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
+                        }
+                    }
+
+                    switch (item.Key)
+                    {
+                        case "equipment_extra_cpu_ajp-01":
+                            jump = true;
+                            break;
+                        case "equipment_extra_repbot_rep-s":
+                        case "equipment_extra_repbot_rep-1":
+                        case "equipment_extra_repbot_rep-2":
+                        case "equipment_extra_repbot_rep-3":
+                        case "equipment_extra_repbot_rep-4":
+                            rep = true;
+                            break;
+                        case "equipment_extra_cpu_smb-01":
+                            smb = true;
+                            break;
+                        case "equipment_extra_cpu_ish-01":
+                            ish = true;
+                            break;
+                        case "equipment_extra_cpu_aim-01":
+                        case "equipment_extra_cpu_aim-02":
+                            aim = true;
+                            break;
+                        case "equipment_extra_cpu_jp-01":
+                        case "equipment_extra_cpu_jp-02":
+                            jumpToBase = true;
+                            break;
+                        case "equipment_extra_cpu_cl04k-xl":
+                        case "equipment_extra_cpu_cl04k-m":
+                        case "equipment_extra_cpu_cl04k-xs":
+                            cloak = true;
+                            break;
+                        case "equipment_extra_cpu_arol-x":
+                            autoRocket = true;
+                            break;
+                        case "equipment_extra_cpu_rllb-x":
+                            autoRocketLauncer = true;
+                            break;
+                        case "equipment_extra_cpu_dr-01":
+                        case "equipment_extra_cpu_dr-02":
+                            droneRep = true;
+                            break;
+                    }
+                }
+            }
+
+            return Convert.ToInt32(droneRep) + "|0|" + Convert.ToInt32(jumpToBase) + "|" +
+                   Convert.ToInt32(ammoBuy) + "|" + Convert.ToInt32(rep) + "|" + Convert.ToInt32(tradeDrone) +
+                   "|0|" + Convert.ToInt32(smb) + "|" + Convert.ToInt32(ish) + "|0|" + Convert.ToInt32(aim) + "|" +
+                   Convert.ToInt32(autoRocket) + "|" + Convert.ToInt32(cloak) + "|" +
+                   Convert.ToInt32(autoRocketLauncer) + "|" + Convert.ToInt32(rocketBuy) + "|" +
+                   Convert.ToInt32(jump) + "|" + Convert.ToInt32(petRefuel);
+        }
+
+        private void CharacterEnteredRange(object s, Range.RangeArgs e)
+        {
+            var charAsPlayer = e.Character as Player;
+            if (charAsPlayer != null)
+            {
+                //if (charAsPlayer.Boosters.Count > 0)
+                Booster.CalculateTotalBoost(charAsPlayer);
+            }
+        }
+
+        private void CharacterExitedRange(object s, Range.RangeArgs e)
+        {
+            var charAsPlayer = e.Character as Player;
+            if (charAsPlayer != null)
+            {
+                //if (charAsPlayer.Boosters.Count > 0)
+                Booster.CalculateTotalBoost(charAsPlayer);
+            }
+        }
+
+        private void TickBoosters()
+        {
+            foreach (var booster in Boosters)
+            {
+                booster.Tick();
+            }
+            CheckForBoosters();
+        }
+
+        private DateTime LastTimeCheckedBoosters = new DateTime();
+        private void CheckForBoosters()
+        {
+            if (LastTimeCheckedBoosters.AddMilliseconds(5000) < DateTime.Now)
+            {
+                // TODO: Get boosters from mysql
+                Booster.CalculateTotalBoost(this);
+                LastTimeCheckedBoosters = DateTime.Now;
+            }
+        }
+
+        public void BoostDamage(double value)
+        {
+            if (BoostedDamage < 0.5)
+            {
+                if (BoostedDamage + value > 0.5)
+                {
+                    value = 0.5 - BoostedDamage;
+                }
+                BoostedDamage += value;
+            }
         }
     }
 }

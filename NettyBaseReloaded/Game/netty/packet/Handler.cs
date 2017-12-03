@@ -42,6 +42,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             LegacyCommands.Add(ServerCommands.ROCKET_ATTACK, new AttackRocketLegacyHandler());
             OldClientCommands.Add(commands.old_client.requests.ShipWarpWindowRequest.ID, new ShipWarpWindowHandler()); 
             OldClientCommands.Add(commands.old_client.requests.PetGearActivationRequest.ID, new PetGearActivationHandler());
+            OldClientCommands.Add(commands.old_client.requests.WindowSettingsRequest.ID, new WindowSettingsHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

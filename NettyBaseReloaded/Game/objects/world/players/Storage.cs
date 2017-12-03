@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
+using Range = NettyBaseReloaded.Game.objects.world.characters.Range;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
@@ -17,8 +19,16 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Dictionary<string, POI> LoadedPOI = new Dictionary<string, POI>();
 
+        public double DistancePassed = 0;
+
         public Storage(Player player) : base(player)
         {
+        }
+
+        public void Tick()
+        {
+            if (DistancePassed > 1000)
+                World.DatabaseManager.SavePlayerPos(Player);
         }
 
         public void LoadPOI(POI poi)

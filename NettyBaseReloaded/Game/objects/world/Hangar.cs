@@ -22,12 +22,12 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int Nanohull { get; set; }
 
-        public Dictionary<string, Item> Consumables { get; set; }
+        public Dictionary<string, Item> Items { get; set; }
 
         public bool Active = false;
 
         //Configurations can be null because npcs will use this class too
-        public Hangar(Ship ship, List<Drone> drones, Vector position, Spacemap spacemap, int hp, int nano, Dictionary<string, Item> consumables, bool active = true, Configuration[] configurations = null)
+        public Hangar(Ship ship, List<Drone> drones, Vector position, Spacemap spacemap, int hp, int nano, Dictionary<string, Item> items, bool active = true, Configuration[] configurations = null)
         {
             Ship = ship;
             Drones = drones;
@@ -35,7 +35,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Spacemap = spacemap;
             Health = hp;
             Nanohull = nano;
-            Consumables = consumables;
+            Items = items;
             Active = active;
             Configurations = configurations;
         }

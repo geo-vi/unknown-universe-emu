@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Properties;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Main
@@ -17,6 +18,7 @@ namespace NettyBaseReloaded.Main
 
         public static void Update()
         {
+            if (!Program.ServerUp) return;
             var oldCursorPosX = Console.CursorLeft;
             var oldCursorPosY = Console.CursorTop;
 
@@ -32,6 +34,7 @@ namespace NettyBaseReloaded.Main
             Console.WriteLine("\r Version = {0} // Errors = {1} / Online = {2}", Program.GetVersion(), ExceptionLog.ERRORS_RECORDED, "W:" + World.StorageManager.GameSessions.Count + "/C:" + Chat.Chat.StorageManager.ChatSessions.Count);
             Console.SetCursorPosition(oldCursorPosX, oldCursorPosY);
             Console.ForegroundColor = oldColor;
+            Console.Title = "Unknown Universe / " + Program.GetVersion() + " / " + (DateTime.Now - Server.RUNTIME).ToString(@"dd\.hh\:mm\:ss");
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
@@ -11,6 +12,7 @@ using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.ammo;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
+using NettyBaseReloaded.Game.objects.world.players.extra;
 using NettyBaseReloaded.Game.objects.world.players.informations;
 using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
@@ -291,9 +293,10 @@ namespace NettyBaseReloaded.Game.managers
                     int shield1 = intConv(queryRow["CONFIG_1_SHIELD"]);
                     double absorb1 = Convert.ToDouble(queryRow["CONFIG_1_SHIELDABSORB"]) / 10000;
                     int lcount1 = intConv(queryRow["CONFIG_1_LASERCOUNT"]);
+                    int ltypes1 = intConv(queryRow["CONFIG_1_LASER_TYPES"]);
 
                     if (extras1 == "") extras1 = "[]";
-                    var config1 = new Configuration(1, dmg1, velocity1, shield1, shield1, absorb1, lcount1, JsonConvert.DeserializeObject<List<Item>>(extras1).ToDictionary(x => x.LootId));
+                    var config1 = new Configuration(1, dmg1, velocity1, shield1, shield1, absorb1, lcount1, ltypes1,JsonConvert.DeserializeObject<List<Item>>(extras1).ToDictionary(x => x.LootId));
 
                     int dmg2 = intConv(queryRow["CONFIG_2_DMG"]);
                     int velocity2 = intConv(queryRow["CONFIG_2_SPEED"]);
@@ -301,9 +304,10 @@ namespace NettyBaseReloaded.Game.managers
                     int shield2 = intConv(queryRow["CONFIG_2_SHIELD"]);
                     double absorb2 = Convert.ToDouble(queryRow["CONFIG_2_SHIELDABSORB"]) / 10000;
                     int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
+                    int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
 
                     if (extras2 == "") extras2 = "[]";
-                    var config2 = new Configuration(2, dmg2, velocity2, shield2, shield2, absorb2, lcount2, JsonConvert.DeserializeObject<List<Item>>(extras2).ToDictionary(x => x.LootId));
+                    var config2 = new Configuration(2, dmg2, velocity2, shield2, shield2, absorb2, lcount2, ltypes2, JsonConvert.DeserializeObject<List<Item>>(extras2).ToDictionary(x => x.LootId));
 
                     builder = new Configuration[2]
                     {
@@ -456,7 +460,7 @@ namespace NettyBaseReloaded.Game.managers
                         foreach (DataRow reader in queryTable.Rows)
                         {
                             var id = intConv(reader["HANGAR_COUNT"]);
-                            int shipId = Convert.ToInt32(reader["SHIP_ID"]);
+                            int shipId = Convert.ToInt32(reader["SHIP_DESIGN"]);
                             int x = Convert.ToInt32(reader["SHIP_X"]);
                             int y = Convert.ToInt32(reader["SHIP_Y"]);
                             int hp = Convert.ToInt32(reader["SHIP_HP"]);
@@ -576,27 +580,6 @@ namespace NettyBaseReloaded.Game.managers
             return -1;
         }
 
-        public void SavePlayer(Player player)
-        {
-            try
-            {
-                using (var mySqlClient = SqlDatabaseManager.GetClient())
-                {
-                    mySqlClient.ExecuteNonQuery($"UPDATE player_data, player_extra_data, player_hangar SET LVL={player.Information.Level.Id}, EXP={player.Information.Experience.Value}, HONOR={player.Information.Honor.Value}, " +
-                                                               $"URIDIUM={player.Information.Uridium.Value}, CREDITS={player.Information.Credits.Value}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, " +
-                                                               $"SHIP_MAP_ID={player.Spacemap.Id}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y}, IN_EQUIPMENT_ZONE={intConv(player.State.InEquipmentArea)}, " +
-                                                               $"{(player.UsingNewClient ? "SETTINGS_GAMEPLAY_NEW=" + JsonConvert.SerializeObject(player.Settings.NewClientUserSettingsCommand) : "SETTINGS_GAMEPLAY_OLD=" + JsonConvert.SerializeObject(player.Settings.OldClientUserSettingsCommand))}, " +
-                                                               $"CLIENT_VERSION={intConv(player.UsingNewClient)} " +
-                                                               $"WHERE player_hangar.PLAYER_ID = player_data.PLAYER_ID AND player_extra_data.PLAYER_ID = player_data.PLAYER_ID AND player_hangar.ACTIVE=1 AND player_data.PLAYER_ID = {player.Id}"  
-                                                               );
-                }
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed executing player save");
-            }
-        }
-
         public void BasicRefresh(Player player)
         {
 
@@ -607,6 +590,106 @@ namespace NettyBaseReloaded.Game.managers
             return false;
         }
 
+        public object GetPlayerGameplaySettings(Player player)
+        {
+            object userSettings = null;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var settingsVersion = "SETTINGS_GAMEPLAY_OLD";
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT " + settingsVersion + " FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
+                    if (player.UsingNewClient)
+                    {
+                        userSettings = JsonConvert.DeserializeObject<netty.commands.new_client.UserSettingsCommand>(queryRow[settingsVersion].ToString());
+                    }
+                    else
+                    {
+                        userSettings = JsonConvert.DeserializeObject<netty.commands.old_client.UserSettingsCommand>(queryRow[settingsVersion].ToString());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            return userSettings;
+        }
+
+        public void SavePlayerGameplaySettings(Settings settings)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    string query = "";
+                    if (settings.Player.UsingNewClient)
+                    {
+                        throw new NotImplementedException();
+                    }
+                    else
+                    {
+                        query = $"UPDATE player_extra_data SET SETTINGS_GAMEPLAY_OLD='{JsonConvert.SerializeObject(settings.OldClientUserSettingsCommand)}' WHERE PLAYER_ID={settings.Player.Id}";
+                    }
+                    mySqlClient.ExecuteNonQuery(query);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public void SavePlayerPos(Player player)
+        {
+            try
+            {
+                if (player.Spacemap != null && player.Position != null)
+                {
+                    using (var mySqlClient = SqlDatabaseManager.GetClient())
+                    {
+                        mySqlClient.ExecuteNonQuery($"UPDATE player_hangar SET SHIP_MAP_ID={player.Spacemap.Id}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y} WHERE PLAYER_ID={player.Id} AND ACTIVE=1");
+                        player.Storage.DistancePassed = 0;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed saving pos");
+            }
+        }
+
+        public Skilltree LoadSkilltree(Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow =
+                        mySqlClient.ExecuteQueryRow($"SELECT * FROM player_skill_tree WHERE PLAYER_ID={player.Id}");
+                    return new Skilltree
+                    {
+                        Character = player,
+                        AlienHunter = intConv(queryRow["ALIEN_HUNTER"]),
+                        BountyHunter = intConv(queryRow["BOUNTY_HUNTER"]),
+                        Cruelty = intConv(queryRow["CRUELTY"]),
+                        Detonation = intConv(queryRow["DETONATION"]),
+                        ElectroOptics = intConv(queryRow["ELECTRO_OPTICS"]),
+                        Engineering = intConv(queryRow["ENGINEERING"]),
+                        EvasiveManeuvers = intConv(queryRow["EVASIVE_MANEUVERS"]),
+                        Explosives = intConv(queryRow["EXPLOSIVES"]),
+                        Greed = intConv(queryRow["GREED"]),
+                        HeatSeekingMissles = intConv(queryRow["HEAT_SEEKING_MISSLES"])
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            return null;
+        }
     }
 }
 

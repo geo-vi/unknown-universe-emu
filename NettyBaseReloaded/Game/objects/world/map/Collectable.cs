@@ -15,6 +15,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public Types Type { get; set; }
 
+        protected bool Disposed { get; set; }
+
         public Collectable(int id, string hash, Types type, Vector pos) : base(id, pos)
         {
             Hash = hash;
@@ -22,7 +24,12 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Position = pos;
         }
 
-        public abstract void Collect(Player player);
+        public virtual void Collect(Player player)
+        {
+            if (Disposed) return;
+            Dispose(player.Spacemap);
+            Reward(player);
+        }
 
         protected abstract void Reward(Player player);
 
@@ -30,7 +37,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         protected void Respawn(Spacemap map)
         {
-
+            var newPos = Vector.Random(1000, 19800, 1000, 11800);
+            Position = newPos;
+            if (!map.Objects.ContainsKey(Id))
+                map.AddObject(this);
+            Disposed = false;
         }
 
         public override void execute(Character character)

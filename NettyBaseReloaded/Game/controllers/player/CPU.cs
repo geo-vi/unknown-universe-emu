@@ -68,7 +68,13 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         void Robot()
         {
-            if (baseController.Character.Moving || !baseController.Repairing || baseController.Character.LastCombatTime.AddSeconds(3) > DateTime.Now) return;
+            if (baseController.Character.Moving || !baseController.Repairing ||
+                baseController.Character.LastCombatTime.AddSeconds(3) > DateTime.Now)
+            {
+                baseController.Repairing = false;
+                return;
+            }
+
 
             var player = (Player)baseController.Character;
             if (player.CurrentHealth == player.MaxHealth)

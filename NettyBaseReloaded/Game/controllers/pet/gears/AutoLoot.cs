@@ -25,6 +25,8 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             var pet = baseController.Pet;
             if (pet.Range.Collectables.Count > 0)
             {
+                // TODO
+                //Console.WriteLine(pet.Range.Collectables.Count + ":PET Boxes count");
                 var collectable = pet.Range.Collectables.FirstOrDefault();
                 MovementController.Move(pet, new Vector(collectable.Value.Position.X, collectable.Value.Position.Y - 50));
             }

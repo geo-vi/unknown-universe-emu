@@ -53,11 +53,17 @@ namespace NettyBaseReloaded.Main.global_managers
 
         private void UpdateCollection()
         {
-            Tickables.AddRange(PendingToBeAdded);
-            PendingToBeAdded.Clear();
-            foreach (var tick in PendingRemoval)
-                Tickables.Remove(tick);
-            PendingRemoval.Clear();
+            if (PendingToBeAdded.Count > 0)
+            {
+                Tickables.AddRange(PendingToBeAdded);
+                PendingToBeAdded.Clear();
+            }
+            if (PendingRemoval.Count > 0)
+            {
+                foreach (var tick in PendingRemoval)
+                    Tickables.Remove(tick);
+                PendingRemoval.Clear();
+            }
         }
     }
 }

@@ -47,13 +47,12 @@ namespace NettyBaseReloaded
 
             Console.SetOut(new Out());
             Console.CursorVisible = false;
-            Console.Title = "Unknown Universe / " + GetVersion();
 
             Draw.Logo();
 
             //RewardBuilder();
             InitiateSession();
-            //ConsoleUpdater();
+            ConsoleUpdater();
             ConsoleCommands.Add();
             KeepAlive();
             
@@ -136,6 +135,8 @@ namespace NettyBaseReloaded
 
         private static async void ConsoleUpdater()
         {
+            Server.RUNTIME = DateTime.Now;
+
             while (true)
             {
                 ConsoleMonitor.Check();
@@ -190,7 +191,7 @@ namespace NettyBaseReloaded
         /// <summary>
         /// Starting the server up
         /// </summary>
-        private static bool ServerUp = false;
+        public static bool ServerUp = false;
         static void InitiateServer()
         {
             if (ServerUp) return;

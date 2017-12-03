@@ -31,6 +31,8 @@ namespace NettyBaseReloaded.Game.objects
 
         public bool InProcessOfReconection = false;
 
+        public bool InProcessOfDisconnection = false;
+
         public GameSession(Player player)
         {
             Player = player;
@@ -56,14 +58,11 @@ namespace NettyBaseReloaded.Game.objects
 
         private void PrepareForDisconnect()
         {
-            Player.Pet?.Controller?.Deactivate();
+            Player.Save();
+            Player.Pet?.Controller.Deactivate();
+            InProcessOfDisconnection = true;
             Player.Controller.Exit();
             Player.Controller.Destruction.Remove(Player);
-            //Player.Spacemap.Entities.Remove(Player.Id);
-            //Player.Spacemap = null; // Moves out of Spacemap
-            //Player.Position = null; // Position goes to null
-            Player.Storage.Clean(); // Cleans storage of Objects & so on
-            Player.Range.Clear(); // Cleans Range
             Global.TickManager.Remove(this);
             Global.TickManager.Remove(Player);
         }
@@ -82,6 +81,7 @@ namespace NettyBaseReloaded.Game.objects
             Player.Log.Write($"User disconnected (Disconnection Type: {dcType})");
             Client.Disconnect();
             World.StorageManager.GameSessions.Remove(Player.Id);
+            InProcessOfDisconnection = false;
         }
     }
 }

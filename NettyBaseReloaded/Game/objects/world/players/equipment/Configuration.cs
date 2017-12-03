@@ -16,10 +16,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
         public int CurrentShield { get; set; }
         public double ShieldAbsorbation { get; set; }
         public int LaserCount { get; set; }
+        public int LaserTypes { get; set; }
 
         public Dictionary<string, Item> Consumables { get; set; }
 
-        public Configuration(int id, int damage, int speed, int maxShield, int shield, double shieldAbsorbation, int lazerCount, Dictionary<string, Item> consumables)
+        public Configuration(int id, int damage, int speed, int maxShield, int shield, double shieldAbsorbation, int lazerCount, int laserTypes, Dictionary<string, Item> consumables)
         {
             Id = id;
             Speed = speed;
@@ -28,6 +29,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             MaxShield = maxShield;
             ShieldAbsorbation = shieldAbsorbation;
             LaserCount = lazerCount;
+            LaserTypes = laserTypes;
             Consumables = consumables;
         }
     }

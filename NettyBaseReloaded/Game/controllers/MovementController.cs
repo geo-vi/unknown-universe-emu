@@ -75,6 +75,12 @@ namespace NettyBaseReloaded.Game.controllers
                 actualPosition = character.Position;
             }
 
+            var player = character as Player;
+            if (player != null)
+            {
+                player.Storage.DistancePassed += character.Position.DistanceTo(actualPosition);
+            }
+
             //updates the actual position into the character
             character.Position = actualPosition;
             return actualPosition;

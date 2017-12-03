@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NettyBaseReloaded.Game.objects.world.players.extra.boosters
+namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
 {
-    class DamageBooster
+    class QualitySettingsModule
     {
     }
 }

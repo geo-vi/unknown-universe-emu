@@ -62,6 +62,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 var player = Character as Player;
                 player.Pet?.Controller?.Deactivate();
+                player.Controller.Exit();
             }
 
             Controller.StopAll();
@@ -71,31 +72,20 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Remove(Character targetCharacter)
         {
-            if (targetCharacter == null)
+            if (Character is Npc)
+            {
+                targetCharacter.Controller.StopController = true;
                 return;
-
-            if (targetCharacter.Spacemap.Entities.ContainsKey(targetCharacter.Id))
-                targetCharacter.Spacemap.Entities.Remove(targetCharacter.Id);
-
+            }
+            targetCharacter.Position = null;
+            targetCharacter.Range.Clear();
             if (targetCharacter is Player)
             {
-                var player = (Player)targetCharacter;
-                foreach (var rangeEntity in targetCharacter.Range.Entities.ToList())
-                {
-                    if (rangeEntity.Value.Selected == targetCharacter) rangeEntity.Value.Selected = null;
-                    rangeEntity.Value.Controller.Checkers.CharacterChecker();
-                }
-                player.AttachedNpcs.Clear();
+                var player = targetCharacter as Player;
                 player.Storage.Clean();
-                player.Range.Clear();
             }
-
-            if (targetCharacter is Pet)
-            {
-                var pet = (Pet) targetCharacter;
-                
-            }
-            targetCharacter.Controller.StopController = true;
+            targetCharacter.Spacemap.RemoveEntity(targetCharacter);
+            //targetCharacter.Spacemap = null;
         }
 
         public void Deselect(Character targetCharacter)
@@ -103,7 +93,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (targetCharacter == null)
                 return;
 
-            foreach (var entity in targetCharacter.Spacemap.Entities.ToList())
+            foreach (var entity in targetCharacter.Spacemap.Entities)
             {
                 if (entity.Value.Selected != null && entity.Value.Selected == targetCharacter)
                 {
@@ -170,19 +160,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 }
                 player.Controller.Start();
                 player.Controller.Initiate();
-
                 var closestStation = player.GetClosestStation();
                 newPos = player.Destination = closestStation.Item1;
                 player.Spacemap = closestStation.Item2;
-
-                player.Refresh();
-                player.Update();
             }
 
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
-                Character.Spacemap.Entities.Add(Character.Id, Character);
+                Character.Spacemap.AddEntity(Character);
 
             Character.SetPosition(newPos);
+
+            (Character as Player)?.Refresh();
         }
     }
 }
