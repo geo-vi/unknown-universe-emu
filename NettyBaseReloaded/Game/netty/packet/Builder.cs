@@ -991,26 +991,19 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                try
+                var boostList = new List<commands.old_client.BoosterUpdateModule>();
+                if (gameSession.Player.BoostedDamage > 0)
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short) Booster.Types.DAMAGE),
+                        Convert.ToSingle(gameSession.Player.BoostedDamage * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+                var pBoosterList = gameSession.Player.Boosters.Concat(gameSession.Player.InheritedBoosters.Values);
+                foreach (var booster in pBoosterList)
                 {
-                    var boostList = new List<commands.old_client.BoosterUpdateModule>();
-                    if (gameSession.Player.BoostedDamage > 0)
-                        boostList.Add(new commands.old_client.BoosterUpdateModule(
-                            new commands.old_client.BoostedAttributeTypeModule((short) Booster.Types.DAMAGE),
-                            Convert.ToSingle(gameSession.Player.BoostedDamage * 100),
-                            new List<commands.old_client.BoosterTypeModule>()));
-                    var pBoosterList = gameSession.Player.Boosters.Concat(gameSession.Player.InheritedBoosters.Values);
-                    foreach (var booster in pBoosterList)
-                    {
-                        boostList.Find(x => x.attributeType.typeValue == (short) booster.Type).boosterTypes
-                            .Add(new commands.old_client.BoosterTypeModule((short) booster.BoosterType));
-                    }
-                    gameSession.Client.Send(commands.old_client.AttributeBoosterUpdateCommand.write(boostList).Bytes);
+                    boostList.Find(x => x.attributeType.typeValue == (short) booster.Type).boosterTypes
+                        .Add(new commands.old_client.BoosterTypeModule((short) booster.BoosterType));
                 }
-                catch (Exception)
-                {
-                    //TODO: FIX
-                }
+                gameSession.Client.Send(commands.old_client.AttributeBoosterUpdateCommand.write(boostList).Bytes);
             }
         }
 #endregion

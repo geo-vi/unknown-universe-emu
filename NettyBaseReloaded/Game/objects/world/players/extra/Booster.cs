@@ -93,7 +93,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
             }
             player.BoostedDamage = 0;
             player.BoostDamage(addedDamage);
-            Packet.Builder.AttributeBoosterUpdateCommand(World.StorageManager.GetGameSession(player.Id));
+            if (addedDamage > 0)
+                Packet.Builder.AttributeBoosterUpdateCommand(World.StorageManager.GetGameSession(player.Id));
         }
 
         public void AddTime(int timeInMs)

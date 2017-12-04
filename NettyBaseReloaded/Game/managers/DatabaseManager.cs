@@ -244,6 +244,11 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
+        public void LoadTitles()
+        {
+
+        }
+
         //"SELECT * FROM player_hangar WHERE PLAYER_ID=" + player.Id + " AND ACTIVE=1"
         public Hangar LoadHangar(Player player)
         {

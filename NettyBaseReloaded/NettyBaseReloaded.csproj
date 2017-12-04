@@ -379,7 +379,6 @@
     <Compile Include="Game\objects\world\players\extra\boosters\DMGBO2.cs" />
     <Compile Include="Game\objects\world\players\extra\GalaxyGate.cs" />
     <Compile Include="Game\objects\world\characters\Skilltree.cs" />
-    <Compile Include="Game\objects\world\players\extra\Title.cs" />
     <Compile Include="Game\objects\world\players\Information.cs" />
     <Compile Include="Game\objects\world\players\informations\BaseInfo.cs" />
     <Compile Include="Game\objects\world\players\informations\Credits.cs" />
