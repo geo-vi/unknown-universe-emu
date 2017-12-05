@@ -56,7 +56,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Faction FactionId { get; set; }
         public Reward Reward { get; }
-        public CargoDrop CargoDrop { get; }
 
         public Clan Clan { get; set; }
 
@@ -159,7 +158,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public List<Cooldown> Cooldowns { get; set; }
 
         protected Character(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap,
-            Reward rewards, CargoDrop cargoDrop, Clan clan = null)
+            Reward rewards, Clan clan = null)
         {
             Id = id;
             Name = name;
@@ -168,7 +167,6 @@ namespace NettyBaseReloaded.Game.objects.world
             Position = position;
             Spacemap = spacemap;
             Reward = rewards;
-            CargoDrop = cargoDrop;
             Clan = clan;
 
             //Default initialization

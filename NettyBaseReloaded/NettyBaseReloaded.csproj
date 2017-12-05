@@ -334,7 +334,7 @@
     <Compile Include="Game\netty\commands\ClientCommands.cs" />
     <Compile Include="Game\netty\commands\Command.cs" />
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
-    <Compile Include="Game\objects\world\characters\CargoDrop.cs" />
+    <Compile Include="Game\objects\world\characters\DropableRewards.cs" />
     <Compile Include="Game\objects\world\characters\Cooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\ConfigCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\EMPCooldown.cs" />
@@ -366,6 +366,7 @@
     <Compile Include="Game\objects\world\map\Zone.cs" />
     <Compile Include="Game\objects\world\map\zones\DemiZone.cs" />
     <Compile Include="Game\objects\world\map\zones\NpcZone.cs" />
+    <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
     <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
     <Compile Include="Game\objects\world\players\Ammunition.cs" />
@@ -381,6 +382,7 @@
     <Compile Include="Game\objects\world\characters\Skilltree.cs" />
     <Compile Include="Game\objects\world\players\Information.cs" />
     <Compile Include="Game\objects\world\players\informations\BaseInfo.cs" />
+    <Compile Include="Game\objects\world\players\informations\Cargo.cs" />
     <Compile Include="Game\objects\world\players\informations\Credits.cs" />
     <Compile Include="Game\objects\world\players\informations\Exp.cs" />
     <Compile Include="Game\objects\world\players\informations\Honor.cs" />

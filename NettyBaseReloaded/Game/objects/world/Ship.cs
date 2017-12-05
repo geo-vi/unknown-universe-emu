@@ -46,12 +46,12 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Reward Reward { get; set; }
 
-        public CargoDrop CargoDrop { get; set; }
+        public DropableRewards CargoDrop { get; set; }
 
         public int AI { get; set; }
 
         public Ship(int id, string name, string lootId, int health, int nanohull, int speed, int shield, double shieldAbsorb, int minDamage, int maxDamage, bool neutral, int laserColor,
-            int batteries, int rockets, int cargo, Reward reward, CargoDrop cargoDrop, int ai)
+            int batteries, int rockets, int cargo, Reward reward, DropableRewards cargoDrop, int ai)
         {
             Id = id;
             Name = name;

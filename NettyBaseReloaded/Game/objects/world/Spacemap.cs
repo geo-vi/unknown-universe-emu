@@ -243,7 +243,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 CreateNpc(new Npc(id, ship.Name,
                     new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                         new Dictionary<string, Item>()),
-                    0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
+                    0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
                     ship.Damage));
             }
         }
@@ -255,7 +255,7 @@ namespace NettyBaseReloaded.Game.objects.world
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
                 ship.Damage));
         }
 
@@ -267,7 +267,7 @@ namespace NettyBaseReloaded.Game.objects.world
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
                 ship.Damage, respawnTime));
         }
 
@@ -279,7 +279,7 @@ namespace NettyBaseReloaded.Game.objects.world
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.CargoDrop, ship.Shield,
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
                 ship.Damage, 0, motherShip));
             return id;
         }
@@ -412,10 +412,9 @@ namespace NettyBaseReloaded.Game.objects.world
                 World.Log.Write("Created Box[" + type + "] on mapId " + Id);
         }
 
-        public void CreateShipLoot(Vector position, CargoDrop content)
+        public void CreateShipLoot(Vector position, DropableRewards content)
         {
-            World.Log.Write("NotImplentedException");
-            throw new NotImplementedException();
+            Console.WriteLine($"Created ship loot (content)->{content}");
         }
 
         #endregion

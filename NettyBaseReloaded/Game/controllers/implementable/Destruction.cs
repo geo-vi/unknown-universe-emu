@@ -31,8 +31,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             if (target.CurrentHealth <= 0 && !target.Controller.Dead)
             {
-                target.Controller.Destruction.Kill();
-
                 if (Character is Player)
                 {
                     var player = Character as Player;
@@ -42,6 +40,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 {
                     // TODO: Send killscreen to target
                 }
+                else target.Spacemap.CreateShipLoot(target.Position, target.Hangar.Ship.CargoDrop);
+                target.Controller.Destruction.Kill();
             }
         }
 

@@ -52,7 +52,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Pet(int id,int ownerId, string name, Hangar hangar, int currentHealth, Faction factionId,
             Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
-            new Reward(0,0), new CargoDrop())
+            new Reward(0,0))
         {
             OwnerId = ownerId;
             MaxHealth = 10000;

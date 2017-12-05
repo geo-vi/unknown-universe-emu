@@ -255,9 +255,9 @@ namespace NettyBaseReloaded.Game.objects.world
         public List<Npc> AttachedNpcs = new List<Npc>();
 
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
-            Faction factionId, Vector position, Spacemap spacemap, Reward rewards, CargoDrop cargoDrop,
+            Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
             string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
-            spacemap, rewards, cargoDrop, clan)
+            spacemap, rewards, clan)
         {
             InitializeClasses();
             SessionId = sessionId;

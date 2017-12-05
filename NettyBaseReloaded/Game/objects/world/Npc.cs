@@ -53,9 +53,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int RespawnTime { get; set; }
 
-        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, CargoDrop cargoDrop,
+        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards,
             int maxShield, int damage, int respawnTime = 0, Npc motherShip = null)
-            : base(id, name, hangar, factionId, position, spacemap, rewards, cargoDrop)
+            : base(id, name, hangar, factionId, position, spacemap, rewards)
         {
             CurrentHealth = currentHealth;
             CurrentNanoHull = currentNanoHull;

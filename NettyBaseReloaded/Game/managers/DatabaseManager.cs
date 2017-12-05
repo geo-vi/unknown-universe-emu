@@ -87,7 +87,7 @@ namespace NettyBaseReloaded.Game.managers
                             var ship_rewards = new Reward(rewards);
 
                             ////@ToDo: Dropables
-                            CargoDrop ship_drops = null;
+                            DropableRewards ship_drops = JsonConvert.DeserializeObject<DropableRewards>(reader["dropJSON"].ToString());
 
                             ////add to Storage
                             World.StorageManager.Ships.Add(ship_id, new Ship(
@@ -404,7 +404,7 @@ namespace NettyBaseReloaded.Game.managers
                         var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
 
                         querySet.Dispose();
-                        player = new Player(playerId, name, clan, hangar,currentHealth,currentNanohull, factionId, position, spacemap, null, null, sessionId, rank, false);
+                        player = new Player(playerId, name, clan, hangar,currentHealth,currentNanohull, factionId, position, spacemap, null, sessionId, rank, false);
                     }
                 }
 
