@@ -40,7 +40,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 {
                     // TODO: Send killscreen to target
                 }
-                else target.Spacemap.CreateShipLoot(target.Position, target.Hangar.Ship.CargoDrop);
+                else target.Spacemap.CreateShipLoot(target.Position, target.Hangar.Ship.CargoDrop, Character);
                 target.Controller.Destruction.Kill();
             }
         }

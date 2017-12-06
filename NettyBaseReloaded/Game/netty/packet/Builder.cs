@@ -665,7 +665,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                LegacyModule(gameSession, "0|c|" + collectable.Hash + "|" + collectable.Type.GetHashCode().ToString() + "|" + collectable.Position.ToPacket());
+                LegacyModule(gameSession, "0|c|" + collectable.Hash + "|" + collectable.GetTypeId(gameSession.Player) + "|" + collectable.Position.ToPacket());
             }
         }
 

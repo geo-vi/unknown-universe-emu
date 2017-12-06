@@ -412,9 +412,18 @@ namespace NettyBaseReloaded.Game.objects.world
                 World.Log.Write("Created Box[" + type + "] on mapId " + Id);
         }
 
-        public void CreateShipLoot(Vector position, DropableRewards content)
+        public void CreateShipLoot(Vector position, DropableRewards content, Character killer)
         {
             Console.WriteLine($"Created ship loot (content)->{content}");
+            if (content != null)
+            {
+                var id = GetNextObjectId();
+                var hash = HashedObjects.Keys.ToList()[id];
+                var box = new CargoLoot(id, hash, position, content, killer);
+                HashedObjects[hash] = box;
+                if (AddObject(box))
+                    World.Log.Write($"Created cargo loot ({position.X},{position.Y}) on mapId " + Id);
+            }
         }
 
         #endregion

@@ -20,10 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         public override void Dispose(Spacemap map)
         {
-            GameClient.SendToSpacemap(map, netty.commands.new_client.DisposeBoxCommand.write(Hash, true));
-            GameClient.SendToSpacemap(map, netty.commands.old_client.LegacyModule.write("0|2|" + Hash));
-            map.RemoveObject(this);
-            Disposed = true;
+            base.Dispose(map);
             if (Respawning)
                 Respawn(map);
         }

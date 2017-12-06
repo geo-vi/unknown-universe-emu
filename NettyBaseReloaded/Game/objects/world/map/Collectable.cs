@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.objects.world.map
 {
@@ -33,7 +34,13 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         protected abstract void Reward(Player player);
 
-        public abstract void Dispose(Spacemap map);
+        public virtual void Dispose(Spacemap map)
+        {
+            GameClient.SendToSpacemap(map, netty.commands.new_client.DisposeBoxCommand.write(Hash, true));
+            GameClient.SendToSpacemap(map, netty.commands.old_client.LegacyModule.write("0|2|" + Hash));
+            map.RemoveObject(this);
+            Disposed = true;
+        }
 
         protected void Respawn(Spacemap map)
         {
@@ -46,6 +53,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public override void execute(Character character)
         {
+        }
+
+        public virtual int GetTypeId(Character character)
+        {
+            return (int)Type;
         }
     }
 }

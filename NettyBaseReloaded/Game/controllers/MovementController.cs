@@ -22,8 +22,10 @@ namespace NettyBaseReloaded.Game.controllers
             character.Moving = true;
 
             //sends the movement to the rest of the players in range if both are on the same map
-            GameClient.SendToSpacemap(character.Spacemap, netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime));
-            GameClient.SendToSpacemap(character.Spacemap, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime));
+            GameClient.SendRangePacket(character, netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime));
+            //GameClient.SendToSpacemap(character.Spacemap, netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
+            GameClient.SendRangePacket(character, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime));
+            //GameClient.SendToSpacemap(character.Spacemap, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
         }
 
         public static int GetTime(Character character, Vector destination)
