@@ -46,6 +46,16 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return "WIZ_X";
                 case "ammunition_rocket_bdr-1211":
                     return "BDR_1211";
+                case "ammunition_rocketlauncher_hstrm-01":
+                    return "HSTRM_01";
+                case "ammunition_rocketlauncher_ubr-100":
+                    return "UBR_100";
+                case "ammunition_rocketlauncher_eco-10":
+                    return "ECO_10";
+                case "ammunition_rocketlauncher_sar-01":
+                    return "SAR_01";
+                case "ammunition_rocketlauncher_sar-02":
+                    return "SAR_02";
                 default:
                     throw new NotImplementedException();
             }
@@ -128,6 +138,16 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return new AmmunitionTypeModule(AmmunitionTypeModule.WIZARD);
                 case "ammunition_rocket_bdr-1211":
                     return new AmmunitionTypeModule(AmmunitionTypeModule.BDR1211);
+                case "ammunition_rocketlauncher_hstrm-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.HELLSTORM);
+                case "ammunition_rocketlauncher_ubr-100":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.UBER_ROCKET);
+                case "ammunition_rocketlauncher_eco-10":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.ECO_ROCKET);
+                case "ammunition_rocketlauncher_sar-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.SAR01);
+                case "ammunition_rocketlauncher_sar-02":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.SAR02);
                 default:
                     throw new NotImplementedException();
             }

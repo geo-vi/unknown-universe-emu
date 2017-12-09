@@ -247,6 +247,11 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public override RocketLauncher RocketLauncher
+        {
+            get { return Hangar.Configurations[CurrentConfig - 1].RocketLauncher; }
+        }
+
         /// <summary>
         /// This is a for the multi-client support.
         /// - Work in progress -
@@ -587,7 +592,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public int EnemyWarningLevel = 0;
         public void AssembleEnemyWarn()
         {
-            if (State.IsOnHomeMap())
+            if (Spacemap != null && State.IsOnHomeMap())
             {
                 var count = Spacemap.Entities.Count(
                     x => x.Value.FactionId != FactionId && x.Value.FactionId != Faction.NONE);

@@ -150,6 +150,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Range Range { get; }
 
+        public virtual RocketLauncher RocketLauncher { get; set; }
+
         public Skilltree Skills { get; set; }
 
         public DateTime LastCombatTime;
@@ -206,9 +208,10 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 ((Pet) this).Tick();
             }
-            //Update();
+            Update();
             Regenerate();
             TickCooldowns();
+            RocketLauncher?.Tick();
         }
 
         public void Update()

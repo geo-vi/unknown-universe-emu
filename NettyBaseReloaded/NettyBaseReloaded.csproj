@@ -283,6 +283,8 @@
     <Compile Include="Game\netty\commands\old_client\requests\CollectBoxRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\DisplaySettingsRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\GameplaySettingsRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\HellstormLaunchRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\HellstormLoadRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\MoveRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetGearActivationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetRequest.cs" />
@@ -315,6 +317,8 @@
     <Compile Include="Game\netty\handlers\CollectBoxHandler.cs" />
     <Compile Include="Game\netty\handlers\command42JHandler.cs" />
     <Compile Include="Game\netty\handlers\ForceInitHandler.cs" />
+    <Compile Include="Game\netty\handlers\HellstormLaunchHandler.cs" />
+    <Compile Include="Game\netty\handlers\HellstormLoadHandler.cs" />
     <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\JumpRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
@@ -336,6 +340,7 @@
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationEffect.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\RocketLauncherCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\WizardCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\WizardEffect.cs" />
     <Compile Include="Game\objects\world\characters\DropableRewards.cs" />
@@ -352,6 +357,7 @@
     <Compile Include="Game\objects\world\characters\Level.cs" />
     <Compile Include="Game\objects\world\characters\Range.cs" />
     <Compile Include="Game\objects\world\characters\Reward.cs" />
+    <Compile Include="Game\objects\world\characters\RocketLauncher.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\CargoLoot.cs" />
     <Compile Include="Game\objects\world\map\collectables\Types.cs" />
@@ -379,7 +385,6 @@
     <Compile Include="Game\objects\world\players\equipment\Configuration.cs" />
     <Compile Include="Game\objects\world\players\equipment\Drone.cs" />
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
-    <Compile Include="Game\objects\world\players\equipment\RocketLauncher.cs" />
     <Compile Include="Game\objects\world\players\extra\Booster.cs" />
     <Compile Include="Game\objects\world\players\extra\boosters\DMGBO1.cs" />
     <Compile Include="Game\objects\world\players\extra\boosters\DMGBO2.cs" />

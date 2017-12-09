@@ -155,7 +155,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2021), player.Information.Ammunitions["ammunition_rocket_plt-2021"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2026), player.Information.Ammunitions["ammunition_rocket_plt-2026"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT3030), player.Information.Ammunitions["ammunition_rocket_plt-3030"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 player.Settings.Slotbar.GetCategories();
             }
@@ -976,7 +976,20 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.HellstormStatusCommand.write(new List<int>(), new commands.old_client.AmmunitionTypeModule(commands.old_client.AmmunitionTypeModule.ECO_ROCKET), 0).Bytes);
+                if (gameSession.Player.RocketLauncher != null)
+                {
+                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand
+                        .write(gameSession.Player.RocketLauncher.Launchers.ToList(),
+                            new commands.old_client.AmmunitionTypeModule(Converter
+                                .ToAmmoType(gameSession.Player.RocketLauncher.LoadLootId).type),
+                            gameSession.Player.RocketLauncher.CurrentLoad).Bytes);
+                }
+                else
+                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand
+                        .write(new List<int>(),
+                            new commands.old_client.AmmunitionTypeModule(commands.old_client.AmmunitionTypeModule
+                                .ECO_ROCKET), 0).Bytes);
+
             }
         }
         #endregion
