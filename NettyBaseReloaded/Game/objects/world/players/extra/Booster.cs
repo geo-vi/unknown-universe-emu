@@ -82,6 +82,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
 
         public static void CalculateTotalBoost(Player player)
         {
+            if (player.Controller.Dead || !player.Controller.Active)
+                return;
+
             double addedDamage = 0;
             foreach (var booster in player.Boosters.Where(x => x.Type == Types.DAMAGE))
             {
