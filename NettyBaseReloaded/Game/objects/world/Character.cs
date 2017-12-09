@@ -234,14 +234,28 @@ namespace NettyBaseReloaded.Game.objects.world
                     Packet.Builder.AttributeShipSpeedUpdateCommand(gameSession, player.Speed);
                 }
 
-                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.Ship.Id, CurrentShield, MaxShield,
+                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
                     CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
-                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.Ship.Id, CurrentShield, MaxShield,
+                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
                     CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
             }
             catch (Exception)
             {
             }
+        }
+
+        public void UpdateShip()
+        {
+            var sessions =
+                World.StorageManager.GameSessions.Where(
+                    x => x.Value.Client != null && InRange(x.Value.Player));
+            foreach (var session in sessions)
+            {
+                if (session.Key != Id)
+                    Packet.Builder.ShipCreateCommand(session.Value, this);
+            }
+            if (this is Player)
+                Packet.Builder.ShipInitializationCommand(World.StorageManager.GetGameSession(Id));
         }
 
         private DateTime LastRegeneratedTime = new DateTime(2016, 12, 24, 0, 0,0);
@@ -276,9 +290,9 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
 
                 //Updates the shield for the users who have 'you' clicked
-                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.Ship.Id, CurrentShield, MaxShield,
+                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
                     CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
-                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.Ship.Id, CurrentShield, MaxShield,
+                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
                     CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
 
                 Update();

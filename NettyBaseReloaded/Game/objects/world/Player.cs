@@ -182,9 +182,16 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public double BoostedAcceleration = 0;
         public override int Speed
         {
-            get { return Hangar.Configurations[CurrentConfig - 1].Speed; }
+            get
+            {
+                var value = Hangar.Configurations[CurrentConfig - 1].Speed;
+                if (BoostedAcceleration > 0)
+                    value = (int) (value * BoostedAcceleration);
+                return value;
+            }
         }
 
         public double BoostedDamage = 0;
@@ -274,6 +281,7 @@ namespace NettyBaseReloaded.Game.objects.world
             LevelChecker();
             Storage.Tick();
             TickBoosters();
+            AssembleEnemyWarn();
         }
 
         private void InitializeClasses()
@@ -555,6 +563,38 @@ namespace NettyBaseReloaded.Game.objects.world
                     value = 0.5 - BoostedDamage;
                 }
                 BoostedDamage += value;
+            }
+        }
+
+        public void BoostSpeed(double value)
+        {
+            if (BoostedAcceleration < 2)
+            {
+                if (BoostedAcceleration + value > 2)
+                {
+                    value = 2 - BoostedAcceleration;
+                }
+                BoostedAcceleration += value;
+                UpdateSpeed();
+            }
+        }
+
+        public void UpdateSpeed()
+        {
+            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|v|" + Speed);
+        }
+
+        public int EnemyWarningLevel = 0;
+        public void AssembleEnemyWarn()
+        {
+            if (State.IsOnHomeMap())
+            {
+                var count = Spacemap.Entities.Count(
+                    x => x.Value.FactionId != FactionId && x.Value.FactionId != Faction.NONE);
+                if (EnemyWarningLevel != count)
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id),
+                        "0|n|w|" + count); //enemy warning
+                EnemyWarningLevel = count;
             }
         }
     }

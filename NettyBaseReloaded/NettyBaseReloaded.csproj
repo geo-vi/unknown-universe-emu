@@ -334,6 +334,10 @@
     <Compile Include="Game\netty\commands\ClientCommands.cs" />
     <Compile Include="Game\netty\commands\Command.cs" />
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\DecelerationCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\DecelerationEffect.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\WizardCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\WizardEffect.cs" />
     <Compile Include="Game\objects\world\characters\DropableRewards.cs" />
     <Compile Include="Game\objects\world\characters\Cooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\ConfigCooldown.cs" />

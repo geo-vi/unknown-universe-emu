@@ -202,16 +202,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
-            if (player?.Settings.CurrentRocket.Shoot() == 0)
-            {
-                // NOTHING TO SHOOT
-                Packet.Builder.LegacyModule(gameSession,
-                    "0|A|STD|No more ammo (todo: find a proper STM message)");
-                Attacking = false;
-                return;
-            }
-
-            int damage = 0;
+            int damage = -1;
             int rocketId = 0;
 
             switch (missleId)
@@ -234,13 +225,29 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     break;
                 case "ammunition_specialammo_pld-8":
                     rocketId = 5;
+                    Plasma(enemy);
                     break;
                 case "ammunition_specialammo_dcr-250":
                     rocketId = 6;
+                    Decelerate(enemy);
+                    break;
+                case "ammunition_specialammo_wiz-x":
+                    rocketId = 8;
+                    if (Character.Cooldowns.Exists(cooldown => cooldown is WizardCooldown)) return;
+                    Wizard(enemy);
                     break;
             }
 
             if (Character.Cooldowns.Exists(cooldown => cooldown is RocketCooldown)) return;
+
+            if (player?.Settings.CurrentRocket.Shoot() == 0)
+            {
+                // NOTHING TO SHOOT
+                Packet.Builder.LegacyModule(gameSession,
+                    "0|A|STD|No more ammo (todo: find a proper STM message)");
+                Attacking = false;
+                return;
+            }
 
             var newCooldown = new RocketCooldown();
             if (player != null) newCooldown.Send(World.StorageManager.GetGameSession(player.Id));
@@ -287,7 +294,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Damage(Character target, int absDamage, int damage, short damageEffect)
         {
-            if (target.Controller.Dead || Character.Controller.Dead) return;
+            if (damage == -1 || target.Controller.Dead || Character.Controller.Dead) return;
             var attackerSession = (Character is Player) ? World.StorageManager.GetGameSession(Character.Id) : null;
             var targetSession = (target is Player) ? World.StorageManager.GetGameSession(target.Id) : null;
             var pairedSessions = new List<GameSession>();
@@ -448,6 +455,45 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                                                                                amount);
 
             Character.Update();
+        }
+
+        public void Wizard(Character target)
+        {
+            if (target == null)
+            {
+                return;
+            }
+            var wizCooldown = new WizardCooldown();
+            if (Character is Player)
+                wizCooldown.Send(World.StorageManager.GetGameSession(Character.Id));
+            Character.Cooldowns.Add(new WizardCooldown());
+
+            var wizEffect = new WizardEffect();
+            wizEffect.OnStart(target);                
+            target.Cooldowns.Add(new WizardEffect());
+        }
+
+        public void Decelerate(Character target)
+        {
+            if (!(target is Player))
+            {
+                return;
+            } 
+
+            var decCooldown = new DecelerationCooldown();
+            if (Character is Player)
+                decCooldown.Send(World.StorageManager.GetGameSession(Character.Id));
+            Character.Cooldowns.Add(new DecelerationCooldown());
+
+            var decEffect = new DecelerationEffect();
+            decEffect.OnStart(target);
+            target.Cooldowns.Add(new DecelerationEffect());
+
+        }
+
+        public void Plasma(Character target)
+        {
+            
         }
     }
 }
