@@ -337,22 +337,7 @@ namespace NettyBaseReloaded.Game.objects.world
             }
             else
             {
-                if (Spacemap.Id < 16)
-                {
-                    switch (FactionId)
-                    {
-                        case Faction.MMO:
-                            map = World.StorageManager.Spacemaps[1];
-                            break;
-                        case Faction.EIC:
-                            map = World.StorageManager.Spacemaps[5];
-                            break;
-                        case Faction.VRU:
-                            map = World.StorageManager.Spacemaps[9];
-                            break;
-                    }
-                }
-                else
+                if (Spacemap?.Id > 16)
                 {
                     switch (FactionId)
                     {
@@ -365,6 +350,22 @@ namespace NettyBaseReloaded.Game.objects.world
                         case Faction.VRU:
                             map = World.StorageManager.Spacemaps[28];
                             break;
+                    }
+                }
+                else
+                {
+                    switch (FactionId)
+                    {
+                        case Faction.MMO:
+                            map = World.StorageManager.Spacemaps[1];
+                            break;
+                        case Faction.EIC:
+                            map = World.StorageManager.Spacemaps[5];
+                            break;
+                        case Faction.VRU:
+                            map = World.StorageManager.Spacemaps[9];
+                            break;
+
                     }
                 }
             }
