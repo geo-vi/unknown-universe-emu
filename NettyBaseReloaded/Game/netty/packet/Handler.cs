@@ -43,6 +43,8 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.ShipWarpWindowRequest.ID, new ShipWarpWindowHandler()); 
             OldClientCommands.Add(commands.old_client.requests.PetGearActivationRequest.ID, new PetGearActivationHandler());
             OldClientCommands.Add(commands.old_client.requests.WindowSettingsRequest.ID, new WindowSettingsHandler());
+            OldClientCommands.Add(commands.old_client.requests.HellstormLoadRequest.ID, new HellstormLoadHandler());
+            OldClientCommands.Add(commands.old_client.requests.HellstormLaunchRequest.ID, new HellstormLaunchHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)
