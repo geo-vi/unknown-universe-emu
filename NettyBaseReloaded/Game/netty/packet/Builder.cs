@@ -144,18 +144,18 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X3), player.Information.Ammunitions["ammunition_laser_mcb-50"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X4), player.Information.Ammunitions["ammunition_laser_ucb-100"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAB), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.CBO), player.Information.Ammunitions["ammunition_laser_cbo-100"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.RSB), player.Information.Ammunitions["ammunition_laser_rsb-75"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.JOB100), player.Information.Ammunitions["ammunition_laser_job-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.CBO), player.Information.Ammunitions["ammunition_laser_cbo-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.RSB), player.Information.Ammunitions["ammunition_laser_rsb-75"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.JOB100), player.Information.Ammunitions["ammunition_laser_job-100"].Get()));
                 //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), player.Information.Ammunitions["ammunition_specialammo_emp-01"].Get()));
                 //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
                 //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
                 //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SMARTBOMB), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.R310), player.Information.Ammunitions["ammunition_rocket_r-310"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2021), player.Information.Ammunitions["ammunition_rocket_plt-2021"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2026), player.Information.Ammunitions["ammunition_rocket_plt-2026"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT3030), player.Information.Ammunitions["ammunition_rocket_plt-3030"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2021), player.Information.Ammunitions["ammunition_rocket_plt-2021"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2026), player.Information.Ammunitions["ammunition_rocket_plt-2026"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT3030), player.Information.Ammunitions["ammunition_rocket_plt-3030"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 player.Settings.Slotbar.GetCategories();
             }
@@ -171,7 +171,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                     commands.new_client.ShipInitializationCommand.write(
                         player.Id,
                         player.Name,
-                        player.Hangar.Ship.ToStringLoot(),
+                        player.Hangar.ShipDesign.ToStringLoot(),
                         player.Speed,
                         player.CurrentShield,
                         player.MaxShield,
@@ -207,7 +207,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                     commands.old_client.ShipInitializationCommand.write(
                         player.Id,
                         player.Name,
-                        player.Hangar.Ship.Id,
+                        player.Hangar.ShipDesign.Id,
                         player.Speed,
                         player.CurrentShield,
                         player.MaxShield,
@@ -265,7 +265,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.new_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.Ship.ToStringLoot(), pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
+                        pChar.Hangar.ShipDesign.ToStringLoot(), pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
                         (int) pChar.FactionId, 0, (int) pChar.RankId, false,
                         new commands.new_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
@@ -279,7 +279,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else
                 {
                     bytes = commands.new_client.ShipCreateCommand.write(character.Id,
-                        character.Hangar.Ship.ToStringLoot(), 0, character.Clan.Tag, character.Name, character.Position.X,
+                        character.Hangar.ShipDesign.ToStringLoot(), 0, character.Clan.Tag, character.Name, character.Position.X,
                         character.Position.Y,
                         (int)character.FactionId, character.Clan.Id, 0, false,
                         new commands.new_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
@@ -293,7 +293,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.old_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.Ship.Id, pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
+                        pChar.Hangar.ShipDesign.Id, pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
                         (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
                         new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
@@ -306,7 +306,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else
                 {
                     bytes = commands.old_client.ShipCreateCommand.write(character.Id,
-                        character.Hangar.Ship.Id, 0, character.Clan.Tag, character.Name, character.Position.X,
+                        character.Hangar.ShipDesign.Id, 0, character.Clan.Tag, character.Name, character.Position.X,
                         character.Position.Y,
                         (int) character.FactionId, character.Clan.Id, 0, false,
                         new commands.old_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
@@ -439,13 +439,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 if (character == null) gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(0,0,0,0,0,0,0,0,false).Bytes);
-                else gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(character.Id, character.Hangar.Ship.Id, character.CurrentShield, character.MaxShield,
+                else gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(character.Id, character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
                     character.CurrentHealth, character.MaxHealth, character.CurrentNanoHull, character.MaxNanoHull, false).Bytes);
             }
             else
             {
                 if (character == null) gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(0,0,0,0,0,0,0,0,false).Bytes);
-                else gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(character.Id, character.Hangar.Ship.Id, character.CurrentShield, character.MaxShield,
+                else gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(character.Id, character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
                     character.CurrentHealth, character.MaxHealth, character.CurrentNanoHull, character.MaxNanoHull, false).Bytes);
             }
         }
@@ -976,7 +976,20 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.HellstormStatusCommand.write(new List<int>(), new commands.old_client.AmmunitionTypeModule(commands.old_client.AmmunitionTypeModule.ECO_ROCKET), 0).Bytes);
+                if (gameSession.Player.RocketLauncher != null)
+                {
+                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand
+                        .write(gameSession.Player.RocketLauncher.Launchers.ToList(),
+                            new commands.old_client.AmmunitionTypeModule(Converter
+                                .ToAmmoType(gameSession.Player.RocketLauncher.LoadLootId).type),
+                            gameSession.Player.RocketLauncher.CurrentLoad).Bytes);
+                }
+                else
+                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand
+                        .write(new List<int>(),
+                            new commands.old_client.AmmunitionTypeModule(commands.old_client.AmmunitionTypeModule
+                                .ECO_ROCKET), 0).Bytes);
+
             }
         }
         #endregion

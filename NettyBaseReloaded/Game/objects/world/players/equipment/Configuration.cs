@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world.characters;
 
 namespace NettyBaseReloaded.Game.objects.world.players.equipment
 {
-    class Configuration
+    class Configuration : PlayerBaseClass
     {
         public int Id { get; }
 
@@ -19,18 +20,22 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
         public int LaserTypes { get; set; }
 
         public Dictionary<string, Item> Consumables { get; set; }
+        public RocketLauncher RocketLauncher { get; set; }
 
-        public Configuration(int id, int damage, int speed, int maxShield, int shield, double shieldAbsorbation, int lazerCount, int laserTypes, Dictionary<string, Item> consumables)
+        public Configuration(Player player, int id, int damage, int speed, int maxShield, int shield, double shieldAbsorbation, int lazerCount, int laserTypes, int[] loadedRocketLaunchers, Dictionary<string, Item> consumables) : base(player)
         {
             Id = id;
             Speed = speed;
             CurrentShield = shield;
             Damage = damage;
             MaxShield = maxShield;
-            ShieldAbsorbation = shieldAbsorbation;
+            ShieldAbsorbation = shieldAbsorbation; //Should be percentage wise ( ShieldAbsorbation / MaxShield = DamageABS ) ex. (ShieldAbsorbation = 112000 / MaxShield = 140000)  == 0.8 DamageABS
+            //ShieldAbsorbation = shieldAbsorbation / MaxShield; //Should be percentage wise ( ShieldAbsorbation / MaxShield = DamageABS ) ex. (ShieldAbsorbation = 112000 / MaxShield = 140000)  == 0.8 DamageABS
             LaserCount = lazerCount;
             LaserTypes = laserTypes;
             Consumables = consumables;
+            if (loadedRocketLaunchers?.Length > 0)
+                RocketLauncher = new RocketLauncher(player, loadedRocketLaunchers);
         }
     }
 }

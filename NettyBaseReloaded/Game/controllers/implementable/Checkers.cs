@@ -269,7 +269,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             catch (Exception e)
             {
-                if (Character.Position == null || Character.Spacemap == null) return;
+                if (Character.Position == null || Character.Spacemap == null || Character.Id == null) return;
                 new ExceptionLog("checkers", "Object Checker", e);
                 //Error in checkers->Disconnecting player
                 World.StorageManager.GetGameSession(Character.Id).Disconnect(GameSession.DisconnectionType.ERROR);

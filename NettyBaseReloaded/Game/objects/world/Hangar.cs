@@ -11,6 +11,9 @@ namespace NettyBaseReloaded.Game.objects.world
     class Hangar
     {
         public Ship Ship { get; set; }
+
+        public Ship ShipDesign { get; set; }
+
         public List<Drone> Drones { get; set; }
         public Configuration[] Configurations { get; set; }
 
@@ -30,6 +33,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public Hangar(Ship ship, List<Drone> drones, Vector position, Spacemap spacemap, int hp, int nano, Dictionary<string, Item> items, bool active = true, Configuration[] configurations = null)
         {
             Ship = ship;
+            ShipDesign = Ship;
             Drones = drones;
             Position = position;
             Spacemap = spacemap;

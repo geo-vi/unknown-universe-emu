@@ -299,9 +299,12 @@ namespace NettyBaseReloaded.Game.managers
                     double absorb1 = Convert.ToDouble(queryRow["CONFIG_1_SHIELDABSORB"]) / 10000;
                     int lcount1 = intConv(queryRow["CONFIG_1_LASERCOUNT"]);
                     int ltypes1 = intConv(queryRow["CONFIG_1_LASER_TYPES"]);
+                    string rlTypes1 = queryRow["CONFIG_1_HEAVY"].ToString();
 
                     if (extras1 == "") extras1 = "[]";
-                    var config1 = new Configuration(1, dmg1, velocity1, shield1, shield1, absorb1, lcount1, ltypes1,JsonConvert.DeserializeObject<List<Item>>(extras1).ToDictionary(x => x.LootId));
+                    var config1 = new Configuration(player, 1, dmg1, velocity1, shield1, shield1, absorb1, lcount1,
+                        ltypes1, JsonConvert.DeserializeObject<int[]>(rlTypes1),
+                        JsonConvert.DeserializeObject<List<Item>>(extras1).ToDictionary(x => x.LootId));
 
                     int dmg2 = intConv(queryRow["CONFIG_2_DMG"]);
                     int velocity2 = intConv(queryRow["CONFIG_2_SPEED"]);
@@ -310,9 +313,12 @@ namespace NettyBaseReloaded.Game.managers
                     double absorb2 = Convert.ToDouble(queryRow["CONFIG_2_SHIELDABSORB"]) / 10000;
                     int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
                     int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
+                    string rlTypes2 = queryRow["CONFIG_2_HEAVY"].ToString();
 
                     if (extras2 == "") extras2 = "[]";
-                    var config2 = new Configuration(2, dmg2, velocity2, shield2, shield2, absorb2, lcount2, ltypes2, JsonConvert.DeserializeObject<List<Item>>(extras2).ToDictionary(x => x.LootId));
+                    var config2 = new Configuration(player, 2, dmg2, velocity2, shield2, shield2, absorb2, lcount2,
+                        ltypes2, JsonConvert.DeserializeObject<int[]>(rlTypes2),
+                        JsonConvert.DeserializeObject<List<Item>>(extras2).ToDictionary(x => x.LootId));
 
                     builder = new Configuration[2]
                     {
@@ -441,6 +447,11 @@ namespace NettyBaseReloaded.Game.managers
                     ammoDictionary.Add("ammunition_specialammo_dcr-250", new Ammunition(player, "ammunition_specialammo_dcr-250", intConv(queryRow["DCR_250"])));
                     ammoDictionary.Add("ammunition_specialammo_wiz-x", new Ammunition(player, "ammunition_specialammo_wiz-x", intConv(queryRow["WIZ_X"])));
                     ammoDictionary.Add("ammunition_rocket_bdr-1211", new Ammunition(player, "ammunition_rocket_bdr-1211", intConv(queryRow["BDR_1211"])));
+                    ammoDictionary.Add("ammunition_rocketlauncher_hstrm-01", new Ammunition(player, "ammunition_rocketlauncher_hstrm-01", intConv(queryRow["HSTRM_01"])));
+                    ammoDictionary.Add("ammunition_rocketlauncher_ubr-100", new Ammunition(player, "ammunition_rocketlauncher_ubr-100", intConv(queryRow["UBR_100"])));
+                    ammoDictionary.Add("ammunition_rocketlauncher_eco-10", new Ammunition(player, "ammunition_rocketlauncher_eco-10", intConv(queryRow["ECO_10"])));
+                    ammoDictionary.Add("ammunition_rocketlauncher_sar-01", new Ammunition(player, "ammunition_rocketlauncher_sar-01", intConv(queryRow["SAR_01"])));
+                    ammoDictionary.Add("ammunition_rocketlauncher_sar-02", new Ammunition(player, "ammunition_rocketlauncher_sar-02", intConv(queryRow["SAR_02"])));
                 }
             }
             catch (Exception e)
