@@ -17,10 +17,10 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
 
         public abstract void execute();
 
-        public static Dictionary<string, Extra> LoadExtras(Player player)
+        public static Dictionary<string, Extra> LoadExtras(Player player, Dictionary<string, Item> consumables)
         {
             var extras = new Dictionary<string, Extra>();
-            foreach (var consumable in player.Hangar.Configurations[player.CurrentConfig].Consumables)
+            foreach (var consumable in consumables)
             {
                 switch (consumable.Key)
                 {

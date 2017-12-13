@@ -42,7 +42,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             if (loadedRocketLaunchers?.Length > 0)
                 RocketLauncher = new RocketLauncher(player, loadedRocketLaunchers);
             if (Consumables.Count > 0)
-                Extras = Extra.LoadExtras(player);
+                Extras = Extra.LoadExtras(player, consumables);
         }
     }
 }
