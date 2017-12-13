@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
+using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.netty.commands.old_client;
@@ -24,6 +25,7 @@ using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
 using ClanRelationModule = NettyBaseReloaded.Game.netty.commands.new_client.ClanRelationModule;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
+using Range = NettyBaseReloaded.Game.objects.world.characters.Range;
 using State = NettyBaseReloaded.Game.objects.world.players.State;
 
 namespace NettyBaseReloaded.Game.objects.world
@@ -435,7 +437,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Refresh();
         }
 
-        public string GetConsumablesPacket()
+        public string BuildExtrasPacket()
         {
             bool rep = false;
             bool droneRep = false;
@@ -452,22 +454,19 @@ namespace NettyBaseReloaded.Game.objects.world
             bool petRefuel = false;
             bool jumpToBase = false;
 
-            var currConfig = Hangar.Configurations[CurrentConfig - 1];
-            if (currConfig.Consumables != null &&
-                currConfig.Consumables.Count > 0)
+            foreach (var item in Extras)
             {
-                foreach (var item in currConfig.Consumables)
+                if (item.Value.Amount > 0) { 
+                var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
+                if (slotbarItem != null)
                 {
-                    var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
-                    if (slotbarItem != null)
+                    slotbarItem.CounterValue = item.Value.Amount;
+                    slotbarItem.Visible = true;
+                    if (UsingNewClient)
                     {
-                        slotbarItem.CounterValue = item.Value.Amount;
-                        slotbarItem.Visible = true;
-                        if (UsingNewClient)
-                        {
-                            World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
-                        }
+                        World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
                     }
+                }
 
                     switch (item.Key)
                     {
@@ -514,12 +513,17 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
             }
 
-            return Convert.ToInt32(droneRep) + "|0|" + Convert.ToInt32(jumpToBase) + "|" +
+            return Convert.ToInt32(droneRep) + "|2|" + Convert.ToInt32(jumpToBase) + "|" +
                    Convert.ToInt32(ammoBuy) + "|" + Convert.ToInt32(rep) + "|" + Convert.ToInt32(tradeDrone) +
                    "|0|" + Convert.ToInt32(smb) + "|" + Convert.ToInt32(ish) + "|0|" + Convert.ToInt32(aim) + "|" +
                    Convert.ToInt32(autoRocket) + "|" + Convert.ToInt32(cloak) + "|" +
                    Convert.ToInt32(autoRocketLauncer) + "|" + Convert.ToInt32(rocketBuy) + "|" +
                    Convert.ToInt32(jump) + "|" + Convert.ToInt32(petRefuel);
+        }
+
+        public void UpdateExtras()
+        {
+            foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Initiate((CPU.Types)type);
         }
 
         private void CharacterEnteredRange(object s, Range.RangeArgs e)

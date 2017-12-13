@@ -385,6 +385,7 @@
     <Compile Include="Game\objects\world\players\equipment\Configuration.cs" />
     <Compile Include="Game\objects\world\players\equipment\Drone.cs" />
     <Compile Include="Game\objects\world\players\equipment\Extra.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\Cloak.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\Robot.cs" />
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
     <Compile Include="Game\objects\world\players\extra\Booster.cs" />

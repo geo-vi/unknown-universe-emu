@@ -37,7 +37,8 @@ namespace NettyBaseReloaded.Game.controllers.login
         {
             Packet.Builder.LegacyModule(GameSession, "0|n|t|" + GameSession.Player.Id + "|222|most_wanted");
 
-            Packet.Builder.LegacyModule(GameSession, "0|A|ITM|" + GameSession.Player.GetConsumablesPacket());
+            Packet.Builder.LegacyModule(GameSession, "0|A|ITM|" + GameSession.Player.BuildExtrasPacket());
+            GameSession.Player.UpdateExtras();
             Packet.Builder.LegacyModule(GameSession, "0|A|BK|0"); //green booty
             Packet.Builder.LegacyModule(GameSession, "0|A|BKR|0"); //red booty
             Packet.Builder.LegacyModule(GameSession, "0|A|BKB|0"); //blue booty

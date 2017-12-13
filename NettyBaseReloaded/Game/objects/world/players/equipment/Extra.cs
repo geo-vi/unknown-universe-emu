@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 
 namespace NettyBaseReloaded.Game.objects.world.players.equipment
@@ -51,7 +52,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                     case "equipment_extra_cpu_cl04k-xl":
                     case "equipment_extra_cpu_cl04k-m":
                     case "equipment_extra_cpu_cl04k-xs":
-                        // TODO: Add cloak
+                        extras.Add(consumable.Key, new Cloak(player, consumable.Value.Id, consumable.Value.LootId, consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_arol-x":
                         // TODO: add auto rocket

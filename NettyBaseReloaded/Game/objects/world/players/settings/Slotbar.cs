@@ -62,7 +62,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                 "equipment_extra_cpu_sle-04", "equipment_extra_hmd-07", "equipment_extra_repbot_rep-1",
                 "equipment_extra_repbot_rep-2", "equipment_extra_repbot_rep-3", "equipment_extra_repbot_rep-4",
                 "equipment_extra_repbot_rep-s", "equipment_weapon_rocketlauncher_hst-1",
-                "equipment_weapon_rocketlauncher_hst-2", "equipment_weapon_rocketlauncher_not_present"
+                "equipment_weapon_rocketlauncher_hst-2", "equipment_weapon_rocketlauncher_not_present", "equipment_extra_cpu_nc-rrb-x"
             };
 
             public static string[] BuyNowIds =
