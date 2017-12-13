@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 
 namespace NettyBaseReloaded.Game.controllers.player
 {
@@ -75,7 +76,6 @@ namespace NettyBaseReloaded.Game.controllers.player
                 return;
             }
 
-
             var player = (Player)baseController.Character;
             if (player.CurrentHealth == player.MaxHealth)
             {
@@ -83,7 +83,10 @@ namespace NettyBaseReloaded.Game.controllers.player
                 return;
             }
 
-            var repAmount = (player.MaxHealth / 100) * player.Equipment.GetRobotLevel();
+            var robot = player.Extras.Values.FirstOrDefault(x => x is Robot) as Robot;
+            if (robot == null) return;
+
+            var repAmount = (player.MaxHealth / 100) * robot.GetLevel();
 
             baseController.Attack.Heal(repAmount);
         }

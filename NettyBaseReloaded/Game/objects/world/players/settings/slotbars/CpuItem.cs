@@ -12,16 +12,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
         public override void Execute(Player player)
         {
-            switch (ItemId)
-            {
-                case "equipment_extra_repbot_rep-s":
-                case "equipment_extra_repbot_rep-1":
-                case "equipment_extra_repbot_rep-2":
-                case "equipment_extra_repbot_rep-3":
-                case "equipment_extra_repbot_rep-4":
-                    player.Controller.Repairing = true;
-                    break;
-            }
+            player.Extras[ItemId].execute();
         }
     }
 }

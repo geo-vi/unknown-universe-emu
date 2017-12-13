@@ -5,17 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
+using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 using NettyBaseReloaded.Main;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
     class Equipment : PlayerBaseClass
     {
+        protected Player Player { get; }
+
+        #region Hangars
         public int ActiveHangar = 0;
 
         public Dictionary<int, Hangar> Hangars { get; set; }
-
-        protected Player Player { get; }
+        #endregion
 
         public Equipment(Player player) : base(player)
         {
@@ -126,7 +129,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public string GetRobot()
         {
-            return "equipment_extra_repbot_rep-4";
+            return Player.Extras.FirstOrDefault(x => x.Value is Robot).Key;
         }
 
         public int GetRobotLevel()

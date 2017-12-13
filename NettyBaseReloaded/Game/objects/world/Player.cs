@@ -246,6 +246,11 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public Dictionary<string, Extra> Extras
+        {
+            get { return Hangar.Configurations[CurrentConfig - 1].Extras; }
+        }
+
         public override RocketLauncher RocketLauncher
         {
             get { return Hangar.Configurations[CurrentConfig - 1].RocketLauncher; }
@@ -426,7 +431,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
             Information.LevelUp(lvl);
             var gameSession = World.StorageManager.GetGameSession(Id);
-            //Packet.Builder.LegacyModule(gameSession, "0|A|LUP|" + Information.Level.Id + "|" + World.StorageManager.Levels.PlayerLevels[Information.Level.Id + 1].Experience);
             Packet.Builder.LevelUpCommand(gameSession);
             Refresh();
         }
