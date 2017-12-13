@@ -149,8 +149,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             get
             {
-                var value = 0.8;
-                //var value = Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation;
+                var value = (double)(Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation / MaxShield);
                 switch (Formation)
                 {
                     case DroneFormation.CRAB:

@@ -477,7 +477,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (Character is Player) Packet.Builder.AttackHitCommand(World.StorageManager.GetGameSession(Character.Id), Character, entry.Value, damage, 14);
             }
         }
-
         public void Heal(int amount, int healerId = 0, HealType healType = HealType.HEALTH)
         {
             if (amount < 0)

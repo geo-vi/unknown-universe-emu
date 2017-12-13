@@ -296,7 +296,7 @@ namespace NettyBaseReloaded.Game.managers
                     int velocity1 = intConv(queryRow["CONFIG_1_SPEED"]);
                     string extras1 = queryRow["CONFIG_1_EXTRAS"].ToString();
                     int shield1 = intConv(queryRow["CONFIG_1_SHIELD"]);
-                    double absorb1 = Convert.ToDouble(queryRow["CONFIG_1_SHIELDABSORB"]) / 10000;
+                    int absorb1 = intConv(queryRow["CONFIG_1_SHIELDABSORB"]);
                     int lcount1 = intConv(queryRow["CONFIG_1_LASERCOUNT"]);
                     int ltypes1 = intConv(queryRow["CONFIG_1_LASER_TYPES"]);
                     string rlTypes1 = queryRow["CONFIG_1_HEAVY"].ToString();
@@ -310,7 +310,7 @@ namespace NettyBaseReloaded.Game.managers
                     int velocity2 = intConv(queryRow["CONFIG_2_SPEED"]);
                     string extras2 = queryRow["CONFIG_2_EXTRAS"].ToString();
                     int shield2 = intConv(queryRow["CONFIG_2_SHIELD"]);
-                    double absorb2 = Convert.ToDouble(queryRow["CONFIG_2_SHIELDABSORB"]) / 10000;
+                    int absorb2 = intConv(queryRow["CONFIG_2_SHIELDABSORB"]);
                     int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
                     int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
                     string rlTypes2 = queryRow["CONFIG_2_HEAVY"].ToString();

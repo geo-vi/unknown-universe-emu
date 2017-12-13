@@ -15,14 +15,14 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
         public int Damage { get; set; }
         public int MaxShield { get; set; }
         public int CurrentShield { get; set; }
-        public double ShieldAbsorbation { get; set; }
+        public int ShieldAbsorbation { get; set; }
         public int LaserCount { get; set; }
         public int LaserTypes { get; set; }
 
         public Dictionary<string, Item> Consumables { get; set; }
         public RocketLauncher RocketLauncher { get; set; }
 
-        public Configuration(Player player, int id, int damage, int speed, int maxShield, int shield, double shieldAbsorbation, int lazerCount, int laserTypes, int[] loadedRocketLaunchers, Dictionary<string, Item> consumables) : base(player)
+        public Configuration(Player player, int id, int damage, int speed, int maxShield, int shield, int shieldAbsorbation, int lazerCount, int laserTypes, int[] loadedRocketLaunchers, Dictionary<string, Item> consumables) : base(player)
         {
             Id = id;
             Speed = speed;
