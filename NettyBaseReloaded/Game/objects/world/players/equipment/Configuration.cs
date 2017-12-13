@@ -29,7 +29,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             CurrentShield = shield;
             Damage = damage;
             MaxShield = maxShield;
-            ShieldAbsorbation = shieldAbsorbation;
+            ShieldAbsorbation = shieldAbsorbation; //Should be percentage wise ( ShieldAbsorbation / MaxShield = DamageABS ) ex. (ShieldAbsorbation = 112000 / MaxShield = 140000)  == 0.8 DamageABS
+            //ShieldAbsorbation = shieldAbsorbation / MaxShield; //Should be percentage wise ( ShieldAbsorbation / MaxShield = DamageABS ) ex. (ShieldAbsorbation = 112000 / MaxShield = 140000)  == 0.8 DamageABS
             LaserCount = lazerCount;
             LaserTypes = laserTypes;
             Consumables = consumables;
