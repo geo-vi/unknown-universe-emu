@@ -7,6 +7,7 @@ using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.player
 {
@@ -36,7 +37,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (baseController.Repairing) Robot();
         }
 
-        public void Initiate(Types type)
+        public void Update(Types type)
         {
             var gameSession = World.StorageManager.GetGameSession(baseController.Character.Id);
             switch (type)
@@ -57,6 +58,9 @@ namespace NettyBaseReloaded.Game.controllers.player
             {
                 case Types.ROBOT:
                     baseController.Repairing = true;
+                    break;
+                case Types.CLOAK:
+                    Cloak();
                     break;
             }
         }
@@ -97,7 +101,14 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         void Cloak()
         {
-
+            var cloakExtra = baseController.Player.Extras.FirstOrDefault(x => x.Value is Cloak);
+            if (cloakExtra.Value != null && cloakExtra.Value.Amount > 0)
+            {
+                baseController.Invisible = true;
+                baseController.Player.Extras.FirstOrDefault(x => x.Value is Cloak).Value.Amount -= 1;
+                Update(Types.CLOAK);
+                baseController.Effects.UpdatePlayerVisibility();
+            }
         }
 
         void AutoRocketLauncher()

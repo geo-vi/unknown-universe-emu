@@ -523,7 +523,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void UpdateExtras()
         {
-            foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Initiate((CPU.Types)type);
+            foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Update((CPU.Types)type);
         }
 
         private void CharacterEnteredRange(object s, Range.RangeArgs e)

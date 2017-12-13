@@ -63,7 +63,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     Player candidatePlayer = null;
                     foreach (var player in players)
                     {
-                        if (player.Value == null || player.Value.Controller.Dead) continue;
+                        if (player.Value == null || player.Value.Controller.Dead || player.Value.Controller.Invisible) continue;
                         if (candidatePlayer == null)
                         {
                             var _player = (Player) player.Value;

@@ -51,5 +51,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.Cooldowns.Add(cooldown);
             cooldown.OnStart(Character);
         }
+
+        public void UpdatePlayerVisibility()
+        {
+            GameClient.SendPacketSelected(Controller.Character,
+                netty.commands.old_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
+                                                             Convert.ToInt32(Controller.Invisible)));
+            GameClient.SendPacketSelected(Controller.Character,
+                netty.commands.new_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
+                                                             Convert.ToInt32(Controller.Invisible)));
+            GameClient.SendRangePacket(Controller.Character,
+                netty.commands.old_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
+                                                             Convert.ToInt32(Controller.Invisible)), true);
+            GameClient.SendRangePacket(Controller.Character,
+                netty.commands.new_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
+                                                             Convert.ToInt32(Controller.Invisible)), true);
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects;
+using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
@@ -21,6 +23,9 @@ namespace NettyBaseReloaded.Game.netty.handlers
                     break;
                 case ClientCommands.ROBOT:
                     gameSession.Player.Controller.Miscs.UseItem(gameSession.Player.Equipment.GetRobot());
+                    break;
+                case ClientCommands.SELECT_CLOAK:
+                    gameSession.Player.Controller.Miscs.UseItem(gameSession.Player.Extras.FirstOrDefault(x => x.Value is Cloak).Key);
                     break;
                 case ClientCommands.CONFIGURATION:
                     gameSession.Player.Controller.Miscs.ChangeConfig();
