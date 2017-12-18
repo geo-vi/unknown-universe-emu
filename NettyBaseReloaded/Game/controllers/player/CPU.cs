@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.player
 {
@@ -22,7 +25,6 @@ namespace NettyBaseReloaded.Game.controllers.player
         public CPU(PlayerController controller)
         {
             baseController = controller;
-            foreach (var type in Enum.GetValues(typeof(Types))) Initiate((Types)type);
         }
 
         DateTime LastTimeCheckedCpus = new DateTime(2017, 1, 18, 0, 0, 0);
@@ -35,13 +37,17 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (baseController.Repairing) Robot();
         }
 
-        public void Initiate(Types type)
+        public void Update(Types type)
         {
-            var client = World.StorageManager.GetGameSession(baseController.Character.Id).Client;
+            var gameSession = World.StorageManager.GetGameSession(baseController.Character.Id);
             switch (type)
             {
                 case Types.CLOAK:
-                    //client.Send(Builder.LegacyModule("0|A|CPU|C|" + baseController.Player.GetCpuUsesLeft(type)).Bytes);
+                    var cloak = baseController.Player.Extras.Values.FirstOrDefault(x => x is Cloak);
+                    if (cloak != null)
+                    {
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|C|" + cloak.Amount);
+                    }
                     break;
             }
         }
@@ -52,6 +58,9 @@ namespace NettyBaseReloaded.Game.controllers.player
             {
                 case Types.ROBOT:
                     baseController.Repairing = true;
+                    break;
+                case Types.CLOAK:
+                    Cloak();
                     break;
             }
         }
@@ -75,7 +84,6 @@ namespace NettyBaseReloaded.Game.controllers.player
                 return;
             }
 
-
             var player = (Player)baseController.Character;
             if (player.CurrentHealth == player.MaxHealth)
             {
@@ -83,14 +91,24 @@ namespace NettyBaseReloaded.Game.controllers.player
                 return;
             }
 
-            var repAmount = (player.MaxHealth / 100) * player.Equipment.GetRobotLevel();
+            var robot = player.Extras.Values.FirstOrDefault(x => x is Robot) as Robot;
+            if (robot == null) return;
+
+            var repAmount = (player.MaxHealth / 100) * robot.GetLevel();
 
             baseController.Attack.Heal(repAmount);
         }
 
         void Cloak()
         {
-
+            var cloakExtra = baseController.Player.Extras.FirstOrDefault(x => x.Value is Cloak);
+            if (cloakExtra.Value != null && cloakExtra.Value.Amount > 0)
+            {
+                baseController.Invisible = true;
+                baseController.Player.Extras.FirstOrDefault(x => x.Value is Cloak).Value.Amount -= 1;
+                Update(Types.CLOAK);
+                baseController.Effects.UpdatePlayerVisibility();
+            }
         }
 
         void AutoRocketLauncher()

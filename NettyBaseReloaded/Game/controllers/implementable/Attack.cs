@@ -352,6 +352,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             var pairedSessions = new List<GameSession>();
             if (attackerSession != null) pairedSessions.Add(attackerSession);
             if (targetSession != null) pairedSessions.Add(targetSession);
+            if (Character.Controller.Invisible)
+            {
+                Character.Controller.Invisible = false;
+                Character.Controller.Effects.UpdatePlayerVisibility();
+            }
 
             foreach (var entry in target.Range.Entities.Where(x => x.Value.Selected == target && x.Value is Player))
             {

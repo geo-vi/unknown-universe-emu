@@ -22,6 +22,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
         public Dictionary<string, Item> Consumables { get; set; }
         public RocketLauncher RocketLauncher { get; set; }
 
+        /// <summary>
+        /// Extras stored in Dictionary as lootId, extra
+        /// </summary>
+        public Dictionary<string, Extra> Extras { get; set; }
+
         public Configuration(Player player, int id, int damage, int speed, int maxShield, int shield, int shieldAbsorbation, int lazerCount, int laserTypes, int[] loadedRocketLaunchers, Dictionary<string, Item> consumables) : base(player)
         {
             Id = id;
@@ -36,6 +41,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             Consumables = consumables;
             if (loadedRocketLaunchers?.Length > 0)
                 RocketLauncher = new RocketLauncher(player, loadedRocketLaunchers);
+            if (Consumables.Count > 0)
+                Extras = Extra.LoadExtras(player, consumables);
         }
     }
 }

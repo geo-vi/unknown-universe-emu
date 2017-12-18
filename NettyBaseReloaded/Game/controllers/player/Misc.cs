@@ -63,8 +63,12 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             baseController.Player.Update();
 
-            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(baseController.Player.Id)
+            var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
+            Packet.Builder.LegacyModule(gameSession
                 , "0|A|CC|" + baseController.Player.CurrentConfig);
+
+            Packet.Builder.LegacyModule(gameSession, baseController.Player.BuildExtrasPacket());
+            baseController.Player.UpdateExtras();
         }
 
         private class jClass

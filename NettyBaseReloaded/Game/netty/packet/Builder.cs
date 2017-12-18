@@ -198,7 +198,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Clan.Tag, //clanTag
                         0, // player GG rings
                         true,
-                        false, //cloaked
+                        player.Controller.Invisible, //cloaked
                         true,
                         new List<commands.new_client.VisualModifierCommand>()
                     ).Bytes);
@@ -236,7 +236,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Clan.Tag, 
                         0,
                         true,
-                        false,
+                        player.Controller.Invisible,
                         new List<commands.old_client.VisualModifierCommand>()).Bytes);
         }
         #endregion
@@ -269,7 +269,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         pChar.Position.Y,
                         (int) pChar.FactionId, 0, (int) pChar.RankId, false,
                         new commands.new_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, false, false, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
+                        false, false, pChar.Controller.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
                 else if (character is Pet)
@@ -283,7 +283,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         character.Position.Y,
                         (int)character.FactionId, character.Clan.Id, 0, false,
                         new commands.new_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, true, false, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
+                        false, true, character.Controller.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
             }
@@ -297,7 +297,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         pChar.Position.Y,
                         (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
                         new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, false, false, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
+                        false, false, character.Controller.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
                 else if (character is Pet)
                 {
@@ -310,7 +310,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         character.Position.Y,
                         (int) character.FactionId, character.Clan.Id, 0, false,
                         new commands.old_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, true, false, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
+                        false, true, character.Controller.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
             }
             gameSession.Client.Send(bytes);
@@ -610,13 +610,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
                 (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.new_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
-                pet.Position.X, pet.Position.Y, pet.Speed, false, true, new commands.new_client.commandK13(0)).Bytes);
+                pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Controller.Invisible, new commands.new_client.commandK13(0)).Bytes);
             }
             else
             {
                 gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
                     (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
-                    pet.Position.X, pet.Position.Y, pet.Speed, false, true).Bytes);
+                    pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Controller.Invisible).Bytes);
             }
         }
 

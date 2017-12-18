@@ -31,6 +31,8 @@ namespace NettyBaseReloaded.Game.controllers
 
         public bool Active { get; set; }
 
+        public bool Invisible { get; set; }
+
         public AbstractCharacterController(Character character)
         {
             Character = character;
