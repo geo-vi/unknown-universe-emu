@@ -19,6 +19,8 @@ namespace NettyBaseReloaded.Chat.managers
 
         public Dictionary<int, ChatSession> ChatSessions = new Dictionary<int, ChatSession>();
 
+        public Dictionary<int, Announcement> Announcements = new Dictionary<int, Announcement>();
+
         public ChatSession GetChatSession(int userId)
         {
             return ChatSessions.ContainsKey(userId) ? ChatSessions[userId] : null;

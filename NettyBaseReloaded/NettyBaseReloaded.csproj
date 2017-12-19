@@ -75,11 +75,14 @@
     <Compile Include="Chat\commands\Command.cs" />
     <Compile Include="Chat\controllers\AbstractCharacterController.cs" />
     <Compile Include="Chat\controllers\BotController.cs" />
+    <Compile Include="Chat\controllers\bots\Angery.cs" />
+    <Compile Include="Chat\controllers\bots\Annoy.cs" />
     <Compile Include="Chat\controllers\LoginController.cs" />
     <Compile Include="Chat\controllers\MessageController.cs" />
     <Compile Include="Chat\controllers\ModeratorController.cs" />
     <Compile Include="Chat\controllers\PlayerController.cs" />
     <Compile Include="Chat\managers\DatabaseManager.cs" />
+    <Compile Include="Chat\objects\Announcement.cs" />
     <Compile Include="Chat\objects\ChatSession.cs" />
     <Compile Include="Chat\managers\StorageManager.cs" />
     <Compile Include="Chat\objects\chat\BannedCharacter.cs" />
@@ -88,7 +91,6 @@
     <Compile Include="Chat\objects\chat\Moderator.cs" />
     <Compile Include="Chat\objects\chat\Player.cs" />
     <Compile Include="Chat\objects\chat\Room.cs" />
-    <Compile Include="Chat\objects\chat\rooms\Announcement.cs" />
     <Compile Include="Chat\objects\chat\rooms\Global.cs" />
     <Compile Include="Chat\objects\chat\rooms\Private.cs" />
     <Compile Include="Chat\objects\chat\rooms\Types.cs" />
@@ -285,6 +287,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\GameplaySettingsRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLaunchRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLoadRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\HellstormSelectRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\MoveRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetGearActivationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetRequest.cs" />
@@ -292,6 +295,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\SelectBatteryRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\SelectRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipSelectionRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\ShipSettingsRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipWarpWindowRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\VersionRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\WindowSettingsRequest.cs" />
@@ -300,6 +304,7 @@
     <Compile Include="Game\netty\commands\old_client\ShipInitializationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipRemoveCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipSelectionCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipSettingsCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpModule.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpNotAllowedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpWindowCommand.cs" />
@@ -319,12 +324,14 @@
     <Compile Include="Game\netty\handlers\ForceInitHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLaunchHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLoadHandler.cs" />
+    <Compile Include="Game\netty\handlers\HellstormSelectRocketHandler.cs" />
     <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\JumpRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
     <Compile Include="Game\netty\handlers\PetGearActivationHandler.cs" />
     <Compile Include="Game\netty\handlers\PetHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSelectionHandler.cs" />
+    <Compile Include="Game\netty\handlers\ShipSettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipWarpWindowHandler.cs" />
     <Compile Include="Game\netty\handlers\UIOpenHandler.cs" />
     <Compile Include="Game\netty\handlers\IHandler.cs" />

@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Chat.packet
 
             // Getting rid of all the '@'
             var packet = content.Replace("@", "%");
-            Console.WriteLine("CHAT> " + packet);
+            //Console.WriteLine("CHAT> " + packet);
 
             // Converting it to char and then splitting the packet
             var msgSeperator = Convert.ToChar(Constants.MSG_SEPERATOR);

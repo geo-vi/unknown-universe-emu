@@ -658,6 +658,58 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
+        public object GetPlayerShipSettings(Player player)
+        {
+            object userSettings = null;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var settingsVersion = "SETTINGS_SLOTBAR_OLD";
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT " + settingsVersion + " FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
+                    if (player.UsingNewClient)
+                    {
+                        //userSettings = JsonConvert.DeserializeObject<netty.commands.new_client.ShipSettingsCommand>(queryRow[settingsVersion].ToString());
+                    }
+                    else
+                    {
+                        userSettings = JsonConvert.DeserializeObject<netty.commands.old_client.ShipSettingsCommand>(queryRow[settingsVersion].ToString());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            return userSettings;
+        }
+
+        public void SavePlayerShipSettings(Settings settings)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    string query = "";
+                    if (settings.Player.UsingNewClient)
+                    {
+                        throw new NotImplementedException();
+                    }
+                    else
+                    {
+                        query = $"UPDATE player_extra_data SET SETTINGS_SLOTBAR_OLD='{JsonConvert.SerializeObject(settings.OldClientShipSettingsCommand)}' WHERE PLAYER_ID={settings.Player.Id}";
+                    }
+                    mySqlClient.ExecuteNonQuery(query);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
+            }
+        }
+
         public void SavePlayerPos(Player player)
         {
             try

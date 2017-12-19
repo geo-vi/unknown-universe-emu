@@ -97,6 +97,16 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return Slotbar.Items.RocketIds[6];
                 case AmmunitionTypeModule.BDR1211:
                     return Slotbar.Items.RocketIds[7];
+                case AmmunitionTypeModule.HELLSTORM:
+                    return Slotbar.Items.RocketLauncherIds[1];
+                case AmmunitionTypeModule.UBER_ROCKET:
+                    return Slotbar.Items.RocketLauncherIds[2];
+                case AmmunitionTypeModule.ECO_ROCKET:
+                    return Slotbar.Items.RocketLauncherIds[3];
+                case AmmunitionTypeModule.SAR01:
+                    return Slotbar.Items.RocketLauncherIds[4];
+                case AmmunitionTypeModule.SAR02:
+                    return Slotbar.Items.RocketLauncherIds[5];
                 default:
                     throw new NotImplementedException();
             }

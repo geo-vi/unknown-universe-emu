@@ -15,8 +15,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public bool Attacking { get; set; }
 
-        public bool Attacked { get; set; }
-
         public bool Invincible { get; set; }
 
         public bool Targetable { get; set; }
@@ -175,7 +173,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             Damage(enemy, absDamage, damage, 1);
 
-            enemy.Controller.Attack.Attacked = true;
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
             LastLaserLoop = DateTime.Now;
         }
@@ -257,7 +254,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|0|0"), true);
             Damage(enemy, 0, damage, 1);
 
-            enemy.Controller.Attack.Attacked = true;
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
             LastMissleLoop = DateTime.Now;
         }
@@ -293,6 +289,24 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     rocketId = 9;
                     damage = RandomizeDamage(2000 * Character.RocketLauncher.CurrentLoad);
                     break;
+                case "ammunition_rocketlauncher_hstrm-01":
+                    rocketId = 10;
+                    damage = RandomizeDamage(2000 * Character.RocketLauncher.CurrentLoad);
+                    break;
+                case "ammunition_rocketlauncher_ubr-100":
+                    rocketId = 11;
+                    var baseDamage = 4000;
+                    if (enemy is Npc) baseDamage = 7500;
+                    damage = RandomizeDamage(baseDamage * Character.RocketLauncher.CurrentLoad);
+                    break;
+                case "ammunition_rocketlauncher_sar-01":
+                    rocketId = 12;
+                    absDamage = RandomizeDamage(1200 * Character.RocketLauncher.CurrentLoad);
+                    break;
+                case "ammunition_rocketlauncher_sar-02":
+                    rocketId = 13;
+                    absDamage = RandomizeDamage(5000 * Character.RocketLauncher.CurrentLoad);
+                    break;
             }
 
             if (Character.Cooldowns.Exists(cooldown => cooldown is RocketLauncherCooldown)) return;
@@ -309,7 +323,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.RocketLauncher.CurrentLoad = 0;
             if (player != null) Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
 
-            enemy.Controller.Attack.Attacked = true;
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
             LastMissleLoop = DateTime.Now;
         }
@@ -437,7 +450,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             else
             {
                 damage = 0;
-                absDamage = -1;
+                absDamage = 0;
             }
 
             foreach (var session in pairedSessions)

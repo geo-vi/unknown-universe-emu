@@ -11,14 +11,6 @@ namespace NettyBaseReloaded.Game.controllers.npc
 {
     class Basic : INpc
     {
-        // TODO: FIX BUG
-        /// <summary>
-        /// Unknown position (null)
-        /// Unknown spacemap (null)
-        /// Suspected error in AttachedNpcs
-        /// Error in Vector (position = null)
-        /// Suspected problem in Range Entities (npc)
-        /// </summary>
         private NpcController Controller { get; set; }
 
         public Basic(NpcController controller)
@@ -80,7 +72,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                         candidatePlayer.AttachedNpcs.Add(Controller.Npc);
                     }
                 }
-                if (Controller.Attack.Attacked || !Controller.Npc.Hangar.Ship.IsNeutral &&
+                if (Controller.Character.LastCombatTime.AddMilliseconds(500) > DateTime.Now || !Controller.Npc.Hangar.Ship.IsNeutral &&
                     Controller.Npc.Selected != null)
                     Active();
             }
@@ -125,6 +117,10 @@ namespace NettyBaseReloaded.Game.controllers.npc
                         }
                     }
                 }
+
+                if (Controller.Character.LastCombatTime.AddMilliseconds(500) > DateTime.Now || !Controller.Npc.Hangar.Ship.IsNeutral &&
+                    target != null)
+                    Active();
             }
             catch (Exception e)
             {

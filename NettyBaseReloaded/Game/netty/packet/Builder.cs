@@ -40,15 +40,6 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                var qs = new commands.old_client.QualitySettingsModule(false, 3, 3, 3, true, 3, 3, 3, 3, 3, 3);
-                var asm = new commands.old_client.AudioSettingsModule(false, false, false);
-                var ws = new commands.old_client.WindowSettingsModule(false, 1,
-                    "0,444,-1,0,1,1057,329,1,20,39,530,0,3,1021,528,1,5,-10,-6,0,24,463,15,0,10,101,307,0,36,100,400,0,13,315,122,0,23,1067,132,0",
-                        "5,240,150,20,300,150,36,260,175,", 11, "313,480", "23,0,24,0,25,1,26,0,27,0", "313,451", "0",
-                        "313,500", "0");
-                var gm = new commands.old_client.GameplaySettingsModule(false, true, true, true, true, true, true, true);
-                var ds = new commands.old_client.DisplaySettingsModule(false, true, true, true, true, true, false, true, true, true, true, true, true, true, true, true);
-
                 gameSession.Client.Send(player.Settings.OldClientUserSettingsCommand.write().Bytes);
             }
         }
@@ -138,6 +129,8 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
+                gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
+
                 var ammo = new List<netty.commands.old_client.AmmunitionCountModule>();
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
@@ -147,15 +140,18 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.CBO), player.Information.Ammunitions["ammunition_laser_cbo-100"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.RSB), player.Information.Ammunitions["ammunition_laser_rsb-75"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.JOB100), player.Information.Ammunitions["ammunition_laser_job-100"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), player.Information.Ammunitions["ammunition_specialammo_emp-01"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
-                //ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SMARTBOMB), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.R310), player.Information.Ammunitions["ammunition_rocket_r-310"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2021), player.Information.Ammunitions["ammunition_rocket_plt-2021"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2026), player.Information.Ammunitions["ammunition_rocket_plt-2026"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT3030), player.Information.Ammunitions["ammunition_rocket_plt-3030"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLASMA), player.Information.Ammunitions["ammunition_specialammo_pld-8"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.WIZARD), player.Information.Ammunitions["ammunition_specialammo_wiz-x"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.DECELERATION), player.Information.Ammunitions["ammunition_specialammo_dcr-250"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.HELLSTORM), player.Information.Ammunitions["ammunition_rocketlauncher_hstrm-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.UBER_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_ubr-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR01), player.Information.Ammunitions["ammunition_rocketlauncher_sar-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR02), player.Information.Ammunitions["ammunition_rocketlauncher_sar-02"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 player.Settings.Slotbar.GetCategories();
             }

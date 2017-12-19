@@ -67,7 +67,6 @@ namespace NettyBaseReloaded.Game.controllers.player
             Packet.Builder.LegacyModule(gameSession
                 , "0|A|CC|" + baseController.Player.CurrentConfig);
 
-            Packet.Builder.LegacyModule(gameSession, baseController.Player.BuildExtrasPacket());
             baseController.Player.UpdateExtras();
         }
 
@@ -120,7 +119,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                     return;
                 }
 
-                if ((baseController.Attack.Attacked || baseController.Attack.Attacking) && baseController.Player.Spacemap.Pvp)
+                if (baseController.Attack.Attacking && baseController.Player.Spacemap.Pvp)
                 {
                     Cancel();
                     return;

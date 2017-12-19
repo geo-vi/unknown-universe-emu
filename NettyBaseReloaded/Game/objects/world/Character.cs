@@ -208,7 +208,7 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 ((Pet) this).Tick();
             }
-            Update();
+            //Update();
             Regenerate();
             TickCooldowns();
             RocketLauncher?.Tick();
@@ -281,7 +281,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
                 else
                 {
-                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now || Controller.Attack.Attacked ||
+                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now ||
                         CurrentShield >= MaxShield)
                         return;
 

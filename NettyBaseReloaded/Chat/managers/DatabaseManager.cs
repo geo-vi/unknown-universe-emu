@@ -1,16 +1,75 @@
-﻿using NettyBaseReloaded.Chat.objects.chat;
+﻿using System;
+using System.Data;
+using NettyBaseReloaded.Chat.objects;
+using NettyBaseReloaded.Chat.objects.chat;
 using NettyBaseReloaded.Chat.objects.chat.rooms;
 using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Main.global_managers;
+using NettyBaseReloaded.Main.interfaces;
+using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Chat.managers
 {
-    public class DatabaseManager
+    class DatabaseManager : DBManagerUtils
     {
-        public void LoadAll()
+        public override void Initiate()
         {
+            LoadAnnouncements();
+            LoadLoginMsg();
             LoadRooms();
             LoadGlobalBans();
             LoadModerators();
+        }
+
+        private void LoadAnnouncements()
+        {
+            try
+            {
+                using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_announcements");
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow reader in queryTable.Rows)
+                        {
+                            int id = intConv(reader["ID"]);
+                            string text = reader["ANNOUNCEMENT"].ToString();
+
+                            ////add to Storage
+                            Chat.StorageManager.Announcements.Add(id, new Announcement(
+                                id, text
+                            ));
+                        }
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager", "Failed to load chat moderators...", e);
+            }
+        }
+
+        private void LoadLoginMsg()
+        {
+            try
+            {
+                using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM server_chat_login");
+                    if (queryRow != null)
+                    {
+
+                        Properties.Chat.USER_LOGIN_MSG = queryRow["USER_LOGIN_MSG"].ToString();
+                        Properties.Chat.MOD_LOGIN_MSG = queryRow["MODERATOR_LOGIN_MSG"].ToString();
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager", "Failed to load chat login messages...", e);
+            }
         }
 
         private void LoadRooms()
@@ -25,7 +84,36 @@ namespace NettyBaseReloaded.Chat.managers
 
         private void LoadModerators()
         {
-            Chat.StorageManager.Moderators.Add(498, new Moderator(498, "general_Rejection", Main.Global.StorageManager.Clans[0], Moderator.Level.VIP));
+            try
+            {
+                using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_chat_moderators");
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow reader in queryTable.Rows)
+                        {
+                            //Informations
+                            int id = intConv(reader["PLAYER_ID"]);
+                            string name = reader["NAME"].ToString();
+                            Moderator.Level lvl = (Moderator.Level) intConv(reader["LEVEL"]);
+
+                            ////add to Storage
+                            Chat.StorageManager.Moderators.Add(id, new Moderator(
+                                id,
+                                name,
+                                Main.Global.StorageManager.Clans[0],
+                                lvl
+                            ));
+                        }
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager", "Failed to load chat moderators...", e);
+            }
         }
     }
 }

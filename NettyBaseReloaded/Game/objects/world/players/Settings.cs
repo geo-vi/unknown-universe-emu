@@ -17,6 +17,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public netty.commands.new_client.UserSettingsCommand NewClientUserSettingsCommand { get; set; }
         public netty.commands.old_client.UserSettingsCommand OldClientUserSettingsCommand { get; set; }
 
+        public netty.commands.old_client.ShipSettingsCommand OldClientShipSettingsCommand { get; set; }
+        //public netty.commands.new_client.ShipSettingsCommand NewShipSettingsCommand { get; set; }
+
         public List<Hotkey> Hotkeys { get; set; }
 
         #endregion
@@ -47,24 +50,36 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 OldClientUserSettingsCommand = World.DatabaseManager.GetPlayerGameplaySettings(Player) as netty.commands.old_client.UserSettingsCommand;
                 if (OldClientUserSettingsCommand == null)
                 {
-                    var qs = new netty.commands.old_client.QualitySettingsModule(false, 3, 3, 3, true, 3, 3, 3, 3, 3, 3);
+                    var qs = new netty.commands.old_client.QualitySettingsModule(false, 3, 3, 3, true, 3, 3, 3, 3, 3,
+                        3);
                     var asm = new netty.commands.old_client.AudioSettingsModule(false, false, false);
                     var ws = new netty.commands.old_client.WindowSettingsModule(false, 0,
                         "0,444,-1,0,1,1057,329,1,20,39,530,0,3,1021,528,1,5,-10,-6,0,24,463,15,0,10,101,307,0,36,100,400,0,13,315,122,0,23,1067,132,0",
                         "5,240,150,20,300,150,36,260,175,", 11, "313,480", "23,0,24,0,25,1,26,0,27,0", "313,451", "0",
                         "313,500", "0");
-                    var gm = new netty.commands.old_client.GameplaySettingsModule(false, true, true, true, true, true, true, true);
-                    var ds = new netty.commands.old_client.DisplaySettingsModule(false, true, true, true, true, true, false, true, true, true, true, true, true, true, true, true);
+                    var gm = new netty.commands.old_client.GameplaySettingsModule(false, true, true, true, true, true,
+                        true, true);
+                    var ds = new netty.commands.old_client.DisplaySettingsModule(false, true, true, true, true, true,
+                        false, true, true, true, true, true, true, true, true, true);
 
-                    OldClientUserSettingsCommand = new netty.commands.old_client.UserSettingsCommand(qs, ds, asm, ws, gm);
-                    SaveSettings();
+                    OldClientUserSettingsCommand =
+                        new netty.commands.old_client.UserSettingsCommand(qs, ds, asm, ws, gm);
                 }
+
+                OldClientShipSettingsCommand =
+                        World.DatabaseManager.GetPlayerShipSettings(Player) as
+                            netty.commands.old_client.ShipSettingsCommand;
+                    if (OldClientShipSettingsCommand == null)
+                        OldClientShipSettingsCommand = new netty.commands.old_client.ShipSettingsCommand("", "", 0, 0, 0);
+                    SaveSettings();
+                
             }
         }
 
         public void SaveSettings()
         {
             World.DatabaseManager.SavePlayerGameplaySettings(this);
+            World.DatabaseManager.SavePlayerShipSettings(this);
         }
     }
 }

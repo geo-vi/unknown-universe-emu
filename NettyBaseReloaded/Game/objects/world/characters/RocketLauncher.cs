@@ -89,5 +89,15 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 ReloadingActive = false;
             }
         }
+
+        public void ChangeLoad(string lootId)
+        {
+            ReloadingActive = false;
+            CurrentLoad = 0;
+            LoadLootId = lootId;
+            var player = Character as Player;
+            if (player != null)
+                Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
+        }
     }
 }

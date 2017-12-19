@@ -24,8 +24,7 @@ namespace NettyBaseReloaded.Chat.controllers
         public bool AllowedToEnter()
         {
             var id = ChatSession.Character.Id;
-            return (id == 544 || id == 495 || id == 498 || id == 497 || id == 697) ||
-                   Properties.Server.PUBLIC_BETA_END > DateTime.Now;
+            return true;
         }
 
         public void Locked()
@@ -44,6 +43,13 @@ namespace NettyBaseReloaded.Chat.controllers
             if (character is Moderator)
                 Packet.Builder.SystemMessage(ChatSession, Properties.Chat.MOD_LOGIN_MSG);
             else Packet.Builder.SystemMessage(ChatSession, Properties.Chat.USER_LOGIN_MSG);
+
+            LoadAnnouncementRoom();
+        }
+
+        private void LoadAnnouncementRoom()
+        {
+            
         }
     }
 }

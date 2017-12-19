@@ -190,7 +190,7 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 var value = Hangar.Configurations[CurrentConfig - 1].Speed;
                 if (BoostedAcceleration > 0)
-                    value = (int) (value * BoostedAcceleration);
+                    value = (int) (value * (1 + BoostedAcceleration));
                 return value;
             }
         }
@@ -219,7 +219,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
 
                 if (BoostedDamage > 0)
-                    value = (int) (value * Hangar.Ship.GetDamageBonus(this) * (1 * BoostedDamage));
+                    value = (int) (value * Hangar.Ship.GetDamageBonus(this) * (1 + BoostedDamage));
                 else value = (int) (value * Hangar.Ship.GetDamageBonus(this));
                 return value;
             }
@@ -523,6 +523,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void UpdateExtras()
         {
+            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|ITM|" + BuildExtrasPacket());
             foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Update((CPU.Types)type);
         }
 
