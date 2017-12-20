@@ -585,14 +585,22 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void PetInitializationCommand(GameSession gameSession, Pet pet)
         {
-            if (pet == null) return;
+            bool hasPet = pet != null;
+            bool petIsAlive = false;
+            bool hasFuel = false;
+            if (hasPet)
+            {
+                hasFuel = pet.HasFuel();
+                petIsAlive = !pet.Controller.Dead;
+            }
+
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.PetInitializationCommand.write(true, pet.HasFuel(), !pet.Controller.Dead).Bytes);
+                gameSession.Client.Send(commands.new_client.PetInitializationCommand.write(hasPet, hasFuel, petIsAlive).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.PetInitializationCommand.write(true, pet.HasFuel(), !pet.Controller.Dead).Bytes);
+                gameSession.Client.Send(commands.old_client.PetInitializationCommand.write(hasPet, hasFuel, petIsAlive).Bytes);
             }
         }
 
@@ -1015,6 +1023,37 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.AttributeBoosterUpdateCommand.write(boostList).Bytes);
             }
         }
-#endregion
+        #endregion
+
+        #region UIButtonShowFlashCommand
+
+        public void UIButtonShowFlashCommand(GameSession gameSession, int buttonId, bool arrow, int flashingTimes = -1)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                Packet.Builder.LegacyModule(gameSession, $"0|UI|B|SF|{flashingTimes}|{Convert.ToInt32(arrow)}|{buttonId}");
+            }
+        }
+
+        #endregion
+        #region UIButtonHideFlashCommand
+
+        public void UIButtonHideFlashCommand(GameSession gameSession, int buttonId, bool arrow, int flashingTimes = -1)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                Packet.Builder.LegacyModule(gameSession, $"0|UI|B|HF|-1|-1|{buttonId}");
+            }
+        }
+
+        #endregion
     }
 }

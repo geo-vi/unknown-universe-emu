@@ -248,6 +248,8 @@
     <Compile Include="Game\netty\commands\old_client\BoosterTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\BoosterUpdateModule.cs" />
     <Compile Include="Game\netty\commands\old_client\ClanRelationModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\CompanyHierarchyInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\CompanyHierarchyRankingModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DestructionTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DisplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationChangeCommand.cs" />
@@ -259,6 +261,7 @@
     <Compile Include="Game\netty\commands\old_client\KillScreenPostCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LegacyModule.cs" />
     <Compile Include="Game\netty\commands\old_client\LevelUpCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\LogoutCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MapAddPOICommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MessageLocalizedWildcardCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MessageWildcardReplacementModule.cs" />
@@ -288,6 +291,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLaunchRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLoadRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormSelectRocketRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\LogoutRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\MoveRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetGearActivationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetRequest.cs" />
@@ -328,6 +332,7 @@
     <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\JumpRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
+    <Compile Include="Game\netty\handlers\LogoutHandler.cs" />
     <Compile Include="Game\netty\handlers\PetGearActivationHandler.cs" />
     <Compile Include="Game\netty\handlers\PetHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSelectionHandler.cs" />

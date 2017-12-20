@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Chat.controllers
             if (character is Bot)
                 throw new NotImplementedException();
             if (character is Player)
-                ChatClient.SendToRoom(character, "a%" + roomId + "@" + character.Name + "@" + message + "#", room);
+                ChatClient.SendToRoom(character, "a%" + roomId + "@" + character.Name + "@" + message + "@" + character.Clan.Tag + "#", room);
         }
     }
 }

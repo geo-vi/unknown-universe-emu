@@ -11,6 +11,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
     abstract class Extra : Item
     {
         protected Player Player { get; set; }
+
         protected Extra(Player player, int itemId, string lootId, int amount) : base(itemId, lootId, amount)
         {
             Player = player;
@@ -33,7 +34,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                     case "equipment_extra_repbot_rep-2":
                     case "equipment_extra_repbot_rep-3":
                     case "equipment_extra_repbot_rep-4":
-                        extras.Add(consumable.Key, new Robot(player, consumable.Value.Id, consumable.Value.LootId, consumable.Value.Amount));
+                        extras.Add(consumable.Key,
+                            new Robot(player, consumable.Value.Id, consumable.Value.LootId,
+                                consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_smb-01":
                         // TODO: add Smartbomb
@@ -52,7 +55,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                     case "equipment_extra_cpu_cl04k-xl":
                     case "equipment_extra_cpu_cl04k-m":
                     case "equipment_extra_cpu_cl04k-xs":
-                        extras.Add(consumable.Key, new Cloak(player, consumable.Value.Id, consumable.Value.LootId, consumable.Value.Amount));
+                        extras.Add(consumable.Key,
+                            new Cloak(player, consumable.Value.Id, consumable.Value.LootId,
+                                consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_arol-x":
                         // TODO: add auto rocket
@@ -66,6 +71,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                         break;
                 }
             }
+
+
             return extras;
         }
     }

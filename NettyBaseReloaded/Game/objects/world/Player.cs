@@ -403,11 +403,11 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void SendLogMessage(string logMsg)
         {
-            if (LogMessages.Any(x => x.TimeSent.AddSeconds(1) > DateTime.Now && x.Key == logMsg))
-            {
-                return;
-            }
-            LogMessages.Add(new LogMessage(logMsg));
+            //if (LogMessages.Any(x => x.TimeSent.AddSeconds(1) > DateTime.Now && x.Key == logMsg))
+            //{
+            //    return;
+            //}
+            //LogMessages.Add(new LogMessage(logMsg));
             Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|STM|" + logMsg + "");
         }
 

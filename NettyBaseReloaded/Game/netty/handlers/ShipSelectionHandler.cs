@@ -43,8 +43,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
                             return;
                         }
                     }
-                    if (gameSession.Player.Controller.Attack.Attacking)
-                        gameSession.Player.Controller.Attack.Attacking = false;
                     gameSession.Player.Selected = entry.Value;
                     Packet.Builder.ShipSelectionCommand(gameSession, entry.Value);
                     return;

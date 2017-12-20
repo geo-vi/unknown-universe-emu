@@ -74,12 +74,11 @@ namespace NettyBaseReloaded.Chat.managers
 
         private void LoadRooms()
         {
-
+            Chat.StorageManager.Rooms.Add(0, new Global(0));
         }
 
         private void LoadGlobalBans()
         {
-            Chat.StorageManager.Rooms.Add(0, new Global(0));
         }
 
         private void LoadModerators()

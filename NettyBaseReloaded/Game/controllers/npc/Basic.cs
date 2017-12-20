@@ -89,35 +89,40 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
             try
             {
-                if (target?.Position != null && target.Spacemap != null)
-                {
-                    if (target.State.InDemiZone || target.Controller.Dead)
-                    {
-                        Exit();
-                        return;
-                    }
-
-                    if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
-                        MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
-
-                }
                 if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1)
                 {
                     var players = Controller.Npc.Range.Entities.Where(x => x.Value is Player);
                     foreach (var player in players)
                     {
                         if (player.Value?.Position == null || player.Value.Spacemap == null) continue;
-                        if (((Player) player.Value).AttachedNpcs.Count >
-                            ((Player) Controller.Npc.Selected).AttachedNpcs.Count &&
+                        if (((Player)player.Value).AttachedNpcs.Count >
+                            ((Player)Controller.Npc.Selected).AttachedNpcs.Count &&
                             player.Value.Position.DistanceTo(Controller.Npc.Position) < 500)
                         {
                             Exit();
                             Controller.Npc.Selected = player.Value;
-                            ((Player) player.Value).AttachedNpcs.Add(Controller.Npc);
+                            ((Player)player.Value).AttachedNpcs.Add(Controller.Npc);
                         }
                     }
                 }
 
+                if (target?.Position != null && target.Spacemap != null)
+                {
+                    if ((target.State.InDemiZone && target.Selected != npc) || target.Controller.Dead)
+                    {
+                        Exit();
+                        return;
+                    }
+
+                    if (npc.CurrentHealth < npc.MaxHealth * 0.1)
+                    {
+                        MovementController.Move(npc, Vector.Random(0, 20800, 0, 12800));
+                    }
+                    else if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
+                        MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
+
+                }
+                
                 if (Controller.Character.LastCombatTime.AddMilliseconds(500) > DateTime.Now || !Controller.Npc.Hangar.Ship.IsNeutral &&
                     target != null)
                     Active();

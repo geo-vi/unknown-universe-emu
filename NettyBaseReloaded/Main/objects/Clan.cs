@@ -8,16 +8,19 @@ namespace NettyBaseReloaded.Main.objects
         public string Name { get; set; }
         public string Tag { get; set; }
 
+        public int RankPoints { get; set; }
+
         // TODO: Add owned BattleStations
 
         private Dictionary<Clan,Diplomacy> Diplomacy { get; set; }
 
-        public Clan(int id, string name, string tag)
+        public Clan(int id, string name, string tag, int rankPoints)
         {
             Id = id;
             Name = name;
             Tag = tag;
             Diplomacy = new Dictionary<Clan, Diplomacy>();
+            RankPoints = rankPoints;
         }
 
         public void LoadDiplomacy()

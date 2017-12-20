@@ -34,18 +34,6 @@ namespace NettyBaseReloaded.Game
                 map.Value.LoadObjects();
                 CreateHashes(map.Value);
                 map.Value.SpawnNpcs();
-                if (map.Key == 10)
-                {
-                    map.Value.CreateNpc(StorageManager.Ships[84]);
-                }
-                //if (map.Key == 12)
-                //{
-                //    for (int i = 0; i < 150; i++)
-                //    {
-                //        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(1000, 19800, 1000, 11800));
-                //    }
-                //    map.Value.CreateNpc(StorageManager.Ships[80], AILevels.MOTHERSHIP, 30);
-                //}
                 if (map.Key == 1)
                 {
                     map.Value.CreateStation(Faction.MMO, new Vector(1000, 1000));

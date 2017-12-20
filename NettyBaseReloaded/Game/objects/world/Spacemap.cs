@@ -298,8 +298,7 @@ namespace NettyBaseReloaded.Game.objects.world
             if (!Global.TickManager.Exists(npc))
                 Global.TickManager.Add(npc);
             npc.Controller = new NpcController(npc);
-            if (Id == 12 || Id == 11 || Id == 10 || Id == 9)
-                npc.Controller.Initiate();
+            npc.Controller.Initiate();
             World.Log.Write("Created NPC[" + npc.Id + ", " + npc.Hangar.Ship.ToStringLoot() + "] on mapId " + Id);
         }
 

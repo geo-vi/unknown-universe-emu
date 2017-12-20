@@ -301,6 +301,7 @@ namespace NettyBaseReloaded.Game.managers
                     int ltypes1 = intConv(queryRow["CONFIG_1_LASER_TYPES"]);
                     string rlTypes1 = queryRow["CONFIG_1_HEAVY"].ToString();
 
+                    if (rlTypes1 == "") rlTypes1 = "[]";
                     if (extras1 == "") extras1 = "[]";
                     var config1 = new Configuration(player, 1, dmg1, velocity1, shield1, shield1, absorb1, lcount1,
                         ltypes1, JsonConvert.DeserializeObject<int[]>(rlTypes1),
@@ -315,6 +316,7 @@ namespace NettyBaseReloaded.Game.managers
                     int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
                     string rlTypes2 = queryRow["CONFIG_2_HEAVY"].ToString();
 
+                    if (rlTypes2 == "") rlTypes2 = "[]";
                     if (extras2 == "") extras2 = "[]";
                     var config2 = new Configuration(player, 2, dmg2, velocity2, shield2, shield2, absorb2, lcount2,
                         ltypes2, JsonConvert.DeserializeObject<int[]>(rlTypes2),
@@ -436,8 +438,8 @@ namespace NettyBaseReloaded.Game.managers
                     ammoDictionary.Add("ammunition_laser_mcb-50", new Ammunition(player, "ammunition_laser_mcb-50", intConv(queryRow["MCB_50"])));
                     ammoDictionary.Add("ammunition_laser_ucb-100", new Ammunition(player, "ammunition_laser_ucb-100", intConv(queryRow["UCB_100"])));
                     ammoDictionary.Add("ammunition_laser_sab-50", new Ammunition(player, "ammunition_laser_sab-50", intConv(queryRow["SAB_50"])));
-                    ammoDictionary.Add("ammunition_laser_cbo-100", new Ammunition(player, "ammunition_laser_rsb-75", intConv(queryRow["RSB_75"])));
-                    ammoDictionary.Add("ammunition_laser_rsb-75", new Ammunition(player, "ammunition_laser_cbo-100", intConv(queryRow["CBO_100"])));
+                    ammoDictionary.Add("ammunition_laser_rsb-75", new Ammunition(player, "ammunition_laser_rsb-75", intConv(queryRow["RSB_75"])));
+                    ammoDictionary.Add("ammunition_laser_cbo-100", new Ammunition(player, "ammunition_laser_cbo-100", intConv(queryRow["CBO_100"])));
                     ammoDictionary.Add("ammunition_laser_job-100", new Ammunition(player, "ammunition_laser_job-100", intConv(queryRow["JOB_100"])));
                     ammoDictionary.Add("ammunition_rocket_r-310", new Ammunition(player, "ammunition_rocket_r-310", intConv(queryRow["R_310"])));
                     ammoDictionary.Add("ammunition_rocket_plt-2026", new Ammunition(player, "ammunition_rocket_plt-2026", intConv(queryRow["PLT_2026"])));
@@ -518,7 +520,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                
+                Console.WriteLine("error " + e);
             }
             return baseInfo;
         }
@@ -535,7 +537,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-
+                Console.WriteLine("error " + e);
             }
             return 0;
         }
@@ -554,7 +556,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                
+                Console.WriteLine("error " + e);
             }
         }
 
@@ -570,7 +572,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-
+                Console.WriteLine("error " + e);
             }
         }
 
@@ -627,7 +629,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-
+                Console.WriteLine("error " + e);
             }
             return userSettings;
         }
@@ -679,7 +681,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-
+                Console.WriteLine("error " + e);
             }
             return userSettings;
         }
@@ -755,6 +757,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Console.WriteLine("error " + e);
             }
             return null;
         }

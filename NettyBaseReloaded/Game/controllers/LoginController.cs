@@ -60,7 +60,7 @@ namespace NettyBaseReloaded.Game.controllers
                 player.Spacemap = closestStation.Item2;
                 player.Position = closestStation.Item1;
             }
-            if (player.Spacemap.Id == 0)
+            if (player.Spacemap.Id == 0 || player.Spacemap.Id == 255)
             {
                 switch (player.FactionId)
                 {
