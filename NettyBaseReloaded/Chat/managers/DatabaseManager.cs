@@ -52,24 +52,24 @@ namespace NettyBaseReloaded.Chat.managers
 
         private void LoadLoginMsg()
         {
-            try
-            {
-                using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
-                {
-                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM server_chat_login");
-                    if (queryRow != null)
-                    {
+            //try
+            //{
+            //    using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
+            //    {
+            //        var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM server_chat_login");
+            //        if (queryRow != null)
+            //        {
 
-                        Properties.Chat.USER_LOGIN_MSG = queryRow["USER_LOGIN_MSG"].ToString();
-                        Properties.Chat.MOD_LOGIN_MSG = queryRow["MODERATOR_LOGIN_MSG"].ToString();
-                    }
+            //            Properties.Chat.USER_LOGIN_MSG = queryRow["USER_LOGIN_MSG"].ToString();
+            //            Properties.Chat.MOD_LOGIN_MSG = queryRow["MODERATOR_LOGIN_MSG"].ToString();
+            //        }
 
-                }
-            }
-            catch (Exception e)
-            {
-                new ExceptionLog("dbmanager", "Failed to load chat login messages...", e);
-            }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    new ExceptionLog("dbmanager", "Failed to load chat login messages...", e);
+            //}
         }
 
         private void LoadRooms()
