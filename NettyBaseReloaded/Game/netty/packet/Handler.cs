@@ -47,6 +47,9 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.HellstormLaunchRequest.ID, new HellstormLaunchHandler());
             OldClientCommands.Add(commands.old_client.requests.HellstormSelectRocketRequest.ID, new HellstormSelectRocketHandler());
             OldClientCommands.Add(commands.old_client.requests.ShipSettingsRequest.ID, new ShipSettingsHandler());
+            OldClientCommands.Add(commands.old_client.requests.DisplaySettingsRequest.ID, new DisplaySettingsHandler());
+            OldClientCommands.Add(commands.old_client.requests.QualitySettingsRequest.ID, new QualitySettingsHandler());
+            OldClientCommands.Add(commands.old_client.requests.AudioSettingsRequest.ID, new AudioSettingsHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

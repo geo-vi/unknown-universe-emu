@@ -295,7 +295,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\MoveRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetGearActivationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetRequest.cs" />
-    <Compile Include="Game\netty\commands\old_client\requests\QualitySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\QualitySettingsRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\SelectBatteryRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\SelectRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipSelectionRequest.cs" />
@@ -322,9 +322,11 @@
     <Compile Include="Game\netty\handlers\AttackLaserHandler.cs" />
     <Compile Include="Game\netty\handlers\AttackRocketHandler.cs" />
     <Compile Include="Game\netty\handlers\AttackRocketLegacyHandler.cs" />
+    <Compile Include="Game\netty\handlers\AudioSettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\ClickableHandler.cs" />
     <Compile Include="Game\netty\handlers\CollectBoxHandler.cs" />
     <Compile Include="Game\netty\handlers\command42JHandler.cs" />
+    <Compile Include="Game\netty\handlers\DisplaySettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\ForceInitHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLaunchHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLoadHandler.cs" />
@@ -335,6 +337,7 @@
     <Compile Include="Game\netty\handlers\LogoutHandler.cs" />
     <Compile Include="Game\netty\handlers\PetGearActivationHandler.cs" />
     <Compile Include="Game\netty\handlers\PetHandler.cs" />
+    <Compile Include="Game\netty\handlers\QualitySettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipWarpWindowHandler.cs" />
