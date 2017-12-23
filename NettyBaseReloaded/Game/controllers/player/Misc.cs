@@ -27,9 +27,42 @@ namespace NettyBaseReloaded.Game.controllers.player
             JClass = new jClass(controller);
         }
 
+        public bool LoggingOut = false;
+        private DateTime LogoutStartTime = new DateTime();
+
+        public void Logout(bool start = false)
+        {
+            if (start)
+            {
+                LoggingOut = true;
+                LogoutStartTime = DateTime.Now;
+                return;
+            }
+
+            if (!LoggingOut) return;
+
+            var gameSession = baseController.Player.GetGameSession();
+
+            if (gameSession.Player.Information.Premium && LogoutStartTime.AddSeconds(5) < DateTime.Now
+            || LogoutStartTime.AddSeconds(20) < DateTime.Now)
+            {
+                gameSession.Disconnect(GameSession.DisconnectionType.NORMAL);
+                Packet.Builder.LegacyModule(gameSession, "0|l");
+            }
+
+        }
+
+        public void AbortLogout()
+        {
+            var gameSession = baseController.Player.GetGameSession();
+            LoggingOut = false;
+            Packet.Builder.LegacyModule(gameSession, "0|t");
+        }
+
         public void Check()
         {
             JClass.Checker();
+            Logout();
         }
 
         /// <summary>
