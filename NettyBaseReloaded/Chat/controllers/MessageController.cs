@@ -10,8 +10,8 @@ namespace NettyBaseReloaded.Chat.controllers
         {
             if (message.StartsWith("/"))
             {
-                throw new NotImplementedException();
-                //return;
+                //throw new NotImplementedException();
+                return;
             }
             Room(character, roomId, message);
         }
@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Chat.controllers
             if (character is Bot)
                 throw new NotImplementedException();
             if (character is Player)
-                ChatClient.SendToRoom(character, "a%" + roomId + "@" + character.Name + "@" + message + "#", room);
+                ChatClient.SendToRoom(character, "a%" + roomId + "@" + character.Name + "@" + message + "@" + character.Clan.Tag + "#", room);
         }
     }
 }

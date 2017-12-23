@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
         {
             var player = gameSession.Player;
 
-            var item = gameSession.Player.Settings.Slotbar._items[player.Settings.CurrentRocket];
+            var item = gameSession.Player.Settings.Slotbar._items[player.Settings.CurrentRocket.LootId];
             if (player.UsingNewClient)
             {
                 gameSession.Client.Send(SetCooldown(item.ItemId, TimerState.COOLDOWN, (EndTime - DateTime.Now).Milliseconds, 2000,true));

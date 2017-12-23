@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.global_managers;
@@ -14,11 +15,23 @@ namespace NettyBaseReloaded.Game.objects
 {
     class GameSession : ITick
     {
+        public enum DisconnectionType
+        {
+            NORMAL,
+            INACTIVITY,
+            ADMIN,
+            ERROR
+        }
+
         public Player Player { get; set; }
 
         public GameClient Client { get; set; }
 
         public DateTime LastActiveTime = new DateTime(2016, 12, 15, 0, 0, 0);
+
+        public bool InProcessOfReconection = false;
+
+        public bool InProcessOfDisconnection = false;
 
         public GameSession(Player player)
         {
@@ -29,47 +42,46 @@ namespace NettyBaseReloaded.Game.objects
         public void Tick()
         {
             if (LastActiveTime >= DateTime.Now.AddMinutes(5))
-                Inactivity();
+                Disconnect(DisconnectionType.INACTIVITY);
         }
 
-        public void Inactivity()
+        public void Relog(Spacemap spacemap = null, Vector pos = null)
         {
-            Player.Log.Write("User got disconnected by inactivity");
-            SilentDisconnect();
+            spacemap = spacemap ?? Player.Spacemap;
+            pos = pos ?? Player.Position;
+            InProcessOfReconection = true;
+            PrepareForDisconnect(); // preparation
+            Player.Spacemap = spacemap;
+            Player.Position = pos;
+            Disconnect(); // closing the socket
         }
 
+        private void PrepareForDisconnect()
+        {
+            Player.Save();
+            Player.Pet?.Controller.Deactivate();
+            InProcessOfDisconnection = true;
+            Player.Controller.Exit();
+            Player.Controller.Destruction.Remove(Player);
+            Global.TickManager.Remove(this);
+            Global.TickManager.Remove(Player);
+        }
+
+        /// <summary>
+        /// No preparations, just close the socket
+        /// </summary>
         public void Disconnect()
         {
-            Player.Log.Write("User disconnected");
-            SilentDisconnect();
-        }
-
-        private void SilentDisconnect()
-        {
-            if (Global.TickManager.Exists(this))
-                Global.TickManager.Remove(this);
-
-            if (Player.Controller != null)
-            {
-                if (Global.TickManager.Exists(Player.Controller))
-                {
-                    Global.TickManager.Remove(Player.Controller);
-                }
-                Player.Controller.Remove(Player);
-            }
-
-            if (Global.TickManager.Exists(Player))
-                Global.TickManager.Remove(Player);
-
-            Player.Spacemap.Entities.Remove(Player.Id);
-
             Client.Disconnect();
         }
 
-        public void Close()
+        public void Disconnect(DisconnectionType dcType)
         {
-            Player.Log.Write("Session closed for User");
+            PrepareForDisconnect();
+            Player.Log.Write($"User disconnected (Disconnection Type: {dcType})");
             Client.Disconnect();
+            World.StorageManager.GameSessions.Remove(Player.Id);
+            InProcessOfDisconnection = false;
         }
     }
 }

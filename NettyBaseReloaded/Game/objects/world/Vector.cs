@@ -53,9 +53,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Character GetCloserCharacter(Character character1, Character character2)
         {
+            if (character1 == null || character2 == null) return null;
             if (DistanceTo(character1.Position) > DistanceTo(character2.Position))
                 return character2;
-
             return character1;
         }
 

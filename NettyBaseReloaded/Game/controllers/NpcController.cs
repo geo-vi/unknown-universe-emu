@@ -17,12 +17,15 @@ namespace NettyBaseReloaded.Game.controllers
         private INpc CurrentNpc { get; set; }
 
         private bool Active { get; set; }
+
+        private DateTime RespawnTimer { get; set; }
+
         public NpcController(Character character) : base(character)
         {
             Npc = (Npc) character;
         }
 
-        public void Initiate()
+        public new void Initiate()
         {
             var ai = (AILevels) Npc.Hangar.Ship.AI;
             switch (ai)
@@ -36,24 +39,32 @@ namespace NettyBaseReloaded.Game.controllers
                     CurrentNpc = new Aggressive(this);
                     break;
                 case AILevels.MOTHERSHIP:
-                    CurrentNpc = new Mothership(this);
+                    CurrentNpc = new Mothership(this, World.StorageManager.Ships[81]);
+                    break;
+                case AILevels.DAUGHTER:
+                    CurrentNpc = new Daughter(this);
                     break;
             }
             Active = true;
-            Tick();
+            Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) Setted AI to {ai}");
+            ActiveTick();
         }
 
-        private async void Tick()
+        private async void ActiveTick()
         {
             while (Active)
             {
-                if (Attacking)
-                    LaserAttack();
                 if (Dead || StopController)
-                    Active = false; 
-                else CurrentNpc.Tick();
+                    Active = false;
+                else
+                {
+                    TickClasses();
+                    Checkers.Tick();
+                    CurrentNpc.Tick();
+                }
                 await Task.Delay(500);
             }
+            Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) NPC went inactive");
             Sleep();
         }
 
@@ -64,15 +75,23 @@ namespace NettyBaseReloaded.Game.controllers
                 if (StopController) return;
                 await Task.Delay(5000);
             }
-            Tick();
+            ActiveTick();
+        }
+
+        public void DelayedRestart()
+        {
+            // TODO
+            //RespawnTimer = DateTime.Now.AddSeconds(Npc.RespawnTime);
+            //if (!StopController) return;
+            //StopController = false;
+            //Sleep();
         }
 
         public void Restart()
         {
-            Active = true;
             if (!StopController) return;
             StopController = false;
-            Tick();
+            Initiate();
         }
     }
 }

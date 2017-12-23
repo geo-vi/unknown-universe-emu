@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
-using NettyBaseReloaded.Game.objects.world.pets;
+using NettyBaseReloaded.Game.controllers.pet;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players;
+using Gear = NettyBaseReloaded.Game.controllers.pet.Gear;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -28,6 +30,18 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public sealed override int MaxHealth { get; set; }
+
+        public sealed override int Damage { get; set; }
+
+        public sealed override int CurrentShield { get; set; }
+
+        public sealed override int MaxShield { get; set; }
+
+        public sealed override double ShieldAbsorption { get; set; }
+
+        public sealed override double ShieldPenetration { get; set; }
+
         public int Fuel { get; set; }
 
         public int Experience { get; set; }
@@ -36,15 +50,23 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Gear> Gears { get; set; }
 
-        public Pet(int id,int ownerId, string name, Hangar hangar, Faction factionId,
-            Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap, hangar.Health, hangar.Nanohull,
-            new Reward(0,0), new DropableRewards(0,0,0,0,0,0,0,0))
+        public Pet(int id,int ownerId, string name, Hangar hangar, int currentHealth, Faction factionId,
+            Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
+            new Reward(0,0))
         {
             OwnerId = ownerId;
+            MaxHealth = 10000;
+            CurrentHealth = 10000;
+            Damage = 1000;
+            CurrentShield = 1000;
+            MaxShield = 1000;
+            ShieldAbsorption = 0.8;
+            ShieldPenetration = 0;
             Level = level;
             Experience = experience;
             Fuel = fuel;
             Gears = gears;
+            Clan = GetOwner().Clan;
         }
 
         /// <summary>

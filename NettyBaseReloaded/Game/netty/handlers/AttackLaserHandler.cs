@@ -35,8 +35,8 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 return;
             }
 
-            player.Controller.Attacking = true;
-            player.Controller.LaserAttack();
+            player.Controller.Attack.Attacking = true;
+            player.Controller.Attack.LaserAttack();
         }
     }
 }

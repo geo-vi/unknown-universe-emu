@@ -1,5 +1,6 @@
 ﻿using System;
 using NettyBaseReloaded.Chat.controllers;
+using NettyBaseReloaded.Chat.managers;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Chat.objects.chat;
 using NettyBaseReloaded.Game;
@@ -20,16 +21,14 @@ namespace NettyBaseReloaded.Chat.packet.handlers
             string clanTag = packet[7];
             string version = packet[8];
 
-            if (!ValidateSession(sessionId)) return;
-
             client.UserId = id;
 
-            Character character;
-
-            if (Chat.StorageManager.Moderators.ContainsKey(id))
-                character = Chat.StorageManager.Moderators[id];
-            else character = new Player(id, username, Global.StorageManager.GetClan(clanTag));
-            //character = new Moderator(id, username, Global.StorageManager.GetClan(clanTag), Moderator.Level.MOD);
+            Character character = Chat.DatabaseManager.LoadCharacter(id);
+            if (!ValidateSession(character, sessionId))
+            {
+                //send msg
+                return;
+            }
 
             var chatSession = new ChatSession(character) {Client = client};
 
@@ -40,9 +39,9 @@ namespace NettyBaseReloaded.Chat.packet.handlers
             new LoginController(chatSession);
         }
 
-        private bool ValidateSession(string sessionId)
+        private bool ValidateSession(Character character, string sessionId)
         {
-            return true;
+            return character.SessionId == sessionId;
         }
     }
 }

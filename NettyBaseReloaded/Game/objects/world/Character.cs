@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -12,7 +13,9 @@ using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
+using NettyBaseReloaded.Main.objects;
 using NettyBaseReloaded.Networking;
 using Newtonsoft.Json;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
@@ -27,10 +30,34 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int Id { get; }
         public string Name { get; set; }
-        public Hangar Hangar { get; set; }
+
+        public Hangar _hangar;
+        public virtual Hangar Hangar
+        {
+            get
+            {
+                if (this is Player)
+                {
+                    var temp = (Player) this;
+                    return temp.Hangar;
+                }
+                return _hangar;
+            }
+            set
+            {
+                if (this is Player)
+                {
+                    var temp = (Player)this;
+                    temp.Hangar = value;
+                }
+                _hangar = value;
+            }
+        }
+
         public Faction FactionId { get; set; }
         public Reward Reward { get; }
-        public DropableRewards DropableRewards { get; }
+
+        public Clan Clan { get; set; }
 
         public virtual AbstractCharacterController Controller
         {
@@ -46,7 +73,11 @@ namespace NettyBaseReloaded.Game.objects.world
                     var temp = (Npc) this;
                     return temp.Controller;
                 }
-
+                if (this is Pet)
+                {
+                    var temp = (Pet) this;
+                    return temp.Controller;
+                }
                 return null;
             }
         }
@@ -117,19 +148,19 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int VirtualWorldId { get; set; }
 
-        public Dictionary<int, Character> RangeEntities;
-        public Dictionary<string, Collectable> RangeCollectables;
-        public Dictionary<string, Ore> RangeResources;
-        public Dictionary<int, Zone> RangeZones;
-        public Dictionary<int, Object> RangeObjects;
+        public Range Range { get; }
+
+        public virtual RocketLauncher RocketLauncher { get; set; }
+
+        public Skilltree Skills { get; set; }
 
         public DateTime LastCombatTime;
-        public DroneFormation Formation { get; set; }
+        public DroneFormation Formation = DroneFormation.STANDARD;
 
         public List<Cooldown> Cooldowns { get; set; }
 
         protected Character(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap,
-            int currentHealth, int currentNanoHull, Reward rewards, DropableRewards dropableRewards)
+            Reward rewards, Clan clan = null)
         {
             Id = id;
             Name = name;
@@ -137,10 +168,8 @@ namespace NettyBaseReloaded.Game.objects.world
             FactionId = factionId;
             Position = position;
             Spacemap = spacemap;
-            CurrentHealth = currentHealth;
-            CurrentNanoHull = currentNanoHull;
             Reward = rewards;
-            DropableRewards = dropableRewards;
+            Clan = clan;
 
             //Default initialization
             Moving = false;
@@ -149,17 +178,20 @@ namespace NettyBaseReloaded.Game.objects.world
             Direction = new Vector(0, 0);
             MovementStartTime = new DateTime();
             MovementTime = 0;
-            RenderRange = 2000;
 
-            RangeEntities = new Dictionary<int, Character>();
-            RangeCollectables = new Dictionary<string, Collectable>();
-            RangeResources = new Dictionary<string, Ore>();
-            RangeZones = new Dictionary<int, Zone>();
-            RangeObjects = new Dictionary<int, Object>();
+            RenderRange = 2000;
+            Range = new Range {Character = this};
+
+            Skills = new Skilltree {Character = this};
 
             LastCombatTime = DateTime.Now;
 
             Cooldowns = new List<Cooldown>();
+
+            if (clan == null)
+            {
+                Clan = Global.StorageManager.Clans[0];
+            }
         }
 
         public void Tick()
@@ -176,10 +208,10 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 ((Pet) this).Tick();
             }
-
             //Update();
             Regenerate();
             TickCooldowns();
+            RocketLauncher?.Tick();
         }
 
         public void Update()
@@ -205,14 +237,28 @@ namespace NettyBaseReloaded.Game.objects.world
                     Packet.Builder.AttributeShipSpeedUpdateCommand(gameSession, player.Speed);
                 }
 
-                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.Ship.Id, CurrentShield, MaxShield,
+                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
                     CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
-                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.Ship.Id, CurrentShield, MaxShield,
+                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
                     CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
             }
             catch (Exception)
             {
             }
+        }
+
+        public void UpdateShip()
+        {
+            var sessions =
+                World.StorageManager.GameSessions.Where(
+                    x => x.Value.Client != null && InRange(x.Value.Player));
+            foreach (var session in sessions)
+            {
+                if (session.Key != Id)
+                    Packet.Builder.ShipCreateCommand(session.Value, this);
+            }
+            if (this is Player)
+                Packet.Builder.ShipInitializationCommand(World.StorageManager.GetGameSession(Id));
         }
 
         private DateTime LastRegeneratedTime = new DateTime(2016, 12, 24, 0, 0,0);
@@ -235,7 +281,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
                 else
                 {
-                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now || Controller.Attacked ||
+                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now ||
                         CurrentShield >= MaxShield)
                         return;
 
@@ -247,9 +293,9 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
 
                 //Updates the shield for the users who have 'you' clicked
-                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.Ship.Id, CurrentShield, MaxShield,
+                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
                     CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
-                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.Ship.Id, CurrentShield, MaxShield,
+                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
                     CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
 
                 Update();
@@ -263,12 +309,12 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool InRange(Character character, int range = 2000)
         {
-            if (character == null) throw new NotImplementedException();
+            if (character == null) return false;
             if (range == -1) return true;
             return character.Id != Id && character.Spacemap.Id == Spacemap.Id &&
                    Position.DistanceTo(character.Position) <= range;
         }
-
+        
         public void TickCooldowns()
         {
             try
@@ -288,6 +334,17 @@ namespace NettyBaseReloaded.Game.objects.world
                 Console.WriteLine(JsonConvert.SerializeObject(Cooldowns));
                 Console.WriteLine(e.StackTrace);
             }
+        }
+
+        public void SetPosition(Vector targetPosition)
+        {
+            Destination = targetPosition;
+            Position = targetPosition;
+            OldPosition = targetPosition;
+            Direction = targetPosition;
+            Moving = false;
+
+            MovementController.Move(this, MovementController.ActualPosition(this));
         }
     }
 }

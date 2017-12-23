@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,6 +41,20 @@ namespace NettyBaseReloaded
             }
         }
 
+        public static string GetCaller(int level = 2)
+        {
+            var m = new StackTrace().GetFrame(level).GetMethod();
+
+            // .Name is the name only, .FullName includes the namespace
+            var className = m.DeclaringType.FullName;
+
+            //the method/function name you are looking for.
+            var methodName = m.Name;
+
+            //returns a composite of the namespace, class and method name.
+            return className + "->" + methodName;
+        }
+
         private TextWriter Writer { get; }
 
         public override Encoding Encoding => Encoding.ASCII;
@@ -53,6 +68,19 @@ namespace NettyBaseReloaded
         {
             //TODO: Log this shit
             Writer.WriteLine(text);
+            ProcessForLog(text);
+        }
+
+        public void ProcessForLog(string text)
+        {
+            if (Program.Log == null) return;
+
+            if ((text.Contains("----") && text.Contains("We are awesome!") && text.Contains("---")) ||
+                (text.Contains("Version") && text.Contains("Errors") && text.Contains("Online") &&
+                 text.Count(x => x == Char.Parse("/")) == 4))
+                return;
+
+            Program.Log.Write(text);
         }
     }
 }

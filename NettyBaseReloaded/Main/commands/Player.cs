@@ -19,36 +19,45 @@ namespace NettyBaseReloaded.Main.commands
 
         public override void Execute(string[] args)
         {
-            if (args == null) return;
-            if (args.Length < 3) return;
-
-            var id = int.Parse(args[1]);
-
-            if (World.StorageManager.GetGameSession(id) == null)
+            try
             {
-                Console.WriteLine("Player is not connected or wrong ID");
-                return;
+
+                if (args == null) return;
+                if (args.Length < 3) return;
+
+                var id = int.Parse(args[1]);
+
+                if (World.StorageManager.GetGameSession(id) == null)
+                {
+                    Console.WriteLine("Player is not connected or wrong ID");
+                    return;
+                }
+
+                var player = World.StorageManager.GetGameSession(id).Player;
+
+                switch (args[2])
+                {
+                    case "tp":
+                        if (args[3] == "destination") player.SetPosition(player.Destination);
+                        else player.SetPosition(new Vector(int.Parse(args[3]), int.Parse(args[4])));
+                        break;
+                    case "heal":
+                        player.Controller.Attack.Heal(player.MaxHealth);
+                        player.Controller.Attack.Heal(player.MaxShield, 0, HealType.SHIELD);
+                        break;
+                    case "stats":
+                        Console.WriteLine("Player {0}->{1}", player.Id, player.Name);
+                        Console.WriteLine("HP " + player.CurrentHealth + " SHD " + player.CurrentShield);
+                        Console.WriteLine("Position " + player.Position);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid arguement");
+                        break;
+                }
             }
-
-            var player = World.StorageManager.GetGameSession(id).Player;
-
-            switch (args[2])
+            catch (Exception)
             {
-                case "tp":
-                    player.SetPosition(new Vector(int.Parse(args[3]), int.Parse(args[4])));
-                    break;
-                case "heal":
-                    player.Controller.Heal(player.MaxHealth);
-                    player.Controller.Heal(player.MaxShield, 0, HealType.SHIELD);
-                    break;
-                case "stats":
-                    Console.WriteLine("Player {0}->{1}", player.Id,player.Name);
-                    Console.WriteLine("HP " + player.CurrentHealth + " SHD " + player.CurrentShield);
-                    Console.WriteLine("Position " + player.Position);
-                    break;
-                default:
-                    Console.WriteLine("Invalid arguement");
-                    break;
+                Console.WriteLine("Invalid args");
             }
         }
     }

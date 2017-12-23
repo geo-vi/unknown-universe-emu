@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using NettyBaseReloaded.Chat.objects.chat.rooms;
+using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.ammo;
+using NettyBaseReloaded.Game.objects.world.players.extra;
 using NettyBaseReloaded.Game.objects.world.players.settings;
+using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
 namespace NettyBaseReloaded.Game.netty.packet
@@ -29,29 +35,12 @@ namespace NettyBaseReloaded.Game.netty.packet
                 var z9 = new commands.new_client.QuestSettingsModule(false, true, true, false, false, false);
                 var ds = new commands.new_client.DisplaySettingsModule(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, 3, 4, 4, 3, 3, 4, 3, 3, true, true, true, true);
 
-                gameSession.Client.Send(commands.new_client.UserSettingsCommand.write(qs, asm, ws, gm, z9, ds).Bytes);
+                //TODO: Integrate it into the Settings 
+                //gameSession.Client.Send(commands.new_client.UserSettingsCommand.write(qs, asm, ws, gm, z9, ds).Bytes);
             }
             else
-            {            //    new QualitySettingsModule(false, 3, 3, 3, true, 3, 3, 3, 3, 3, 3),
-                         //    new DisplaySettingsModule(false, true, true, true, true, true, false, true, true, true, true, true, true,
-                         //        true, true, true),
-                         //    new AudioSettingsModule(false, false, false),
-                         //    new WindowSettingsModule(false, 1,
-                         //        "0,444,-1,0,1,1057,329,1,20,39,530,0,3,1021,528,1,5,-10,-6,0,24,463,15,0,10,101,307,0,36,100,400,0,13,315,122,0,23,1067,132,0",
-                         //        "5,240,150,20,300,150,36,260,175,", 11, "313,480", "23,0,24,0,25,1,26,0,27,0", "313,451", "0",
-                         //        "313,500", "0"),
-                         //    new GameplaySettingsModule(false, true, true, true, true, true, true, true),
-
-                var qs = new commands.old_client.QualitySettingsModule(false, 3, 3, 3, true, 3, 3, 3, 3, 3, 3);
-                var asm = new commands.old_client.AudioSettingsModule(false, false, false);
-                var ws = new commands.old_client.WindowSettingsModule(false, 1,
-                    "0,444,-1,0,1,1057,329,1,20,39,530,0,3,1021,528,1,5,-10,-6,0,24,463,15,0,10,101,307,0,36,100,400,0,13,315,122,0,23,1067,132,0",
-                        "5,240,150,20,300,150,36,260,175,", 11, "313,480", "23,0,24,0,25,1,26,0,27,0", "313,451", "0",
-                        "313,500", "0");
-                var gm = new commands.old_client.GameplaySettingsModule(false, true, true, true, true, true, true, true);
-                var ds = new commands.old_client.DisplaySettingsModule(false, true, true, true, true, true, false, true, true, true, true, true, true, true, true, true);
-
-                gameSession.Client.Send(commands.old_client.UserSettingsCommand.write(qs, ds, asm, ws, gm).Bytes);
+            {
+                gameSession.Client.Send(player.Settings.OldClientUserSettingsCommand.write().Bytes);
             }
         }
         #endregion
@@ -140,24 +129,29 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
+                gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
+
                 var ammo = new List<netty.commands.old_client.AmmunitionCountModule>();
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X3), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X4), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAB), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.CBO), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.RSB), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.JOB100), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), 1000));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SMARTBOMB), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.R310), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2021), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2026), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT3030), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X3), player.Information.Ammunitions["ammunition_laser_mcb-50"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X4), player.Information.Ammunitions["ammunition_laser_ucb-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAB), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.CBO), player.Information.Ammunitions["ammunition_laser_cbo-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.RSB), player.Information.Ammunitions["ammunition_laser_rsb-75"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.JOB100), player.Information.Ammunitions["ammunition_laser_job-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.R310), player.Information.Ammunitions["ammunition_rocket_r-310"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2021), player.Information.Ammunitions["ammunition_rocket_plt-2021"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2026), player.Information.Ammunitions["ammunition_rocket_plt-2026"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT3030), player.Information.Ammunitions["ammunition_rocket_plt-3030"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLASMA), player.Information.Ammunitions["ammunition_specialammo_pld-8"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.WIZARD), player.Information.Ammunitions["ammunition_specialammo_wiz-x"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.DECELERATION), player.Information.Ammunitions["ammunition_specialammo_dcr-250"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.HELLSTORM), player.Information.Ammunitions["ammunition_rocketlauncher_hstrm-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.UBER_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_ubr-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR01), player.Information.Ammunitions["ammunition_rocketlauncher_sar-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR02), player.Information.Ammunitions["ammunition_rocketlauncher_sar-02"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 player.Settings.Slotbar.GetCategories();
             }
@@ -167,19 +161,19 @@ namespace NettyBaseReloaded.Game.netty.packet
         public void ShipInitializationCommand(GameSession gameSession)
         {
             var player = gameSession.Player;
-
+            
             if (gameSession.Player.UsingNewClient)
                 gameSession.Client.Send(
                     commands.new_client.ShipInitializationCommand.write(
                         player.Id,
                         player.Name,
-                        player.Hangar.Ship.ToStringLoot(),
+                        player.Hangar.ShipDesign.ToStringLoot(),
                         player.Speed,
                         player.CurrentShield,
                         player.MaxShield,
                         player.CurrentHealth,
                         player.MaxHealth,
-                        player.Cargo.Free(player.Hangar.Ship.Cargo), //freeCargo
+                        player.Hangar.Ship.Cargo, //freeCargo
                         player.Hangar.Ship.Cargo, //maxCargo
                         player.CurrentNanoHull,
                         player.MaxNanoHull,
@@ -187,20 +181,20 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Position.Y,
                         player.Spacemap.Id,
                         (int) player.FactionId,
-                        player.Clan.Id, //idk
-                        player.LaserCount(), //idk
-                        player.Premium,
-                        player.Experience,
-                        player.Honor,
-                        player.Level.Id,
-                        player.Credits,
-                        player.Uridium,
-                        player.Jackpot,
+                        player.Clan.Id, //clan
+                        player.Equipment.LaserCount(), //idk
+                        player.Information.Premium,
+                        player.Information.Experience.Get(),
+                        player.Information.Honor.Get(),
+                        player.Information.Level.Id,
+                        player.Information.Credits.Get(),
+                        player.Information.Uridium.Get(),
+                        0,//Jackpot
                         (int) player.RankId,
                         player.Clan.Tag, //clanTag
-                        player.Rings,
+                        0, // player GG rings
                         true,
-                        false, //cloaked
+                        player.Controller.Invisible, //cloaked
                         true,
                         new List<commands.new_client.VisualModifierCommand>()
                     ).Bytes);
@@ -209,13 +203,13 @@ namespace NettyBaseReloaded.Game.netty.packet
                     commands.old_client.ShipInitializationCommand.write(
                         player.Id,
                         player.Name,
-                        player.Hangar.Ship.Id,
+                        player.Hangar.ShipDesign.Id,
                         player.Speed,
                         player.CurrentShield,
                         player.MaxShield,
                         player.CurrentHealth,
                         player.MaxHealth,
-                        player.Cargo.Free(player.Hangar.Ship.Cargo),
+                        player.Hangar.Ship.Cargo,
                         player.Hangar.Ship.Cargo,
                         player.CurrentNanoHull,
                         player.MaxNanoHull,
@@ -226,19 +220,19 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Clan.Id,
                         0,
                         0,
-                        player.LaserCount(),
-                        player.Premium,
-                        player.Experience,
-                        player.Honor,
-                        player.Level.Id,
-                        player.Credits,
-                        player.Uridium,
-                        player.Jackpot,
+                        player.Equipment.LaserCount(),
+                        player.Information.Premium,
+                        player.Information.Experience.Get(),
+                        player.Information.Honor.Get(),
+                        player.Information.Level.Id,
+                        player.Information.Credits.Get(),
+                        player.Information.Uridium.Get(),
+                        0,
                         (int) player.RankId,
-                        player.Clan.Tag,
-                        player.Rings,
+                        player.Clan.Tag, 
+                        0,
                         true,
-                        false,
+                        player.Controller.Invisible,
                         new List<commands.old_client.VisualModifierCommand>()).Bytes);
         }
         #endregion
@@ -267,11 +261,11 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.new_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.Ship.ToStringLoot(), pChar.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
+                        pChar.Hangar.ShipDesign.ToStringLoot(), pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
-                        (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
-                        new commands.new_client.ClanRelationModule(0), 0,
-                        false, false, false, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
+                        (int) pChar.FactionId, 0, (int) pChar.RankId, false,
+                        new commands.new_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
+                        false, false, pChar.Controller.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
                 else if (character is Pet)
@@ -281,11 +275,11 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else
                 {
                     bytes = commands.new_client.ShipCreateCommand.write(character.Id,
-                        character.Hangar.Ship.ToStringLoot(), 0, "", character.Name, character.Position.X,
+                        character.Hangar.ShipDesign.ToStringLoot(), 0, character.Clan.Tag, character.Name, character.Position.X,
                         character.Position.Y,
-                        (int)character.FactionId, 0, 0, false,
-                        new commands.new_client.ClanRelationModule(0), 0,
-                        false, true, false, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
+                        (int)character.FactionId, character.Clan.Id, 0, false,
+                        new commands.new_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
+                        false, true, character.Controller.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
             }
@@ -295,11 +289,11 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.old_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.Ship.Id, pChar.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
+                        pChar.Hangar.ShipDesign.Id, pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
                         (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
-                        new commands.old_client.ClanRelationModule(0), 0,
-                        false, false, false, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
+                        new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
+                        false, false, character.Controller.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
                 else if (character is Pet)
                 {
@@ -308,11 +302,11 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else
                 {
                     bytes = commands.old_client.ShipCreateCommand.write(character.Id,
-                        character.Hangar.Ship.Id, 0, "", character.Name, character.Position.X,
+                        character.Hangar.ShipDesign.Id, 0, character.Clan.Tag, character.Name, character.Position.X,
                         character.Position.Y,
-                        (int) character.FactionId, 0, 0, false,
-                        new commands.old_client.ClanRelationModule(0), 0,
-                        false, true, false, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
+                        (int) character.FactionId, character.Clan.Id, 0, false,
+                        new commands.old_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
+                        false, true, character.Controller.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
             }
             gameSession.Client.Send(bytes);
@@ -441,13 +435,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 if (character == null) gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(0,0,0,0,0,0,0,0,false).Bytes);
-                else gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(character.Id, character.Hangar.Ship.Id, character.CurrentShield, character.MaxShield,
+                else gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(character.Id, character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
                     character.CurrentHealth, character.MaxHealth, character.CurrentNanoHull, character.MaxNanoHull, false).Bytes);
             }
             else
             {
                 if (character == null) gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(0,0,0,0,0,0,0,0,false).Bytes);
-                else gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(character.Id, character.Hangar.Ship.Id, character.CurrentShield, character.MaxShield,
+                else gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(character.Id, character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
                     character.CurrentHealth, character.MaxHealth, character.CurrentNanoHull, character.MaxNanoHull, false).Bytes);
             }
         }
@@ -591,13 +585,22 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void PetInitializationCommand(GameSession gameSession, Pet pet)
         {
+            bool hasPet = pet != null;
+            bool petIsAlive = false;
+            bool hasFuel = false;
+            if (hasPet)
+            {
+                hasFuel = pet.HasFuel();
+                petIsAlive = !pet.Controller.Dead;
+            }
+
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.PetInitializationCommand.write(true, pet.HasFuel(), !pet.Controller.Dead).Bytes);
+                gameSession.Client.Send(commands.new_client.PetInitializationCommand.write(hasPet, hasFuel, petIsAlive).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.PetInitializationCommand.write(true, pet.HasFuel(), !pet.Controller.Dead).Bytes);
+                gameSession.Client.Send(commands.old_client.PetInitializationCommand.write(hasPet, hasFuel, petIsAlive).Bytes);
             }
         }
 
@@ -610,18 +613,33 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
-                (short)pet.FactionId, pet.GetOwner().Clan.Id, (short)pet.Level.Id, pet.GetOwner().Clan.Tag, new commands.new_client.ClanRelationModule(0),
-                pet.Position.X, pet.Position.Y, pet.Speed, true, true, new commands.new_client.commandK13(0)).Bytes);
+                (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.new_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
+                pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Controller.Invisible, new commands.new_client.commandK13(0)).Bytes);
             }
             else
             {
                 gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
-                    (short)pet.FactionId, pet.GetOwner().Clan.Id, (short)pet.Level.Id, pet.GetOwner().Clan.Tag, new commands.old_client.ClanRelationModule(0),
-                    pet.Position.X, pet.Position.Y, pet.Speed, true, true).Bytes);
+                    (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
+                    pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Controller.Invisible).Bytes);
             }
         }
 
         #endregion
+
+        #region PetHeroActivationCommand
+
+        public void PetHeroActivationCommand(GameSession gameSession, Pet pet)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetHeroActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name, (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, pet.Position.X, pet.Position.Y, pet.Speed).Bytes);
+            }
+        }
+#endregion
 
         #region PetStatusCommand
 
@@ -651,7 +669,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                LegacyModule(gameSession, "0|c|" + collectable.Hash + "|" + collectable.Type.GetHashCode().ToString() + "|" + collectable.Position.ToPacket());
+                LegacyModule(gameSession, "0|c|" + collectable.Hash + "|" + collectable.GetTypeId(gameSession.Player) + "|" + collectable.Position.ToPacket());
             }
         }
 
@@ -665,13 +683,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.BeaconCommand.write(0,0,0,0,
-                    player.InDemiZone, player.Controller.Repairing, player.Controller.Repairing, player.GetRobot(), player.InRadiationArea).Bytes);
+                    player.State.InDemiZone, player.Controller.Repairing, player.Controller.Repairing, player.Equipment.GetRobot(), player.State.InRadiationArea).Bytes);
             }
             else
             {
-                LegacyModule(gameSession, "0|" + commands.ServerCommands.BEACON + "|0|0|" + Convert.ToInt32(player.InDemiZone) + "|0|"
-                                          + Convert.ToInt32(player.InTradeArea) + "|"
-                                          + Convert.ToInt32(player.InRadiationArea) + "|" + Convert.ToInt32(player.InPortalArea) + "|0");
+                LegacyModule(gameSession, "0|" + commands.ServerCommands.BEACON + "|0|0|" + Convert.ToInt32(player.State.InDemiZone) + "|0|"
+                                          + Convert.ToInt32(player.State.InTradeArea) + "|"
+                                          + Convert.ToInt32(player.State.InRadiationArea) + "|" + Convert.ToInt32(player.State.InPortalArea) + "|0");
                 LegacyModule(gameSession, "0|A|RS|S|" + player.Controller.Repairing);
             }
         }
@@ -759,23 +777,27 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void ShipWarpWindowCreateCommand(GameSession gameSession)
         {
-            var player = gameSession.Player;
-            var hangars = World.DatabaseManager.GetHangars(player);
             if (gameSession.Player.UsingNewClient)
             {
                 var ships = new List<commands.new_client.ShipWarpModule>();
 
-                int i = 0;
-                foreach (var hangar in hangars)
+                foreach (var hangar in gameSession.Player.Equipment.Hangars)
                 {
-                    ships.Add(new commands.new_client.ShipWarpModule(hangar.Ship.Id, hangar.Ship.LootId, hangar.Ship.Name ,0, 0, i, hangar.Ship.Name));
+                    ships.Add(new commands.new_client.ShipWarpModule(hangar.Value.Ship.Id, hangar.Value.Ship.ToStringLoot(), hangar.Value.Ship.Name, 0, 0, hangar.Key, hangar.Value.Ship.Name));
                 }
 
-                gameSession.Client.Send(commands.new_client.ShipWarpWindowCommand.write(0, (int)player.Uridium, gameSession.Player.InEquipmentArea, ships).Bytes);
+                gameSession.Client.Send(commands.new_client.ShipWarpWindowCommand.write(0, (int)gameSession.Player.Information.Uridium.Get(), gameSession.Player.State.InEquipmentArea, ships).Bytes);
             }
             else
             {
+                var ships = new List<commands.old_client.ShipWarpModule>();
 
+                foreach (var hangar in gameSession.Player.Equipment.Hangars)
+                {
+                    ships.Add(new commands.old_client.ShipWarpModule(hangar.Value.Ship.Id, hangar.Value.Ship.Id, hangar.Value.Ship.Name, 0, 0, hangar.Key, hangar.Value.Ship.Name));
+                }
+
+                gameSession.Client.Send(commands.old_client.ShipWarpWindowCommand.write(0, (int)gameSession.Player.Information.Uridium.Get(), gameSession.Player.State.InEquipmentArea, ships).Bytes);
             }
         }
         #endregion
@@ -863,6 +885,175 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.AddOreCommand.write(ore.Hash, new commands.old_client.OreTypeModule((short)ore.Type), ore.Position.X, ore.Position.Y).Bytes);
             }
         }
+        #endregion
+
+        #region PetGearAddCommand
+
+        public void PetGearAddCommand(GameSession gameSession, Gear gear)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                Console.WriteLine("Gear->" + gear.Type.ToString());
+                gameSession.Client.Send(netty.commands.old_client.PetGearAddCommand.write(new commands.old_client.PetGearTypeModule((short)gear.Type), gear.Level, gear.Amount, gear.Enabled).Bytes);
+            }
+        }
+        #endregion
+
+        #region PetGearSelectCommand
+
+        public void PetGearSelectCommand(GameSession gameSession, Gear gear)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                Console.WriteLine("Select Gear->" + gear.Type.ToString());
+                gameSession.Client.Send(commands.old_client.PetGearSelectCommand.write(new commands.old_client.PetGearTypeModule((short)gear.Type), new List<int>()).Bytes);
+            }
+        }
+
+        #endregion
+
+        #region MapChangeCommand
+
+        public void MapChangeCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+                throw new NotImplementedException();
+            else
+                LegacyModule(gameSession, "0|z");
+        }
+        #endregion
+
+        #region PetDeactivationCommand
+
+        public void PetDeactivationCommand(GameSession gameSession, Pet pet)
+        {
+            if (gameSession.Player.UsingNewClient)
+                throw new NotImplementedException();
+            else
+                gameSession.Client.Send(commands.old_client.PetDeactivationCommand.write(pet.Id).Bytes);
+        }
+
+        #endregion
+
+        #region LevelUpCommand
+        public void LevelUpCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.LevelUpCommand.write(gameSession.Player.Id, gameSession.Player.Information.Level.Id).Bytes);
+            }
+        }
+        #endregion
+        #region AmmunitionCountUpdateCommand
+
+        public void AmmunitionCountUpdateCommand(GameSession gameSession, string lootId, int amount)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AmmunitionCountUpdateCommand.write(new List<commands.old_client.AmmunitionCountModule>(){new commands.old_client.AmmunitionCountModule(Converter.ToAmmoType(lootId), amount)}).Bytes);
+            }
+        }
+        #endregion
+
+        #region HellstormStatusCommand
+        public void HellstormStatusCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                if (gameSession.Player.RocketLauncher != null)
+                {
+                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand
+                        .write(gameSession.Player.RocketLauncher.Launchers.ToList(),
+                            new commands.old_client.AmmunitionTypeModule(Converter
+                                .ToAmmoType(gameSession.Player.RocketLauncher.LoadLootId).type),
+                            gameSession.Player.RocketLauncher.CurrentLoad).Bytes);
+                }
+                else
+                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand
+                        .write(new List<int>(),
+                            new commands.old_client.AmmunitionTypeModule(commands.old_client.AmmunitionTypeModule
+                                .ECO_ROCKET), 0).Bytes);
+
+            }
+        }
+        #endregion
+
+        #region AttributeBoosterUpdateCommand
+
+        public void AttributeBoosterUpdateCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                var boostList = new List<commands.old_client.BoosterUpdateModule>();
+                if (gameSession.Player.BoostedDamage > 0)
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short) Booster.Types.DAMAGE),
+                        Convert.ToSingle(gameSession.Player.BoostedDamage * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+                var pBoosterList = gameSession.Player.Boosters.Concat(gameSession.Player.InheritedBoosters.Values);
+                foreach (var booster in pBoosterList)
+                {
+                    boostList.Find(x => x.attributeType.typeValue == (short) booster.Type).boosterTypes
+                        .Add(new commands.old_client.BoosterTypeModule((short) booster.BoosterType));
+                }
+                gameSession.Client.Send(commands.old_client.AttributeBoosterUpdateCommand.write(boostList).Bytes);
+            }
+        }
+        #endregion
+
+        #region UIButtonShowFlashCommand
+
+        public void UIButtonShowFlashCommand(GameSession gameSession, int buttonId, bool arrow, int flashingTimes = -1)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                Packet.Builder.LegacyModule(gameSession, $"0|UI|B|SF|{flashingTimes}|{Convert.ToInt32(arrow)}|{buttonId}");
+            }
+        }
+
+        #endregion
+        #region UIButtonHideFlashCommand
+
+        public void UIButtonHideFlashCommand(GameSession gameSession, int buttonId, bool arrow, int flashingTimes = -1)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                Packet.Builder.LegacyModule(gameSession, $"0|UI|B|HF|-1|-1|{buttonId}");
+            }
+        }
+
         #endregion
     }
 }

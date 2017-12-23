@@ -1,6 +1,5 @@
 ﻿using System;
 using NettyBaseReloaded.Game.netty.commands.new_client;
-using NettyBaseReloaded.Game.objects.world.players.settings.new_client_slotbars;
 
 namespace NettyBaseReloaded.Game.objects.world.characters
 {

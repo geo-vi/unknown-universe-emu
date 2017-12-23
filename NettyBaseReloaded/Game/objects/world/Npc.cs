@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players;
 
 namespace NettyBaseReloaded.Game.objects.world
@@ -21,6 +22,7 @@ namespace NettyBaseReloaded.Game.objects.world
     }
     class Npc : Character
     {
+        public static DebugLog Log = new DebugLog("npc");
         /**********
          * BASICS *
          **********/
@@ -37,18 +39,33 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        
-        //public int Damage { get; set; }
+        public sealed override int Damage { get; set; }
 
-        public int motherShipId { get; set; }
+        public sealed override int CurrentShield { get; set; }
 
-        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, DropableRewards dropableRewards,
-            int maxShield, int damage)
-            : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, dropableRewards)
+        public sealed override int MaxShield { get; set; }
+
+        public sealed override double ShieldAbsorption { get; set; }
+
+        public sealed override double ShieldPenetration { get; set; }
+
+        public Npc MotherShip { get; set; }
+
+        public int RespawnTime { get; set; }
+
+        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards,
+            int maxShield, int damage, int respawnTime = 0, Npc motherShip = null)
+            : base(id, name, hangar, factionId, position, spacemap, rewards)
         {
-            //Id - 10000 as base Id for Npcs
+            CurrentHealth = currentHealth;
+            CurrentNanoHull = currentNanoHull;
             Damage = damage;
-            motherShipId = 0;
+            CurrentShield = maxShield;
+            MaxShield = maxShield;
+            ShieldAbsorption = 0.5;
+            ShieldPenetration = 0.05;
+            MotherShip = motherShip;
+            RespawnTime = respawnTime;
         }
 
         public new void Tick()

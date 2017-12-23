@@ -13,12 +13,22 @@ namespace NettyBaseReloaded.Logger
 
         public Writer(string filePath)
         {
-            FilePath = filePath;
+            FilePath = Creator.ReformPath(filePath);
+            Creator.New(FilePath);
         }
 
-        public void Write(string message)
+        public async void Write(string message)
         {
-            
+            try
+            {
+                StreamWriter writer = new StreamWriter(FilePath, true);
+                await writer.WriteLineAsync(message);
+                writer.Dispose();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Log writer failed / {e.GetType()}, {FilePath}");
+            }
         }
     }
 }

@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
-using NettyBaseReloaded.Game.netty.commands.new_client;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.objects.world.players.killscreen
 {
     class KillscreenOption
     {
-        public KillScreenOptionModule Object { get; set; }
+        public object Object { get; set; }
 
         public static short NEAREST_BASE = 1;
         public static short PAYMENT_LINK = 9;
@@ -18,40 +21,91 @@ namespace NettyBaseReloaded.Game.objects.world.players.killscreen
         public static short FREE_REPAIR_SECS = 4;
         public static short TDM_FREE_REPAIR = 8;
 
-        public KillscreenOption(short buttonType, short currency = 0, short amount = 0)
+        public KillscreenOption(bool newClient, short buttonType, short currency = 0, short amount = 0)
         {
             //TODO remove desc_killscreen_free_repair_cause_test_phase
-            if (amount > 0)
+            if (newClient)
             {
-                var currencyTooltip = (currency == 0) ? "C." : "U.";
+                if (amount > 0)
+                {
+                    var currencyTooltip = (currency == 0) ? "C." : "U.";
 
-                Object = new KillScreenOptionModule(0,
-                    new KillScreenOptionTypeModule(buttonType),
-                    new MessageLocalizedWildcardCommand("", new commandWw(0), new List<commandF5>()), //ttip_killscreen_basic_repair
-                    new MessageLocalizedWildcardCommand("btn_killscreen_repair_for_money", new commandWw(0),
-                        new List<commandF5>
-                        {
-                            new commandF5("%COUNT%", "" + amount, new commandWw(0)),
-                            new commandF5("%CURRENCY%", currencyTooltip, new commandWw(0))
-                        }),
-                    new MessageLocalizedWildcardCommand("", new commandWw(0), new List<commandF5>()),
-                    new PriceModule(currency, amount),
-                    new MessageLocalizedWildcardCommand("desc_killscreen_free_repair_cause_test_phase", new commandWw(0), new List<commandF5>()), //explication
-                    true
-                );
+                    Object = new netty.commands.new_client.KillScreenOptionModule(0,
+                        new netty.commands.new_client.KillScreenOptionTypeModule(buttonType),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()), //ttip_killscreen_basic_repair
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_money",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>
+                            {
+                                new netty.commands.new_client.commandF5("%COUNT%", "" + amount,
+                                    new netty.commands.new_client.commandWw(0)),
+                                new netty.commands.new_client.commandF5("%CURRENCY%", currencyTooltip,
+                                    new netty.commands.new_client.commandWw(0))
+                            }),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()),
+                        new netty.commands.new_client.PriceModule(currency, amount),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand(
+                            "desc_killscreen_free_repair_cause_test_phase", new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()), //explication
+                        true
+                    );
+                }
+                else
+                {
+                    Object = new netty.commands.new_client.KillScreenOptionModule(0,
+                        new netty.commands.new_client.KillScreenOptionTypeModule(buttonType),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()), //ttip_killscreen_basic_repair
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()),
+                        new netty.commands.new_client.PriceModule(currency, amount),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand(
+                            "desc_killscreen_free_repair_cause_test_phase", new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()), //explication
+                        true
+                    );
+                }
             }
             else
             {
-                Object = new KillScreenOptionModule(0,
-                    new KillScreenOptionTypeModule(buttonType),
-                    new MessageLocalizedWildcardCommand("", new commandWw(0), new List<commandF5>()), //ttip_killscreen_basic_repair
-                    new MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new commandWw(0), new List<commandF5>()),
-                    new MessageLocalizedWildcardCommand("", new commandWw(0), new List<commandF5>()),
-                    new PriceModule(currency, amount),
-                    new MessageLocalizedWildcardCommand("desc_killscreen_free_repair_cause_test_phase", new commandWw(0), new List<commandF5>()), //explication
-                    true
-                );
+                if (amount > 0)
+                {
+                    var currencyTooltip = (currency == 0) ? "C." : "U.";
+
+//                    Object = new netty.commands.old_client.KillScreenOptionModule(new netty.commands.old_client.KillScreenOptionTypeModule(buttonType),
+//new netty.commands.old_client.PriceModule(currency, amount), true, 0,                    );
+                }
+                else
+                {
+                    Object = new netty.commands.new_client.KillScreenOptionModule(0,
+                        new netty.commands.new_client.KillScreenOptionTypeModule(buttonType),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()), //ttip_killscreen_basic_repair
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand("",
+                            new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()),
+                        new netty.commands.new_client.PriceModule(currency, amount),
+                        new netty.commands.new_client.MessageLocalizedWildcardCommand(
+                            "desc_killscreen_free_repair_cause_test_phase", new netty.commands.new_client.commandWw(0),
+                            new List<netty.commands.new_client.commandF5>()), //explication
+                        true
+                    );
+                }
             }
         }
     }
+
 }

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.netty.packet;
+using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.global_managers;
@@ -20,6 +22,8 @@ namespace NettyBaseReloaded.Networking
         private XSocket XSocket;
         public int UserId { get; set; }
 
+        public IPAddress IPAddress => XSocket.RemoteHost;
+
         public GameClient(XSocket gameSocket)
         {
             XSocket = gameSocket;
@@ -29,9 +33,10 @@ namespace NettyBaseReloaded.Networking
         }
 
         private void XSocketOnConnectionClosedEvent(object sender, EventArgs eventArgs)
-        {         
-            //var gameSess = World.StorageManager.GetGameSession(UserId);
-            //gameSess?.Disconnect();
+        {
+            var gameSess = World.StorageManager.GetGameSession(UserId); // TODO: Fix regular connection drop - player still stays in range even after disconnection
+            if (!gameSess.InProcessOfReconection)
+                gameSess.Disconnect(GameSession.DisconnectionType.NORMAL);
         }
 
         private void XSocketOnOnReceive(object sender, EventArgs eventArgs)
@@ -49,19 +54,19 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                if (World.StorageManager.GetGameSession(UserId) != null)
+                var gameSession = World.StorageManager.GetGameSession(UserId);
+                if (gameSession != null)
                 {
-                    if (World.StorageManager.GameSessions[UserId].Player.Controller != null)
-                        World.StorageManager.GameSessions[UserId].LastActiveTime = DateTime.Now;
+                    if (gameSession.InProcessOfReconection || gameSession.InProcessOfDisconnection) return;
+                    if (gameSession.Player.Controller != null)
+                        gameSession.LastActiveTime = DateTime.Now;
                 }
 
                 XSocket.Write(bytes);
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Connected?");
-                Debug.WriteLine(e.StackTrace);
-                Debug.WriteLine(e.Message);
+                //new ExceptionLog("socket", "Unable to send packet / Connected?", e);
             }
         }
         public void Send(string packet)
@@ -74,7 +79,7 @@ namespace NettyBaseReloaded.Networking
             if (character == null) return;
             try
             {
-                foreach (var entry in character.Spacemap.Entities.ToList())
+                foreach (var entry in character.Spacemap.Entities)
                 {
                     var entity = entry.Value as Player;
 
@@ -109,7 +114,7 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                foreach (var entry in character.Spacemap.Entities.ToList())
+                foreach (var entry in character.Spacemap.Entities)
                 {
                     var entity = entry.Value;
 
@@ -135,10 +140,10 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                foreach (var entry in spacemap.Entities.ToList())
+                foreach (var entry in spacemap.Entities)
                 {
                     var entity = entry.Value as Player;
-                    if (entity != null)
+                    if (entity != null && (entity.Spacemap != null || entity.Position != null))
                     {
                         if (entity.UsingNewClient && command.IsNewClient)
                         {
@@ -158,6 +163,7 @@ namespace NettyBaseReloaded.Networking
 
             }
         }
+
 
         public void Disconnect()
         {

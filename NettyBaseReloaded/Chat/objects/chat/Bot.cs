@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.Chat.objects.chat
         /// </summary>
         public new BotController Controller { get; set; }
 
-        public Bot(int id, string name) : base(id, name, new Clan(-1, "We are the bots", "BOT"))
+        public Bot(int id, string name) : base(id, name, "", new Clan(-1, "We are the bots", "BOT", -1))
         {
 
         }

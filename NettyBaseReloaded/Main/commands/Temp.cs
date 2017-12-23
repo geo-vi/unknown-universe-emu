@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.controllers;
@@ -14,12 +16,12 @@ namespace NettyBaseReloaded.Main.commands
     {
         public Temp() : base("temp", ""){ }
 
-        public override void Execute(string[] args = null)
+        public override async void Execute(string[] args = null)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 105; i++)
             {
-                World.StorageManager.Spacemaps[12].CreateOre(OreTypes.DURANIUM, Vector.Random(16000, 20000, 1000, 5000));                
-                World.StorageManager.Spacemaps[12].CreateBox(Types.BONUS_BOX, Vector.Random(16000, 20000, 1000, 5000));
+                new ExceptionLog("temp", "Just a test", new WarningException("Just a working warning exception"));
+                await Task.Delay(150);
             }
         }
     }

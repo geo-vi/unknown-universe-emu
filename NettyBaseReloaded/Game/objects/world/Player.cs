@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
@@ -7,18 +8,26 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
+using NettyBaseReloaded.Game.controllers.login;
+using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.netty.packet;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
-using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.players;
-using NettyBaseReloaded.Game.objects.world.storages.playerStorages;
+using NettyBaseReloaded.Game.objects.world.players.equipment;
+using NettyBaseReloaded.Game.objects.world.players.extra;
+using NettyBaseReloaded.Game.objects.world.players.extra.boosters;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
+using ClanRelationModule = NettyBaseReloaded.Game.netty.commands.new_client.ClanRelationModule;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
+using Range = NettyBaseReloaded.Game.objects.world.characters.Range;
+using State = NettyBaseReloaded.Game.objects.world.players.State;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -27,6 +36,7 @@ namespace NettyBaseReloaded.Game.objects.world
         /**********
          * BASICS *
          **********/
+
         public string SessionId { get; set; }
 
         public Rank RankId { get; set; }
@@ -35,70 +45,59 @@ namespace NettyBaseReloaded.Game.objects.world
         /***************
          * INFORMATION *
          ***************/
-        public Clan Clan { get; set; }
 
-        public Group Group { get; set; }
-        public Level Level { get; set; }
-        public long Experience { get; set; }
-        public long Honor { get; set; }
-        public double Credits { get; set; }
-        public double Uridium { get; set; }
-        public int GGSpins { get; set; }
-        public float Jackpot { get; set; }
+        public Equipment Equipment { get; private set; }
 
-        public int[] BootyKeys { get; set; }
+        public Statistics Statistics { get; private set; }
+
+        public Information Information { get; private set; }
+
+        public State State { get; private set; }
+
+        private Hangar _hangar;
+
+        public override Hangar Hangar
+        {
+            get
+            {
+                if (Equipment?.Hangars?[Equipment.ActiveHangar] != null)
+                {
+                    return Equipment.Hangars[Equipment.ActiveHangar];
+                }
+                return _hangar;
+            }
+            set
+            {
+                if (Equipment?.Hangars?[Equipment.ActiveHangar] != null)
+                {
+                    Equipment.Hangars[Equipment.ActiveHangar] = value;
+                }
+                _hangar = value;
+            }
+        }
 
         /*********
          * EXTRA *
          *********/
-        private int _rings;
-
-        public int Rings
-        {
-            get { return _rings; }
-            //64 => Kronos (Max value)
-            set { _rings = (value <= 64) ? value : 64; }
-        }
-
-        public bool Premium { get; set; }
-        public int CurrentConfig { get; set; }
-
-        public Ammo CurrentAmmo { get; set; }
-        public Ammo SpentAmmo { get; set; }
-
-        public bool SoftBan { get; set; }
-        public bool InEquipmentArea { get; set; }
-        public bool InTradeArea { get; set; }
-        public bool InDemiZone { get; set; }
-        public bool InRadiationArea { get; set; }
-        public bool InPortalArea { get; set; }
-        public bool InInstaRepairZone { get; set; }
-        public int JumpVouchers { get; set; }
-
-        public List<DroneFormation> OwnedFormations { get; set; }
-        public bool Warping { get; set; }
 
         public Pet Pet { get; set; }
 
+        public Settings Settings { get; private set; }
+
+        public Storage Storage { get; private set; }
+
+        public PlayerLog Log { get; private set; }
+
         public List<Booster> Boosters { get; set; }
 
-        public Settings Settings { get; set; }
-
-        public RocketLauncher RocketLauncher { get; set; }
-
-        public StatsStorage Stats { get; set; }
-
-        public PlayerStorage UserStorage { get; set; }
-
-        public SettingsStorage SettingsStorage = new SettingsStorage();
-
-        public EntitiesStorage EntitiesStorage = new EntitiesStorage();
-
-        public PlayerLog Log { get; }
+        public ConcurrentDictionary<Player, Booster> InheritedBoosters = new ConcurrentDictionary<Player, Booster>();
 
         /*********
          * STATS *
          *********/
+
+        public int CurrentConfig { get; set; }
+
         public override int MaxHealth
         {
             get
@@ -153,7 +152,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             get
             {
-                var value = Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation;
+                var value = (double)Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation / MaxShield;
                 switch (Formation)
                 {
                     case DroneFormation.CRAB:
@@ -185,11 +184,19 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public double BoostedAcceleration = 0;
         public override int Speed
         {
-            get { return Hangar.Ship.Speed + Hangar.Configurations[CurrentConfig - 1].Speed; }
+            get
+            {
+                var value = Hangar.Configurations[CurrentConfig - 1].Speed;
+                if (BoostedAcceleration > 0)
+                    value = (int) (value * (1 + BoostedAcceleration));
+                return value;
+            }
         }
 
+        public double BoostedDamage = 0;
         public override int Damage
         {
             get
@@ -211,7 +218,10 @@ namespace NettyBaseReloaded.Game.objects.world
                         break;
 
                 }
-                value = (int) (value * Hangar.Ship.GetDamageBonus(this));
+
+                if (BoostedDamage > 0)
+                    value = (int) (value * Hangar.Ship.GetDamageBonus(this) * (1 + BoostedDamage));
+                else value = (int) (value * Hangar.Ship.GetDamageBonus(this));
                 return value;
             }
         }
@@ -239,17 +249,15 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public List<Drone> Drones => Hangar.Drones;
+        public Dictionary<string, Extra> Extras
+        {
+            get { return Hangar.Configurations[CurrentConfig - 1].Extras; }
+        }
 
-        public Dictionary<int, Ability> Abilities { get; set; }
-
-        public List<InvitedForGroup> InvitedForGroups { get; set; }
-
-        public List<Npc> AttachedNpcs { get; set; }
-
-        public List<GalaxyGate> AvailableGalaxyGates { get; set; }
-
-        public Cargo Cargo { get; set; }
+        public override RocketLauncher RocketLauncher
+        {
+            get { return Hangar.Configurations[CurrentConfig - 1].RocketLauncher; }
+        }
 
         /// <summary>
         /// This is a for the multi-client support.
@@ -257,141 +265,183 @@ namespace NettyBaseReloaded.Game.objects.world
         /// </summary>
         public bool UsingNewClient { get; set; }
 
-        public Player(int id, string name, string sessionId, Hangar hangar, Clan clan, Faction factionId, Reward reward,
-            DropableRewards dropableRewards,
-            Rank rankId, Level level, long experience, long honor, double credits, double uridium, float jackpot,
-            int rings, bool premium, RocketLauncher launcher, Cargo cargo, StatsStorage stats)
-            : base(id, name, hangar, factionId, hangar.Position, hangar.Spacemap, hangar.Health, hangar.Nanohull,
-                reward, dropableRewards)
+        /// <summary>
+        /// Lists
+        /// </summary>
+        public List<Drone> Drones => Hangar.Drones;
+
+        private List<LogMessage> LogMessages = new List<LogMessage>();
+        public List<Npc> AttachedNpcs = new List<Npc>();
+
+        public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
+            Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
+            string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
+            spacemap, rewards, clan)
         {
+            InitializeClasses();
             SessionId = sessionId;
             RankId = rankId;
-            Level = level;
-            Experience = experience;
-            Honor = honor;
-            Credits = credits;
-            Uridium = uridium;
-            Jackpot = jackpot;
-            Rings = rings;
-            Premium = premium;
-            CurrentConfig = 1; //Selected config1 by default
-            Clan = clan;
-            RocketLauncher = launcher;
-            //Cargo = cargo;
-            Stats = stats;
-            //Settings = settings;
-
-            SoftBan = false;
-            UsingNewClient = false;
-
-            InDemiZone = false;
-            InRadiationArea = false;
-            InTradeArea = false;
-            InEquipmentArea = false;
-            InPortalArea = false;
-            InInstaRepairZone = false;
-
-            UserStorage = new PlayerStorage(Id, Credits, Uridium);
-
-            Boosters = new List<Booster>();
-            BootyKeys = new[] {2, 2, 1};
-            Abilities = new Dictionary<int, Ability>();
-            Group = null;
-            InvitedForGroups = new List<InvitedForGroup>();
-            AttachedNpcs = new List<Npc>();
-            OwnedFormations = new List<DroneFormation>();
-            Cargo = new Cargo(0,0,0,0,0,0,0,0,0,0);
-            Settings = new Settings();
-            Log = new PlayerLog(SessionId);
+            UsingNewClient = usingNewClient;
+            CurrentConfig = 1;
+            CurrentHealth = currentHealth;
+            CurrentNanoHull = currentNano;
         }
 
-        public int GetRewardLevel()
+        public new void Tick()
         {
-            int baseRewardMultiplyer = 21;
-            if (Level.Id < 20)
-            {
-                return baseRewardMultiplyer - Level.Id;
-            }
-            return 1;
-        }
-
-        public void Tick()
-        {
-            BasicDbRefresh();
+            // TODO -> Added ticked processes
             LevelChecker();
-            RefreshBonuses();
-            //BetaTestCountdown();
-            Hangar.DronesLevelChecker(this);
+            Storage.Tick();
+            TickBoosters();
+            AssembleEnemyWarn();
         }
 
-        private DateTime LastTimeAnnounced = new DateTime(2017, 1, 21, 0, 0, 0);
-
-        public void BetaTestCountdown()
+        private void InitializeClasses()
         {
-            if (!SettingsStorage.BetaCountdown && LastTimeAnnounced < DateTime.Now.AddSeconds(10) && Properties.Server.PUBLIC_BETA_END > DateTime.Now ||
-                Properties.Server.PUBLIC_BETA_END < DateTime.Now) return;
+            Equipment = new Equipment(this);
+            Statistics = World.DatabaseManager.LoadStatistics(this);
+            Information = new Information(this);
+            Settings = new Settings(this);
+            State = new State(this);
+            Storage = new Storage(this);
+            Log = new PlayerLog(SessionId);
+            Skills = World.DatabaseManager.LoadSkilltree(this);
+            Boosters = new List<Booster>(); // TODO: Load from SQL
+            Range.EntityAdded += CharacterEnteredRange;
+            Range.EntityRemoved += CharacterExitedRange;
+        }
 
-            LastTimeAnnounced = DateTime.Now;
-
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            var timeLeft = Properties.Server.PUBLIC_BETA_END - DateTime.Now;
-            var client = World.StorageManager.GetGameSession(Id).Client;
-            if (client != null)
+        public void ClickableCheck(Object obj)
+        {
+            if (obj is IClickable)
             {
-                if (timeLeft.Days > 1) Packet.Builder.LegacyModule(gameSession, "0|A|STD|" + timeLeft.Days + " days and " + timeLeft.Hours + " hours of testing left.");
-                else if (timeLeft.Minutes > 1) Packet.Builder.LegacyModule(gameSession, "0|A|STD|" + timeLeft.Hours + " hours and " + timeLeft.Minutes + " minutes of testing left.");
-                else Packet.Builder.LegacyModule(gameSession, "0|A|STD|Thank you for coming! Hope you had a great time =)");
+                var active = Vector.IsInRange(Position, obj.Position, obj.Range);
+                Packet.Builder.MapAssetActionAvailableCommand(World.StorageManager.GetGameSession(Id), obj, active);
             }
+        }
+
+        public void LoadObject(Object obj)
+        {
+            if (obj is Station) Storage.LoadStation(obj as Station);
+            else if (obj is Jumpgate) Storage.LoadPortal(obj as Jumpgate);
+            else if (obj is Asteroid) Storage.LoadAsteroid(obj as Asteroid);
+            else if (obj is Asset) Storage.LoadAsset(obj as Asset);
+            else if (obj is Collectable) Storage.LoadCollectable(obj as Collectable);
+            else if (obj is Ore) Storage.LoadResource(obj as Ore);
+        }
+
+        public void Save()
+        {
+            World.DatabaseManager.SavePlayerPos(this);
+        }
+
+        public void Refresh()
+        {
+            var gameSession = World.StorageManager.GetGameSession(Id);
+            if (gameSession == null) return;
+            Packet.Builder.ShipInitializationCommand(gameSession);
+            ILogin.SendLegacy(gameSession);
+        }
+
+        public void SetPosition(Vector targetPosition)
+        {
+            if (Moving)
+                MovementController.Move(this, MovementController.ActualPosition(this));
+            Position = targetPosition;
+            Refresh();
+        }
+
+        public Tuple<Vector, Spacemap> GetClosestStation()
+        {
+            Spacemap map = null;
+            if (Properties.Game.PVP_MODE)
+            {
+                map = World.StorageManager.Spacemaps[16];
+            }
+            else
+            {
+                if (Spacemap?.Id > 16)
+                {
+                    switch (FactionId)
+                    {
+                        case Faction.MMO:
+                            map = World.StorageManager.Spacemaps[20];
+                            break;
+                        case Faction.EIC:
+                            map = World.StorageManager.Spacemaps[24];
+                            break;
+                        case Faction.VRU:
+                            map = World.StorageManager.Spacemaps[28];
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (FactionId)
+                    {
+                        case Faction.MMO:
+                            map = World.StorageManager.Spacemaps[1];
+                            break;
+                        case Faction.EIC:
+                            map = World.StorageManager.Spacemaps[5];
+                            break;
+                        case Faction.VRU:
+                            map = World.StorageManager.Spacemaps[9];
+                            break;
+
+                    }
+                }
+            }
+
+            var stations = map.Objects.Values.Where(x => x is Station);
+            foreach (var station in stations)
+            {
+                var pStation = station as Station;
+                if (pStation?.Faction == FactionId)
+                {
+                    return new Tuple<Vector, Spacemap>(pStation?.Position, map);
+                }
+            }
+            return null;
+        }
+
+        public void SendLogMessage(string logMsg)
+        {
+            //if (LogMessages.Any(x => x.TimeSent.AddSeconds(1) > DateTime.Now && x.Key == logMsg))
+            //{
+            //    return;
+            //}
+            //LogMessages.Add(new LogMessage(logMsg));
+            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|STM|" + logMsg + "");
         }
 
         public void LevelChecker()
         {
-            if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(Level.Id + 1))
+            if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(Information.Level.Id + 1))
                 return;
 
             foreach (var level in World.StorageManager.Levels.PlayerLevels)
             {
-                if (Experience > level.Value.Experience && level.Key > Level.Id)
+                if (Information.Experience.Get() > level.Value.Experience && level.Key > Information.Level.Id)
                     LevelUp();
             }
         }
 
         public void LevelUp()
         {
-            if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(Level.Id + 1))
+            if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(Information.Level.Id + 1))
                 return;
+            var lvl = World.StorageManager.Levels.PlayerLevels[Information.Level.Id + 1];
+            if (Information.Experience.Get() < lvl.Experience)
+                Information.Experience.Add(lvl.Experience - Information.Experience.Get() + 1);
 
-            Level = World.StorageManager.Levels.PlayerLevels[Level.Id + 1];
-            //World.StorageManager.GetGameSession(Id).Client.Send(Builder.LegacyModule(
-            //    "0|A|LUP|" + Level.Id + "|" + World.StorageManager.Levels.PlayerLevels[Level.Id + 1].Experience).Bytes);
+            Information.LevelUp(lvl);
+            var gameSession = World.StorageManager.GetGameSession(Id);
+            Packet.Builder.LevelUpCommand(gameSession);
             Refresh();
         }
 
-        public void Refresh()
-        {
-            Packet.Builder.ShipInitializationCommand(World.StorageManager.GetGameSession(Id));
-        }
-
-        public DateTime LastDbRefreshTime = new DateTime(2017, 1, 13, 0, 0, 0);
-
-        public void BasicDbRefresh(bool instantRefresh = false)
-        {
-            if (LastDbRefreshTime.AddSeconds(11) > DateTime.Now && !instantRefresh) return;
-            LastDbRefreshTime = DateTime.Now;
-
-            World.DatabaseManager.BasicRefresh(this);
-            UserStorage.PlayerRefresh(this);
-        }
-
-        public DateTime LastSaveTime = new DateTime(2016, 12, 24, 0, 0, 0);
-
-        public void InstantSave()
-        {
-            World.DatabaseManager.BasicSave(this);
-            LastSaveTime = DateTime.Now;
-        }
-
-        public string GetConsumablesPacket()
+        public string BuildExtrasPacket()
         {
             bool rep = false;
             bool droneRep = false;
@@ -408,22 +458,19 @@ namespace NettyBaseReloaded.Game.objects.world
             bool petRefuel = false;
             bool jumpToBase = false;
 
-            var currConfig = Hangar.Configurations[CurrentConfig - 1];
-            if (currConfig.Consumables != null &&
-                currConfig.Consumables.Count > 0)
+            foreach (var item in Extras)
             {
-                foreach (var item in currConfig.Consumables)
+                if (item.Value.Amount > 0) { 
+                var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
+                if (slotbarItem != null)
                 {
-                    var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
-                    if (slotbarItem != null)
+                    slotbarItem.CounterValue = item.Value.Amount;
+                    slotbarItem.Visible = true;
+                    if (UsingNewClient)
                     {
-                        slotbarItem.CounterValue = item.Value.Amount;
-                        slotbarItem.Visible = true;
-                        if (UsingNewClient)
-                        {
-                            World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
-                        }
+                        World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
                     }
+                }
 
                     switch (item.Key)
                     {
@@ -470,187 +517,108 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
             }
 
-            return Convert.ToInt32(droneRep) + "|0|" + Convert.ToInt32(jumpToBase) + "|" +
+            return Convert.ToInt32(droneRep) + "|2|" + Convert.ToInt32(jumpToBase) + "|" +
                    Convert.ToInt32(ammoBuy) + "|" + Convert.ToInt32(rep) + "|" + Convert.ToInt32(tradeDrone) +
                    "|0|" + Convert.ToInt32(smb) + "|" + Convert.ToInt32(ish) + "|0|" + Convert.ToInt32(aim) + "|" +
                    Convert.ToInt32(autoRocket) + "|" + Convert.ToInt32(cloak) + "|" +
                    Convert.ToInt32(autoRocketLauncer) + "|" + Convert.ToInt32(rocketBuy) + "|" +
                    Convert.ToInt32(jump) + "|" + Convert.ToInt32(petRefuel);
-
         }
 
-        public int LaserCount()
+        public void UpdateExtras()
         {
-            return Hangar.Configurations[CurrentConfig - 1].LaserCount;
+            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|ITM|" + BuildExtrasPacket());
+            foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Update((CPU.Types)type);
         }
 
-        public void RefreshBonuses()
+        private void CharacterEnteredRange(object s, Range.RangeArgs e)
         {
-        }
-
-        public bool IsOnHomeMaps()
-        {
-            switch (Spacemap.Id)
+            var charAsPlayer = e.Character as Player;
+            if (charAsPlayer != null)
             {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    if (FactionId == Faction.MMO) return true;
-                    break;
-                case 5:
-                case 6:
-                case 7:
-                case 8:
-                    if (FactionId == Faction.EIC) return true;
-                    break;
-                case 9:
-                case 10:
-                case 11:
-                case 12:
-                    if (FactionId == Faction.VRU) return true;
-                    break;
+                //if (charAsPlayer.Boosters.Count > 0)
+                Booster.CalculateTotalBoost(charAsPlayer);
             }
-            return false;
         }
 
-        public Zone GetCurrentZone()
+        private void CharacterExitedRange(object s, Range.RangeArgs e)
         {
-            throw new NotImplementedException();
-        }
-
-        public string GetRobot()
-        {
-            return "equipment_extra_repbot_rep-4";
-        }
-
-        public int GetRobotLevel()
-        {
-            return 4;
-        }
-
-        public int GetCpuUsesLeft(PlayerController.CPU.Types type)
-        {
-            var consumables = Hangar.Configurations[CurrentConfig - 1].Consumables;
-            switch (type)
+            var charAsPlayer = e.Character as Player;
+            if (charAsPlayer != null)
             {
-                case PlayerController.CPU.Types.CLOAK:
-                    if (consumables.ContainsKey("equipment_extra_cpu_cl04k-xl"))
-                        return consumables["equipment_extra_cpu_cl04k-xl"].Amount;
-                    if (consumables.ContainsKey("equipment_extra_cpu_cl04k-m"))
-                        return consumables["equipment_extra_cpu_cl04k-m"].Amount;
-                    if (consumables.ContainsKey("equipment_extra_cpu_cl04k-xs"))
-                        return consumables["equipment_extra_cpu_cl04k-xs"].Amount;
-                    break;
+                //if (charAsPlayer.Boosters.Count > 0)
+                Booster.CalculateTotalBoost(charAsPlayer);
             }
-            return 0;
         }
 
-        public Tuple<Vector, Spacemap> GetClosestStation()
+        private void TickBoosters()
         {
-            if (Properties.Game.PVP_MODE)
+            foreach (var booster in Boosters)
             {
-                var map = World.StorageManager.Spacemaps[16];
-                var stations = map.Objects.Values.Where(x => x is Station);
-                foreach (var station in stations)
+                booster.Tick();
+            }
+            CheckForBoosters();
+        }
+
+        private DateTime LastTimeCheckedBoosters = new DateTime();
+        private void CheckForBoosters()
+        {
+            if (LastTimeCheckedBoosters.AddMilliseconds(5000) < DateTime.Now)
+            {
+                // TODO: Get boosters from mysql
+                Booster.CalculateTotalBoost(this);
+                LastTimeCheckedBoosters = DateTime.Now;
+            }
+        }
+
+        public void BoostDamage(double value)
+        {
+            if (BoostedDamage < 0.5)
+            {
+                if (BoostedDamage + value > 0.5)
                 {
-                    var pStation = station as Station;
-                    if (pStation.Faction == FactionId)
-                    {
-                        return new Tuple<Vector, Spacemap>(pStation.Position, map);
-                    }
+                    value = 0.5 - BoostedDamage;
                 }
+                BoostedDamage += value;
             }
-            throw new NotImplementedException();
         }
 
-        public void CleanRange()
+        public void BoostSpeed(double value)
         {
-            RangeObjects.Clear();
-            RangeEntities.Clear();
-            RangeZones.Clear();
-            RangeCollectables.Clear();
-        }
-
-        public void CleanStorage()
-        {
-            EntitiesStorage.LoadedObjects.Clear();
-            EntitiesStorage.LoadedPOI.Clear();
-        }
-
-        public void LoadObject(Object obj)
-        {
-            if (obj is Station) LoadStation(obj as Station);
-            else if (obj is Jumpgate) LoadPortal(obj as Jumpgate);
-            else if (obj is Asteroid) LoadAsteroid(obj as Asteroid);
-            else if (obj is Asset) LoadAsset(obj as Asset);
-            else if (obj is Collectable) LoadCollectable(obj as Collectable);
-            else if (obj is Ore) LoadResource(obj as Ore);
-        }
-
-        public void LoadPOI(POI poi)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedPOI.Add(poi.Id, poi);
-            Packet.Builder.MapAddPOICommand(gameSession, poi);
-        }
-
-        private void LoadStation(Station station)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(station.Id, station);
-            Packet.Builder.StationCreateCommand(gameSession, station);
-        }
-
-        private void LoadPortal(Jumpgate portal)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(portal.Id, portal);
-            Packet.Builder.JumpgateCreateCommand(gameSession,portal);
-        }
-
-        public void LoadAsteroid(Asteroid asteroid)
-        {
-            LoadAsset(asteroid);
-            Packet.Builder.BattleStationNoClanUiInitializationCommand(World.StorageManager.GetGameSession(Id), asteroid);
-        }
-
-        public void LoadAsset(Asset asset)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(asset.Id, asset);
-            Packet.Builder.AssetCreateCommand(gameSession, asset);
-        }
-
-        public void LoadCollectable(Collectable collectable)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(collectable.Id, collectable);
-            Packet.Builder.CreateBoxCommand(gameSession, collectable);
-        }
-
-        public void LoadResource(Ore ore)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Id);
-            EntitiesStorage.LoadedObjects.Add(ore.Id, ore);
-            Packet.Builder.AddOreCommand(gameSession, ore);
-        }
-
-        public void SetPosition(Vector targetPosition)
-        {
-            if (Moving)
-                MovementController.Move(this, MovementController.ActualPosition(this));
-            Position = targetPosition;
-            Refresh();
-        }
-
-        public void ClickableCheck(Object obj)
-        {
-            if (obj is IClickable)
+            if (BoostedAcceleration < 2)
             {
-                var active = Vector.IsInRange(Position, obj.Position, 1000);
-                Packet.Builder.MapAssetActionAvailableCommand(World.StorageManager.GetGameSession(Id), obj, active);
+                if (BoostedAcceleration + value > 2)
+                {
+                    value = 2 - BoostedAcceleration;
+                }
+                BoostedAcceleration += value;
+                UpdateSpeed();
             }
+        }
+
+        public void UpdateSpeed()
+        {
+            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|v|" + Speed);
+        }
+
+        public int EnemyWarningLevel = 0;
+        public void AssembleEnemyWarn()
+        {
+            if (GetGameSession() == null) return;
+            if (Spacemap != null && State.IsOnHomeMap())
+            {
+                var count = Spacemap.Entities.Count(
+                    x => x.Value.FactionId != FactionId && x.Value.FactionId != Faction.NONE);
+                if (EnemyWarningLevel != count)
+                    Packet.Builder.LegacyModule(GetGameSession(),
+                        "0|n|w|" + count); //enemy warning
+                EnemyWarningLevel = count;
+            }
+        }
+
+        public GameSession GetGameSession()
+        {
+            return World.StorageManager.GetGameSession(Id);
         }
     }
 }

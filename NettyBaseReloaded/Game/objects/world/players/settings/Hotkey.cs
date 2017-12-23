@@ -42,8 +42,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
         public Hotkey(short action, int keyCode, int parameter, bool newClient)
         {
             if (newClient)
-                Object = new netty.commands.new_client.UserKeyBindingsModule(action, new List<int> {keyCode}, parameter,0);
-            else Object = new netty.commands.old_client.UserKeyBindingsModule(action, new List<int> {keyCode}, parameter,0);
+                Object = new netty.commands.new_client.UserKeyBindingsModule(action, new List<int> { keyCode }, parameter, 0);
+            else Object = new netty.commands.old_client.UserKeyBindingsModule(action, new List<int> { keyCode }, parameter, 0);
         }
 
     }

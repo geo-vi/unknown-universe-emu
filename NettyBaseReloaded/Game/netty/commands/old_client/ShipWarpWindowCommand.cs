@@ -5,7 +5,7 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client
 {
     class ShipWarpWindowCommand
     {
-        public const short ID = 17461;
+        public const short ID = 32348;
 
         public static Command write(int jumpVoucherCount, int uridium, bool isNearSpacestation, List<ShipWarpModule> ships)
         {

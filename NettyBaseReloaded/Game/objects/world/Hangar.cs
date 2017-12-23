@@ -4,12 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.equipment;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
     class Hangar
     {
         public Ship Ship { get; set; }
+
+        public Ship ShipDesign { get; set; }
+
         public List<Drone> Drones { get; set; }
         public Configuration[] Configurations { get; set; }
 
@@ -21,20 +25,21 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int Nanohull { get; set; }
 
-        public Dictionary<string, Item> Consumables { get; set; }
+        public Dictionary<string, Item> Items { get; set; }
 
         public bool Active = false;
 
         //Configurations can be null because npcs will use this class too
-        public Hangar(Ship ship, List<Drone> drones, Vector position, Spacemap spacemap, int hp, int nano, Dictionary<string, Item> consumables, bool active = true, Configuration[] configurations = null)
+        public Hangar(Ship ship, List<Drone> drones, Vector position, Spacemap spacemap, int hp, int nano, Dictionary<string, Item> items, bool active = true, Configuration[] configurations = null)
         {
             Ship = ship;
+            ShipDesign = Ship;
             Drones = drones;
             Position = position;
             Spacemap = spacemap;
             Health = hp;
             Nanohull = nano;
-            Consumables = consumables;
+            Items = items;
             Active = active;
             Configurations = configurations;
         }

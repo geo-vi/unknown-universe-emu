@@ -9,6 +9,8 @@ using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
+using NettyBaseReloaded.Game.objects.world.map.pois;
+using Types = NettyBaseReloaded.Game.objects.world.map.collectables.Types;
 
 namespace NettyBaseReloaded.Game
 {
@@ -21,7 +23,7 @@ namespace NettyBaseReloaded.Game
         public static void InitiateManagers()
         {
             Packet.Handler.AddCommands();
-            DatabaseManager.BasicLoads();
+            DatabaseManager.Initiate();
             InitiateWorld();
         }
 
@@ -31,15 +33,35 @@ namespace NettyBaseReloaded.Game
             {
                 map.Value.LoadObjects();
                 CreateHashes(map.Value);
-                if (map.Key == 12)
-                {
-                    for (int i = 0; i < 150; i++)
-                        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(1000, 19800, 1000, 11800));
-                }
                 map.Value.SpawnNpcs();
+                if (map.Key == 1)
+                {
+                    map.Value.CreateStation(Faction.MMO, new Vector(1000, 1000));
+                }
+                if (map.Key == 5)
+                {
+                    map.Value.CreateStation(Faction.EIC, new Vector(19200, 1000));
+                }
+                if (map.Key == 9)
+                {
+                    map.Value.CreateStation(Faction.VRU, new Vector(19200, 11800));
+                    //map.Value.CreatePirateStation(new Vector(2000, 5650));
+                    //map.Value.CreateAsteroid("Metroid", new Vector(5000, 2500));
+                    //map.Value.CreatePOI(new POI("Poi1", objects.world.map.pois.Types.NO_ACCESS, Designs.ASTEROIDS_MIXED_WITH_SCRAP, Shapes.RECTANGLE, new List<Vector> { new Vector(7680, 9216), new Vector(8192, 9216), new Vector(8192, 9728), new Vector(7680, 9728) }));
+                }
+                if (map.Key == -1)
+                {
+                    // TODO Add PVP Spawn
+                }
+                else
+                {
+                    for (int i = 0; i <= BonusBox.SPAWN_COUNT; i++)
+                    {
+                        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(1000, 19800, 1000, 11800));
+                    }
+                }
             }
-            if (Properties.Server.DEBUG)
-                Log.Write("Loaded World");
+            Log.Write("Loaded World");
         }
 
         private static void CreateHashes(Spacemap map)
@@ -59,7 +81,7 @@ namespace NettyBaseReloaded.Game
                 var hash = new String(stringChars);
                 if (map.HashedObjects.ContainsKey(hash))
                     goto NEWHASH;
-                map.HashedObjects.Add(hash, null);
+                map.HashedObjects.TryAdd(hash, null);
             }
             Console.WriteLine($"Created {HASHES-1} hashes.");
         }

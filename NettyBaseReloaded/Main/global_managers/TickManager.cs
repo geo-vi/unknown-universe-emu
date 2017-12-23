@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.Main.global_managers
 {
     class TickManager
     {
-        public static short TICKS_PER_SECOND = 512;
+        public static short TICKS_PER_SECOND = 32;
 
         /// <summary>
         /// ITick, Delay *TODO* 
@@ -24,12 +24,14 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public void Add(ITick tick)
         {
-            PendingToBeAdded.Add(tick);
+            if (!Tickables.Contains(tick))
+                PendingToBeAdded.Add(tick);
         }
 
         public void Remove(ITick tick)
         {
-            PendingRemoval.Remove(tick);
+            if (Tickables.Contains(tick))
+                PendingRemoval.Remove(tick);
         }
 
         public bool Exists(ITick tickable)
@@ -51,11 +53,17 @@ namespace NettyBaseReloaded.Main.global_managers
 
         private void UpdateCollection()
         {
-            Tickables.AddRange(PendingToBeAdded);
-            PendingToBeAdded.Clear();
-            foreach (var tick in PendingRemoval)
-                Tickables.Remove(tick);
-            PendingRemoval.Clear();
+            if (PendingToBeAdded.Count > 0)
+            {
+                Tickables.AddRange(PendingToBeAdded);
+                PendingToBeAdded.Clear();
+            }
+            if (PendingRemoval.Count > 0)
+            {
+                foreach (var tick in PendingRemoval)
+                    Tickables.Remove(tick);
+                PendingRemoval.Clear();
+            }
         }
     }
 }

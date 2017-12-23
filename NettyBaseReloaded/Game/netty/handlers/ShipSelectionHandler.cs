@@ -37,7 +37,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 {
                     if (entry.Value is Player)
                     {
-                        if (!entry.Value.Controller.Targetable)
+                        if (!entry.Value.Controller.Attack.Targetable)
                         {
                             Packet.Builder.LegacyModule(gameSession, "0|A|STM|msg_own_targeting_harmed");
                             return;

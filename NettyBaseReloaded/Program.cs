@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -7,9 +8,12 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Properties;
 using NettyBaseReloaded.Utils;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded
 {
@@ -34,6 +38,8 @@ namespace NettyBaseReloaded
 
         public static string SERVER_SESSION = "";
 
+        public static DebugLog Log;
+
         public static void Main(string[] args)
         {
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
@@ -41,15 +47,63 @@ namespace NettyBaseReloaded
 
             Console.SetOut(new Out());
             Console.CursorVisible = false;
-            Console.Title = "Unknown Universe / " + GetVersion();
 
             Draw.Logo();
 
+            //RewardBuilder();
             InitiateSession();
-            //ConsoleUpdater();
+            ConsoleUpdater();
             ConsoleCommands.Add();
             KeepAlive();
             
+        }
+
+        public static void RewardBuilder()
+        {
+            Console.WriteLine("Entered reward builder mode..");
+            Console.WriteLine("Start adding items");
+            var itemDictionary = new List<Tuple<string, int>>(); // lootid - amount
+            while (true)
+            {
+                var l = Console.ReadLine();
+                if (l != "")
+                {
+                    // ADD ITEM
+                    var itemId = l;
+                    int amount = 0;
+                    if (l.Contains(' ') && int.TryParse(l.Split(' ')[1], out amount))
+                    {
+                        itemId = l.Split(' ')[0];
+                    }
+                    else amount = int.Parse(Console.ReadLine());
+                    Console.WriteLine("ItemId: " + itemId);
+                    Console.WriteLine("Amount: " + amount);
+                    Console.WriteLine("Add?");
+                    var readKey = Console.ReadKey();
+                    if (readKey.Key == ConsoleKey.Enter)
+                    {
+                        itemDictionary.Add(new Tuple<string, int>(itemId, amount));
+                        Console.WriteLine("Added item to dictionary");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Finished?");
+                    var readKey = Console.ReadKey();
+                    if (readKey.Key == ConsoleKey.Enter)
+                    {
+                        var result = JsonConvert.SerializeObject(itemDictionary);
+                        Console.WriteLine("Result:\n" + result);
+                        Console.WriteLine("Copy to clipboard?");
+                        readKey = Console.ReadKey();
+                        if (readKey.Key == ConsoleKey.Enter)
+                        {
+                            Clipboard.SetText(result);
+                        }
+                        Environment.Exit(0);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -59,6 +113,7 @@ namespace NettyBaseReloaded
         /// <param name="e"></param>
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
+            new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
             // TODO: Save everything and then fuck up
         }
 
@@ -80,6 +135,8 @@ namespace NettyBaseReloaded
 
         private static async void ConsoleUpdater()
         {
+            Server.RUNTIME = DateTime.Now;
+
             while (true)
             {
                 ConsoleMonitor.Check();
@@ -119,6 +176,7 @@ namespace NettyBaseReloaded
         /// </summary>
         static void LookForConfigFiles()
         {
+            Log.Write("Looking for config files");
             if (File.Exists(Directory.GetCurrentDirectory() + "/server.cfg")) ConfigFileReader.ReadServerConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/game.cfg")) ConfigFileReader.ReadGameConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/mysql.cfg")) ConfigFileReader.ReadMySQLConfig();
@@ -133,26 +191,31 @@ namespace NettyBaseReloaded
         /// <summary>
         /// Starting the server up
         /// </summary>
-        private static bool ServerUp = false;
+        public static bool ServerUp = false;
         static void InitiateServer()
         {
             if (ServerUp) return;
             Console.WriteLine("Initiating..");
+            LoadLogger();
             LookForConfigFiles();
-            if (Server.LOGGING)
-                CreateLogger();
             Global.Start();
             ServerUp = true;
         }
 
-        static void CreateLogger()
+        public static void CloseForMaintenance()
         {
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION);
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/debug");
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/errors");
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/executables");
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/players");
-            Directory.CreateDirectory(Server.LOGGING_DIRECTORY + SERVER_SESSION + "/tasks");
+            Console.WriteLine("Entering critical mode (Over 100 exceptions recorded)");
+            Properties.Server.DEBUG = true;
+        }
+
+        static void LoadLogger()
+        {
+            if (!Server.LOGGING) return;
+
+            Creator.InitializeSession();
+            Log = new DebugLog("core");
+            Log.Write("Logger succesfully loaded.");
+            Log.Write("Testing... 1 2 3");
         }
     }
 }

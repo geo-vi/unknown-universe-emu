@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.netty.handlers
@@ -21,19 +22,44 @@ namespace NettyBaseReloaded.Game.netty.handlers
                                                "]");
 
             client.UserId = userId;
-            if (!ValidateSession(userId, sessionId)) return;
 
-            Player = World.DatabaseManager.GetAccount(userId);
-            Player.UsingNewClient = newClient;
+            var tempSession = World.StorageManager.GetGameSession(userId);
+            if (tempSession != null && tempSession.InProcessOfReconection)
+            {
+                Player = tempSession.Player;
+                Console.WriteLine("User relogged successfully");
+                World.StorageManager.GameSessions.Remove(userId);
+            }
 
+            Player = GetAccount(userId);
             if (Player != null) GameSession = CreateSession(client, Player);
+            else
+            {
+                Console.WriteLine("Failed loading user ship / ShipInitializationHandler ERROR");
+                return;
+            }
+
+            Player.Log.Write($"Session received: {sessionId}->Database session: {Player.SessionId}");
+            if (Player.SessionId != sessionId)
+            {
+                ExecuteWrongSession();
+                return; // Wrong session ID
+            }
+            Player.UsingNewClient = newClient;
 
             execute();
         }
 
-        private bool ValidateSession(int userId, string sessionId)
+        private Player GetAccount(int userId)
         {
-            return true;
+            if (Player != null) return Player;
+            return World.DatabaseManager.GetAccount(userId);
+        }
+
+        private void ExecuteWrongSession()
+        {
+            Console.WriteLine($"{GameSession.Client.IPAddress} tried breaching into {GameSession.Client.UserId}'s account");
+            Player.Log.Write($"Breach attempt by {GameSession.Client.IPAddress}");
         }
 
         private GameSession CreateSession(GameClient client, Player player)
@@ -53,7 +79,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 World.StorageManager.GameSessions.Add(Player.Id, GameSession);
             else
             {
-                World.StorageManager.GameSessions[Player.Id].Disconnect();
+                World.StorageManager.GameSessions[Player.Id].Disconnect(GameSession.DisconnectionType.NORMAL);
                 World.StorageManager.GameSessions[Player.Id] = GameSession;
             }
 

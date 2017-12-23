@@ -12,14 +12,14 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void OnStart(Character character)
         {
-            character.Controller.Invincible = true;
+            character.Controller.Attack.Invincible = true;
             //if (ShowEffect)
             //character.Controller.UpdateVisuals(); TODO
         }
 
         public override void OnFinish(Character character)
         {
-            character.Controller.Invincible = false;
+            character.Controller.Attack.Invincible = false;
             //if (ShowEffect)
                 //1character.Controller.UpdateVisuals(); TODO
         }

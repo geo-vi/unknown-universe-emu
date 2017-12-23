@@ -28,7 +28,13 @@ namespace NettyBaseReloaded.Chat
 
         private static void InitiateManagers()
         {
-            DatabaseManager.LoadAll();
+            DatabaseManager.Initiate();
         }
+
+        private static void LoadBots()
+        {
+            
+        }
+
     }
 }

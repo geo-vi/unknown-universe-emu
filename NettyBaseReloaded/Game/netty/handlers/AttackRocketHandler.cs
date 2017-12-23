@@ -1,4 +1,5 @@
-﻿using NettyBaseReloaded.Game.objects;
+﻿using System;
+using NettyBaseReloaded.Game.objects;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
@@ -15,12 +16,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 cmd.readCommand(bytes);
                 targetId = cmd.targetId;
             }
-            else
-            {
-                var cmd = new commands.old_client.requests.AttackRocketRequest();
-                cmd.readCommand(bytes);
-                targetId = cmd.targetId;
-            }
 
             // Get if targetId is valid
             var player = gameSession.Player;
@@ -33,7 +28,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 return;
             }
 
-            player.Controller.LaunchMissle(player.Settings.CurrentRocket);
+            player.Controller.Attack.LaunchMissle(player.Settings.CurrentRocket.LootId);
         }
     }
 }

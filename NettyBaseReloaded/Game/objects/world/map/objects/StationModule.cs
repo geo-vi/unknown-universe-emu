@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty.commands.new_client;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects
 {
@@ -20,6 +21,12 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public void click(Character character)
         {
+            switch (Type)
+            {
+                case AssetTypeModule.REPAIR_DOCK:
+                    character.Controller.Attack.Heal(character.MaxHealth, Id);
+                    break;
+            }
         }
     }
 }
