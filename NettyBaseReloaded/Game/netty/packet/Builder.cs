@@ -1040,6 +1040,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
         #region UIButtonHideFlashCommand
 
         public void UIButtonHideFlashCommand(GameSession gameSession, int buttonId, bool arrow, int flashingTimes = -1)
@@ -1055,5 +1056,23 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
+        #region LogoutCommand
+
+
+        public void LogoutCommand(GameSession gameSession)
+        {
+            if(gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                LegacyModule(gameSession, "0|l");
+            }
+        }
+
+        #endregion
+
     }
 }
