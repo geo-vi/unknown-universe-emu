@@ -25,7 +25,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             gameSession.Player.Settings.SaveSettings();
 
-            //Example change
         }
     }
 }
