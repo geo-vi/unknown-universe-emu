@@ -24,6 +24,8 @@ namespace NettyBaseReloaded.Game.netty.handlers
             slotbarSettings.selectedRocket = request.selectedRocket;
 
             gameSession.Player.Settings.SaveSettings();
+
+            //Example change
         }
     }
 }
