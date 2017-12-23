@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
+using NettyBaseReloaded.Game.controllers.login;
 using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
@@ -305,7 +306,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Storage = new Storage(this);
             Log = new PlayerLog(SessionId);
             Skills = World.DatabaseManager.LoadSkilltree(this);
-            Boosters = new List<Booster> { new DMGBO2(this, DateTime.Now.AddHours(10)) }; // TODO: Load from SQL
+            Boosters = new List<Booster>(); // TODO: Load from SQL
             Range.EntityAdded += CharacterEnteredRange;
             Range.EntityRemoved += CharacterExitedRange;
         }
@@ -336,7 +337,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void Refresh()
         {
-            Packet.Builder.ShipInitializationCommand(World.StorageManager.GetGameSession(Id));
+            var gameSession = World.StorageManager.GetGameSession(Id);
+            if (gameSession == null) return;
+            Packet.Builder.ShipInitializationCommand(gameSession);
+            ILogin.SendLegacy(gameSession);
         }
 
         public void SetPosition(Vector targetPosition)
@@ -600,15 +604,21 @@ namespace NettyBaseReloaded.Game.objects.world
         public int EnemyWarningLevel = 0;
         public void AssembleEnemyWarn()
         {
+            if (GetGameSession() == null) return;
             if (Spacemap != null && State.IsOnHomeMap())
             {
                 var count = Spacemap.Entities.Count(
                     x => x.Value.FactionId != FactionId && x.Value.FactionId != Faction.NONE);
                 if (EnemyWarningLevel != count)
-                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id),
+                    Packet.Builder.LegacyModule(GetGameSession(),
                         "0|n|w|" + count); //enemy warning
                 EnemyWarningLevel = count;
             }
+        }
+
+        public GameSession GetGameSession()
+        {
+            return World.StorageManager.GetGameSession(Id);
         }
     }
 }

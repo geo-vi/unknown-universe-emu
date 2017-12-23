@@ -10,10 +10,7 @@ namespace NettyBaseReloaded.Chat.managers
 {
     class StorageManager
     {
-
-        public Dictionary<int, Moderator> Moderators = new Dictionary<int, Moderator>();
-
-        public Dictionary<int, BannedCharacter> GlobalBans = new Dictionary<int, BannedCharacter>();
+        public Dictionary<int, Banned> GlobalBans = new Dictionary<int, Banned>();
 
         public Dictionary<int, Room> Rooms = new Dictionary<int, Room>();
 

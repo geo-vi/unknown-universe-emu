@@ -18,6 +18,8 @@ namespace NettyBaseReloaded.Chat.objects.chat
         /// </summary>
         public string Name { get; set; }
 
+        public string SessionId { get; set; }
+
         public Clan Clan { get; set; }
 
         public virtual AbstractCharacterController Controller
@@ -55,10 +57,11 @@ namespace NettyBaseReloaded.Chat.objects.chat
         /// </summary>
         public bool RCON { get; set; }
 
-        public Character(int id, string name, Clan clan)
+        public Character(int id, string name, string sessionId, Clan clan)
         {
             Id = id;
             Name = name;
+            SessionId = sessionId;
             Clan = clan;
         }
 
@@ -72,7 +75,7 @@ namespace NettyBaseReloaded.Chat.objects.chat
             var room = Chat.StorageManager.Rooms[roomId];
             if (room == null) return;
 
-            if (room.ConnectedUsers.Count >= room.MaxUsers && !(this is Moderator)) return;
+            if (room.ConnectedUsers.Count > room.MaxUsers) return;
 
             room.ConnectedUsers.Add(Id, this);
             ConnectedRooms.Add(roomId, room);

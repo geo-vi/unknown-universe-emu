@@ -85,7 +85,7 @@
     <Compile Include="Chat\objects\Announcement.cs" />
     <Compile Include="Chat\objects\ChatSession.cs" />
     <Compile Include="Chat\managers\StorageManager.cs" />
-    <Compile Include="Chat\objects\chat\BannedCharacter.cs" />
+    <Compile Include="Chat\objects\chat\Banned.cs" />
     <Compile Include="Chat\objects\chat\Bot.cs" />
     <Compile Include="Chat\objects\chat\Character.cs" />
     <Compile Include="Chat\objects\chat\Moderator.cs" />
@@ -504,6 +504,12 @@
     <Compile Include="Unused_Codes\Looping_through_constants.cs" />
     <Compile Include="Unused_Codes\Old_Destroy_Function.unused" />
     <Compile Include="Utils\Random.cs" />
+    <Compile Include="WebSocks\packets\Handler.cs" />
+    <Compile Include="WebSocks\packets\handlers\IHandler.cs" />
+    <Compile Include="WebSocks\packets\handlers\UserHandler.cs" />
+    <Compile Include="WebSocks\Shop.cs" />
+    <Compile Include="WebSocks\ShopPacketListener.cs" />
+    <None Include="packages.config" />
     <None Include="Unused_Codes\LoginController.cs.unused" />
     <None Include="Unused_Codes\SpawnOnMap.cs.unused" />
     <Compile Include="Utils\Bytes.cs" />
@@ -531,6 +537,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Unused_Codes\Old_Program_cs.unused" />

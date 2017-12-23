@@ -2,7 +2,7 @@
 
 namespace NettyBaseReloaded.Chat.objects.chat
 {
-    class BannedCharacter
+    class Banned : Character
     {
         /// <summary>
         /// Banned character id
@@ -29,9 +29,9 @@ namespace NettyBaseReloaded.Chat.objects.chat
         /// </summary>
         public string Note { get; set; }
 
-        public BannedCharacter(int id, DateTime endTime, string reason, string note = "")
+        public Banned(int id, DateTime endTime, int banId, string reason, string note = "") : base(id, "", "", null)
         {
-            Id = id;
+            BanId = banId;
             BanEndTime = endTime;
             Reason = reason;
             Note = note;

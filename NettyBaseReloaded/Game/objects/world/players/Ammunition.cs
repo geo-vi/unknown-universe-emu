@@ -60,5 +60,15 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 Amount = SyncedAmount;
             }
         }
+
+        public static void ForceSync(Player player)
+        {
+            foreach (var ammo in player.Information.Ammunitions)
+            {
+                ammo.Value.SyncCheck(true);
+                Packet.Builder.AmmunitionCountUpdateCommand(World.StorageManager.GetGameSession(player.Id), ammo.Key,
+                    ammo.Value.Amount);
+            }
+        }
     }
 }

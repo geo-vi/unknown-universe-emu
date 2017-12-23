@@ -45,25 +45,34 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public State(Player player) : base(player)
         {
-            
+            AddHomeMaps();
         }
         
-        private Tuple<int, Faction>[] HomeMapIds =
+        private Dictionary<int, Faction> HomeMapIds = new Dictionary<int, Faction>();
+
+        private void AddHomeMaps()
         {
-            new Tuple<int, Faction>(0, Faction.NONE), 
-            new Tuple<int, Faction>(1, Faction.MMO), new Tuple<int, Faction>(2, Faction.MMO),
-            new Tuple<int, Faction>(3, Faction.MMO), new Tuple<int, Faction>(4, Faction.MMO),
-            new Tuple<int, Faction>(5, Faction.EIC), new Tuple<int, Faction>(6, Faction.EIC),
-            new Tuple<int, Faction>(7, Faction.EIC), new Tuple<int, Faction>(8, Faction.EIC),
-            new Tuple<int, Faction>(9, Faction.VRU), new Tuple<int, Faction>(10, Faction.VRU),
-            new Tuple<int, Faction>(11, Faction.VRU), new Tuple<int, Faction>(12, Faction.VRU)
-        };
+            HomeMapIds.Add(0, Faction.NONE);
+            HomeMapIds.Add(1, Faction.MMO);
+            HomeMapIds.Add(2, Faction.MMO);
+            HomeMapIds.Add(3, Faction.MMO);
+            HomeMapIds.Add(4, Faction.MMO);
+            HomeMapIds.Add(5, Faction.EIC);
+            HomeMapIds.Add(6, Faction.EIC);
+            HomeMapIds.Add(7, Faction.EIC);
+            HomeMapIds.Add(8, Faction.EIC);
+            HomeMapIds.Add(9, Faction.VRU);
+            HomeMapIds.Add(10, Faction.VRU);
+            HomeMapIds.Add(11, Faction.VRU);
+            HomeMapIds.Add(12, Faction.VRU);
+        }
 
         public bool IsOnHomeMap()
         {
-            if (HomeMapIds[Player.Spacemap.Id]?.Item2 == Player.FactionId)
+            if (HomeMapIds.ContainsKey(Player.Spacemap.Id))
             {
-                return true;
+                var mapFaction = HomeMapIds[Player.Spacemap.Id];
+                if (Player.FactionId == mapFaction) return true;
             }
             return false;
         }

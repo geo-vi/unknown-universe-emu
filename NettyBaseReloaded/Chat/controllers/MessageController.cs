@@ -10,8 +10,8 @@ namespace NettyBaseReloaded.Chat.controllers
         {
             if (message.StartsWith("/"))
             {
-                throw new NotImplementedException();
-                //return;
+                //throw new NotImplementedException();
+                return;
             }
             Room(character, roomId, message);
         }

@@ -18,7 +18,6 @@ namespace NettyBaseReloaded.Chat.managers
             LoadLoginMsg();
             LoadRooms();
             LoadGlobalBans();
-            LoadModerators();
         }
 
         private void LoadAnnouncements()
@@ -81,38 +80,49 @@ namespace NettyBaseReloaded.Chat.managers
         {
         }
 
-        private void LoadModerators()
+        public Moderator LoadModerator(int id)
         {
+            Moderator mod = null;
             try
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_chat_moderators");
-                    if (queryTable != null)
-                    {
-                        foreach (DataRow reader in queryTable.Rows)
-                        {
-                            //Informations
-                            int id = intConv(reader["PLAYER_ID"]);
-                            string name = reader["NAME"].ToString();
-                            Moderator.Level lvl = (Moderator.Level) intConv(reader["LEVEL"]);
+                    var queryRow = mySqlClient.ExecuteQueryRow($"SELECT * FROM server_chat_moderators WHERE PLAYER_ID={id}");
+                    //Informations
+                    string name = queryRow["NAME"].ToString();
+                    Moderator.Level lvl = (Moderator.Level) intConv(queryRow["LEVEL"]);
 
-                            ////add to Storage
-                            Chat.StorageManager.Moderators.Add(id, new Moderator(
-                                id,
-                                name,
-                                Main.Global.StorageManager.Clans[0],
-                                lvl
-                            ));
-                        }
-                    }
-
+                    ////add to Storage
+                    mod = new Moderator(
+                        id,
+                        name,
+                        "",
+                        Main.Global.StorageManager.Clans[0],
+                        lvl
+                    );
                 }
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed to load chat moderators...", e);
             }
+            return mod;
+        }
+
+        public Character LoadCharacter(int id)
+        {
+            Character character = null;
+            try
+            {
+                using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    //mySqlClient.ExecuteQueryRow()
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager", "Failed to load character...", e);
+            }
+            return character;
         }
     }
 }

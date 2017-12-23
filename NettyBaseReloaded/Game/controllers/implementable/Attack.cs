@@ -65,7 +65,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
 
 
-            if (LastLaserLoop.AddMilliseconds(500) > DateTime.Now) return;
+            if (LastLaserLoop.AddMilliseconds(1000) > DateTime.Now) return;
             if (!Character.InRange(enemy, AttackRange))
             {
                 var pCharacter = Character as Player;

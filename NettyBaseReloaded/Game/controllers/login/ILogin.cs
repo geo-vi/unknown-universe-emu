@@ -35,6 +35,11 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public void SendLegacy()
         {
+            SendLegacy(GameSession);
+        }
+
+        public static void SendLegacy(GameSession GameSession)
+        {
             Packet.Builder.LegacyModule(GameSession, "0|n|t|" + GameSession.Player.Id + "|222|most_wanted");
 
             GameSession.Player.UpdateExtras();
@@ -47,7 +52,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             Packet.Builder.LegacyModule(GameSession, "0|ps|blk|0");
             Packet.Builder.LegacyModule(GameSession, "0|g|a|b,1000,1,10000.0,C,2,500.0,U,3,1000.0,U,4,4000.0,U|r,100,1,10000,C,2,50000,C,3,500.0,U,4,700.0,");
 
-            Packet.Builder.VideoWindowCreateCommand(GameSession, 1, "c", true, new List<string> { "login_dialog_1", "login_dialog_2" }, 0, 1);
+            //Packet.Builder.VideoWindowCreateCommand(GameSession, 1, "c", true, new List<string> { "login_dialog_1", "login_dialog_2" }, 0, 1);
             //Packet.Builder.MineCreateCommand(GameSession, "asdf", 6, GameSession.Player.Position, false);
             Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
             Packet.Builder.HellstormStatusCommand(GameSession);
@@ -60,8 +65,8 @@ namespace NettyBaseReloaded.Game.controllers.login
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
-            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
+            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
         }
-    }
+    } 
 }

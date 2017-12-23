@@ -42,7 +42,7 @@ namespace NettyBaseReloaded.Chat.objects.chat
 
         public Dictionary<int, Character> ConnectedUsers = new Dictionary<int, Character>();
 
-        public Dictionary<int, BannedCharacter> BannedUsers = new Dictionary<int, BannedCharacter>();
+        public Dictionary<int, Banned> BannedUsers = new Dictionary<int, Banned>();
 
         public Room(int id, string name, int tabOrder, Types type = Types.NORMAL_ROOM, int maxUsers = 250, bool multiLang = false, string roomLang = "en")
         {

@@ -26,14 +26,14 @@ namespace NettyBaseReloaded.Main.objects
         public void LoadDiplomacy()
         {
             // TEMP
-            if (Tag == "DEV")
-            {
-                Diplomacy.Add(Global.StorageManager.Clans[1], objects.Diplomacy.AT_WAR);
-            }
-            else if (Tag == "ADM")
-            {
-                Diplomacy.Add(Global.StorageManager.Clans[2], objects.Diplomacy.AT_WAR);
-            }
+            //if (Tag == "DEV")
+            //{
+            //    Diplomacy.Add(Global.StorageManager.Clans[1], objects.Diplomacy.AT_WAR);
+            //}
+            //else if (Tag == "ADM")
+            //{
+            //    Diplomacy.Add(Global.StorageManager.Clans[2], objects.Diplomacy.AT_WAR);
+            //}
         }
 
         public short GetRelation(Clan clan)

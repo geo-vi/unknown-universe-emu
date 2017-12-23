@@ -48,8 +48,8 @@ namespace NettyBaseReloaded.Main.global_managers
         public void LoadClans()
         {
             Global.StorageManager.Clans.Add(0, new Clan(0, "", "",0));
-            Global.StorageManager.Clans.Add(1, new Clan(1, "Administrators", "ADM",0));
-            Global.StorageManager.Clans.Add(2, new Clan(2, "Developers", "DEV",0));
+            //Global.StorageManager.Clans.Add(1, new Clan(1, "Administrators", "ADM",0));
+            //Global.StorageManager.Clans.Add(2, new Clan(2, "Developers", "DEV",0));
             foreach (var clan in Global.StorageManager.Clans)
                 clan.Value.LoadDiplomacy();
         }

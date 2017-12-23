@@ -48,6 +48,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Uridium.Refresh();
             Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
             Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
+            Premium = World.DatabaseManager.LoadPremium(Player);
         }
 
         public void LevelUp(Level targetLevel)

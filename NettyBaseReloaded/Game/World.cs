@@ -38,7 +38,7 @@ namespace NettyBaseReloaded.Game
                 {
                     map.Value.CreateStation(Faction.MMO, new Vector(1000, 1000));
                 }
-                if (map.Key == 6)
+                if (map.Key == 5)
                 {
                     map.Value.CreateStation(Faction.EIC, new Vector(19200, 1000));
                 }

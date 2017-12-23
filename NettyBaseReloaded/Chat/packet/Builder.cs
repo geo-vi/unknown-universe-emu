@@ -37,7 +37,6 @@ namespace NettyBaseReloaded.Chat.packet
             {
                 packet += roomConnected.ToString();
             }
-            Console.WriteLine(packet);
             Legacy(chatSession, packet);
         }
         #endregion

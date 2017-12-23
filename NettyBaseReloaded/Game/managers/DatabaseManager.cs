@@ -303,6 +303,7 @@ namespace NettyBaseReloaded.Game.managers
 
                     if (rlTypes1 == "") rlTypes1 = "[]";
                     if (extras1 == "") extras1 = "[]";
+                    if (velocity1 == 0) velocity1 = player.Hangar.Ship.Speed;
                     var config1 = new Configuration(player, 1, dmg1, velocity1, shield1, shield1, absorb1, lcount1,
                         ltypes1, JsonConvert.DeserializeObject<int[]>(rlTypes1),
                         JsonConvert.DeserializeObject<List<Item>>(extras1).ToDictionary(x => x.LootId));
@@ -315,7 +316,7 @@ namespace NettyBaseReloaded.Game.managers
                     int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
                     int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
                     string rlTypes2 = queryRow["CONFIG_2_HEAVY"].ToString();
-
+                    if (velocity2 == 0) velocity2 = player.Hangar.Ship.Speed;
                     if (rlTypes2 == "") rlTypes2 = "[]";
                     if (extras2 == "") extras2 = "[]";
                     var config2 = new Configuration(player, 2, dmg2, velocity2, shield2, shield2, absorb2, lcount2,
@@ -408,12 +409,12 @@ namespace NettyBaseReloaded.Game.managers
                         var factionId = (Faction) intConv(querySet["FACTION_ID"]);
                         var rank = (Rank)(intConv(querySet["RANK"]));
                         var sessionId = stringConv(querySet["SESSION_ID"]);
-                        //var clan = Global.StorageManager.Clans[0];
-                        var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
+                        var clan = Global.StorageManager.Clans[0];
+                        //var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
 
-                        querySet.Dispose();
                         player = new Player(playerId, name, clan, hangar,currentHealth,currentNanohull, factionId, position, spacemap, null, sessionId, rank, false);
                     }
+                    querySet.Dispose();
                 }
 
             }
@@ -760,6 +761,25 @@ namespace NettyBaseReloaded.Game.managers
                 Console.WriteLine("error " + e);
             }
             return null;
+        }
+
+        public bool LoadPremium(Player player)
+        {
+            bool premium = false;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow =
+                        mySqlClient.ExecuteQueryRow($"SELECT PREMIUM FROM player_data WHERE PLAYER_ID={player.Id}");
+                    premium = Convert.ToBoolean(intConv(queryRow["PREMIUM"]));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("error " + e);
+            }
+            return premium;
         }
     }
 }

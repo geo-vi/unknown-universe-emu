@@ -62,7 +62,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     if (!(main is Player)) return;
                     var gameSession = World.StorageManager.GameSessions[main.Id];
 
-                    Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
+                    //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
                     //Draws the entity ship for character
                     Packet.Builder.ShipCreateCommand(gameSession, entity);
                     Packet.Builder.DronesCommand(gameSession, entity);
@@ -88,7 +88,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     if (!(entity is Player)) return;
                     var gameSession = World.StorageManager.GameSessions[entity.Id];
 
-                    Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
+                    //Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
                     Packet.Builder.ShipRemoveCommand(gameSession, main);
                     if (main.Selected != null && main.Selected.Id == entity.Id)
                     {

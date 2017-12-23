@@ -29,19 +29,35 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Destroy(Character target)
         {
-            if (target.CurrentHealth <= 0 && !target.Controller.Dead)
+            try
             {
-                if (Character is Player)
+                if (target.CurrentHealth <= 0 && !target.Controller.Dead)
                 {
-                    var player = Character as Player;
-                    target.Hangar.Ship.Reward.ParseRewards(player);
+                    if (Character is Player)
+                    {
+                        var player = Character as Player;
+                        target.Hangar.Ship.Reward.ParseRewards(player);
+                    }
+                    if (target is Player)
+                    {
+                        // TODO: Send killscreen to target
+                    }
+                    else target.Spacemap.CreateShipLoot(target.Position, target.Hangar.Ship.CargoDrop, Character);
+                    target.Controller.Destruction.Kill();
                 }
-                if (target is Player)
+            }
+            catch (Exception)
+            {
+                if (target is Npc)
                 {
-                    // TODO: Send killscreen to target
+                    var npc = target as Npc;
+                    npc.Controller.Active = false;
+                    npc.SetPosition(new Vector(0, 0));
+                    Deselect(npc);
+                    npc.Selected = null;
+                    npc.Controller.Attack.Attacking = false;
+                    npc.Controller.Restart();
                 }
-                else target.Spacemap.CreateShipLoot(target.Position, target.Hangar.Ship.CargoDrop, Character);
-                target.Controller.Destruction.Kill();
             }
         }
 

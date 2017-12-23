@@ -15,7 +15,9 @@ namespace NettyBaseReloaded
             Initialize(fileName + "_" + DateTime.Now.ToString("MM_dd_yyyy__hh_mm_ss"));
             Write(message);
             Write("Exception type: " + exception.GetType());
-            Write("ERROR: " + exception.Message);
+            Write(exception.ToString());
+            Write(exception.Message);
+            Write(exception.StackTrace);
             ERRORS_RECORDED++;
         }
 

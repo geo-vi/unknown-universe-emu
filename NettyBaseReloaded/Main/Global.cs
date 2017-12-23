@@ -8,6 +8,7 @@ using NettyBaseReloaded.Main.global_managers;
 using NettyBaseReloaded.Main.global_storage;
 using NettyBaseReloaded.Main.objects;
 using NettyBaseReloaded.Networking;
+using NettyBaseReloaded.WebSocks;
 
 namespace NettyBaseReloaded.Main
 {
@@ -24,8 +25,9 @@ namespace NettyBaseReloaded.Main
         {
             InitiateGlobalQueries();
             InitiatePolicy();
-            InitiateChat();
+            //InitiateChat();
             InitiateGame();
+            InitiateWebSocks();
             InitiateRandomResetTimer();
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
@@ -62,6 +64,15 @@ namespace NettyBaseReloaded.Main
 
             Out.WriteLine("Game-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("Game-Server started.");
+        }
+
+        private static void InitiateWebSocks()
+        {
+            WebSocks.packets.Handler.AddHandlers();
+            ShopPacketListener.InitiateListener();
+
+            Out.WriteLine("WebSocks - ready to listen!", "SUCCESS", ConsoleColor.DarkGreen);
+            Log.Write("WebSocks started.");
         }
 
         static void InitiateRandomResetTimer()

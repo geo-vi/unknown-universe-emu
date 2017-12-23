@@ -21,7 +21,7 @@ namespace NettyBaseReloaded.Chat.objects.chat
         /// </summary>
         public new ModeratorController Controller { get; set; }
 
-        public Moderator(int id, string name, Clan clan, Level adminLevel) : base(id, name, clan)
+        public Moderator(int id, string name, string sessionId, Clan clan, Level adminLevel) : base(id, name, sessionId, clan)
         {
             AdminLevel = adminLevel;
         }
