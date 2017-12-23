@@ -50,6 +50,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.DisplaySettingsRequest.ID, new DisplaySettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.QualitySettingsRequest.ID, new QualitySettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.AudioSettingsRequest.ID, new AudioSettingsHandler());
+            OldClientCommands.Add(commands.old_client.requests.LogoutRequest.ID, new LogoutHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

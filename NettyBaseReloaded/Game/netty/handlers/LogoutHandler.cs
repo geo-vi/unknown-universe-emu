@@ -16,8 +16,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
             var cmd = new LogoutRequest();
             cmd.readCommand(bytes);
 
-            // very important thing - always send packets from Packet.Builder!!
-
             switch (cmd.request)
             {
                 case LogoutRequest.REQUEST_LOGOUT:
