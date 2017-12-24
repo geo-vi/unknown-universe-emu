@@ -40,6 +40,17 @@ namespace NettyBaseReloaded.Game.objects.world.players
             UpdateAll();
         }
 
+        private DateTime LastUpd = new DateTime();
+
+        public void Timer()
+        {
+            if (LastUpd.AddSeconds(3) > DateTime.Now) return;
+
+            UpdateAll();
+            LastUpd = DateTime.Now;
+
+        }
+
         public void UpdateAll()
         {
             Experience.Refresh();
