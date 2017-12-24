@@ -114,7 +114,7 @@ namespace NettyBaseReloaded.Game.objects.world
                             if (Objects.ContainsKey(differance.Key))
                                 player.LoadObject(differance.Value);
                             else if (player.Storage.LoadedObjects.ContainsKey(differance.Key))
-                                player.Storage.LoadedObjects.Remove(differance.Key);
+                                player.UnloadObject(differance.Value);
                         }
                     }
 
@@ -413,7 +413,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void CreateShipLoot(Vector position, DropableRewards content, Character killer)
         {
-            Console.WriteLine($"Created ship loot (content)->{content}");
+            //Console.WriteLine($"Created ship loot (content)->{content}");
             if (content != null)
             {
                 var id = GetNextObjectId();

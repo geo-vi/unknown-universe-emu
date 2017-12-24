@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.Main
     {
         public static void Check()
         {
-            if (ExceptionLog.ERRORS_RECORDED > 100 && !Properties.Server.DEBUG)
+            if (ExceptionLog.ERRORS_RECORDED > 100000 && !Properties.Server.DEBUG)
                 Program.CloseForMaintenance();
         }
 

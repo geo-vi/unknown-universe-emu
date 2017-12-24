@@ -330,6 +330,16 @@ namespace NettyBaseReloaded.Game.objects.world
             else if (obj is Ore) Storage.LoadResource(obj as Ore);
         }
 
+        public void UnloadObject(Object obj)
+        {
+            if (obj is Collectable) Storage.UnLoadCollectable(obj as Collectable);
+            else
+            {
+                if (Storage.LoadedObjects.ContainsKey(obj.Id))
+                    Storage.LoadedObjects.Remove(obj.Id);
+            }
+        }
+
         public void Save()
         {
             World.DatabaseManager.SavePlayerPos(this);

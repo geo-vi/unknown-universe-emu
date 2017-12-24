@@ -108,7 +108,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
                 if (target?.Position != null && target.Spacemap != null)
                 {
-                    if ((target.State.InDemiZone && target.Selected != npc) || target.Controller.Dead)
+                    if ((target.State.InDemiZone) || target.Controller.Dead)
                     {
                         Exit();
                         return;

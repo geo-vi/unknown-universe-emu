@@ -77,6 +77,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Packet.Builder.CreateBoxCommand(gameSession, collectable);
         }
 
+        public void UnLoadCollectable(Collectable collectable)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (LoadedObjects.ContainsKey(collectable.Id))
+                LoadedObjects.Remove(collectable.Id);
+            Packet.Builder.DisposeBoxCommand(gameSession, collectable);
+        }
+
         public void LoadResource(Ore ore)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);

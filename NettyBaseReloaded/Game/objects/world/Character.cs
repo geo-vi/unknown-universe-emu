@@ -320,6 +320,7 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 new ExceptionLog("rangebug", "InRange bug", e);
             }
+            return false;
         }
         
         public void TickCooldowns()

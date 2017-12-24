@@ -25,7 +25,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public Attack(AbstractCharacterController controller) : base(controller)
         {
-            Targetable = true;            
+            Targetable = true;
+            if (controller is NpcController) AttackRange = 500;
         }
 
         public override void Tick()
