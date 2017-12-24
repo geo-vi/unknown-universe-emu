@@ -30,23 +30,31 @@ namespace NettyBaseReloaded.Game.controllers
 
         public static int GetTime(Character character, Vector destination)
         {
-            //Sets the position before the movement
-            character.OldPosition = ActualPosition(character);
+            try
+            {
+                //Sets the position before the movement
+                character.OldPosition = ActualPosition(character);
 
-            //And the destination position
-            var destinationPosition = destination;
-            character.Destination = destinationPosition;
+                //And the destination position
+                var destinationPosition = destination;
+                character.Destination = destinationPosition;
 
-            //Same with the direction, will be used to calculate the position
-            character.Direction = new Vector(destinationPosition.X - character.OldPosition.X, destinationPosition.Y - character.OldPosition.Y);
+                //Same with the direction, will be used to calculate the position
+                character.Direction = new Vector(destinationPosition.X - character.OldPosition.X, destinationPosition.Y - character.OldPosition.Y);
 
-            var distance = destinationPosition.DistanceTo(character.OldPosition);
+                var distance = destinationPosition.DistanceTo(character.OldPosition);
 
-            var time = Math.Round(distance / character.Speed * 1000);
+                var time = Math.Round(distance / character.Speed * 1000);
 
-            //Console.WriteLine("Character: {0} => Position = {1} , Destination = {2} , Distance = {3} , Speed = {4} , Time = {5}", character.Name, character.Position, character.Destination, distance, character.Speed, time);
+                //Console.WriteLine("Character: {0} => Position = {1} , Destination = {2} , Distance = {3} , Speed = {4} , Time = {5}", character.Name, character.Position, character.Destination, distance, character.Speed, time);
 
-            return (int)time;
+                return (int)time;
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("moveController", "GetTime", e);
+            }
+            return -1;
         }
 
         public static Vector ActualPosition(Character character)
