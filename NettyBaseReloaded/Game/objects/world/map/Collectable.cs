@@ -12,8 +12,6 @@ namespace NettyBaseReloaded.Game.objects.world.map
     {
         public string Hash { get; set; }
 
-        public Vector Position { get; set; }
-
         public Spacemap Spacemap { get; set; }
 
         public Types Type { get; set; }
@@ -57,9 +55,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             var newPos = Vector.Random(1000, 19800, 1000, 11800);
             Position = newPos;
-            if (!Spacemap.Objects.ContainsKey(Id))
-                Spacemap.AddObject(this);
             Disposed = false;
+            Spacemap.AddObject(this);
         }
 
         public override void execute(Character character)
