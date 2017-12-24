@@ -83,7 +83,7 @@ namespace NettyBaseReloaded.Game.objects.world
             if (LastTimeTicketObjects.AddSeconds(2) > DateTime.Now) return;
             foreach (var obj in Objects)
             {
-                obj.Value.Tick();
+                obj.Value?.Tick();
             }
             LastTimeTicketObjects = DateTime.Now;
         }
