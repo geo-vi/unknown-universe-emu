@@ -319,6 +319,10 @@ namespace NettyBaseReloaded.Game.objects.world
             catch(Exception e)
             {
                 new ExceptionLog("rangebug", "InRange bug", e);
+                if (character != null)
+                    character.Position = new Vector(0,0);
+                var player = character as Player;
+                player?.GetGameSession()?.Disconnect();
             }
             return false;
         }
