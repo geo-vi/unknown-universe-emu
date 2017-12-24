@@ -270,7 +270,6 @@ namespace NettyBaseReloaded.Game.objects.world
         /// </summary>
         public List<Drone> Drones => Hangar.Drones;
 
-        private List<LogMessage> LogMessages = new List<LogMessage>();
         public List<Npc> AttachedNpcs = new List<Npc>();
 
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
@@ -416,14 +415,20 @@ namespace NettyBaseReloaded.Game.objects.world
             return null;
         }
 
-        public void SendLogMessage(string logMsg)
+        public void SendLogMessage(string logMsg, LogMessage.LogType logType = LogMessage.LogType.SYSTEM)
         {
-            //if (LogMessages.Any(x => x.TimeSent.AddSeconds(1) > DateTime.Now && x.Key == logMsg))
-            //{
-            //    return;
-            //}
-            //LogMessages.Add(new LogMessage(logMsg));
-            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|STM|" + logMsg + "");
+            LogMessage logMessage = new LogMessage(logMsg, logType);
+            var lastMessageOfSameKind =
+                Storage.LogMessages.FirstOrDefault(x => x.Value.TimeSent.AddSeconds(1) > DateTime.Now && x.Value.Key == logMsg);
+            
+            if (lastMessageOfSameKind.Value != null)
+            {
+                return;
+            }
+            if (Storage.LogMessages.TryAdd(Storage.LogMessages.Count, logMessage))
+            {
+                Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|STM|" + logMsg + "");
+            }
         }
 
         public void LevelChecker()

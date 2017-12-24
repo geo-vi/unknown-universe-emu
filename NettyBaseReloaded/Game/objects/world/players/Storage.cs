@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public Dictionary<int, Object> LoadedObjects = new Dictionary<int, Object>();
 
         public Dictionary<string, POI> LoadedPOI = new Dictionary<string, POI>();
+
+        public ConcurrentDictionary<int, LogMessage> LogMessages = new ConcurrentDictionary<int, LogMessage>();
 
         public double DistancePassed = 0;
 

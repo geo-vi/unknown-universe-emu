@@ -25,7 +25,6 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             Hash = hash;
             Type = type;
-            Position = pos;
             Spacemap = map;
         }
 
@@ -36,7 +35,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public virtual void Collect(Player player)
         {
-            if (Disposed) return;
+            if (Disposed || player.Position.DistanceTo(Position) > 200) return;
             Dispose();
             Reward(player);
         }

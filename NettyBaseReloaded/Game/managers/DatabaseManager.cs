@@ -521,7 +521,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("error " + e);
+                //Console.WriteLine("error " + e);
             }
             return baseInfo;
         }
