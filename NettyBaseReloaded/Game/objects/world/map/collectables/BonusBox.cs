@@ -13,16 +13,16 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         public static int PVP_SPAWN_COUNT = 0;
 
         private bool Respawning { get; }
-        public BonusBox(int id, string hash, Vector pos, bool respawning = false) : base(id, hash, Types.BONUS_BOX, pos)
+        public BonusBox(int id, string hash, Vector pos, Spacemap map, bool respawning = false) : base(id, hash, Types.BONUS_BOX, pos, map)
         {
             Respawning = respawning;
         }
 
-        public override void Dispose(Spacemap map)
+        public override void Dispose()
         {
-            base.Dispose(map);
+            base.Dispose();
             if (Respawning)
-                Respawn(map);
+                Respawn();
         }
 
         protected override void Reward(Player player)

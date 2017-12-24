@@ -14,40 +14,51 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public Vector Position { get; set; }
 
+        public Spacemap Spacemap { get; set; }
+
         public Types Type { get; set; }
 
         protected bool Disposed { get; set; }
+        protected DateTime EstTimeOfDisposal { get; set; }
 
-        public Collectable(int id, string hash, Types type, Vector pos) : base(id, pos)
+        public bool Temporary { get; set; }
+
+        public Collectable(int id, string hash, Types type, Vector pos, Spacemap map) : base(id, pos)
         {
             Hash = hash;
             Type = type;
             Position = pos;
+            Spacemap = map;
+        }
+
+        public override void Tick()
+        {
+            if (Temporary && EstTimeOfDisposal < DateTime.Now) Dispose();
         }
 
         public virtual void Collect(Player player)
         {
             if (Disposed) return;
-            Dispose(player.Spacemap);
+            Dispose();
             Reward(player);
         }
 
         protected abstract void Reward(Player player);
 
-        public virtual void Dispose(Spacemap map)
+        public virtual void Dispose()
         {
-            GameClient.SendToSpacemap(map, netty.commands.new_client.DisposeBoxCommand.write(Hash, true));
-            GameClient.SendToSpacemap(map, netty.commands.old_client.LegacyModule.write("0|2|" + Hash));
-            map.RemoveObject(this);
+            GameClient.SendToSpacemap(Spacemap, netty.commands.new_client.DisposeBoxCommand.write(Hash, true));
+            GameClient.SendToSpacemap(Spacemap, netty.commands.old_client.LegacyModule.write("0|2|" + Hash));
+            Spacemap.RemoveObject(this);
             Disposed = true;
         }
 
-        protected void Respawn(Spacemap map)
+        protected void Respawn()
         {
             var newPos = Vector.Random(1000, 19800, 1000, 11800);
             Position = newPos;
-            if (!map.Objects.ContainsKey(Id))
-                map.AddObject(this);
+            if (!Spacemap.Objects.ContainsKey(Id))
+                Spacemap.AddObject(this);
             Disposed = false;
         }
 
@@ -58,6 +69,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public virtual int GetTypeId(Character character)
         {
             return (int)Type;
+        }
+
+        public void DelayedDispose(int ms)
+        {
+            EstTimeOfDisposal = DateTime.Now.AddMilliseconds(ms);
         }
     }
 }

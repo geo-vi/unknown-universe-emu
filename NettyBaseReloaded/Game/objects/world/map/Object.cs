@@ -22,5 +22,10 @@ namespace NettyBaseReloaded.Game.objects.world.map
         }
 
         public abstract void execute(Character character);
+
+        public virtual void Tick()
+        {
+            
+        }
     }
 }

@@ -77,9 +77,15 @@ namespace NettyBaseReloaded.Game.objects.world
             //NpcTicker();
         }
 
+        private DateTime LastTimeTicketObjects = new DateTime();
         public void ObjectsTicker()
         {
-            // TODO
+            if (LastTimeTicketObjects.AddSeconds(2) > DateTime.Now) return;
+            foreach (var obj in Objects)
+            {
+                obj.Value.Tick();
+            }
+            LastTimeTicketObjects = DateTime.Now;
         }
 
         public void ZoneTicker()
@@ -405,7 +411,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
-            var box = new BonusBox(id, hash, pos);
+            var box = new BonusBox(id, hash, pos, this, true);
             HashedObjects[hash] = box;
             if (AddObject(box))
                 World.Log.Write("Created Box[" + type + "] on mapId " + Id);
