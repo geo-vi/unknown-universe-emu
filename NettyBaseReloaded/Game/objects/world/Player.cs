@@ -322,6 +322,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void LoadObject(Object obj)
         {
+            if (obj == null) return;
+
             if (obj is Station) Storage.LoadStation(obj as Station);
             else if (obj is Jumpgate) Storage.LoadPortal(obj as Jumpgate);
             else if (obj is Asteroid) Storage.LoadAsteroid(obj as Asteroid);
