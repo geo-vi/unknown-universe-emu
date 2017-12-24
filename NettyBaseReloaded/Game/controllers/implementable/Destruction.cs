@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Networking;
 
@@ -44,20 +45,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                     else target.Spacemap.CreateShipLoot(target.Position, target.Hangar.Ship.CargoDrop, Character);
                     target.Controller.Destruction.Kill();
+                    Character.Cooldowns.RemoveAt(Character.Cooldowns.FindIndex(x => x is LaserCooldown));
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                if (target is Npc)
-                {
-                    var npc = target as Npc;
-                    npc.Controller.Active = false;
-                    npc.SetPosition(new Vector(0, 0));
-                    Deselect(npc);
-                    npc.Selected = null;
-                    npc.Controller.Attack.Attacking = false;
-                    npc.Controller.Restart();
-                }
+                new ExceptionLog("destruction", "Destroy", e);
             }
         }
 
