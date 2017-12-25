@@ -61,7 +61,7 @@ namespace NettyBaseReloaded
         public static void RewardBuilder()
         {
             Console.WriteLine("Entered reward builder mode..");
-            Console.WriteLine("Start adding items");
+            Console.WriteLine("Setup adding items");
             var itemDictionary = new List<Tuple<string, int>>(); // lootid - amount
             while (true)
             {

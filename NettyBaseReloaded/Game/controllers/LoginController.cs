@@ -92,7 +92,7 @@ namespace NettyBaseReloaded.Game.controllers
             if (player.Pet != null && player.Pet.Controller == null)
                 player.Pet.Controller = new PetController(player.Pet);
 
-            player.Controller.Start();
+            player.Controller.Setup();
             player.Controller.Initiate();
         }
 

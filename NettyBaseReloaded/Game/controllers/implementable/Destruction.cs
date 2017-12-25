@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Stop()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void Destroy(Character target)
@@ -64,8 +64,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.Selected = null;
             Controller.Dead = true;
 
-            Remove(Character);
-
             if (Character is Player)
             {
                 var player = Character as Player;
@@ -73,6 +71,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 player.Controller.Exit();
             }
 
+            Remove(Character);
             Controller.StopAll();
             Respawn();
             //new Killscreen(Character as Player);
@@ -167,17 +166,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 {
                     player.Controller = new PlayerController(Character);
                 }
-                player.Controller.Start();
-                player.Controller.Initiate();
                 var closestStation = player.GetClosestStation();
-                newPos = player.Destination = closestStation.Item1;
+                newPos = closestStation.Item1;
                 player.Spacemap = closestStation.Item2;
+                player.Controller.Setup();
             }
 
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
 
             Character.SetPosition(newPos);
+            Character.Controller.Initiate();
 
             (Character as Player)?.Refresh();
         }

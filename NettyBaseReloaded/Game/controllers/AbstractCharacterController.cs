@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using NettyBaseReloaded.Game.controllers.implementable;
+﻿using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects.world;
@@ -10,6 +6,10 @@ using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
 using NettyBaseReloaded.Networking;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.controllers
 {

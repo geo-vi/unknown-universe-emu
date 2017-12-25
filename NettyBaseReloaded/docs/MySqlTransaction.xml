@@ -23,7 +23,7 @@
         Dim myCommand As MySqlCommand = myConnection.CreateCommand()
         Dim myTrans As MySqlTransaction
 
-        ' Start a local transaction
+        ' Setup a local transaction
         myTrans = myConnection.BeginTransaction()
         ' Must assign both transaction object and connection
         ' to Command object for a pending local transaction
@@ -64,7 +64,7 @@
         MySqlCommand myCommand = myConnection.CreateCommand();
         MySqlTransaction myTrans;
 
-        // Start a local transaction
+        // Setup a local transaction
         myTrans = myConnection.BeginTransaction();
         // Must assign both transaction object and connection
         // to Command object for a pending local transaction
@@ -133,7 +133,7 @@
         Dim myCommand As MySqlCommand = myConnection.CreateCommand()
         Dim myTrans As MySqlTransaction
 
-        ' Start a local transaction
+        ' Setup a local transaction
         myTrans = myConnection.BeginTransaction()
 
         ' Must assign both transaction object and connection
@@ -175,7 +175,7 @@
         MySqlCommand myCommand = myConnection.CreateCommand();
         MySqlTransaction myTrans;
 
-        // Start a local transaction
+        // Setup a local transaction
         myTrans = myConnection.BeginTransaction();
         // Must assign both transaction object and connection
         // to Command object for a pending local transaction
@@ -240,7 +240,7 @@
         Dim myCommand As MySqlCommand = myConnection.CreateCommand()
         Dim myTrans As MySqlTransaction
 
-        ' Start a local transaction
+        ' Setup a local transaction
         myTrans = myConnection.BeginTransaction()
 
         ' Must assign both transaction object and connection
@@ -282,7 +282,7 @@
         MySqlCommand myCommand = myConnection.CreateCommand();
         MySqlTransaction myTrans;
 
-        // Start a local transaction
+        // Setup a local transaction
         myTrans = myConnection.BeginTransaction();
         // Must assign both transaction object and connection
         // to Command object for a pending local transaction

@@ -66,7 +66,7 @@ namespace NettyBaseReloaded.Game.controllers
             }
         }
 
-        public void Start()
+        public void Setup()
         {
             if (CheckedClasses.Count == 0)
                 AddClasses();    

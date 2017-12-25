@@ -219,7 +219,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             //var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
             //baseController.Player.Formation = targetFormation;
             //gameSession.Client.Send(DroneFormationChangeCommand.write(baseController.Player.Id, (int)targetFormation));
-            //baseController.CooldownStorage.Start(gameSession, objects.world.storages.playerStorages.CooldownStorage.DRONE_FORMATION_COOLDOWN);
+            //baseController.CooldownStorage.Setup(gameSession, objects.world.storages.playerStorages.CooldownStorage.DRONE_FORMATION_COOLDOWN);
             //baseController.Player.Update();
         }
 

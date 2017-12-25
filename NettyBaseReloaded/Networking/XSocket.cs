@@ -338,7 +338,7 @@ namespace NettyBaseReloaded.Networking
                 //}// what happens if it's incomplete just ignores it and waits for the next packet.. i'm not sure if that should work as expected
                 OnReceiveData(_readBuffer);
 
-                //Start over
+                //Setup over
                 _readBuffer = new byte[BufferSize];
                 _socket.BeginReceive(_readBuffer, 0, _readBuffer.Length, 0, OnReceiveCallback, this);
                 
@@ -370,7 +370,7 @@ namespace NettyBaseReloaded.Networking
                     OnReceiveData(content);
                 }
 
-                //Start over
+                //Setup over
                 _readBuffer = new byte[BufferSize];
                 _socket.BeginReceive(_readBuffer, 0, _readBuffer.Length, 0, OnReceiveBufferedCallback, this);
             }

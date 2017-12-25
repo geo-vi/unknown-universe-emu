@@ -342,7 +342,7 @@
         Dim myCommand As MySqlCommand = myConnection.CreateCommand()
         Dim myTrans As MySqlTransaction
 
-        ' Start a local transaction
+        ' Setup a local transaction
         myTrans = myConnection.BeginTransaction()
         ' Must assign both transaction object and connection
         ' to Command object for a pending local transaction
@@ -383,7 +383,7 @@
         MySqlCommand myCommand = myConnection.CreateCommand();
         MySqlTransaction myTrans;
 
-        // Start a local transaction
+        // Setup a local transaction
         myTrans = myConnection.BeginTransaction();
         // Must assign both transaction object and connection
         // to Command object for a pending local transaction
@@ -457,7 +457,7 @@
         Dim myCommand As MySqlCommand = myConnection.CreateCommand()
         Dim myTrans As MySqlTransaction
 
-        ' Start a local transaction
+        ' Setup a local transaction
         myTrans = myConnection.BeginTransaction()
         ' Must assign both transaction object and connection
         ' to Command object for a pending local transaction
@@ -498,7 +498,7 @@
         MySqlCommand myCommand = myConnection.CreateCommand();
         MySqlTransaction myTrans;
 
-        // Start a local transaction
+        // Setup a local transaction
         myTrans = myConnection.BeginTransaction();
         // Must assign both transaction object and connection
         // to Command object for a pending local transaction
@@ -911,7 +911,7 @@
             <td>
               When true, multiple SQL statements can be sent with one command execution.<br/><br/>
               -Note-<br/>
-              Starting with MySQL 4.1.1, batch statements should be separated by the server-defined seperator character.<br/>
+              Setuping with MySQL 4.1.1, batch statements should be separated by the server-defined seperator character.<br/>
               Commands sent to earlier versions of MySQL should be seperated with ';'.
             </td>
           </tr>

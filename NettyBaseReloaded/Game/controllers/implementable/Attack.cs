@@ -53,7 +53,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             return null;
         }
 
-        private DateTime LastLaserLoop = new DateTime();
         public void LaserAttack()
         {
             var enemy = Character.Selected;
@@ -65,8 +64,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
-
-            if (LastLaserLoop.AddMilliseconds(1000) > DateTime.Now) return;
             if (!Character.InRange(enemy, AttackRange))
             {
                 var pCharacter = Character as Player;
@@ -176,7 +173,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Controller.Damage.Laser(enemy, absDamage, true);
 
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
-            LastLaserLoop = DateTime.Now;
         }
 
         private DateTime LastMissleLoop = new DateTime();

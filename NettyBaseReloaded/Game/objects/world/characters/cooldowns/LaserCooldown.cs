@@ -4,7 +4,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 {
     class LaserCooldown : Cooldown
     {
-        internal LaserCooldown() : base(DateTime.Now, DateTime.Now.AddSeconds(1)) { }
+        internal LaserCooldown() : base(DateTime.Now, DateTime.Now.AddMilliseconds(1000)) { }
 
         public override void OnStart(Character character)
         {
