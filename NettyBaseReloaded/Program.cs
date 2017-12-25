@@ -55,7 +55,7 @@ namespace NettyBaseReloaded
             ConsoleUpdater();
             ConsoleCommands.Add();
             KeepAlive();
-            
+
         }
 
         public static void RewardBuilder()

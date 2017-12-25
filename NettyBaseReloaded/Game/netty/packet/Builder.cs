@@ -663,6 +663,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void CreateBoxCommand(GameSession gameSession, Collectable collectable)
         {
+            if (collectable.Disposed) return;
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.CreateBoxCommand.write(collectable.Type.ToString(), new commands.new_client.BoxModule(collectable.Hash, collectable.Position.X, collectable.Position.Y)).Bytes);

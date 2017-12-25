@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.map.zones;
+using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
 namespace NettyBaseReloaded.Game.controllers.npc
 {
@@ -38,11 +40,15 @@ namespace NettyBaseReloaded.Game.controllers.npc
             try
             {
                 Controller.Attack.Attacking = false;
-                if (LastMovedTime.AddSeconds(45) <= DateTime.Now || Controller.Npc.Range.Objects.Count > 0)
+                var noAccessObjects =
+                    Controller.Npc.Range.Objects.Where(
+                        x => x.Value is Asteroid || x.Value is Asset || x.Value is Station || x.Value is Jumpgate);
+                var keyValuePairs = noAccessObjects as KeyValuePair<int, Object>[] ?? noAccessObjects.ToArray();
+                if (LastMovedTime.AddSeconds(45) <= DateTime.Now || keyValuePairs.Any())
                 {
                     newDest:
                     var dest = Vector.Random(0, 20800, 0, 12800);
-                    if (Controller.Npc.Spacemap.Objects.Count(x => x.Value?.Position.DistanceTo(dest) < 1000) > 0)
+                    if (keyValuePairs.Count(x => x.Value?.Position.DistanceTo(dest) < 1000) > 0)
                     {
                         goto newDest;
                     }

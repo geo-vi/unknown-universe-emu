@@ -544,7 +544,7 @@ namespace NettyBaseReloaded.Game.managers
             return 0;
         }
 
-        public void UpdateInfo(Player player, BaseInfo baseInfo, long amount_change)
+        public void UpdateInfo(Player player, BaseInfo baseInfo, double amount_change)
         {
             try
             {
@@ -562,7 +562,7 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public void UpdateInfo(Player player, string row, long amount_change)
+        public void UpdateInfo(Player player, string row, double amount_change)
         {
             try
             {

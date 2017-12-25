@@ -19,19 +19,19 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
             Value = SyncedValue;
         }
 
-        public override void Add(long amount)
+        public override void Add(double amount)
         {
             World.DatabaseManager.UpdateInfo(Player, this, amount);
             Value = SyncedValue;
         }
 
-        public override void Remove(long amount)
+        public override void Remove(double amount)
         {
             World.DatabaseManager.UpdateInfo(Player, this, -amount);
             Value = SyncedValue;
         }
 
-        public override void Set(long value)
+        public override void Set(double value)
         {
             throw new NotImplementedException();
         }

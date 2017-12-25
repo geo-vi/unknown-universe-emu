@@ -87,12 +87,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             targetCharacter.Range.Clear();
             targetCharacter.Spacemap.RemoveEntity(targetCharacter);
+            targetCharacter.Controller.StopAll();
             if (targetCharacter is Player)
             {
                 var player = targetCharacter as Player;
                 player.Storage.Clean();
-                //targetCharacter.Position = null;
             }
+            targetCharacter.Position = null;
             //targetCharacter.Spacemap = null;
         }
 

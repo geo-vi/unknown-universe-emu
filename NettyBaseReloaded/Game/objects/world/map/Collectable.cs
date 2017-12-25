@@ -16,7 +16,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public Types Type { get; set; }
 
-        protected bool Disposed { get; set; }
+        public bool Disposed { get; set; }
         protected DateTime EstTimeOfDisposal { get; set; }
 
         public bool Temporary { get; set; }

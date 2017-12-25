@@ -71,7 +71,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void Tick()
         {
-            //ObjectsTicker();
+            ObjectsTicker();
             ZoneTicker();
             PlayerTicker();
             //NpcTicker();

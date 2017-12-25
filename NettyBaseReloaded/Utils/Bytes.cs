@@ -47,6 +47,11 @@ namespace NettyBaseReloaded.Utils
             AddBytes(BitConverter.GetBytes(num), true);
         }
 
+        public void Long(long num)
+        {
+            AddBytes(BitConverter.GetBytes(num));
+        }
+
         public void Float(float num)
         {
             AddBytes(BitConverter.GetBytes(num), true);
