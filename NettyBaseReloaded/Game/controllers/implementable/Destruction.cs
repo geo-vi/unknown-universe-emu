@@ -45,7 +45,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                     else target.Spacemap.CreateShipLoot(target.Position, target.Hangar.Ship.CargoDrop, Character);
                     target.Controller.Destruction.Kill();
-                    Character.Cooldowns.RemoveAt(Character.Cooldowns.FindIndex(x => x is LaserCooldown));
                 }
             }
             catch (Exception e)
@@ -86,14 +85,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 targetCharacter.Controller.StopController = true;
                 return;
             }
-            targetCharacter.Position = null;
             targetCharacter.Range.Clear();
+            targetCharacter.Spacemap.RemoveEntity(targetCharacter);
             if (targetCharacter is Player)
             {
                 var player = targetCharacter as Player;
                 player.Storage.Clean();
+                //targetCharacter.Position = null;
             }
-            targetCharacter.Spacemap.RemoveEntity(targetCharacter);
             //targetCharacter.Spacemap = null;
         }
 

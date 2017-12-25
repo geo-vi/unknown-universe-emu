@@ -30,7 +30,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             set { _damage = (value <= 100) ? value : 100; }
         }
 
-        public Drone(int id, int accountId, DroneType droneType, Level level, int experience, int damage)
+        public int Design { get; }
+
+        public Drone(int id, int accountId, DroneType droneType, Level level, int experience, int damage, int design)
         {
             Id = id;
             AccountId = accountId;
@@ -38,6 +40,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             Level = level;
             Experience = experience;
             Damage = damage;
+            Design = design;
         }
 
         public void LevelUp(Player player)

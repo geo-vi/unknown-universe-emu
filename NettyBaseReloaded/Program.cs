@@ -114,6 +114,7 @@ namespace NettyBaseReloaded
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
             new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
+            Environment.Exit(0);
             // TODO: Save everything and then fuck up
         }
 

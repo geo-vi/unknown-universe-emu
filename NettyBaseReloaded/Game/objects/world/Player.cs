@@ -549,7 +549,7 @@ namespace NettyBaseReloaded.Game.objects.world
             foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Update((CPU.Types)type);
         }
 
-        private void CharacterEnteredRange(object s, Range.RangeArgs e)
+        private void CharacterEnteredRange(object s, CharacterArgs e)
         {
             var charAsPlayer = e.Character as Player;
             if (charAsPlayer != null)
@@ -559,7 +559,7 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        private void CharacterExitedRange(object s, Range.RangeArgs e)
+        private void CharacterExitedRange(object s, CharacterArgs e)
         {
             var charAsPlayer = e.Character as Player;
             if (charAsPlayer != null)

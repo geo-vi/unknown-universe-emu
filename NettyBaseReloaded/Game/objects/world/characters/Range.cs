@@ -9,15 +9,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 {
     class Range
     {
-        public class RangeArgs : EventArgs
-        {
-            public Character Character { get; }
-            public RangeArgs(Character character)
-            {
-                Character = character;
-            }
-        }
-
         public ConcurrentDictionary<int, Character> Entities = new ConcurrentDictionary<int, Character>();
         public ConcurrentDictionary<int, Object> Objects = new ConcurrentDictionary<int, Object>();
 
@@ -33,19 +24,19 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             return Entities.ContainsKey(id) ? Entities[id] : null;
         }
 
-        public event EventHandler<RangeArgs> EntityAdded;
+        public event EventHandler<CharacterArgs> EntityAdded;
         public bool AddEntity(Character entity)
         {
             var success = Entities.TryAdd(entity.Id, entity);
-            if (success) EntityAdded?.Invoke(this, new RangeArgs(entity));
+            if (success) EntityAdded?.Invoke(this, new CharacterArgs(entity));
             return success;
         }
 
-        public event EventHandler<RangeArgs> EntityRemoved;
+        public event EventHandler<CharacterArgs> EntityRemoved;
         public bool RemoveEntity(Character entity)
         { 
             var success = Entities.TryRemove(entity.Id, out entity);
-            if (success) EntityRemoved?.Invoke(this, new RangeArgs(entity));
+            if (success) EntityRemoved?.Invoke(this, new CharacterArgs(entity));
             return success;
         }
 
@@ -81,7 +72,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         private void ClearEntities()
         {
             foreach (var entity in Entities)
-                EntityRemoved?.Invoke(this, new RangeArgs(entity.Value));
+                EntityRemoved?.Invoke(this, new CharacterArgs(entity.Value));
             Entities.Clear();
         }
     }

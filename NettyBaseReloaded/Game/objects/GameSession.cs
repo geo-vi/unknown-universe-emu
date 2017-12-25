@@ -63,6 +63,7 @@ namespace NettyBaseReloaded.Game.objects
             InProcessOfDisconnection = true;
             Player.Controller.Exit();
             Player.Controller.Destruction.Remove(Player);
+            
             Global.TickManager.Remove(this);
             Global.TickManager.Remove(Player);
         }

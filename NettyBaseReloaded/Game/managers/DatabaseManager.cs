@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
@@ -20,6 +16,10 @@ using NettyBaseReloaded.Main.global_managers;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace NettyBaseReloaded.Game.managers
 {
@@ -355,9 +355,10 @@ namespace NettyBaseReloaded.Game.managers
                             int type = intConv(reader["DRONE_TYPE"]);
                             int level = intConv(reader["LEVEL"]);
                             int exp = intConv(reader["EXPERIENCE"]);
+                            int design = intConv(reader["DESIGN"]);
 
                             drones.Add(new Drone(droneId, player.Id, (DroneType) (type + 1),
-                                World.StorageManager.Levels.DroneLevels[level], exp, 0));
+                                World.StorageManager.Levels.DroneLevels[level], exp, 0,design));
                         }
                     }
                 }

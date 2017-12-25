@@ -17,6 +17,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
+            Character.Spacemap.EntityAdded += (s, e) => Update(e.Character);
+            Character.Spacemap.EntityRemoved += (s, e) => Update(e.Character);
         }
 
         public void Start()
@@ -99,8 +101,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Range Error Occured - Remove/ Players: {main.Id}, {entity.Id}");
-                Console.WriteLine(e.Message);
+                var player = entity as Player;
+                if (player != null)
+                    Packet.Builder.ShipRemoveCommand(player.GetGameSession(), main);
             }
         }
 

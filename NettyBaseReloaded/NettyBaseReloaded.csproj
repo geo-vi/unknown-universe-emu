@@ -373,6 +373,7 @@
     <Compile Include="Game\objects\world\characters\Range.cs" />
     <Compile Include="Game\objects\world\characters\Reward.cs" />
     <Compile Include="Game\objects\world\characters\RocketLauncher.cs" />
+    <Compile Include="Game\objects\world\Events.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\CargoLoot.cs" />
     <Compile Include="Game\objects\world\map\collectables\Types.cs" />

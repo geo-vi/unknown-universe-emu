@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NettyBaseReloaded.Game.controllers;
+﻿using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
@@ -17,6 +10,13 @@ using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
 namespace NettyBaseReloaded.Game.objects.world
@@ -153,14 +153,20 @@ namespace NettyBaseReloaded.Game.objects.world
         }
         #region Thread Safe Adds / Removes
 
+        public event EventHandler<CharacterArgs> EntityAdded;
         public bool AddEntity(Character character)
         {
-            return Entities.TryAdd(character.Id, character);
+            var success = Entities.TryAdd(character.Id, character);
+            if (success) EntityAdded?.Invoke(this, new CharacterArgs(character));
+            return success;
         }
 
+        public event EventHandler<CharacterArgs> EntityRemoved;
         public bool RemoveEntity(Character character)
         {
-            return Entities.TryRemove(character.Id, out character);
+            var success = Entities.TryRemove(character.Id, out character);
+            if (success) EntityRemoved?.Invoke(this, new CharacterArgs(character));
+            return success;
         }
 
         public bool AddObject(Object obj)
