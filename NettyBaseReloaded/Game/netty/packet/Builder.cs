@@ -688,7 +688,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                LegacyModule(gameSession, "0|" + commands.ServerCommands.BEACON + "|0|0|" + Convert.ToInt32(player.State.InDemiZone) + "|0|"
+                LegacyModule(gameSession, "0|" + commands.ServerCommands.BEACON + "|"+ player.Position.X +"|"+player.Position.Y+"|" + Convert.ToInt32(player.State.InDemiZone) + "|0|"
                                           + Convert.ToInt32(player.State.InTradeArea) + "|"
                                           + Convert.ToInt32(player.State.InRadiationArea) + "|" + Convert.ToInt32(player.State.InPortalArea) + "|0");
                 LegacyModule(gameSession, "0|A|RS|S|" + player.Controller.Repairing);

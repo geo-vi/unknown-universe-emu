@@ -90,7 +90,31 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void ZoneTicker()
         {
-            // TODO
+            foreach (var entity in Entities)
+            {
+                var player = entity.Value as Player;
+                if (player != null)
+                {
+                    int positionX = player.Position.X;
+                    int positionY = player.Position.Y;
+
+                    bool inRadiationZone = false;
+
+                    if (player.Spacemap.Id == 16)
+                    {
+                        inRadiationZone = positionX < 0 || positionX > 41800 || positionY < 0 || positionY > 26000;
+                    }
+                    else
+                    {
+                        inRadiationZone = positionX < 0 || positionX > 20900 || positionY < 0 || positionY > 13000;
+                    }
+
+                    if (player.Controller.Miscs.inRadiationZone != inRadiationZone)
+                    {
+                        player.Controller.Miscs.inRadiationZone = inRadiationZone;
+                    }               
+                }
+            }
         }
 
         private DateTime LastTimeTickedPlayers = new DateTime();
