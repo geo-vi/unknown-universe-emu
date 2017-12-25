@@ -123,7 +123,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         break;
                     case "ammunition_laser_sab-50":
                         absDamage = damage * 2;
-                        damage = 0;
+                        damage *= 0;
                         laserColor = 4;
                         break;
                     case "ammunition_laser_cbo-100":
@@ -172,7 +172,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
                     Character.Skills.HasFatLasers()), true);
 
-            Damage(enemy, absDamage, damage, 1);
+            Controller.Damage.Laser(enemy, damage, false);
+            Controller.Damage.Laser(enemy, absDamage, true);
 
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
             LastLaserLoop = DateTime.Now;
@@ -253,7 +254,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|0|0"), true);
             GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|0|0"), true);
-            Damage(enemy, 0, damage, 1);
+            Controller.Damage.Rocket(enemy, damage, false);
 
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
             LastMissleLoop = DateTime.Now;
@@ -283,6 +284,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             int damage = 0;
             int absDamage = 0;
             int rocketId = 0;
+            Damage.Types dmgTypes = Damage.Types.ROCKET;
 
             switch (Character.RocketLauncher.LoadLootId)
             {
@@ -303,10 +305,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 case "ammunition_rocketlauncher_sar-01":
                     rocketId = 12;
                     absDamage = RandomizeDamage(1200 * Character.RocketLauncher.CurrentLoad);
+                    dmgTypes = Damage.Types.SHIELD_ABSORBER_ROCKET_CREDITS;
                     break;
                 case "ammunition_rocketlauncher_sar-02":
                     rocketId = 13;
                     absDamage = RandomizeDamage(5000 * Character.RocketLauncher.CurrentLoad);
+                    dmgTypes = Damage.Types.SHIELD_ABSORBER_ROCKET_URIDIUM;
                     break;
             }
 
@@ -319,7 +323,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
             GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
-            Damage(enemy, absDamage, damage, 1);
+
+            Controller.Damage.Rocket(enemy, absDamage, true, dmgTypes);
+            Controller.Damage.Rocket(enemy, damage, false, dmgTypes);
 
             Character.RocketLauncher.CurrentLoad = 0;
             if (player != null) Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
@@ -356,175 +362,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 default:
                     return baseDmg;
             }
-        }
-
-        public void Damage(Character target, int absDamage, int damage, short damageEffect)
-        {
-            if (damage == -1 || target.Controller.Dead || Character.Controller.Dead) return;
-            var attackerSession = (Character is Player) ? World.StorageManager.GetGameSession(Character.Id) : null;
-            var targetSession = (target is Player) ? World.StorageManager.GetGameSession(target.Id) : null;
-            var pairedSessions = new List<GameSession>();
-            if (attackerSession != null) pairedSessions.Add(attackerSession);
-            if (targetSession != null) pairedSessions.Add(targetSession);
-            if (Character.Controller.Invisible)
-            {
-                Character.Controller.Invisible = false;
-                Character.Controller.Effects.UpdatePlayerVisibility();
-            }
-
-            foreach (var entry in target.Range.Entities.Where(x => x.Value.Selected == target && x.Value is Player))
-            {
-                pairedSessions.Add(World.StorageManager.GetGameSession(entry.Key));
-            }
-
-            target.LastCombatTime = DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
-
-            if (!target.Controller.Attack.Invincible)
-            {
-                #region DamageCalculations
-
-                if (target.CurrentShield > 0)
-                {
-                    //For example => Target has 80% abs but you' have moth (+20% penetration) :> damage * 0.6
-
-                    var totalAbs = Math.Abs(Character.ShieldPenetration - target.ShieldAbsorption);
-
-                    if (absDamage > 0)
-                    {
-                        var _absDmg = (int)(absDamage * totalAbs);
-                        target.CurrentShield -= _absDmg;
-                        Character.CurrentShield += _absDmg;
-                    }
-
-                    var shieldDamage = damage * totalAbs;
-
-                    var healthDamage = 0;
-                    if (target.CurrentShield <= damage)
-                    {
-                        healthDamage = Math.Abs(target.CurrentShield - damage);
-                        target.CurrentShield = 0;
-                        target.CurrentHealth -= healthDamage;
-                    }
-                    else
-                    {
-                        target.CurrentShield -= (int)shieldDamage; //Correspondent shield damage
-                        healthDamage = (int)(damage * (1 - totalAbs));
-                    }
-
-                    if (target.CurrentNanoHull > 0)
-                    {
-                        //If the player can receive some damage on the nanohull
-                        if (target.CurrentNanoHull - healthDamage < 0)
-                        {
-                            var nanoDamage = healthDamage - target.CurrentNanoHull;
-                            target.CurrentNanoHull = 0;
-                            target.CurrentHealth -= nanoDamage;
-                        }
-                        else
-                            target.CurrentNanoHull -= healthDamage;
-                    }
-                    else
-                        target.CurrentHealth -= healthDamage; //80% shield abs => 20% life
-                }
-                else //NO SHIELD
-                {
-                    absDamage = 0;
-
-                    if (target.CurrentNanoHull > 0)
-                    {
-                        //If the player can receive some damage on the nanohull
-                        if (target.CurrentNanoHull - damage < 0)
-                        {
-                            var nanoDamage = damage - target.CurrentNanoHull;
-                            target.CurrentNanoHull = 0;
-                            target.CurrentHealth -= nanoDamage;
-                        }
-                        else
-                            target.CurrentNanoHull -= damage; //Full dmg to nanohull
-                    }
-                    else
-                        target.CurrentHealth -= damage; //Full dmg to health
-                }
-
-                #endregion DamageCalculations
-            }
-            else
-            {
-                damage = 0;
-                absDamage = 0;
-            }
-
-            foreach (var session in pairedSessions)
-                Packet.Builder.AttackHitCommand(session, Character, target, damage + absDamage, damageEffect);
-
-            if (target.CurrentHealth <= 0 && !target.Controller.Dead)
-            {
-                Controller.Destruction.Destroy(target);
-            }
-
-            target.Update();
-            Character.Update();
-        }
-
-        /// <summary>
-        /// Causes a damage in area.
-        /// </summary>
-        public void DamageArea(int amount, int distance = 0, DamageType damageType = DamageType.DEFINED)
-        {
-            if (distance == 0) distance = AttackRange;
-
-            foreach (var entry in Character.Spacemap.Entities)
-            {
-                if (Character.Position.DistanceTo(entry.Value.Position) > distance) return;
-                if (Character.Id == entry.Value.Id) continue;
-
-                var damage = 0;
-                switch (damageType)
-                {
-                    case DamageType.DEFINED:
-                        damage = amount;
-                        break;
-                    case DamageType.PERCENTAGE:
-                        damage = entry.Value.CurrentHealth * amount / 100;
-                        break;
-                }
-                //TODO use Damage() method instead
-
-                entry.Value.CurrentHealth -= damage;
-                entry.Value.LastCombatTime = DateTime.Now;
-                if (entry.Value is Player) Packet.Builder.AttackHitCommand(World.StorageManager.GetGameSession(entry.Value.Id), Character, entry.Value, damage, 14);
-                if (Character is Player) Packet.Builder.AttackHitCommand(World.StorageManager.GetGameSession(Character.Id), Character, entry.Value, damage, 14);
-            }
-        }
-        public void Heal(int amount, int healerId = 0, HealType healType = HealType.HEALTH)
-        {
-            if (amount < 0)
-                return;
-
-            var newAmount = amount;
-            var oldHp = Character.CurrentHealth;
-            var oldShd = Character.CurrentShield;
-
-            switch (healType)
-            {
-                case HealType.HEALTH:
-                    newAmount = Character.CurrentHealth + amount;
-                    Character.CurrentHealth = newAmount;
-                    break;
-                case HealType.SHIELD:
-                    newAmount = Character.CurrentHealth + amount;
-                    Character.CurrentShield = newAmount;
-                    break;
-            }
-
-            if (Character is Player && healType == HealType.HEALTH)
-                Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Character.Id), "0|A|HL|" + healerId + "|" + Character.Id + "|HPT|" + Character.CurrentHealth + "|" +
-                                                                                               amount);
-            else if (Character is Player && healType == HealType.SHIELD)
-                Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Character.Id), "0|A|HL|" + healerId + "|" + Character.Id + "|SHD|" + Character.CurrentShield + "|" +
-                                                                                               amount);
-
-            Character.Update();
         }
 
         public void Wizard(Character target)

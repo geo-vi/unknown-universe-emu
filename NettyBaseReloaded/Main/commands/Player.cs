@@ -42,8 +42,8 @@ namespace NettyBaseReloaded.Main.commands
                         else player.SetPosition(new Vector(int.Parse(args[3]), int.Parse(args[4])));
                         break;
                     case "heal":
-                        player.Controller.Attack.Heal(player.MaxHealth);
-                        player.Controller.Attack.Heal(player.MaxShield, 0, HealType.SHIELD);
+                        player.Controller.Heal.Execute(player.MaxHealth);
+                        player.Controller.Heal.Execute(player.MaxShield, 0, HealType.SHIELD);
                         break;
                     case "stats":
                         Console.WriteLine("Player {0}->{1}", player.Id, player.Name);

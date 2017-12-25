@@ -65,13 +65,13 @@ namespace NettyBaseReloaded.Game.controllers.player
         {
             if (baseController.Player.State.InRadiationArea)
             {
-                if(lastDamagedTime.AddSeconds(1) > DateTime.Now)
+                if(lastDamagedTime.AddSeconds(1) < DateTime.Now)
                 {
                     var radiationDamage = (DateTime.Now - baseController.Player.State.RadiationEntryTime).Seconds * (baseController.Player.MaxHealth / 25);
-                    baseController.Attack.Damage(baseController.Character, 0, radiationDamage, 3);
+                    baseController.Damage.Radiation(baseController.Character, radiationDamage);
+                    lastDamagedTime = DateTime.Now;
                 }
                 baseController.Ranges.UpdatePlayer();
-                lastDamagedTime = DateTime.Now;
             }
         }
 

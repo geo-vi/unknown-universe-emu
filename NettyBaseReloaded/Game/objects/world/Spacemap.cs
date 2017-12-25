@@ -93,17 +93,13 @@ namespace NettyBaseReloaded.Game.objects.world
             
         }
 
-        public bool InPlayArea(Vector position)
+        public bool InNonPlayArea(Vector position)
         {
             if (Id == 16)
             {
                 return position.X < 0 || position.X > 41800 || position.Y < 0 || position.Y > 26000;
             }
-            else
-            {
-                return position.X < 0 || position.X > 20900 || position.Y < 0 || position.Y > 13000;
-            }
-
+            return position.X < 0 || position.X > 20900 || position.Y < 0 || position.Y > 13000;
         }
 
         private DateTime LastTimeTickedPlayers = new DateTime();

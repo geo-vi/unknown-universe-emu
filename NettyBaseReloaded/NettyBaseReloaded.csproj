@@ -109,8 +109,10 @@
     <Compile Include="Game\controllers\events\Types.cs" />
     <Compile Include="Game\controllers\implementable\Attack.cs" />
     <Compile Include="Game\controllers\implementable\Checkers.cs" />
+    <Compile Include="Game\controllers\implementable\Damage.cs" />
     <Compile Include="Game\controllers\implementable\Destruction.cs" />
     <Compile Include="Game\controllers\implementable\Effects.cs" />
+    <Compile Include="Game\controllers\implementable\Heal.cs" />
     <Compile Include="Game\controllers\implementable\IAbstractCharacter.cs" />
     <Compile Include="Game\controllers\LoginController.cs" />
     <Compile Include="Game\controllers\login\ILogin.cs" />

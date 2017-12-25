@@ -56,12 +56,12 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         private void RadiationMonitor()
         {
-            var inPlayArea = Player.Spacemap.InPlayArea(Player.Position);
-            if (!InRadiationArea && !inPlayArea)
+            var inPlayArea = Player.Spacemap.InNonPlayArea(Player.Position);
+            if (!InRadiationArea && inPlayArea)
             {
-                InRadiationArea = true;
                 RadiationEntryTime = DateTime.Now;
             }
+            InRadiationArea = inPlayArea;
         }
 
         private Dictionary<int, Faction> HomeMapIds = new Dictionary<int, Faction>();

@@ -21,6 +21,10 @@ namespace NettyBaseReloaded.Game.controllers
 
         public Attack Attack { get; }
 
+        public Damage Damage { get; }
+
+        public Heal Heal { get; }
+
         public Destruction Destruction { get; }
 
         public Effects Effects { get; }
@@ -39,6 +43,8 @@ namespace NettyBaseReloaded.Game.controllers
 
             Checkers = new Checkers(this);
             Attack = new Attack(this);
+            Damage = new Damage(this);
+            Heal = new Heal(this);
             Destruction = new Destruction(this);
             Effects = new Effects(this);
 
@@ -84,6 +90,8 @@ namespace NettyBaseReloaded.Game.controllers
         public void TickClasses()
         {
             Attack.Tick();
+            Damage.Tick();
+            Heal.Tick();
             Destruction.Tick();
             Effects.Tick();
         }

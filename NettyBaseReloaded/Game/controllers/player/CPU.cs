@@ -96,7 +96,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             var repAmount = (player.MaxHealth / 100) * robot.GetLevel();
 
-            baseController.Attack.Heal(repAmount);
+            baseController.Heal.Execute(repAmount);
         }
 
         void Cloak()
