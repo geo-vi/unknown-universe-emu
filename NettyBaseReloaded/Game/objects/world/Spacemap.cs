@@ -72,7 +72,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void Tick()
         {
             ObjectsTicker();
-            ZoneTicker();
+            //ZoneTicker();
             PlayerTicker();
             //NpcTicker();
         }
@@ -90,31 +90,20 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void ZoneTicker()
         {
-            foreach (var entity in Entities)
+            
+        }
+
+        public bool InPlayArea(Vector position)
+        {
+            if (Id == 16)
             {
-                var player = entity.Value as Player;
-                if (player != null)
-                {
-                    int positionX = player.Position.X;
-                    int positionY = player.Position.Y;
-
-                    bool inRadiationZone = false;
-
-                    if (player.Spacemap.Id == 16)
-                    {
-                        inRadiationZone = positionX < 0 || positionX > 41800 || positionY < 0 || positionY > 26000;
-                    }
-                    else
-                    {
-                        inRadiationZone = positionX < 0 || positionX > 20900 || positionY < 0 || positionY > 13000;
-                    }
-
-                    if (player.Controller.Miscs.inRadiationZone != inRadiationZone)
-                    {
-                        player.Controller.Miscs.inRadiationZone = inRadiationZone;
-                    }               
-                }
+                return position.X < 0 || position.X > 41800 || position.Y < 0 || position.Y > 26000;
             }
+            else
+            {
+                return position.X < 0 || position.X > 20900 || position.Y < 0 || position.Y > 13000;
+            }
+
         }
 
         private DateTime LastTimeTickedPlayers = new DateTime();

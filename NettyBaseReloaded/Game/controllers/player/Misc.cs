@@ -59,22 +59,19 @@ namespace NettyBaseReloaded.Game.controllers.player
             Packet.Builder.LegacyModule(gameSession, "0|t");
         }
 
-        public bool inRadiationZone = false;
         private DateTime lastDamagedTime = new DateTime();
 
         public void RadiationZone()
         {
-            var player = (Player)baseController.Player;
-
-            if (this.inRadiationZone)
+            if (baseController.Player.State.InRadiationArea)
             {
-                int radiationDamage = 0;
-
                 if(lastDamagedTime.AddSeconds(1) > DateTime.Now)
                 {
+                    var radiationDamage = DateTime.Now - EnteredRadiationTime 
                     baseController.Attack.Damage(baseController.Character, 0, radiationDamage, 3);
                 }
                 baseController.Ranges.UpdatePlayer();
+                lastDamagedTime = DateTime.Now;
             }
         }
 

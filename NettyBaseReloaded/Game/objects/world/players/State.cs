@@ -31,6 +31,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         /// Out of map bounderies
         /// </summary>
         public bool InRadiationArea { get; set; }
+        public DateTime RadiationEntryTime = new DateTime();
 
         /// <summary>
         /// If player is in portal area
@@ -47,7 +48,22 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             AddHomeMaps();
         }
-        
+
+        public void Tick()
+        {
+            RadiationMonitor();
+        }
+
+        private void RadiationMonitor()
+        {
+            var inPlayArea = Player.Spacemap.InPlayArea(Player.Position);
+            if (!InRadiationArea && !inPlayArea)
+            {
+                InRadiationArea = true;
+                RadiationEntryTime = DateTime.Now;
+            }
+        }
+
         private Dictionary<int, Faction> HomeMapIds = new Dictionary<int, Faction>();
 
         private void AddHomeMaps()

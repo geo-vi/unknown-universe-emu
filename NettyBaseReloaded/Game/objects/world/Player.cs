@@ -294,6 +294,7 @@ namespace NettyBaseReloaded.Game.objects.world
             TickBoosters();
             AssembleEnemyWarn();
             Information.Timer();
+            State.Tick();
         }
 
         private void InitializeClasses()

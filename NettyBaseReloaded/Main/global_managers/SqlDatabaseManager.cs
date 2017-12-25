@@ -12,9 +12,9 @@ namespace NettyBaseReloaded.Main.global_managers
     {
         public static DebugLog Log = new DebugLog("mysql");
 
-        public static string SERVER = "213.32.95.48";
-        public static string UID = "remote";
-        public static string PWD = "Fuckuberorbit";
+        public static string SERVER = "127.0.0.1";
+        public static string UID = "root";
+        public static string PWD = "";
         public static string DB = "do_server_ge1";
 
         public static void Initialize()
