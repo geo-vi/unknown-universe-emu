@@ -16,6 +16,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment.extras
 
         public override void execute()
         {
+            base.execute();
         }
     }
 }

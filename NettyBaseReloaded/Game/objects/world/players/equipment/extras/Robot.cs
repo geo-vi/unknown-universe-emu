@@ -33,6 +33,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment.extras
 
         public override void execute()
         {
+            base.execute();
             Player.Controller.Repairing = true;
             Player.Controller.CPUs.Activate(CPU.Types.ROBOT);
         }

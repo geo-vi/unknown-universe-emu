@@ -21,9 +21,22 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
 
         public virtual void execute()
         {
-            var cpus = Player.Settings.OldClientShipSettingsCommand.activeCpus;
-            if (!cpus.Contains(LootId))
-                cpus.Add(LootId);
+
+           
+            var cpus = Player.Settings.OldClientShipSettingsCommand.quickbarSlots;
+            if (cpus != null)
+            {
+                /*
+                if (!cpus.Contains(LootId))
+                {
+                    cpus.Add(LootId);
+                }
+                else
+                {
+                    cpus.Remove(LootId);
+                }
+                */
+            }  
         }
 
         public static Dictionary<string, Extra> LoadExtras(Player player, Dictionary<string, Item> consumables)
