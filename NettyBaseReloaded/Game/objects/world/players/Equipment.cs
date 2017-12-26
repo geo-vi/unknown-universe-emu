@@ -55,6 +55,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             bool jump = false;
             bool petRefuel = false;
             bool jumpToBase = false;
+            bool rokTurbo = false;
 
             var currConfig = Player.Hangar.Configurations[Player.CurrentConfig - 1];
             if (currConfig.Consumables != null &&

@@ -403,6 +403,9 @@
     <Compile Include="Game\objects\world\players\equipment\Configuration.cs" />
     <Compile Include="Game\objects\world\players\equipment\Drone.cs" />
     <Compile Include="Game\objects\world\players\equipment\Extra.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\Turbo.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\AutoRocketLauncher.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\AutoRocket.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\Cloak.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\Robot.cs" />
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
