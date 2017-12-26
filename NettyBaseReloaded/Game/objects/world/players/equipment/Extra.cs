@@ -12,6 +12,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
     {
         protected Player Player { get; set; }
 
+        public bool Active = false;
+
         protected Extra(Player player, int itemId, string lootId, int amount) : base(itemId, lootId, amount)
         {
             Player = player;
@@ -28,6 +30,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                 {
                     case "equipment_extra_cpu_ajp-01":
                         // TODO add Jump
+                        break;
+                    case "equipment_extra_cpu_rok-t01":
+                        extras.Add(consumable.Key,
+                          new Turbo(player, consumable.Value.Id, consumable.Value.LootId,
+                              consumable.Value.Amount));
                         break;
                     case "equipment_extra_repbot_rep-s":
                     case "equipment_extra_repbot_rep-1":
@@ -60,10 +67,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                                 consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_arol-x":
-                        // TODO: add auto rocket
+                        extras.Add(consumable.Key, new AutoRocket(player, consumable.Value.Id, consumable.Value.LootId,
+                                consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_rllb-x":
-                        // TODO: add auto rocket launcher
+                        extras.Add(consumable.Key, new AutoRocketLauncher(player, consumable.Value.Id, consumable.Value.LootId,
+                               consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_dr-01":
                     case "equipment_extra_cpu_dr-02":

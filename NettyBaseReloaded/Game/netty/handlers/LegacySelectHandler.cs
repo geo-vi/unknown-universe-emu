@@ -27,6 +27,12 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 case ClientCommands.SELECT_CLOAK:
                     gameSession.Player.Controller.Miscs.UseItem(gameSession.Player.Extras.FirstOrDefault(x => x.Value is Cloak).Key);
                     break;
+                case ClientCommands.AROL:
+                    gameSession.Player.Controller.Miscs.UseItem("equipment_extra_cpu_arol-x");
+                    break;
+                case ClientCommands.RLLB:
+                    gameSession.Player.Controller.Miscs.UseItem("equipment_extra_cpu_rllb-x");
+                    break;
                 case ClientCommands.CONFIGURATION:
                     gameSession.Player.Controller.Miscs.ChangeConfig();
                     break;

@@ -6,7 +6,12 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 {
     class RocketCooldown : Cooldown
     {
-        internal RocketCooldown() : base(DateTime.Now, DateTime.Now.AddSeconds(2)) { }
+        private double CooldownTime;
+
+        internal RocketCooldown(double seconds = 2) : base(DateTime.Now, DateTime.Now.AddSeconds(seconds))
+        {
+            CooldownTime = seconds;
+        }
 
         public override void OnStart(Character character)
         {
@@ -23,11 +28,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
             var item = gameSession.Player.Settings.Slotbar._items[player.Settings.CurrentRocket.LootId];
             if (player.UsingNewClient)
             {
-                gameSession.Client.Send(SetCooldown(item.ItemId, TimerState.COOLDOWN, (EndTime - DateTime.Now).Milliseconds, 2000,true));
+                gameSession.Client.Send(SetCooldown(item.ItemId, TimerState.COOLDOWN, (EndTime - DateTime.Now).Milliseconds, CooldownTime * 100, true));
             }
             else
             {
-                Packet.Builder.LegacyModule(gameSession, "0|A|CLD|ROK|2");
+                Packet.Builder.LegacyModule(gameSession, "0|A|CLD|ROK|"+CooldownTime);
             }
         }
     }
