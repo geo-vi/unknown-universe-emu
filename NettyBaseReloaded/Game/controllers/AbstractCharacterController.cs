@@ -53,7 +53,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         }
 
-        public void Initiate()
+        public virtual void Initiate()
         {
             Active = true;
             StopController = false;

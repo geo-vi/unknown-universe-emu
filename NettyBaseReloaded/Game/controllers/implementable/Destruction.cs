@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NettyBaseReloaded.Game.netty;
+﻿using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Networking;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -40,16 +40,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         target.Hangar.Ship.Reward.ParseRewards(player);
                     }
 
-                    if (target is Player)
+                    if (target is Npc)
+                    {
+                        target.Spacemap.CreateShipLoot(pos, target.Hangar.Ship.CargoDrop, Character);
+                        target.Controller.Destruction.RespawnAlien();
+                    }
+                    else if (target is Player)
                     {
                         // TODO: Send killscreen to target
                         //TEMP UNTIL KILLSCREEN IS ADDED
-                        RespawnPlayer();
-                    }
-                    else if (target is Npc)
-                    {
-                        target.Spacemap.CreateShipLoot(pos, target.Hangar.Ship.CargoDrop, Character);
-                        RespawnAlien();
+                        target.Controller.Destruction.RespawnPlayer();
                     }
                 }
             }
@@ -90,7 +90,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             targetCharacter.Spacemap.RemoveEntity(targetCharacter);
             if (targetCharacter is Player)
             {
-                var player = targetCharacter as Player;
+                var player = (Player) targetCharacter;
                 player.Storage.Clean();
             }
             targetCharacter.Position = null;
@@ -126,6 +126,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void RespawnPlayer()
         {
+            Character.Controller.Dead = false;
             Character.Range.Clear();
 
             var player = (Player) Character;
@@ -144,6 +145,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
 
+            player.Refresh();
+
             player.Controller.Setup();
             player.Controller.Initiate();
         }
@@ -151,6 +154,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void RespawnAlien()
         {
+            Character.Controller.Dead = false;
             Character.Range.Clear();
 
             Vector newPos;
@@ -174,14 +178,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
-            npc.Controller.Restart();
-
             Character.SetPosition(newPos);
 
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
 
-            Character.Controller.Initiate();
+            npc.Controller.Restart();
         }
     }
 }

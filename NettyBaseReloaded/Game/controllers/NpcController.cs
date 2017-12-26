@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.controllers
             Npc = (Npc) character;
         }
 
-        public new void Initiate()
+        public override void Initiate()
         {
             var ai = (AILevels) Npc.Hangar.Ship.AI;
             switch (ai)
