@@ -19,7 +19,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             Player = player;
         }
 
-        public abstract void execute();
+        public virtual void execute()
+        {
+            var cpus = Player.Settings.OldClientShipSettingsCommand.activeCpus;
+            if (!cpus.Contains(LootId))
+                cpus.Add(LootId);
+        }
 
         public static Dictionary<string, Extra> LoadExtras(Player player, Dictionary<string, Item> consumables)
         {

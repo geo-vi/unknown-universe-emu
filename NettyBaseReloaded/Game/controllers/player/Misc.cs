@@ -71,7 +71,6 @@ namespace NettyBaseReloaded.Game.controllers.player
                     baseController.Damage.Radiation(baseController.Character, radiationDamage);
                     lastDamagedTime = DateTime.Now;
                 }
-                baseController.Ranges.UpdatePlayer();
             }
         }
 
@@ -80,6 +79,17 @@ namespace NettyBaseReloaded.Game.controllers.player
             JClass.Checker();
             Logout();
             RadiationZone();
+            BeaconSync();
+        }
+
+        private DateTime LastBeaconSent = new DateTime();
+        public void BeaconSync()
+        {
+            if (LastBeaconSent.AddSeconds(1) > DateTime.Now || !baseController.Active) return;
+            var gameSession = baseController.Player?.GetGameSession();
+            if (gameSession != null)
+                Packet.Builder.BeaconCommand(gameSession);
+            LastBeaconSent = DateTime.Now;
         }
 
         /// <summary>

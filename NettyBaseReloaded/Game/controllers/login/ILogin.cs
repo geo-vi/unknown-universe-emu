@@ -67,6 +67,13 @@ namespace NettyBaseReloaded.Game.controllers.login
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
+
+            //Fix for 0 credits
+            Packet.Builder.LegacyModule(GameSession, "0|A|C|" + GameSession.Player.Information.Credits.Get() + "|" + GameSession.Player.Information.Uridium.Get());
+
+            Packet.Builder.LegacyModule(GameSession
+                , "0|A|CC|" + GameSession.Player.CurrentConfig);
+
         }
     } 
 }

@@ -53,7 +53,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             return null;
         }
 
-        private DateTime LastLaserLoop = new DateTime();
         public void LaserAttack()
         {
             var enemy = Character.Selected;
@@ -65,8 +64,22 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
+            if (Character.Cooldowns.Exists(cooldown => cooldown is LaserCooldown))
+            {
+                if ((Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75")
+                {
+                    if (Character.Cooldowns.Exists(cooldown => cooldown is RSBCooldown)) return;
 
-            if (LastLaserLoop.AddMilliseconds(1000) > DateTime.Now) return;
+                    var cld = new RSBCooldown();
+                    cld.Send(((Player) Character).GetGameSession());
+                    Character.Cooldowns.Add(cld);
+                }
+                else return;
+            }
+            var newCooldown = new LaserCooldown();
+            Character.Cooldowns.Add(newCooldown);
+
+
             if (!Character.InRange(enemy, AttackRange))
             {
                 var pCharacter = Character as Player;
@@ -87,23 +100,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     Attacking = false; // Will stop attacking if there are no lasers equipped.
                     Packet.Builder.LegacyModule(gameSession, "0|A|STM|no_lasers_on_board");
                     return;
-                }
-
-                var selectedAmmo = gameSession.Player.Settings.CurrentAmmo.LootId;
-                if (selectedAmmo == "ammunition_laser_rsb-75")
-                {
-                    if (Character.Cooldowns.Exists(cooldown => cooldown is RSBCooldown)) return;
-
-                    var newCooldown = new RSBCooldown();
-                    newCooldown.Send(gameSession);
-                    Character.Cooldowns.Add(newCooldown);
-                }
-                else
-                {
-                    if (Character.Cooldowns.Exists(cooldown => cooldown is LaserCooldown)) return;
-
-                    var newCooldown = new LaserCooldown();
-                    Character.Cooldowns.Add(newCooldown);
                 }
 
                 if (gameSession.Player.Settings.CurrentAmmo.Shoot() == 0)
@@ -204,7 +200,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Controller.Damage.Laser(enemy, absDamage, true);
 
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
-            LastLaserLoop = DateTime.Now;
         }
 
         public void LaunchMissle(string missleId)
@@ -274,7 +269,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             RocketCooldown cooldown;
             double cooldown_time = 2;
-            if (player.Information.Premium || player.Extras.ContainsKey("equipment_extra_cpu_rok-t01"))
+            if (player != null && player.Extras.ContainsKey("equipment_extra_cpu_rok-t01") || player.Information.Premium)
                 cooldown_time *= 0.5;
             /*
             if (player.Extras.ContainsKey("equipment_extra_cpu_rok-t01"))

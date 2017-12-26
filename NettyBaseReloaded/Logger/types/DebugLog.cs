@@ -23,6 +23,7 @@ namespace NettyBaseReloaded
             try
             {
                 Writer.Write(DateTime.Now + " - " + "(" + Out.GetCaller() + ") " + message);
+                LastLogTime = DateTime.Now;
             }
             catch (Exception)
             {

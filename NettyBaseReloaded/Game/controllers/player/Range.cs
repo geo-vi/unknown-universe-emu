@@ -35,7 +35,6 @@ namespace NettyBaseReloaded.Game.controllers.player
                     if (!baseController.Player.State.InDemiZone && !baseController.Attack.Attacking)
                     {
                         baseController.Player.State.InDemiZone = true;
-                        UpdatePlayer();
                     }
                 }
                 else
@@ -43,7 +42,6 @@ namespace NettyBaseReloaded.Game.controllers.player
                     if (baseController.Player.State.InDemiZone)
                     {
                         baseController.Player.State.InDemiZone = false;
-                        UpdatePlayer();
                     }
                 }
             }
@@ -59,12 +57,6 @@ namespace NettyBaseReloaded.Game.controllers.player
         {
             //TODO
             LastTimeCheckedObjects = DateTime.Now;
-        }
-
-        public void UpdatePlayer()
-        {
-            var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
-            Packet.Builder.BeaconCommand(gameSession);
         }
     }
 }

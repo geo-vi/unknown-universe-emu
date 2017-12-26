@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.Logger
 
         protected Writer Writer { get; set; }
 
-        public DateTime LastLogTime { get; set; }
+        public static DateTime LastLogTime { get; set; }
 
         public abstract void Initialize(string fileName = "");
     }

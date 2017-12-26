@@ -516,7 +516,7 @@ namespace NettyBaseReloaded.Game.managers
                 {
                     var getName = baseInfo.GetType().Name?.ToUpper();
                     var queryRow = mySqlClient.ExecuteQueryRow("SELECT " + getName + " FROM player_data WHERE PLAYER_ID=" + player.Id);
-                    baseInfo.SyncedValue = longConv(queryRow[getName].ToString());
+                    baseInfo.SyncedValue = doubleConv(queryRow[getName].ToString());
                     baseInfo.LastTimeSynced = DateTime.Now;
                 }
             }

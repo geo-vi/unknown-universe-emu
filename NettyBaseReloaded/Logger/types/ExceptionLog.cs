@@ -12,7 +12,10 @@ namespace NettyBaseReloaded
 
         public ExceptionLog(string fileName, string message, Exception exception)
         {
-            Initialize(fileName + "_" + DateTime.Now.ToString("MM_dd_yyyy__hh_mm_ss"));
+            string timeStr = DateTime.Now.ToString("MM_dd_yyyy__hh_mm_ss");
+            if (LastLogTime.AddSeconds(1) > DateTime.Now)
+                timeStr = DateTime.Now.ToString("MM_dd_yyyy__hh_mm_ss_ms");
+            Initialize(fileName + "_" + timeStr);
             Write(message);
             Write("Exception type: " + exception.GetType());
             Write(exception.ToString());
@@ -29,6 +32,7 @@ namespace NettyBaseReloaded
         public void Write(string message)
         {
             Writer.Write(message);
+            LastLogTime = DateTime.Now;
         }
 
     }
