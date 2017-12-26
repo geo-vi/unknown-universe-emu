@@ -101,11 +101,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     continue;
 
                 target = entry.Value.Target;
-                if (entry.Value.Absorb) totalDamage += totalAbsDamage;
+                if (entry.Value.Absorb) totalAbsDamage += entry.Value.Damage;
                 else totalDamage += entry.Value.Damage;
                 damageType = entry.Value.Type;
                 RemoveEntry(entry.Key, entry.Value);
             }
+            if (target == null) return;
 
             var attackerSession = (Character is Player) ? World.StorageManager.GetGameSession(Character.Id) : null;
             var pTarget = target as Player;
