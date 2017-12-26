@@ -11,8 +11,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.boosters
     {
         public DMGBO2(Player player, DateTime finishTime) : base(player, finishTime, Boosters.DMG_B02, Types.DAMAGE)
         {
-            player.Range.EntityAdded += (s, e) => CheckForBoost(e.Character as Player, false);
-            player.Range.EntityRemoved += (s, e) => CheckForBoost(e.Character as Player, true);
         }
 
         private void CheckForBoost(Player player, bool isRemove)

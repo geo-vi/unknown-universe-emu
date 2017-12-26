@@ -289,6 +289,8 @@ namespace NettyBaseReloaded.Game.objects.world
         public new void Tick()
         {
             // TODO -> Added ticked processes
+            if (!Controller.Active || Controller.Dead)
+                return;
             LevelChecker();
             Storage.Tick();
             TickBoosters();

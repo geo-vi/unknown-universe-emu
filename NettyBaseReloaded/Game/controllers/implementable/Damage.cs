@@ -207,13 +207,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             foreach (var session in pairedSessions)
                 Packet.Builder.AttackHitCommand(session, Character, target, totalDamage + totalAbsDamage, (short)damageType);
 
+            target.Update();
+            Character.Update();
             if (target.CurrentHealth <= 0 && !target.Controller.Dead)
             {
                 Controller.Destruction.Destroy(target);
             }
-
-            target.Update();
-            Character.Update();
         }
         
         /// <summary>

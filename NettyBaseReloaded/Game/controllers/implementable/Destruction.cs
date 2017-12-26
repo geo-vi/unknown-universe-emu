@@ -20,31 +20,37 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Tick()
         {
-            //throw new NotImplementedException();
         }
 
         public override void Stop()
         {
-            //throw new NotImplementedException();
         }
 
         public void Destroy(Character target)
         {
             try
             {
+                Vector pos = target.Position;
                 if (target.CurrentHealth <= 0 && !target.Controller.Dead)
                 {
+                    target.Controller.Destruction.Kill();
                     if (Character is Player)
                     {
                         var player = Character as Player;
                         target.Hangar.Ship.Reward.ParseRewards(player);
                     }
+
                     if (target is Player)
                     {
                         // TODO: Send killscreen to target
+                        //TEMP UNTIL KILLSCREEN IS ADDED
+                        RespawnPlayer();
                     }
-                    else target.Spacemap.CreateShipLoot(target.Position, target.Hangar.Ship.CargoDrop, Character);
-                    target.Controller.Destruction.Kill();
+                    else if (target is Npc)
+                    {
+                        target.Spacemap.CreateShipLoot(pos, target.Hangar.Ship.CargoDrop, Character);
+                        RespawnAlien();
+                    }
                 }
             }
             catch (Exception e)
@@ -53,47 +59,41 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
+        public void Destroy()
+        {
+            Character.Controller.Destruction.Kill();
+            RespawnPlayer();
+        }
+
         public void Kill()
         {
+            Character.CurrentHealth = 0;
+            Character.CurrentNanoHull = 0;
+            Character.CurrentShield = 0;
+
             GameClient.SendRangePacket(Character, ShipDestroyedCommand.write(Character.Id, 0), true);
-            GameClient.SendRangePacket(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 0), true);
+            GameClient.SendRangePacket(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 0),
+                true);
+
+            if (Controller.Attack.GetAttacker() != null)
+                Controller.Attack.GetAttacker().Controller.Attack.Attacking = false;
 
             Deselect(Character);
 
-            Controller.Attack.Attacking = false;
-            Character.Selected = null;
-            Controller.Dead = true;
-
-            if (Character is Player)
-            {
-                var player = Character as Player;
-                player.Pet?.Controller?.Deactivate();
-                player.Controller.Exit();
-            }
-
             Remove(Character);
-            Controller.StopAll();
-            Respawn();
-            //new Killscreen(Character as Player);
+            Controller.Dead = true;
         }
 
         public void Remove(Character targetCharacter)
         {
-            if (Character is Npc)
-            {
-                targetCharacter.Controller.StopController = true;
-                return;
-            }
-            targetCharacter.Range.Clear();
-            targetCharacter.Spacemap.RemoveEntity(targetCharacter);
             targetCharacter.Controller.StopAll();
+            targetCharacter.Spacemap.RemoveEntity(targetCharacter);
             if (targetCharacter is Player)
             {
                 var player = targetCharacter as Player;
                 player.Storage.Clean();
             }
             targetCharacter.Position = null;
-            //targetCharacter.Spacemap = null;
         }
 
         public void Deselect(Character targetCharacter)
@@ -124,61 +124,64 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
-        public void Respawn()
+        private void RespawnPlayer()
         {
-            Controller.Dead = false;
-            Controller.StopController = false;
-            Controller.Attack.Attacking = false;
-
             Character.Range.Clear();
 
-            Vector newPos = null;
+            var player = (Player) Character;
+            player.CurrentHealth = 1000;
 
-            if (Character is Npc)
+            if (player.Controller == null)
             {
-                var npc = (Npc)Character;
-
-                if (npc.MotherShip != null)
-                {
-                    npc.Controller.StopController = true;
-                    return;
-                }
-
-                npc.CurrentHealth = npc.MaxHealth;
-                npc.CurrentShield = npc.MaxShield;
-
-                if (npc.RespawnTime == 0)
-                    newPos = Vector.Random(1000, 28000, 1000, 12000);
-                else
-                {
-                    npc.Controller.DelayedRestart();
-                    return;
-                }
-
-                npc.Controller.Restart();
+                player.Controller = new PlayerController(Character);
             }
-            else if (Character is Player)
-            {
-                var player = (Player)Character;
-                player.CurrentHealth = 1000;
+            var closestStation = player.GetClosestStation();
+            var newPos = closestStation.Item1;
+            player.Spacemap = closestStation.Item2;
 
-                if (player.Controller == null)
-                {
-                    player.Controller = new PlayerController(Character);
-                }
-                var closestStation = player.GetClosestStation();
-                newPos = closestStation.Item1;
-                player.Spacemap = closestStation.Item2;
-                player.Controller.Setup();
-            }
+            Character.SetPosition(newPos);
 
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
 
-            Character.SetPosition(newPos);
-            Character.Controller.Initiate();
+            player.Controller.Setup();
+            player.Controller.Initiate();
+        }
 
-            (Character as Player)?.Refresh();
+
+        private void RespawnAlien()
+        {
+            Character.Range.Clear();
+
+            Vector newPos;
+
+            var npc = (Npc) Character;
+
+            if (npc.MotherShip != null)
+            {
+                npc.Controller.StopController = true;
+                return;
+            }
+
+            npc.CurrentHealth = npc.MaxHealth;
+            npc.CurrentShield = npc.MaxShield;
+
+            if (npc.RespawnTime == 0)
+                newPos = Vector.Random(1000, 28000, 1000, 12000);
+            else
+            {
+                npc.Controller.DelayedRestart();
+                return;
+            }
+
+            npc.Controller.Restart();
+
+            Character.SetPosition(newPos);
+
+            if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
+                Character.Spacemap.AddEntity(Character);
+
+            Character.Controller.Initiate();
         }
     }
 }

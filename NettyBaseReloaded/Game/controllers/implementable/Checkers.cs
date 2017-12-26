@@ -101,9 +101,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             catch (Exception e)
             {
-                var player = entity as Player;
-                if (player != null)
-                    Packet.Builder.ShipRemoveCommand(player.GetGameSession(), main);
+                Console.WriteLine($"Range Error Occured - Remove/ Players: {main.Id}, {entity.Id}");
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -120,7 +119,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
-        public void CharacterChecker() // Error here
+        public void CharacterChecker()
         {
             try
             {
@@ -164,19 +163,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     {
                         //remove
                         RemoveCharacter(Character, entity);
-                    }
-                }
-                if (Character.Range.Entities.Count != Character.Spacemap.Entities.Count)
-                {
-                    var diff = Character.Range.Entities.Except(Character.Spacemap.Entities).Concat(Character.Spacemap.Entities.Except(Character.Range.Entities));
-                    foreach (var playerDifferance in diff)
-                    {
-                        if (playerDifferance.Value == null) continue;
-                        if (playerDifferance.Value.Spacemap != Character.Spacemap ||
-                            playerDifferance.Value.Position == null)
-                        {
-                            RemoveCharacter(playerDifferance.Value, Character);
-                        }
                     }
                 }
             }
