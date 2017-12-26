@@ -29,48 +29,18 @@ namespace NettyBaseReloaded.Game.controllers.player
         public CPU(PlayerController controller)
         {
             baseController = controller;
-            
-            var activeCPUs = baseController.Player.Settings.OldClientShipSettingsCommand.activeCpus;
-            foreach(string activeCPU in activeCPUs)
+        }
+
+        public void LoadCpus()
+        {
+            var activeCPUs = baseController.Player.Settings?.OldClientShipSettingsCommand?.activeCpus;
+            if (activeCPUs == null) return;
+
+            foreach (string activeCPU in activeCPUs)
             {
-                switch (activeCPU)
-                {
-                    case "equipment_extra_cpu_ajp-01":
-                        // TODO add Jump
-                        break;
-                    case "equipment_extra_repbot_rep-s":
-                    case "equipment_extra_repbot_rep-1":
-                    case "equipment_extra_repbot_rep-2":
-                    case "equipment_extra_repbot_rep-3":
-                    case "equipment_extra_repbot_rep-4":
-                        Active.Add(Types.ROBOT);
-                        break;
-                    case "equipment_extra_cpu_aim-01":
-                    case "equipment_extra_cpu_aim-02":
-                        // TODO: Add aim cpu
-                        break;
-                    case "equipment_extra_cpu_jp-01":
-                    case "equipment_extra_cpu_jp-02":
-                        // TODO: Add jump2base
-                        break;
-                    case "equipment_extra_cpu_cl04k-xl":
-                    case "equipment_extra_cpu_cl04k-m":
-                    case "equipment_extra_cpu_cl04k-xs":
-                        Active.Add(Types.CLOAK);
-                        break;
-                    case "equipment_extra_cpu_arol-x":
-                        Active.Add(Types.AUTO_ROK);
-                        break;
-                    case "equipment_extra_cpu_rllb-x":
-                        Active.Add(Types.AUTO_ROCKLAUNCHER);
-                        break;
-                    case "equipment_extra_cpu_dr-01":
-                    case "equipment_extra_cpu_dr-02":
-                        // TODO: add drone rep
-                        break;
-                }
+                if (activeCPU == "equipment_extra_cpu_arol-x") Active.Add(Types.AUTO_ROK);
+                else if (activeCPU == "equipment_extra_cpu_rllb-x") Active.Add(Types.AUTO_ROCKLAUNCHER);
             }
-            
         }
 
 

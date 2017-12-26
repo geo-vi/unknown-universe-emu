@@ -18,14 +18,14 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client
         public int selectedHellstormRocket { get; set; }
         public List<string> activeCpus { get; set; }
 
-        public ShipSettingsCommand(string quickbarSlots, string quickbarSlotsPremium, int selectedLaser, int selectedRocket, int selectedHellstormRocket, List<string> activeCpus)
+        public ShipSettingsCommand(string quickbarSlots, string quickbarSlotsPremium, int selectedLaser, int selectedRocket, int selectedHellstormRocket)
         {
             this.quickbarSlots = quickbarSlots;
             this.quickbarSlotsPremium = quickbarSlotsPremium;
             this.selectedLaser = selectedLaser;
             this.selectedRocket = selectedRocket;
             this.selectedHellstormRocket = selectedHellstormRocket;
-            this.activeCpus = activeCpus;
+            this.activeCpus = new List<string>();
         }
 
         public Command write()

@@ -70,7 +70,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
                         World.DatabaseManager.GetPlayerShipSettings(Player) as
                             netty.commands.old_client.ShipSettingsCommand;
                     if (OldClientShipSettingsCommand == null)
-                        OldClientShipSettingsCommand = new netty.commands.old_client.ShipSettingsCommand("", "", 0, 0, 0, new List<string>());
+                        OldClientShipSettingsCommand = new netty.commands.old_client.ShipSettingsCommand("", "", 0, 0, 0);
                     SaveSettings();
                 
             }

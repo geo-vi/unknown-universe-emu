@@ -544,6 +544,12 @@ namespace NettyBaseReloaded.Game.objects.world
                    Convert.ToInt32(jump) + "|" + Convert.ToInt32(petRefuel);
         }
 
+        public void LoadExtras()
+        {
+            Controller.CPUs.LoadCpus();
+            UpdateExtras();
+        }
+
         public void UpdateExtras()
         {
             Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|ITM|" + BuildExtrasPacket());
