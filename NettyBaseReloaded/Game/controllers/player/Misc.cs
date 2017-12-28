@@ -68,7 +68,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                 if(lastDamagedTime.AddSeconds(1) < DateTime.Now)
                 {
                     var radiationDamage = (DateTime.Now - baseController.Player.State.RadiationEntryTime).Seconds * (baseController.Player.MaxHealth / 25);
-                    baseController.Damage.Radiation(baseController.Character, radiationDamage);
+                    baseController.Damage?.Radiation(baseController.Character, radiationDamage);
                     lastDamagedTime = DateTime.Now;
                 }
             }

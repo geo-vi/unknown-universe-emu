@@ -28,6 +28,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Ammunition CurrentRocket { get; set; }
 
+        public int ASSET_VERSION = 0;
+
         public Settings(Player player) : base(player)
         {
             Slotbar = new Slotbar();
@@ -72,7 +74,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
                     if (OldClientShipSettingsCommand == null)
                         OldClientShipSettingsCommand = new netty.commands.old_client.ShipSettingsCommand("", "", 0, 0, 0);
                     SaveSettings();
-                
+
+                ASSET_VERSION = World.DatabaseManager.GetPlayerAssetsVersion(Player);
             }
         }
 
@@ -80,6 +83,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             World.DatabaseManager.SavePlayerGameplaySettings(this);
             World.DatabaseManager.SavePlayerShipSettings(this);
+            World.DatabaseManager.SetPlayerAssetsVersion(this);
         }
     }
 }

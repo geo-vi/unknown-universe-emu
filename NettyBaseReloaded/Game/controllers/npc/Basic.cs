@@ -95,7 +95,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
             try
             {
-                if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1)
+                if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1 && !Controller.Attack.GetAttackers().Contains(npc.Selected))
                 {
                     var players = Controller.Npc.Range.Entities.Where(x => x.Value is Player);
                     foreach (var player in players)

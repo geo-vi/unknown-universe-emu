@@ -44,7 +44,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 Exit();
             }
 
-            var attacker = Controller.Npc.MotherShip.Controller.Attack.GetAttacker();
+            var attacker = Controller.Npc.MotherShip.Controller.Attack.GetAttackers().OrderBy(x => x.Damage).FirstOrDefault();
             if (attacker == null)
             {
                 var rangePlayers = Controller.Npc.Range.Entities.Where(x => x.Value is Player);

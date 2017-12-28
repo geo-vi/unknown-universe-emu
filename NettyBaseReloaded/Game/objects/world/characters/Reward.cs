@@ -70,6 +70,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public void RewardPlayer(Player player, RewardType type, int amount)
         {
+            if (amount == 0) return;
             switch (type)
             {
                 case RewardType.CREDITS:

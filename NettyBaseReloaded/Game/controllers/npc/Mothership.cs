@@ -53,7 +53,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             if (Controller.Character.LastCombatTime.AddMilliseconds(100) > DateTime.Now)
             {
                 if (TickAttacked == null)
-                    TickAttacked = new Tuple<DateTime, Character>(DateTime.Now, Controller.Attack.GetAttacker());
+                    TickAttacked = new Tuple<DateTime, Character>(DateTime.Now, Controller.Npc.MotherShip.Controller.Attack.GetAttackers().OrderBy(x => x.Damage).FirstOrDefault());
                 if (TickAttacked.Item1.AddSeconds(1) < DateTime.Now)
                     Active();
             }

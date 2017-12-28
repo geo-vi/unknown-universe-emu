@@ -722,7 +722,7 @@ namespace NettyBaseReloaded.Game.managers
                 {
                     using (var mySqlClient = SqlDatabaseManager.GetClient())
                     {
-                        mySqlClient.ExecuteNonQuery($"UPDATE player_hangar SET SHIP_MAP_ID={player.Spacemap.Id}, SHIP_HP={player.CurrentHealth}, SHIP_SHD_LEFT={player.CurrentShield}, SHIP_NANO={player.CurrentNanoHull}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y} WHERE PLAYER_ID={player.Id} AND ACTIVE=1");
+                        mySqlClient.ExecuteNonQuery($"UPDATE player_hangar SET SHIP_MAP_ID={player.Spacemap.Id}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y} WHERE PLAYER_ID={player.Id} AND ACTIVE=1");
                         player.Storage.DistancePassed = 0;
                     }
                 }
@@ -783,13 +783,13 @@ namespace NettyBaseReloaded.Game.managers
             return premium;
         }
 
-        public void SetPlayerAssetVersion(Player player, int clientResolutionId)
+        public void SetPlayerAssetsVersion(Settings settings)
         {
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    mySqlClient.ExecuteNonQuery($"UPDATE player_extra_data SET ASSETS_VERSION={clientResolutionId} WHERE PLAYER_ID={player.Id}");
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_extra_data SET ASSETS_VERSION={settings.ASSET_VERSION} WHERE PLAYER_ID={settings.Player.Id}");
                 }
             }
             catch (Exception)
@@ -804,7 +804,7 @@ namespace NettyBaseReloaded.Game.managers
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    mySqlClient.ExecuteNonQuery($"UPDATE player_extra_data SET EXPERIENCE={drone.Experience}, LEVEL={drone.Level.Id} WHERE ID={drone.Id}");
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_drones SET EXPERIENCE={drone.Experience}, LEVEL={drone.Level.Id} WHERE ID={drone.Id}");
                 }
             }
             catch (Exception)
@@ -828,6 +828,23 @@ namespace NettyBaseReloaded.Game.managers
             {
 
             }
+        }
+
+        public int GetPlayerAssetsVersion(Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow($"SELECT ASSETS_VERSION FROM player_extra_data WHERE PLAYER_ID={player.Id}");
+                    return intConv(queryRow["ASSETS_VERSION"]);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return 0;
         }
     }
 }

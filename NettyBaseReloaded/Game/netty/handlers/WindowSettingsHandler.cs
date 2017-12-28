@@ -22,9 +22,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             playerWindowSettings.slotmenuPosition = cmd.slotmenuPosition;
             playerWindowSettings.slotmenuPremiumPosition = cmd.slotmenuPremiumPosition;
             playerWindowSettings.windowSettings = cmd.windowSettings;
-
             gameSession.Player.Settings.SaveSettings();
-            World.DatabaseManager.SetPlayerAssetVersion(gameSession.Player, cmd.clientResolutionId);
         }
     }
 }

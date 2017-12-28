@@ -24,7 +24,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
             switch (Type)
             {
                 case AssetTypeModule.REPAIR_DOCK:
-                    character.Controller.Damage.Area(character.MaxHealth, Id);
+                    character.Controller.Damage?.Area(character.MaxHealth, Id);
                     break;
             }
         }

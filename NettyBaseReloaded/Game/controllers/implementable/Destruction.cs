@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world.characters;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -37,9 +38,23 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     if (Character is Player)
                     {
                         var player = Character as Player;
-                        target.Hangar.Ship.Reward.ParseRewards(player);
-                    }
+                        if (target.FactionId == player.FactionId)
+                        {
+                            Reward newReward = new Reward(new Dictionary<RewardType, int>());
+                            var rewards = target.Hangar.Ship.Reward;
+                            foreach (var reward in rewards.Rewards)
+                            {
+                                if (reward is int)
+                                {
+                                    newReward.Rewards.Add((int) reward * -1);
+                                }
+                                else newReward.Rewards.Add(reward);
+                            }
+                            newReward.ParseRewards(player);
+                        }
+                        else target.Hangar.Ship.Reward.ParseRewards(player);
 
+                    }
                     if (target is Npc)
                     {
                         target.Spacemap.CreateShipLoot(pos, target.Hangar.Ship.CargoDrop, Character);
@@ -74,9 +89,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             GameClient.SendRangePacket(Character, ShipDestroyedCommand.write(Character.Id, 0), true);
             GameClient.SendRangePacket(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 0),
                 true);
-
-            if (Controller.Attack.GetAttacker() != null)
-                Controller.Attack.GetAttacker().Controller.Attack.Attacking = false;
 
             Remove();
             Controller.Dead = true;

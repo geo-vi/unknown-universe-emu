@@ -82,7 +82,30 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Radiation(Character character, int damage)
         {
-            //TODO
+            var player = character as Player;
+            if (player == null) return;
+            if (player.CurrentNanoHull > 0)
+            {
+                //If the player can receive some damage on the nanohull
+                if (player.CurrentNanoHull - damage < 0)
+                {
+                    var nanoDamage = damage - player.CurrentNanoHull;
+                    player.CurrentNanoHull = 0;
+                    player.CurrentHealth -= nanoDamage;
+                }
+                else
+                    player.CurrentNanoHull -= damage;
+            }
+            else
+                player.CurrentHealth -= damage;
+
+            Packet.Builder.AttackHitCommand(player.GetGameSession(), player, player, damage, (short)Types.RADIATION);
+
+            Character.Update();
+            if (Character.CurrentHealth <= 0 && !Character.Controller.Dead)
+            {
+                Controller.Destruction.Destroy();
+            }
         }
 
         private void DistributeDamage()

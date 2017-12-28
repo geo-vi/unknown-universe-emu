@@ -58,7 +58,7 @@ namespace NettyBaseReloaded.Game.objects.world
                         drone.LevelUp(player);
                 }
 
-                drone.Update();
+                drone.Update(player);
             }
         }
 

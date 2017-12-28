@@ -40,17 +40,18 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             throw new NotImplementedException();
         }
 
-        public Character GetAttacker()
+        public List<Character> GetAttackers()
         {
+            List<Character> attackers = new List<Character>();
             foreach (var entity in Character.Range.Entities.Values)
             {
                 if (entity.Controller.Dead) return null;
                 if (entity.Selected == Character && entity.Controller.Attack.Attacking)
                 {
-                    return entity;
+                    attackers.Add(entity);
                 }
             }
-            return null;
+            return attackers;
         }
 
         public void LaserAttack()
@@ -210,8 +211,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
                     Character.Skills.HasFatLasers()), true);
 
-            Controller.Damage.Laser(enemy, damage, false);
-            Controller.Damage.Laser(enemy, absDamage, true);
+            Controller.Damage?.Laser(enemy, damage, false);
+            Controller.Damage?.Laser(enemy, absDamage, true);
 
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
         }
@@ -297,7 +298,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|0|0"), true);
             GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|0|0"), true);
-            Controller.Damage.Rocket(enemy, damage, false);
+            Controller.Damage?.Rocket(enemy, damage, false);
 
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
         }
@@ -364,8 +365,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
             GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
 
-            Controller.Damage.Rocket(enemy, absDamage, true, dmgTypes);
-            Controller.Damage.Rocket(enemy, damage, false, dmgTypes);
+            Controller.Damage?.Rocket(enemy, absDamage, true, dmgTypes);
+            Controller.Damage?.Rocket(enemy, damage, false, dmgTypes);
 
             Character.RocketLauncher.CurrentLoad = 0;
             if (player != null) Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));

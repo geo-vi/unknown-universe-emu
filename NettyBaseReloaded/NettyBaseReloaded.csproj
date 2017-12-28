@@ -287,6 +287,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\AttackLaserRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AudioSettingsRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\ClientResolutionChangeRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\CollectBoxRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\DisplaySettingsRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\GameplaySettingsRequest.cs" />
@@ -326,10 +327,12 @@
     <Compile Include="Game\netty\handlers\AttackRocketLegacyHandler.cs" />
     <Compile Include="Game\netty\handlers\AudioSettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\ClickableHandler.cs" />
+    <Compile Include="Game\netty\handlers\ClientResolutionChangeHandler.cs" />
     <Compile Include="Game\netty\handlers\CollectBoxHandler.cs" />
     <Compile Include="Game\netty\handlers\command42JHandler.cs" />
     <Compile Include="Game\netty\handlers\DisplaySettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\ForceInitHandler.cs" />
+    <Compile Include="Game\netty\handlers\GameplaySettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLaunchHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLoadHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormSelectRocketHandler.cs" />

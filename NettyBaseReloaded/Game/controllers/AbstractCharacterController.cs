@@ -89,11 +89,11 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void TickClasses()
         {
-            Attack.Tick();
-            Damage.Tick();
-            Heal.Tick();
-            Destruction.Tick();
-            Effects.Tick();
+            Attack?.Tick();
+            Damage?.Tick();
+            Heal?.Tick();
+            Destruction?.Tick();
+            Effects?.Tick();
         }
 
         public void StopAll()
