@@ -16,8 +16,6 @@ namespace NettyBaseReloaded.Game.controllers
 
         private INpc CurrentNpc { get; set; }
 
-        private bool Active { get; set; }
-
         private DateTime RespawnTimer { get; set; }
 
         public NpcController(Character character) : base(character)
@@ -46,7 +44,7 @@ namespace NettyBaseReloaded.Game.controllers
                     break;
             }
             Active = true;
-            Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) Setted AI to {ai}");
+            //Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) Setted AI to {ai}");
             Checkers.Start();
             Task.Factory.StartNew(ActiveTick);
         }
@@ -64,7 +62,7 @@ namespace NettyBaseReloaded.Game.controllers
                 }
                 await Task.Delay(500);
             }
-            Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) NPC went inactive");
+            //Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) NPC went inactive");
             Sleep();
         }
 

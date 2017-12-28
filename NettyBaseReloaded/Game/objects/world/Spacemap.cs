@@ -59,7 +59,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Id = id;
             Name = name;
             Faction = faction;
-            Pvp = pvp;
+            Pvp = isPvp();
             Starter = starter;
             Limits = "208x128";
             Level = level;
@@ -67,6 +67,11 @@ namespace NettyBaseReloaded.Game.objects.world
             Npcs = npcs;
 
             Global.TickManager.Add(this);
+        }
+
+        private bool isPvp()
+        {
+            return Id == 16 || Id == 15 || Id == 14 || Id == 13;
         }
 
         public void Tick()
@@ -95,7 +100,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool InNonPlayArea(Vector position)
         {
-            if (Id == 16)
+            if (Id == 16 || Id == 29)
             {
                 return position.X < 0 || position.X > 41800 || position.Y < 0 || position.Y > 26000;
             }
@@ -330,7 +335,8 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateDemiZone(Vector topLeft, Vector botRight)
         {
             var id = GetNextZoneId();
-            Zones.Add(id, new DemiZone(id, topLeft, botRight));
+            if (!Pvp)
+                Zones.Add(id, new DemiZone(id, topLeft, botRight));
             Console.WriteLine("Zone added [ID: {0}, topLeft: {1} botRight: {2}]", id, topLeft.ToString(), botRight.ToString());
         }
 
@@ -358,7 +364,8 @@ namespace NettyBaseReloaded.Game.objects.world
             AddObject(new Jumpgate(id, 0, new Vector(x, y), new Vector(newX, newY), map, true, 0, 0, 1));
 
             var zoneId = GetNextZoneId();
-            Zones.Add(zoneId, new DemiZone(zoneId, new Vector(x - 500, y + 500), new Vector(x + 500, y - 500)));
+            if (!Pvp)
+                Zones.Add(zoneId, new DemiZone(zoneId, new Vector(x - 500, y + 500), new Vector(x + 500, y - 500)));
             World.Log.Write("Created Portal on mapId " + Id);
         }
 

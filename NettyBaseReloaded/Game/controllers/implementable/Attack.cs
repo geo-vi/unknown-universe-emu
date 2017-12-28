@@ -63,6 +63,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 Attacking = false;
                 return;
             }
+            if (Character.Spacemap.Starter && enemy.FactionId == Character.FactionId)
+            {
+                Attacking = false;
+                var player = Character as Player;
+                if (player != null)
+                    Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Can't attack members of your own company on starter maps.");
+                return;
+            }
 
             if (Character.Cooldowns.Exists(cooldown => cooldown is LaserCooldown))
             {
@@ -106,8 +114,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 {
                     // NOTHING TO SHOOT
                     Packet.Builder.LegacyModule(gameSession, "0|A|STD|No more ammo (todo: find a proper STM message)");
-                    Attacking = false;
-                    return;
+                    var getAmmo = gameSession.Player.Information.Ammunitions.Keys.ToList();
+                    if (gameSession.Player.Settings.CurrentAmmo.LootId == getAmmo[0])
+                    {
+                        Attacking = false;
+                        return;
+                    }
+                    gameSession.Player.Settings.CurrentAmmo =
+                            gameSession.Player.Information.Ammunitions[getAmmo[getAmmo.FindIndex(x => x == gameSession.Player.Settings.CurrentAmmo.LootId) - 1]];
                 }
 
                 var pEnemy = enemy as Player;
@@ -166,17 +180,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 if (gameSession.Player.Controller.CPUs.Active.Any(x => x == player.CPU.Types.AUTO_ROCKLAUNCHER))
                 {
-                    var RocketLauncher = Character.RocketLauncher;
-                    if (RocketLauncher != null)
+                    var rocketLauncher = Character.RocketLauncher;
+                    if (rocketLauncher?.Launchers != null)
                     {
-                        if(RocketLauncher.CurrentLoad != RocketLauncher.GetMaxLoad())
+                        if(rocketLauncher.CurrentLoad != rocketLauncher.GetMaxLoad())
                         {
-                            RocketLauncher.Reload();
+                            rocketLauncher.Reload();
                         }
                         else
                         {
                             LaunchRocketLauncher();
-                            RocketLauncher.Reload();
+                            rocketLauncher.Reload();
                         }
                     }
                 }
@@ -269,7 +283,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             RocketCooldown cooldown;
             double cooldown_time = 2;
-            if (player != null && player.Extras.ContainsKey("equipment_extra_cpu_rok-t01") || player.Information.Premium)
+            if (player != null && (player.Extras.ContainsKey("equipment_extra_cpu_rok-t01") || player.Information.Premium))
                 cooldown_time *= 0.5;
             /*
             if (player.Extras.ContainsKey("equipment_extra_cpu_rok-t01"))

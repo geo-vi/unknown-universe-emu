@@ -52,8 +52,9 @@ namespace NettyBaseReloaded.Game.objects
             InProcessOfReconection = true;
             PrepareForDisconnect(); // preparation
             Player.Spacemap = spacemap;
-            Player.Position = pos;
+            Player.SetPosition(pos);
             Disconnect(); // closing the socket
+            Player.Save();
         }
 
         private void PrepareForDisconnect()

@@ -11,9 +11,6 @@ namespace NettyBaseReloaded.Game.controllers
         // TODO: Send local movement sent with MoveHero Command in order to *remove* lag
         public static void Move(Character character, Vector destination)
         {
-            var player = character as Player;
-            if (player != null) if (player.Controller.Jumping) return;
-
             //Gets the movement time
             character.MovementTime = GetTime(character, destination);
 

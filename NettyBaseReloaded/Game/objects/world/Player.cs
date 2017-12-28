@@ -297,6 +297,7 @@ namespace NettyBaseReloaded.Game.objects.world
             AssembleEnemyWarn();
             Information.Timer();
             State.Tick();
+            Hangar.DronesLevelChecker(this);
         }
 
         private void InitializeClasses()
@@ -345,9 +346,17 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        private DateTime LastConfigSave = new DateTime();
+        public void SaveConfig()
+        {
+            if (LastConfigSave.AddSeconds(5) < DateTime.Now)
+                World.DatabaseManager.SaveConfig(this);
+        }
+
         public void Save()
         {
-            World.DatabaseManager.SavePlayerPos(this);
+            World.DatabaseManager.SavePlayerHangar(this);
+            World.DatabaseManager.SaveConfig(this);
         }
 
         public void Refresh()
@@ -360,9 +369,12 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void SetPosition(Vector targetPosition)
         {
-            if (Moving)
-                MovementController.Move(this, MovementController.ActualPosition(this));
             Position = targetPosition;
+            Destination = targetPosition;
+            Direction = targetPosition;
+            MovementStartTime = DateTime.Now;
+            MovementTime = 0;
+            Moving = false;
             Refresh();
         }
 

@@ -16,7 +16,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
             Rewards = dropableRewards;
             Killer = killer;
             Temporary = true;
-            DelayedDispose(30000);
+            DelayedDispose(5000);
         }
         
         protected override void Reward(Player player)

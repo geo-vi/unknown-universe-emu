@@ -47,8 +47,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                         break;
                     case "equipment_extra_cpu_rok-t01":
                         extras.Add(consumable.Key,
-                          new Turbo(player, consumable.Value.Id, consumable.Value.LootId,
-                              consumable.Value.Amount));
+                            new Turbo(player, consumable.Value.Id, consumable.Value.LootId,
+                                consumable.Value.Amount));
                         break;
                     case "equipment_extra_repbot_rep-s":
                     case "equipment_extra_repbot_rep-1":
@@ -82,11 +82,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                         break;
                     case "equipment_extra_cpu_arol-x":
                         extras.Add(consumable.Key, new AutoRocket(player, consumable.Value.Id, consumable.Value.LootId,
-                                consumable.Value.Amount));
+                            consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_rllb-x":
-                        extras.Add(consumable.Key, new AutoRocketLauncher(player, consumable.Value.Id, consumable.Value.LootId,
-                               consumable.Value.Amount));
+                        extras.Add(consumable.Key, new AutoRocketLauncher(player, consumable.Value.Id,
+                            consumable.Value.LootId,
+                            consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_dr-01":
                     case "equipment_extra_cpu_dr-02":
@@ -97,6 +98,16 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
 
 
             return extras;
+        }
+
+        public static Dictionary<string, Item> ToItems(Dictionary<string, Extra> extras)
+        {
+            Dictionary<string,Item> items = new Dictionary<string, Item>();
+            foreach (var extra in extras)
+            {
+                items.Add(extra.Key, new Item(extra.Value.Id, extra.Value.LootId, extra.Value.Amount));
+            }
+            return items;
         }
     }
 }

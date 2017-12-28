@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void Tick()
         {
             if (DistancePassed > 1000)
-                World.DatabaseManager.SavePlayerPos(Player);
+                World.DatabaseManager.SavePlayerHangar(Player);
         }
 
         public void LoadPOI(POI poi)

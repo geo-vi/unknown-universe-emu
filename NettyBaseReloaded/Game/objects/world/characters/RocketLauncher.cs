@@ -29,8 +29,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public void Tick()
         {
-            if (ReloadingActive) Reload();
-            GetCPU();
+            if (Launchers != null)
+            {
+                if (ReloadingActive) Reload();
+                GetCPU();
+            }
         }
 
         public int GetMaxLoad()

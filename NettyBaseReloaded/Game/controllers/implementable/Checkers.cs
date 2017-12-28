@@ -103,7 +103,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             foreach (var entry in Character.Spacemap.Entities)
             {
                 var entity = entry.Value;
-                //Console.WriteLine(DateTime.Now.Millisecond.ToString());
                 EntityCheck(entity);
             }
         }

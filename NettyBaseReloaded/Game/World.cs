@@ -49,6 +49,19 @@ namespace NettyBaseReloaded.Game
                     //map.Value.CreateAsteroid("Metroid", new Vector(5000, 2500));
                     //map.Value.CreatePOI(new POI("Poi1", objects.world.map.pois.Types.NO_ACCESS, Designs.ASTEROIDS_MIXED_WITH_SCRAP, Shapes.RECTANGLE, new List<Vector> { new Vector(7680, 9216), new Vector(8192, 9216), new Vector(8192, 9728), new Vector(7680, 9728) }));
                 }
+                if (map.Key == 20)
+                {
+                    map.Value.CreateStation(Faction.MMO, new Vector(1000, 12800 / 2));
+                }
+                if (map.Key == 24)
+                {
+                    map.Value.CreateStation(Faction.EIC, new Vector(20800 - 1000, 12800 / 2));
+                }
+                if (map.Key == 28)
+                {
+                    map.Value.CreateStation(Faction.VRU, new Vector(20800 - 1000, 12800 / 2));
+                }
+
                 if (map.Key == -1)
                 {
                     // TODO Add PVP Spawn

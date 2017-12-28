@@ -216,8 +216,11 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (baseController.Player.Spacemap == targetMap) return;
             var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
             Packet.Builder.MapChangeCommand(gameSession);
+            baseController.Destruction.Deselect(baseController.Player);
             gameSession.Relog(targetMap, targetPosition);
-            baseController.Player.Save();
+            //baseController.Player.Position = targetPosition;
+            //baseController.Player.Spacemap = targetMap;
+            //baseController.Player.Save();
         }
 
         public void ChangeDroneFormation(DroneFormation targetFormation)

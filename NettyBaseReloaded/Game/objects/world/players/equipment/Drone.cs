@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.WebSocks.packets.handlers;
 
 namespace NettyBaseReloaded.Game.objects.world.players.equipment
 {
@@ -49,8 +50,14 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                 return;
 
             Level = World.StorageManager.Levels.DroneLevels[Level.Id + 1];
-            //GameClient.SendRangePacket(player, Builder.DronesCommand(player, false), true);
-            //GameClient.SendRangePacket(player, Builder.DronesCommand(player, true), true);
+            new UserHandler().execute(new []{"user", "drones", player.Id.ToString()});
+        }
+
+        private DateTime LastUpdate = new DateTime();
+        public void Update(Player player)
+        {
+            if (LastUpdate.AddSeconds(4) > DateTime.Now) return;
+            World.DatabaseManager.UpdateDrone(this);
         }
     }
 

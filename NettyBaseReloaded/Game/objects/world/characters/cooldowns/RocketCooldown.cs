@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 
@@ -19,6 +21,12 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void OnFinish(Character character)
         {
+            var player = character as Player;
+            if (player == null) return;
+            if (player.Controller.Attack.Attacking && player.Controller.CPUs.Active.Any(x => x == CPU.Types.AUTO_ROK))
+            {
+                player.Controller?.Attack.LaunchMissle(player.Settings.CurrentRocket.LootId);
+            }
         }
 
         public override void Send(GameSession gameSession)

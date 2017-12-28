@@ -57,6 +57,8 @@ namespace NettyBaseReloaded.Game.objects.world
                     if (drone.Experience > level.Value.Experience && level.Key > drone.Level.Id)
                         drone.LevelUp(player);
                 }
+
+                drone.Update();
             }
         }
 
