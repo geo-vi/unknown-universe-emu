@@ -17,8 +17,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
-            Character.Spacemap.EntityAdded += (s, e) => Update(e.Character);
-            Character.Spacemap.EntityRemoved += (s, e) => Update(e.Character);
+            Character.Spacemap.EntityAdded += (s, e) => AddedToSpacemap(e);
+            Character.Spacemap.EntityRemoved += (s, e) => RemovedFromSpacemap(e);
         }
 
         public void Start()
@@ -28,8 +28,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Tick()
         {
-            UpdateEntity(Character);
-            CharacterChecker();
+            MovementController.ActualPosition(Character);
+            SpacemapChecker();
+            RangeChecker();
             ZoneChecker();
             ObjectChecker();
         }
@@ -40,155 +41,122 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Global.TickManager.Remove(this);
         }
 
-        private void UpdateEntity(Character character)
+        #region Character related
+        private void AddedToSpacemap(CharacterArgs args)
         {
-            try
+            if (Character == null || !Controller.Active || Controller.Dead)
+                return;
+
+            if (args.Character.InRange(Character))
+                AddCharacter(Character, args.Character);
+        }
+
+        private void RemovedFromSpacemap(CharacterArgs args)
+        {
+            if (Character == null || !Controller.Active || Controller.Dead)
             {
-                if (!character.Position.Equals(character.Destination))
-                {
-                    character.Position = MovementController.ActualPosition(character);
-                }
+                return;
             }
-            catch (Exception)
-            {
-                // Position is null
-            }
+
+            RemoveCharacter(args.Character, Character);
         }
 
         private void AddCharacter(Character main, Character entity)
         {
-            try
+            if (!main.Controller.Active) return;
+            if (main.Range.AddEntity(entity))
             {
-                if (main.Range.AddEntity(entity))
-                {
-                    if (!(main is Player)) return;
-                    var gameSession = World.StorageManager.GameSessions[main.Id];
+                if (!(main is Player)) return;
+                var gameSession = World.StorageManager.GameSessions[main.Id];
 
-                    //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
-                    //Draws the entity ship for character
-                    Packet.Builder.ShipCreateCommand(gameSession, entity);
-                    Packet.Builder.DronesCommand(gameSession, entity);
+                //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
+                //Draws the entity ship for character
+                Packet.Builder.ShipCreateCommand(gameSession, entity);
+                Packet.Builder.DronesCommand(gameSession, entity);
 
-                    //Send movement
-                    var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
-                    Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Range Error Occured - Add/ Players: {main.Id}, {entity.Id}");
-                Console.WriteLine(e.Message);
+                //Send movement
+                var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
+                Packet.Builder.MoveCommand(gameSession, entity, (int)(entity.MovementTime - timeElapsed));
             }
         }
 
         private void RemoveCharacter(Character main, Character entity)
         {
-            try
+            if (!entity.Controller.Active) return;
+            if (entity.Range.RemoveEntity(main))
             {
-                if (entity.Range.RemoveEntity(main))
-                {
-                    if (!(entity is Player)) return;
-                    var gameSession = World.StorageManager.GameSessions[entity.Id];
+                if (!(entity is Player)) return;
+                var gameSession = World.StorageManager.GameSessions[entity.Id];
 
-                    //Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
-                    Packet.Builder.ShipRemoveCommand(gameSession, main);
-                    if (main.Selected != null && main.Selected.Id == entity.Id)
-                    {
-                        Packet.Builder.ShipSelectionCommand(gameSession, null);
-                        main.Selected = null;
-                    }
+                //Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
+                Packet.Builder.ShipRemoveCommand(gameSession, main);
+                if (main.Selected != null && main.Selected.Id == entity.Id)
+                {
+                    Packet.Builder.ShipSelectionCommand(gameSession, null);
+                    main.Selected = null;
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Range Error Occured - Remove/ Players: {main.Id}, {entity.Id}");
-                Console.WriteLine(e.Message);
             }
         }
 
-        public void Update(Character targetCharacter)
+        public void SpacemapChecker()
         {
-            UpdateEntity(targetCharacter);
-            if (Character.InRange(targetCharacter))
+            foreach (var entry in Character.Spacemap.Entities)
             {
-                AddCharacter(Character, targetCharacter);
+                var entity = entry.Value;
+                //Console.WriteLine(DateTime.Now.Millisecond.ToString());
+                EntityCheck(entity);
+            }
+        }
+
+        public void RangeChecker()
+        {
+            foreach (var entry in Character.Range.Entities)
+            {
+                var entity = entry.Value;
+                EntityCheck(entity);
+            }
+        }
+
+        private void EntityCheck(Character entity)
+        {
+            if (entity == Character)
+                return;
+
+            if (entity.Spacemap != Character.Spacemap && entity.Range.Entities.ContainsKey(Character.Id))
+            {
+                RemoveCharacter(entity, Character);
+                return;
+            }
+
+            if (Character.InRange(entity))
+            {
+                if (!Character.Range.Entities.ContainsKey(entity.Id))
+                    AddCharacter(Character, entity);
             }
             else
             {
-                RemoveCharacter(targetCharacter, Character);
-            }
-        }
-
-        public void CharacterChecker()
-        {
-            try
-            {
-                foreach (var entry in Character.Spacemap.Entities)
-                {
-                    var entity = entry.Value;
-                    if (entity.Position == null || entity.Spacemap != Character.Spacemap)
-                    {
-                        RemoveCharacter(entity, Character);
-                        continue;
-                    }
-
-                    UpdateEntity(entity);
-
-                    if (entity is Pet)
-                        if (((Pet) entity).GetOwner().Id == Character.Id)
-                            continue;
-                    if (Character is Pet)
-                        if (entity == ((Pet) Character).GetOwner())
-                            continue;
-
-                    if (GetForSelection(entity))
-                        continue;
-
-                    //If i have the entity in range
-                    if (Character.InRange(entity))
-                    {
-                        AddCharacter(Character, entity);
-                    }
-                    else
-                    {
-                        RemoveCharacter(entity, Character);
-                    }
-
-                    //If the entity has me in range
-                    if (entity.InRange(Character))
-                    {
-                        AddCharacter(entity, Character);
-                    }
-                    else
-                    {
-                        //remove
-                        RemoveCharacter(Character, entity);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                //if (Character.Position == null || Character.Spacemap == null)
-                //     Stop();
+                if (Character.Range.Entities.ContainsKey(entity.Id))
+                    RemoveCharacter(entity, Character);
             }
         }
 
         private bool GetForSelection(Character entity)
         {
-            //if (Character.Spacemap.Entities.ContainsKey(entity.Id))
-            //{
-            //    if (entity.Selected == Character || Character.Selected == entity)
-            //    {
-            //        if (!Character.RangeEntities.ContainsKey(entity.Id))
-            //            Character.RangeEntities.Add(entity.Id, entity);
-            //        if (!entity.RangeEntities.ContainsKey(Character.Id))
-            //            entity.RangeEntities.Add(Character.Id, Character);
-            //        return true;
-            //    }
-            //}
+            if (Character.Spacemap.Entities.ContainsKey(entity.Id))
+            {
+                if (entity.Selected == Character || Character.Selected == entity)
+                {
+                    if (!Character.Range.Entities.ContainsKey(entity.Id))
+                        Character.Range.AddEntity(entity);
+                    if (!entity.Range.Entities.ContainsKey(Character.Id))
+                        entity.Range.AddEntity(Character);
+                    return true;
+                }
+            }
             return false;
         }
-
+        #endregion
+        #region Zone related
         private void ZoneChecker()
         {
             try
@@ -215,7 +183,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 new ExceptionLog("checkers", "Zone Checker", e);
             }
         }
-
+        #endregion
+        #region Object related
         private void ObjectChecker()
         {
             //if (!(Character is Player)) return;
@@ -264,5 +233,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 World.StorageManager.GetGameSession(Character.Id)?.Disconnect(GameSession.DisconnectionType.ERROR);
             }
         }
+        #endregion
     }
 }

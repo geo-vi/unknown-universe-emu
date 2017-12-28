@@ -47,7 +47,8 @@ namespace NettyBaseReloaded.Game.controllers
             }
             Active = true;
             Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) Setted AI to {ai}");
-            ActiveTick();
+            Checkers.Start();
+            Task.Factory.StartNew(ActiveTick);
         }
 
         private async void ActiveTick()
@@ -59,7 +60,6 @@ namespace NettyBaseReloaded.Game.controllers
                 else
                 {
                     TickClasses();
-                    Checkers.Tick();
                     CurrentNpc.Tick();
                 }
                 await Task.Delay(500);

@@ -83,7 +83,7 @@ namespace NettyBaseReloaded.Game.controllers
             var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             Packet.Builder.PetDeactivationCommand(ownerSession, Pet);
             Exit();
-            Destruction.Remove(Pet);
+            Destruction.Remove();
         }
 
         public void Repair()

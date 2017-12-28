@@ -309,22 +309,11 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool InRange(Character character, int range = 2000)
         {
-            try
-            {
-                if (character == null) return false;
-                if (range == -1) return true;
-                return character.Id != Id && character.Spacemap.Id == Spacemap.Id &&
-                       Position.DistanceTo(character.Position) <= range;
-            }
-            catch(Exception e)
-            {
-                new ExceptionLog("rangebug", "InRange bug", e);
-                if (character != null)
-                    character.Position = new Vector(0,0);
-                var player = character as Player;
-                player?.GetGameSession()?.Disconnect();
-            }
-            return false;
+
+            if (character == null) return false;
+            if (range == -1) return true;
+            return character.Id != Id && character.Spacemap.Id == Spacemap.Id &&
+                   Position.DistanceTo(character.Position) <= range;
         }
         
         public void TickCooldowns()

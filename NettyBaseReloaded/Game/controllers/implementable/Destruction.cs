@@ -78,22 +78,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Controller.Attack.GetAttacker() != null)
                 Controller.Attack.GetAttacker().Controller.Attack.Attacking = false;
 
-            Deselect(Character);
-
-            Remove(Character);
+            Remove();
             Controller.Dead = true;
         }
 
-        public void Remove(Character targetCharacter)
+        public void Remove()
         {
-            targetCharacter.Controller.StopAll();
-            targetCharacter.Spacemap.RemoveEntity(targetCharacter);
-            if (targetCharacter is Player)
+            Deselect(Character);
+            Character.Controller.StopAll();
+            Character.Spacemap.RemoveEntity(Character);
+            if (Character is Player)
             {
-                var player = (Player) targetCharacter;
+                var player = (Player)Character;
                 player.Storage.Clean();
             }
-            targetCharacter.Position = null;
+            Character.Range.Clear();
         }
 
         public void Deselect(Character targetCharacter)

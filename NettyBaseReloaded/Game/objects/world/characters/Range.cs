@@ -34,9 +34,12 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public event EventHandler<CharacterArgs> EntityRemoved;
         public bool RemoveEntity(Character entity)
-        { 
+        {
             var success = Entities.TryRemove(entity.Id, out entity);
-            if (success) EntityRemoved?.Invoke(this, new CharacterArgs(entity));
+            if (success)
+            {
+                EntityRemoved?.Invoke(this, new CharacterArgs(entity));
+            }
             return success;
         }
 

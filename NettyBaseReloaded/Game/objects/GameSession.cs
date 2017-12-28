@@ -62,7 +62,7 @@ namespace NettyBaseReloaded.Game.objects
             Player.Pet?.Controller.Deactivate();
             InProcessOfDisconnection = true;
             Player.Controller.Exit();
-            Player.Controller.Destruction.Remove(Player);
+            Player.Controller.Destruction.Remove();
             
             Global.TickManager.Remove(this);
             Global.TickManager.Remove(Player);
