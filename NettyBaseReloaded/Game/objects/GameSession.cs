@@ -59,6 +59,7 @@ namespace NettyBaseReloaded.Game.objects
 
         private void PrepareForDisconnect()
         {
+            Player.Controller.Attack.Attacking = false;
             Player.Save();
             Player.Pet?.Controller.Deactivate();
             InProcessOfDisconnection = true;
