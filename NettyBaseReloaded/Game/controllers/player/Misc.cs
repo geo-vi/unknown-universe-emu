@@ -113,7 +113,14 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         public void ChangeConfig(int targetConfigId = 0)
         {
-            if (baseController.Character.Cooldowns.Exists(x => x is ConfigCooldown)) return;
+            var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
+
+            if (baseController.Character.Cooldowns.Exists(x => x is ConfigCooldown))
+            {
+                Packet.Builder.LegacyModule(gameSession
+                , "0|A|STM|config_change_failed_time");
+                return;
+            }
 
             baseController.Character.Cooldowns.Add(new ConfigCooldown());
 
@@ -123,7 +130,6 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             baseController.Player.Update();
 
-            var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
             Packet.Builder.LegacyModule(gameSession
                 , "0|A|CC|" + baseController.Player.CurrentConfig);
 
