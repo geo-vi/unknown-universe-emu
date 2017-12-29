@@ -63,7 +63,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             //EB -> Enable button
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
-            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
+            //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
 

@@ -10,7 +10,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
     {
         public string Hash { get; set; }
 
-        public Mine(int id, string hash, Vector pos) : base(id, pos)
+        protected Mine(int id, string hash, Vector pos) : base(id, pos)
         {
             Hash = hash;
         }

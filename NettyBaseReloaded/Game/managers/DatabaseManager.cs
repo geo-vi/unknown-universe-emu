@@ -456,6 +456,7 @@ namespace NettyBaseReloaded.Game.managers
                     ammoDictionary.Add("ammunition_rocketlauncher_eco-10", new Ammunition(player, "ammunition_rocketlauncher_eco-10", intConv(queryRow["ECO_10"])));
                     ammoDictionary.Add("ammunition_rocketlauncher_sar-01", new Ammunition(player, "ammunition_rocketlauncher_sar-01", intConv(queryRow["SAR_01"])));
                     ammoDictionary.Add("ammunition_rocketlauncher_sar-02", new Ammunition(player, "ammunition_rocketlauncher_sar-02", intConv(queryRow["SAR_02"])));
+                    ammoDictionary.Add("ammunition_mine_acm-01", new Ammunition(player, "ammunition_mine_acm-01", intConv(queryRow["ACM_01"])));
                 }
             }
             catch (Exception e)

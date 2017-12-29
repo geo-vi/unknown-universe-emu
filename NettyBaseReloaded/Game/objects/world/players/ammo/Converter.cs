@@ -56,6 +56,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return "SAR_01";
                 case "ammunition_rocketlauncher_sar-02":
                     return "SAR_02";
+                case "ammunition_mine_acm-01":
+                    return "ACM_01";
                 default:
                     throw new NotImplementedException();
             }
@@ -107,6 +109,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return Slotbar.Items.RocketLauncherIds[4];
                 case AmmunitionTypeModule.SAR02:
                     return Slotbar.Items.RocketLauncherIds[5];
+                case AmmunitionTypeModule.MINE:
+                    return Slotbar.Items.MinesIds[0];
                 default:
                     throw new NotImplementedException();
             }
@@ -158,6 +162,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return new AmmunitionTypeModule(AmmunitionTypeModule.SAR01);
                 case "ammunition_rocketlauncher_sar-02":
                     return new AmmunitionTypeModule(AmmunitionTypeModule.SAR02);
+                case "ammunition_mine_acm-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.MINE);
                 default:
                     throw new NotImplementedException();
             }

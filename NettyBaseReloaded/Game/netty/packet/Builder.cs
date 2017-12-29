@@ -152,6 +152,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.UBER_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_ubr-100"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR01), player.Information.Ammunitions["ammunition_rocketlauncher_sar-01"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR02), player.Information.Ammunitions["ammunition_rocketlauncher_sar-02"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), player.Information.Ammunitions["ammunition_mine_acm-01"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 player.Settings.Slotbar.GetCategories();
             }

@@ -36,6 +36,14 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 case ClientCommands.CONFIGURATION:
                     gameSession.Player.Controller.Miscs.ChangeConfig();
                     break;
+                case ClientCommands.MINE:
+                    switch (packet[2])
+                    {
+                        case ServerCommands.MINE_ACM:
+                            gameSession.Player.Controller.Miscs.UseItem("ammunition_mine_acm-01");
+                            break;
+                    }
+                    break;
             }
         }
     }

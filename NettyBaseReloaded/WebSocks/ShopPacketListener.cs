@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.WebSocks
     {
         public static void InitiateListener()
         {
-            var wssv = new WebSocketServer("ws://213.32.95.48:666");
+            var wssv = new WebSocketServer(666);
             wssv.AddWebSocketService<Shop>("/shoplistener");
             wssv.Start();
         }
