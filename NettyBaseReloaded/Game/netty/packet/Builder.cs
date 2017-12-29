@@ -981,7 +981,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                if (gameSession.Player.RocketLauncher != null)
+                if (gameSession.Player.RocketLauncher != null && gameSession.Player.RocketLauncher.Launchers != null)
                 {
                     gameSession.Client.Send(commands.old_client.HellstormStatusCommand
                         .write(gameSession.Player.RocketLauncher.Launchers.ToList(),

@@ -53,7 +53,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             newReward.ParseRewards(player);
                         }
                         else target.Hangar.Ship.Reward.ParseRewards(player);
-
+                        Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
                     }
                     if (target is Npc)
                     {

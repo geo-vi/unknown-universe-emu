@@ -65,7 +65,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                         if (candidatePlayer == null)
                         {
                             var _player = (Player) player.Value;
-                            if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone)
+                            if (_player.Spacemap.Id == Controller.Npc.Spacemap.Id && !_player.State.InDemiZone && _player.Range.Zones.FirstOrDefault(x => x.Value is DemiZone).Value == null)
                                 candidatePlayer = _player;
                         }
                         else
@@ -84,7 +84,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             }
             catch (Exception e)
             {
-                new ExceptionLog("npc_inactive_crash", "NPC Crashed", e);
+                //new ExceptionLog("npc_inactive_crash", "NPC Crashed", e);
             }
         }
 
@@ -114,7 +114,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
                 if (target?.Position != null && target.Spacemap != null)
                 {
-                    if ((target.State.InDemiZone) || target.Controller.Dead)
+                    if ((target.State.InDemiZone) || npc.Range.Zones.FirstOrDefault(x => x.Value is DemiZone).Value != null && Controller.Attack.GetAttackers().Count == 0|| target.Controller.Dead)
                     {
                         Exit();
                         return;

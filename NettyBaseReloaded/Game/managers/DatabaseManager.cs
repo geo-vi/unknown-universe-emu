@@ -735,26 +735,24 @@ namespace NettyBaseReloaded.Game.managers
 
         public Skilltree LoadSkilltree(Player player)
         {
+            Skilltree skilltree = new Skilltree(player);
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     var queryRow =
                         mySqlClient.ExecuteQueryRow($"SELECT * FROM player_skill_tree WHERE PLAYER_ID={player.Id}");
-                    return new Skilltree
-                    {
-                        Character = player,
-                        AlienHunter = intConv(queryRow["ALIEN_HUNTER"]),
-                        BountyHunter = intConv(queryRow["BOUNTY_HUNTER"]),
-                        Cruelty = intConv(queryRow["CRUELTY"]),
-                        Detonation = intConv(queryRow["DETONATION"]),
-                        ElectroOptics = intConv(queryRow["ELECTRO_OPTICS"]),
-                        Engineering = intConv(queryRow["ENGINEERING"]),
-                        EvasiveManeuvers = intConv(queryRow["EVASIVE_MANEUVERS"]),
-                        Explosives = intConv(queryRow["EXPLOSIVES"]),
-                        Greed = intConv(queryRow["GREED"]),
-                        HeatSeekingMissles = intConv(queryRow["HEAT_SEEKING_MISSLES"])
-                    };
+
+                    skilltree.AlienHunter = intConv(queryRow["ALIEN_HUNTER"]);
+                    skilltree.BountyHunter = intConv(queryRow["BOUNTY_HUNTER"]);
+                    skilltree.Cruelty = intConv(queryRow["CRUELTY"]);
+                    skilltree.Detonation = intConv(queryRow["DETONATION"]);
+                    skilltree.ElectroOptics = intConv(queryRow["ELECTRO_OPTICS"]);
+                    skilltree.Engineering = intConv(queryRow["ENGINEERING"]);
+                    skilltree.EvasiveManeuvers = intConv(queryRow["EVASIVE_MANEUVERS"]);
+                    skilltree.Explosives = intConv(queryRow["EXPLOSIVES"]);
+                    skilltree.Greed = intConv(queryRow["GREED"]);
+                    skilltree.HeatSeekingMissles = intConv(queryRow["HEAT_SEEKING_MISSLES"]);
                 }
             }
             catch (Exception e)

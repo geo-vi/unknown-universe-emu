@@ -107,8 +107,9 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public Character Character { get; set; }
 
-        public Skilltree()
+        public Skilltree(Character character)
         {
+            Character = character;
         }
 
         public bool HasFatLasers()

@@ -92,6 +92,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public ConcurrentDictionary<Player, Booster> InheritedBoosters = new ConcurrentDictionary<Player, Booster>();
 
+        public override Skilltree Skills { get; set; }
+
         /*********
          * STATS *
          *********/
@@ -305,12 +307,12 @@ namespace NettyBaseReloaded.Game.objects.world
             Equipment = new Equipment(this);
             Statistics = World.DatabaseManager.LoadStatistics(this);
             Information = new Information(this);
-            Settings = new Settings(this);
             State = new State(this);
+            Skills = World.DatabaseManager.LoadSkilltree(this);
             Storage = new Storage(this);
             Log = new PlayerLog(SessionId);
-            Skills = World.DatabaseManager.LoadSkilltree(this);
             Boosters = new List<Booster>(); // TODO: Load from SQL
+            Settings = new Settings(this);
             Range.EntityAdded += CharacterEnteredRange;
             Range.EntityRemoved += CharacterExitedRange;
         }
@@ -370,12 +372,14 @@ namespace NettyBaseReloaded.Game.objects.world
         public void SetPosition(Vector targetPosition)
         {
             Position = targetPosition;
+            OldPosition = targetPosition;
             Destination = targetPosition;
             Direction = targetPosition;
             MovementStartTime = DateTime.Now;
             MovementTime = 0;
             Moving = false;
             Refresh();
+            MovementController.Move(this, MovementController.ActualPosition(this));
         }
 
         public Tuple<Vector, Spacemap> GetClosestStation()

@@ -229,6 +229,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             foreach (var session in pairedSessions)
                 Packet.Builder.AttackHitCommand(session, Character, target, totalDamage + totalAbsDamage, (short)damageType);
+            
+            var player = Character as Player;
+            if (player != null) player.State.InDemiZone = false;
 
             target.Update();
             Character.Update();

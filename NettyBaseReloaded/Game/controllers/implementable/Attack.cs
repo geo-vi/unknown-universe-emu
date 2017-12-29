@@ -121,8 +121,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         Attacking = false;
                         return;
                     }
+                    var index = getAmmo.FindIndex(x => x == gameSession.Player.Settings.CurrentAmmo.LootId) - 1;
                     gameSession.Player.Settings.CurrentAmmo =
-                            gameSession.Player.Information.Ammunitions[getAmmo[getAmmo.FindIndex(x => x == gameSession.Player.Settings.CurrentAmmo.LootId) - 1]];
+                            gameSession.Player.Information.Ammunitions[getAmmo[index]];
+                    gameSession.Player.Settings.OldClientShipSettingsCommand.selectedLaser = index;
+                    Packet.Builder.SendSlotbars(gameSession);
                 }
 
                 var pEnemy = enemy as Player;
@@ -179,22 +182,22 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 }
 
 
-                if (gameSession.Player.Controller.CPUs.Active.Any(x => x == player.CPU.Types.AUTO_ROCKLAUNCHER))
-                {
-                    var rocketLauncher = Character.RocketLauncher;
-                    if (rocketLauncher?.Launchers != null)
-                    {
-                        if(rocketLauncher.CurrentLoad != rocketLauncher.GetMaxLoad())
-                        {
-                            rocketLauncher.Reload();
-                        }
-                        else
-                        {
-                            LaunchRocketLauncher();
-                            rocketLauncher.Reload();
-                        }
-                    }
-                }
+                //if (gameSession.Player.Controller.CPUs.Active.Any(x => x == player.CPU.Types.AUTO_ROCKLAUNCHER))
+                //{
+                //    var rocketLauncher = Character.RocketLauncher;
+                //    if (rocketLauncher?.Launchers != null)
+                //    {
+                //        //if(rocketLauncher.CurrentLoad != rocketLauncher.GetMaxLoad())
+                //        //{
+                //        //    rocketLauncher.Reload();
+                //        //}
+                //        //else
+                //        //{
+                //        //    LaunchRocketLauncher();
+                //        //    rocketLauncher.Reload();
+                //        //}
+                //    }
+                //}
 
 
             }
@@ -206,10 +209,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             damage = RandomizeDamage(damage);
             GameClient.SendRangePacket(Character,
                 netty.commands.old_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
-                    Character.Skills.HasFatLasers()), true);
+                    true), true);
             GameClient.SendRangePacket(Character,
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
-                    Character.Skills.HasFatLasers()), true);
+                    true), true);
 
             Controller.Damage?.Laser(enemy, damage, false);
             Controller.Damage?.Laser(enemy, absDamage, true);
@@ -278,7 +281,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 // NOTHING TO SHOOT
                 Packet.Builder.LegacyModule(gameSession,
                     "0|A|STD|No more ammo (todo: find a proper STM message)");
-                Attacking = false;
                 return;
             }
 
@@ -296,8 +298,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (player != null) cooldown.Send(World.StorageManager.GetGameSession(player.Id));
             Character.Cooldowns.Add(cooldown);
 
-            GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|0|0"), true);
-            GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|0|0"), true);
+            GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|1"), true);
+            GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|1"), true);
             Controller.Damage?.Rocket(enemy, damage, false);
 
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;

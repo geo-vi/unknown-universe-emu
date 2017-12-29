@@ -152,7 +152,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public virtual RocketLauncher RocketLauncher { get; set; }
 
-        public Skilltree Skills { get; set; }
+        public virtual Skilltree Skills { get; set; }
 
         public DateTime LastCombatTime;
         public DroneFormation Formation = DroneFormation.STANDARD;
@@ -182,7 +182,7 @@ namespace NettyBaseReloaded.Game.objects.world
             RenderRange = 2000;
             Range = new Range {Character = this};
 
-            Skills = new Skilltree {Character = this};
+            Skills = new Skilltree(this);
 
             LastCombatTime = DateTime.Now;
 
