@@ -47,6 +47,7 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Relog(Spacemap spacemap = null, Vector pos = null)
         {
+            Player.Controller.Attack.Attacking = false;
             spacemap = spacemap ?? Player.Spacemap;
             pos = pos ?? Player.Position;
             InProcessOfReconection = true;
