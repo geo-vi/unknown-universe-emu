@@ -7,12 +7,13 @@ using WebSocketSharp.Server;
 
 namespace NettyBaseReloaded.WebSocks
 {
-    class ShopPacketListener
+    class WebSocketListener
     {
         public static void InitiateListener()
         {
             var wssv = new WebSocketServer(666);
-            wssv.AddWebSocketService<Shop>("/shoplistener");
+            wssv.AddWebSocketService<WebSocketReceiver>("/shoplistener");
+            wssv.AddWebSocketService<WebSocketReceiver>("/external");
             wssv.Start();
         }
     }

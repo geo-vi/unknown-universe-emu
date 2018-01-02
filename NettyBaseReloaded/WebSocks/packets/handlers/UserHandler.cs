@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.WebSocks.packets.handlers
 {
     class UserHandler : IHandler
     {
-        public void execute(string[] packet)
+        public void execute(WebSocketReceiver receiver, string[] packet)
         {
             int userId;
             if (!int.TryParse(packet[2], out userId))

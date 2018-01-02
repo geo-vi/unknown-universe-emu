@@ -69,7 +69,7 @@ namespace NettyBaseReloaded.Main
         private static void InitiateWebSocks()
         {
             WebSocks.packets.Handler.AddHandlers();
-            ShopPacketListener.InitiateListener();
+            WebSocketListener.InitiateListener();
 
             Out.WriteLine("WebSocks - ready to listen!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("WebSocks started.");

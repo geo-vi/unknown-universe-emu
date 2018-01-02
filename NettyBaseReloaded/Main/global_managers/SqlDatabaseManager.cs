@@ -16,6 +16,7 @@ namespace NettyBaseReloaded.Main.global_managers
         public static string UID = "remote";
         public static string PWD = "Fuckuberorbit";
         public static string DB = "do_server_ge1";
+        public static string DB_EXT = "do_system";
 
         public static void Initialize()
         {
@@ -31,6 +32,33 @@ namespace NettyBaseReloaded.Main.global_managers
             return new SqlDatabaseClient(Connection);
         }
 
+        public static SqlDatabaseClient GetGlobalClient()
+        {
+            MySqlConnection Connection = new MySqlConnection(GenerateConnectionString());
+            Connection.Open();
+            return new SqlDatabaseClient(Connection);
+        }
+
+        public static string GenerateGlobalConnectionString()
+        {
+            if (GlobalConnectionString == "")
+            {
+                MySqlConnectionStringBuilder ConnectionStringBuilder = new MySqlConnectionStringBuilder();
+                ConnectionStringBuilder.Server = SERVER;
+                ConnectionStringBuilder.Port = 3306;
+                ConnectionStringBuilder.UserID = UID;
+                ConnectionStringBuilder.Password = PWD;
+                ConnectionStringBuilder.Database = DB_EXT;
+                ConnectionStringBuilder.MinimumPoolSize = 10; //I've been using 10-100, but you can play with them
+                ConnectionStringBuilder.MaximumPoolSize = 100;
+                ConnectionStringBuilder.Pooling = true;
+                GlobalConnectionString = ConnectionStringBuilder.ToString();
+            }
+            return GlobalConnectionString;
+        }
+
+        public static string GlobalConnectionString = "";
+
         public static string GenerateConnectionString()
         {
             if (ConnectionString == "")
@@ -40,7 +68,7 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.Port = 3306;
                 ConnectionStringBuilder.UserID = UID;
                 ConnectionStringBuilder.Password = PWD;
-                ConnectionStringBuilder.Database = DB;
+                ConnectionStringBuilder.Database = "";
                 ConnectionStringBuilder.MinimumPoolSize = 10; //I've been using 10-100, but you can play with them
                 ConnectionStringBuilder.MaximumPoolSize = 100;
                 ConnectionStringBuilder.Pooling = true;
@@ -50,5 +78,6 @@ namespace NettyBaseReloaded.Main.global_managers
         }
 
         public static string ConnectionString = "";
+
     }
 }

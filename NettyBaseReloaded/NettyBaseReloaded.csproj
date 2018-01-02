@@ -418,6 +418,7 @@
     <Compile Include="Game\objects\world\players\extra\boosters\DMGBO2.cs" />
     <Compile Include="Game\objects\world\players\extra\GalaxyGate.cs" />
     <Compile Include="Game\objects\world\characters\Skilltree.cs" />
+    <Compile Include="Game\objects\world\players\Group.cs" />
     <Compile Include="Game\objects\world\players\Information.cs" />
     <Compile Include="Game\objects\world\players\informations\BaseInfo.cs" />
     <Compile Include="Game\objects\world\players\informations\Cargo.cs" />
@@ -517,11 +518,15 @@
     <Compile Include="Unused_Codes\Looping_through_constants.cs" />
     <Compile Include="Unused_Codes\Old_Destroy_Function.unused" />
     <Compile Include="Utils\Random.cs" />
+    <Compile Include="WebSocks\objects\Payload.cs" />
+    <Compile Include="WebSocks\objects\Server.cs" />
+    <Compile Include="WebSocks\objects\User.cs" />
     <Compile Include="WebSocks\packets\Handler.cs" />
+    <Compile Include="WebSocks\packets\handlers\ExternalClientHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\IHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\UserHandler.cs" />
-    <Compile Include="WebSocks\Shop.cs" />
-    <Compile Include="WebSocks\ShopPacketListener.cs" />
+    <Compile Include="WebSocks\WebSocketReceiver.cs" />
+    <Compile Include="WebSocks\WebSocketListener.cs" />
     <None Include="packages.config" />
     <None Include="Unused_Codes\LoginController.cs.unused" />
     <None Include="Unused_Codes\SpawnOnMap.cs.unused" />
@@ -546,6 +551,7 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
       <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
     </Reference>

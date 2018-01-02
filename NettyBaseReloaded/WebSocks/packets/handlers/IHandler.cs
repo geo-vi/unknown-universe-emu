@@ -8,6 +8,6 @@ namespace NettyBaseReloaded.WebSocks.packets.handlers
 {
     interface IHandler
     {
-        void execute(string[] packet);
+        void execute(WebSocketReceiver receiver, string[] packet);
     }
 }

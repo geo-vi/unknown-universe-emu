@@ -9,12 +9,17 @@ using WebSocketSharp.Server;
 
 namespace NettyBaseReloaded.WebSocks
 {
-    class Shop : WebSocketBehavior
+    class WebSocketReceiver : WebSocketBehavior
     {
         protected override void OnMessage(MessageEventArgs e)
         {
             var packetData = e.Data;
-            Handler.Handle(packetData);
+            Handler.Handle(this, packetData);
+        }
+
+        public new void Send(string msg)
+        {
+            base.Send(msg);
         }
     }
 }

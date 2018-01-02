@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Threading;
 using NettyBaseReloaded.Main.objects;
+using NettyBaseReloaded.WebSocks.objects;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Main.global_managers
 {
@@ -57,6 +61,61 @@ namespace NettyBaseReloaded.Main.global_managers
         public void SaveAll()
         {
 
+        }
+
+        public List<Server> GetServers()
+        {
+            List<Server> servers = new List<Server>();
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetGlobalClient())
+                {
+                    var queryTable =
+                        mySqlClient.ExecuteQueryTable(
+                            $"SELECT * FROM server_infos");
+
+                    foreach (DataRow row in queryTable.Rows)
+                    {
+                        var id = Convert.ToInt32(row["ID"].ToString());
+                        var region = row["REGION"].ToString();
+                        var shortcut = row["SHORTCUT"].ToString();
+                        var name = row["NAME"].ToString();
+                        var ip = row["SERVER_IP"].ToString();
+                        var open = Convert.ToBoolean(Convert.ToInt32(row["OPEN"]));
+                        servers.Add(new Server{Id = id, Ip = ip, Name = name, Open = open, Region = region, Shortcut = shortcut});
+                    }
+                    mySqlClient.Dispose();
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return servers;
+        }
+
+        public User GetUser(int id)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow($"SELECT PLAYER_NAME, RANK FROM player_data WHERE PLAYER_ID={id}");
+                    var user = new User
+                    {
+                        Admin = Convert.ToInt32(queryRow["RANK"]) == 21,
+                        Id = id,
+                        Name = queryRow["NAME"].ToString()
+                    };
+                    mySqlClient.Dispose();
+                    return user;
+                }
+            }
+            catch (Exception)
+            {
+                
+            }
+            return null;
         }
     }
 }

@@ -15,14 +15,15 @@ namespace NettyBaseReloaded.WebSocks.packets
         public static void AddHandlers()
         {
             HandledPackets.Add("user", new UserHandler());
+            HandledPackets.Add("ext", new ExternalClientHandler());
         }
 
-        public static void Handle(string packet)
+        public static void Handle(WebSocketReceiver receiver, string packet)
         {
             IHandler handler;
             var finalPacket = packet.Contains("|") ? packet.Split('|') : new[] { packet };
             HandledPackets.TryGetValue(finalPacket[0], out handler);
-            handler?.execute(finalPacket);
+            handler?.execute(receiver, finalPacket);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                 return;
 
             Level = World.StorageManager.Levels.DroneLevels[Level.Id + 1];
-            new UserHandler().execute(new []{"user", "drones", player.Id.ToString()});
+            new UserHandler().execute(null,new []{"user", "drones", player.Id.ToString()});
         }
 
         private DateTime LastUpdate = new DateTime();
