@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using NettyBaseReloaded.Chat.objects.chat.rooms;
 using NettyBaseReloaded.Game.controllers.pet;
@@ -14,6 +15,7 @@ using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.ammo;
 using NettyBaseReloaded.Game.objects.world.players.extra;
 using NettyBaseReloaded.Game.objects.world.players.settings;
+using NettyBaseReloaded.Utils;
 using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
@@ -1076,5 +1078,54 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #endregion
 
+        #region GroupInviteCommand
+
+        public void GroupInviteCommand(GameSession gameSession, GameSession invited)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                //LegacyModule(gameSession, "0|ps|inv|new|" + invited.Player.Id + "|" + Encode.Base64(invited.Player.Name) + "|" + invited.Player.Hangar.Ship.Id + "|" + gameSession.Player.Id + "|" + Encode.Base64(gameSession.Player.Name) + "|" + gameSession.Player.Hangar.Ship.Id);
+                LegacyModule(gameSession, "0|ps|inv|new|" + gameSession.Player.Id + "|" + Encode.Base64(gameSession.Player.Name) + "|" + gameSession.Player.Hangar.Ship.Id + "|" + invited.Player.Id + "|" + Encode.Base64(invited.Player.Name) + "|" + invited.Player.Hangar.Ship.Id);
+            }
+            if (invited.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                LegacyModule(invited, "0|ps|inv|new|" + gameSession.Player.Id + "|" + Encode.Base64(gameSession.Player.Name) + "|" + gameSession.Player.Hangar.Ship.Id + "|" + invited.Player.Id + "|" + Encode.Base64(invited.Player.Name) + "|" + invited.Player.Hangar.Ship.Id);
+            }
+        }
+        #endregion
+
+        #region GroupInitializationCommand
+
+        public void GroupInitializationCommand(GameSession gameSession)
+        {
+            var player = gameSession.Player;
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                StringBuilder builder = new StringBuilder($"0|ps|init|grp|{player.Group.Id}|{player.Group.Members.Count + 1}|{Group.DEFAULT_MAX_GROUP_SIZE}|{Convert.ToInt32(player.Group.LeaderInvitesOnly)}|{gameSession.Player.Group.LootMode}|");
+                Player _player = player.Group.Leader;
+                builder.Append($"{Encode.Base64(_player.Name)}|{_player.Id}|{_player.CurrentHealth}|{_player.MaxHealth}|{_player.CurrentNanoHull}|{_player.MaxNanoHull}|{_player.CurrentShield}|{_player.MaxShield}|{_player.Spacemap.Id}|{_player.Position.X}|{_player.Position.Y}|{_player.Information.Level.Id}|0|{Convert.ToInt32(_player.Controller.Invisible)}|{Convert.ToInt32(_player.Controller.Attack.Attacking)}|{Convert.ToInt32(_player.FactionId)}|{Convert.ToInt32(_player.Selected?.Hangar.Ship.Id)}|{_player.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(_player.Id) == null)}|");
+                foreach (var groupMember in player.Group.Members.Values)
+                {
+                    _player = groupMember;
+                    builder.Append($"{Encode.Base64(_player.Name)}|{_player.Id}|{_player.CurrentHealth}|{_player.MaxHealth}|{_player.CurrentNanoHull}|{_player.MaxNanoHull}|{_player.CurrentShield}|{_player.MaxShield}|{_player.Spacemap.Id}|{_player.Position.X}|{_player.Position.Y}|{_player.Information.Level.Id}|0|{Convert.ToInt32(_player.Controller.Invisible)}|{Convert.ToInt32(_player.Controller.Attack.Attacking)}|{Convert.ToInt32(_player.FactionId)}|{Convert.ToInt32(_player.Selected?.Hangar.Ship.Id)}|{_player.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(_player.Id) == null)}|");
+                }
+                LegacyModule(gameSession,builder.ToString());
+            }
+        }
+
+        #endregion
     }
 }
+

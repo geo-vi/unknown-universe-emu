@@ -94,6 +94,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override Skilltree Skills { get; set; }
 
+        public Group Group { get; set; }
+
+        public Dictionary<int, Group> GroupInvites = new Dictionary<int, Group>();
+
         /*********
          * STATS *
          *********/
@@ -300,6 +304,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Information.Timer();
             State.Tick();
             Hangar.DronesLevelChecker(this);
+            Group?.Tick();
         }
 
         private void InitializeClasses()

@@ -87,9 +87,9 @@ namespace NettyBaseReloaded.Main.global_managers
                     mySqlClient.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e);
             }
             return servers;
         }
@@ -105,7 +105,7 @@ namespace NettyBaseReloaded.Main.global_managers
                     {
                         Admin = Convert.ToInt32(queryRow["RANK"]) == 21,
                         Id = id,
-                        Name = queryRow["NAME"].ToString()
+                        Name = queryRow["PLAYER_NAME"].ToString()
                     };
                     mySqlClient.Dispose();
                     return user;

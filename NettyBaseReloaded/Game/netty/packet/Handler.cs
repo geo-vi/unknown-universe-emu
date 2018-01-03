@@ -53,6 +53,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.GameplaySettingsRequest.ID, new GameplaySettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.LogoutRequest.ID, new LogoutHandler());
             OldClientCommands.Add(commands.old_client.requests.ClientResolutionChangeRequest.ID, new ClientResolutionChangeHandler());
+            LegacyCommands.Add(ClientCommands.GROUPSYSTEM, new GroupSystemHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

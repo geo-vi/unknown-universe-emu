@@ -20,6 +20,7 @@ namespace NettyBaseReloaded.Game.managers
         public List<Ore> OrePrices = new List<Ore>();
         public Levels Levels = new Levels();
         public Dictionary<int, Title> Titles = new Dictionary<int, Title>();
+        public Dictionary<int, Group> Groups = new Dictionary<int, Group>();
 
         public GameSession GetGameSession(int userId)
         {
