@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.controllers.implementable.attack;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
@@ -23,6 +25,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public DateTime LastTimeAttacked = new DateTime();
 
+        public Player MainAttacker { get; set; }
+
+        public ConcurrentDictionary<int, Attacker> Attackers = new ConcurrentDictionary<int, Attacker>();
+
         public Attack(AbstractCharacterController controller) : base(controller)
         {
             Targetable = true;
@@ -33,14 +39,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             if (Attacking)
                 LaserAttack();
+            RefreshAttackers();
         }
 
         public override void Stop()
         {
-            throw new NotImplementedException();
+            Controller.Attack.MainAttacker = null;
+            Controller.Attack.Attackers.Clear();
         }
 
-        public List<Character> GetAttackers()
+        public List<Character> GetActiveAttackers()
         {
             List<Character> attackers = new List<Character>();
             foreach (var entity in Character.Range.Entities.Values)
@@ -199,7 +207,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 //    }
                 //}
 
-
+                UpdateAttacker(enemy, gameSession.Player);
             }
             else if (Character is Pet)
             {
@@ -298,6 +306,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (player != null) cooldown.Send(World.StorageManager.GetGameSession(player.Id));
             Character.Cooldowns.Add(cooldown);
 
+            if (player != null) UpdateAttacker(enemy, player);
+
             GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|1"), true);
             GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|1"), true);
             Controller.Damage?.Rocket(enemy, damage, false);
@@ -371,8 +381,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Controller.Damage?.Rocket(enemy, damage, false, dmgTypes);
 
             Character.RocketLauncher.CurrentLoad = 0;
-            if (player != null) Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
-
+            if (player != null)
+            {
+                Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
+                UpdateAttacker(enemy, player);
+            }
             enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
         }
 
@@ -443,6 +456,55 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void Plasma(Character target)
         {
             
+        }
+
+        public void UpdateAttacker(Character target, Player player)
+        {
+            if (target.Controller.Attack.MainAttacker == null)
+            {
+                target.Controller.Attack.MainAttacker = player;
+            }
+            if (!target.Controller.Attack.Attackers.ContainsKey(Character.Id))
+            {
+                target.Controller.Attack.Attackers.TryAdd(Character.Id, new Attacker(player));
+            }
+            else
+            {
+                target.Controller.Attack.Attackers[player.Id].Refresh();
+            }
+        }
+
+        public void RefreshAttackers()
+        {
+            foreach (var attacker in Attackers)
+            {
+                if (attacker.Value?.Player != null && attacker.Value.LastRefresh.AddSeconds(10) > DateTime.Now)
+                {
+                    //check for fade
+                    if (attacker.Value.FadedToGray && MainAttacker == attacker.Value.Player)
+                    {
+                        Packet.Builder.LegacyModule(attacker.Value.Player.GetGameSession(), $"0|n|USH|{Character.Id}");
+                        attacker.Value.FadedToGray = false;
+                        // fade back to red.
+                    }
+                    if (!attacker.Value.FadedToGray && MainAttacker != attacker.Value.Player)
+                    {
+                        // fade to gray
+                        Packet.Builder.LegacyModule(attacker.Value.Player.GetGameSession(), $"0|n|LSH|{Character.Id}|{Character.Id}");
+                        attacker.Value.FadedToGray = true;
+                    }
+                    continue;
+                }
+                Attacker removedAttacker;
+                Attackers.TryRemove(attacker.Key, out removedAttacker);
+            }
+            if (MainAttacker != null)
+            {
+                if (!Attackers.ContainsKey(MainAttacker.Id))
+                {
+                    MainAttacker = null;
+                }
+            }
         }
     }
 }

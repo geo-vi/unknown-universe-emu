@@ -29,8 +29,13 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Active()
         {
-            // TODO: If npc is throwing rockets etc define here
-            Controller.Attack.Attacking = true;
+            if (Controller.Attack.MainAttacker != null)
+            {
+                Controller.Character.Selected = Controller.Attack.MainAttacker;
+                Controller.Attack.Attacking = true;
+            }
+            if (!Controller.Npc.Hangar.Ship.IsNeutral)
+                Controller.Attack.Attacking = true;
         }
 
         private DateTime LastMovedTime = new DateTime();
@@ -95,7 +100,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
             try
             {
-                if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1 && !Controller.Attack.GetAttackers().Contains(npc.Selected))
+                if (Controller.Npc.Range.Entities.Count(x => x.Value is Player) > 1 && Controller.Attack.MainAttacker == null)
                 {
                     var players = Controller.Npc.Range.Entities.Where(x => x.Value is Player);
                     foreach (var player in players)
@@ -114,7 +119,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
                 if (target?.Position != null && target.Spacemap != null)
                 {
-                    if ((target.State.InDemiZone) || npc.Range.Zones.FirstOrDefault(x => x.Value is DemiZone).Value != null && Controller.Attack.GetAttackers().Count == 0|| target.Controller.Dead)
+                    if ((target.State.InDemiZone) || npc.Range.Zones.FirstOrDefault(x => x.Value is DemiZone).Value != null && Controller.Attack.GetActiveAttackers().Count == 0|| target.Controller.Dead)
                     {
                         Exit();
                         return;

@@ -20,6 +20,7 @@ namespace NettyBaseReloaded.Game.objects
             NORMAL,
             INACTIVITY,
             ADMIN,
+            SOCKET_CLOSED,
             ERROR
         }
 
@@ -33,6 +34,8 @@ namespace NettyBaseReloaded.Game.objects
 
         public bool InProcessOfDisconnection = false;
 
+        public DateTime EstDisconnectionTime = new DateTime();
+
         public GameSession(Player player)
         {
             Player = player;
@@ -43,6 +46,8 @@ namespace NettyBaseReloaded.Game.objects
         {
             if (LastActiveTime >= DateTime.Now.AddMinutes(5))
                 Disconnect(DisconnectionType.INACTIVITY);
+            if (EstDisconnectionTime < DateTime.Now && InProcessOfDisconnection)
+                Disconnect(DisconnectionType.NORMAL);
         }
 
         public void Relog(Spacemap spacemap = null, Vector pos = null)
@@ -63,7 +68,6 @@ namespace NettyBaseReloaded.Game.objects
             Player.Controller.Attack.Attacking = false;
             Player.Save();
             Player.Pet?.Controller.Deactivate();
-            InProcessOfDisconnection = true;
             Player.Controller.Exit();
             Player.Controller.Destruction.Remove();
             
@@ -81,6 +85,12 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Disconnect(DisconnectionType dcType)
         {
+            InProcessOfDisconnection = true;
+            if (dcType == DisconnectionType.SOCKET_CLOSED)
+            {
+                EstDisconnectionTime = DateTime.Now.AddSeconds(30);
+                return;
+            }
             PrepareForDisconnect();
             Player.Log.Write($"User disconnected (Disconnection Type: {dcType})");
             Client.Disconnect();

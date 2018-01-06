@@ -36,7 +36,7 @@ namespace NettyBaseReloaded.Networking
         {
             var gameSess = World.StorageManager.GetGameSession(UserId); // TODO: Fix regular connection drop - player still stays in range even after disconnection
             if (!gameSess.InProcessOfReconection)
-                gameSess.Disconnect(GameSession.DisconnectionType.NORMAL);
+                gameSess.Disconnect(GameSession.DisconnectionType.SOCKET_CLOSED);
         }
 
         private void XSocketOnOnReceive(object sender, EventArgs eventArgs)

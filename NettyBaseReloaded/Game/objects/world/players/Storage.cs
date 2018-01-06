@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.netty.commands;
+using NettyBaseReloaded.Game.netty.handlers;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
@@ -24,6 +26,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public double DistancePassed = 0;
 
+        public Dictionary<int, Group> GroupInvites = new Dictionary<int, Group>();
+
+        public bool BlockedGroupInvites { get; set; }
+
         public Storage(Player player) : base(player)
         {
         }
@@ -32,6 +38,27 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             if (DistancePassed > 1000)
                 World.DatabaseManager.SavePlayerHangar(Player);
+            CleanInvites();
+        }
+
+        private DateTime LastInviteClean = new DateTime();
+        public void CleanInvites()
+        {
+            if (LastInviteClean.AddSeconds(10) < DateTime.Now)
+            {
+                foreach (var invite in GroupInvites.ToList())
+                {
+                    if (World.StorageManager.GetGameSession(invite.Key) == null ||
+                        invite.Value == null)
+                    {
+                        GroupInvites.Remove(invite.Key);
+                        var gHandler = new GroupSystemHandler();
+                        gHandler.Error(Player.GetGameSession(), ServerCommands.GROUPSYSTEM_GROUP_INVITE_SUB_ERROR_CANDIDATE_NOT_AVAILABLE);
+                        gHandler.DeleteInvitation(World.StorageManager.GetGameSession(invite.Key)?.Player, Player);
+                    }
+                }
+                LastInviteClean = DateTime.Now;
+            }
         }
 
         public void LoadPOI(POI poi)

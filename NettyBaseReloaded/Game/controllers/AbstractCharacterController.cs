@@ -101,6 +101,7 @@ namespace NettyBaseReloaded.Game.controllers
             StopController = true;
             Active = false;
             Checkers.Stop();
+            Attack.Stop();
         }
 
     }

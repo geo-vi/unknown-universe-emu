@@ -52,7 +52,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
             {
                 Debug.WriteLine(e.StackTrace);
             }
-
         }
     }
 }

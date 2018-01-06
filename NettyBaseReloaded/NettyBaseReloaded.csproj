@@ -257,6 +257,7 @@
     <Compile Include="Game\netty\commands\old_client\DroneFormationChangeCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\GameplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\HellstormStatusCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\HeroMoveCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\HitpointInfoCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenOptionModule.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenOptionTypeModule.cs" />
@@ -400,6 +401,7 @@
     <Compile Include="Game\objects\world\map\Zone.cs" />
     <Compile Include="Game\objects\world\map\zones\DemiZone.cs" />
     <Compile Include="Game\objects\world\map\zones\NpcZone.cs" />
+    <Compile Include="Game\controllers\implementable\attack\Attacker.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
     <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
@@ -554,6 +556,7 @@
     <Reference Include="System.Runtime" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
       <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
     </Reference>
@@ -574,6 +577,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Client\" />
+    <Folder Include="Game\objects\world\npcs\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

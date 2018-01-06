@@ -231,8 +231,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 Packet.Builder.AttackHitCommand(session, Character, target, totalDamage + totalAbsDamage, (short)damageType);
             
             var player = Character as Player;
-            if (player != null) player.State.InDemiZone = false;
+            if (player != null)
+            {
+                player.State.InDemiZone = false;
 
+                if (target.Controller.Attack.Attackers.ContainsKey(player.Id))
+                {
+                    target.Controller.Attack.Attackers[player.Id].Damage(totalDamage + totalAbsDamage);
+                }
+            }
             target.Update();
             Character.Update();
             if (target.CurrentHealth <= 0 && !target.Controller.Dead)

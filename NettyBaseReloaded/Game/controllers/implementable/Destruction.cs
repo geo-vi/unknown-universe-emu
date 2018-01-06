@@ -5,10 +5,12 @@ using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Networking;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.controllers.implementable.attack;
 using NettyBaseReloaded.Game.objects.world.characters;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
@@ -34,6 +36,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 Vector pos = target.Position;
                 if (target.CurrentHealth <= 0 && !target.Controller.Dead)
                 {
+                    var mainAttacker = target.Controller.Attack.MainAttacker;
+                    var attackers = target.Controller.Attack.Attackers.ToList();
+
                     target.Controller.Destruction.Kill();
                     if (Character is Player)
                     {
@@ -52,7 +57,44 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             }
                             newReward.ParseRewards(player);
                         }
-                        else target.Hangar.Ship.Reward.ParseRewards(player);
+                        else
+                        {
+                            if (attackers.Count > 1)
+                            {
+                                if (target.Hangar.Ship.Id == 80 || mainAttacker.Group != null)
+                                {
+                                    foreach (var _attacker in attackers)
+                                    {
+                                        if (target.Hangar.Ship.Id != 80)
+                                            if (_attacker.Value.Player.Group != mainAttacker.Group)
+                                                continue;// TODO: Add proper mothership/ cubi                                          
+
+                                        Reward reward = new Reward(new Dictionary<RewardType, int>());
+                                        var baseReward = target.Hangar.Ship.Reward;
+
+                                        foreach (var rewardValue in baseReward.Rewards)
+                                        {
+                                            //TODO: Group reward modes & stuff
+                                            var percentageTotalDmgGiven = (double)_attacker.Value.TotalDamage / (double)(target.MaxHealth + target.MaxShield);
+
+                                            if (target.Hangar.Ship.Id != 80 && _attacker.Value.Player == mainAttacker) 
+                                                percentageTotalDmgGiven = 1;
+
+                                            if (rewardValue is int)
+                                            {
+                                                reward.Rewards.Add(Convert.ToInt32((int) rewardValue * percentageTotalDmgGiven));
+                                            }
+                                            else reward.Rewards.Add(rewardValue);
+                                        }
+                                        reward.ParseRewards(_attacker.Value.Player);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                target.Hangar.Ship.Reward.ParseRewards(player);
+                            }
+                        }
                         Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
                     }
                     if (target is Npc)

@@ -85,7 +85,7 @@ namespace NettyBaseReloaded.Networking
 
         public IPEndPoint IpEndPoint { get; private set; }
 
-        private const int BufferSize = 1024 * 3;
+        private const int BufferSize = 1024 * 8;
         #endregion
 
         #region Constructors

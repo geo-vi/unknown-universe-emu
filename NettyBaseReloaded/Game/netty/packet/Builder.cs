@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using NettyBaseReloaded.Chat.objects.chat.rooms;
 using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.netty.commands;
@@ -1102,6 +1104,22 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
         #endregion
 
+        #region GroupDeleteInvitationCommand
+
+        public void GroupDeleteInvitationCommand(GameSession gameSession, Player inviter)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                LegacyModule(gameSession, $"0|ps|inv|del|none|{inviter.Id}");
+                LegacyModule(gameSession, $"0|ps|inv|del|none|{gameSession.Player.Id}|{inviter.Id}");
+            }
+        }
+        #endregion
+
         #region GroupInitializationCommand
 
         public void GroupInitializationCommand(GameSession gameSession)
@@ -1113,18 +1131,56 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                StringBuilder builder = new StringBuilder($"0|ps|init|grp|{player.Group.Id}|{player.Group.Members.Count + 1}|{Group.DEFAULT_MAX_GROUP_SIZE}|{Convert.ToInt32(player.Group.LeaderInvitesOnly)}|{gameSession.Player.Group.LootMode}|");
-                Player _player = player.Group.Leader;
-                builder.Append($"{Encode.Base64(_player.Name)}|{_player.Id}|{_player.CurrentHealth}|{_player.MaxHealth}|{_player.CurrentNanoHull}|{_player.MaxNanoHull}|{_player.CurrentShield}|{_player.MaxShield}|{_player.Spacemap.Id}|{_player.Position.X}|{_player.Position.Y}|{_player.Information.Level.Id}|0|{Convert.ToInt32(_player.Controller.Invisible)}|{Convert.ToInt32(_player.Controller.Attack.Attacking)}|{Convert.ToInt32(_player.FactionId)}|{Convert.ToInt32(_player.Selected?.Hangar.Ship.Id)}|{_player.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(_player.Id) == null)}|");
-                foreach (var groupMember in player.Group.Members.Values)
+                StringBuilder builder =
+                    new StringBuilder(
+                        $"0|ps|init|grp|{player.Group.Id}|{player.Group.Members.Count + 1}|{Group.DEFAULT_MAX_GROUP_SIZE}|{Convert.ToInt32(player.Group.LeaderInvitesOnly)}|{player.Group.LootMode}");
+                var groupLeader = player.Group.Leader;
+
+                builder.Append(
+                    $"|{Encode.Base64(groupLeader.Name)}|{groupLeader.Id}|{groupLeader.CurrentHealth}|{groupLeader.MaxHealth}|{groupLeader.CurrentNanoHull}|{groupLeader.MaxNanoHull}|{groupLeader.CurrentShield}|{groupLeader.MaxShield}|{groupLeader.Spacemap.Id}|{groupLeader.Position.X}|{groupLeader.Position.Y}|{groupLeader.Information.Level.Id}|0|{Convert.ToInt32(groupLeader.Controller.Invisible)}|{Convert.ToInt32(groupLeader.Controller.Attack.Attacking)}|{Convert.ToInt32(groupLeader.FactionId)}|{groupLeader.Selected?.Hangar.Ship.Id}|{groupLeader.Clan.Tag}|{groupLeader.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupLeader.Id) == null)}|");
+
+                foreach (var grpMember in player.Group.Members)
                 {
-                    _player = groupMember;
-                    builder.Append($"{Encode.Base64(_player.Name)}|{_player.Id}|{_player.CurrentHealth}|{_player.MaxHealth}|{_player.CurrentNanoHull}|{_player.MaxNanoHull}|{_player.CurrentShield}|{_player.MaxShield}|{_player.Spacemap.Id}|{_player.Position.X}|{_player.Position.Y}|{_player.Information.Level.Id}|0|{Convert.ToInt32(_player.Controller.Invisible)}|{Convert.ToInt32(_player.Controller.Attack.Attacking)}|{Convert.ToInt32(_player.FactionId)}|{Convert.ToInt32(_player.Selected?.Hangar.Ship.Id)}|{_player.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(_player.Id) == null)}|");
+                    var groupMember = grpMember.Value;
+                    if (groupMember.Id == player.Group.Leader.Id) continue;
+
+                    builder.Append(
+                        $"|{Encode.Base64(groupMember.Name)}|{groupMember.Id}|{groupMember.CurrentHealth}|{groupMember.MaxHealth}|{groupMember.CurrentNanoHull}|{groupMember.MaxNanoHull}|{groupMember.CurrentShield}|{groupMember.MaxShield}|{groupMember.Spacemap.Id}|{groupMember.Position.X}|{groupMember.Position.Y}|{groupMember.Information.Level.Id}|0|{Convert.ToInt32(groupMember.Controller.Invisible)}|{Convert.ToInt32(groupMember.Controller.Attack.Attacking)}|{Convert.ToInt32(groupMember.FactionId)}|{groupMember.Selected?.Hangar.Ship.Id}|{groupMember.Clan.Tag}|{groupMember.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupMember.Id) == null)}|");
                 }
-                LegacyModule(gameSession,builder.ToString());
+                LegacyModule(gameSession, builder.ToString());
             }
         }
 
+        #endregion
+
+        #region GroupUpdateCommand
+        public void GroupUpdateCommand(GameSession gameSession, Player updatedPlayer, XElement xml)
+        {
+            var player = gameSession.Player;
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                LegacyModule(gameSession, "0|ps|upd|" + updatedPlayer.Id + "|" + xml.ToString(SaveOptions.None));
+            }
+        }
+        #endregion
+
+        #region HeroMoveCommand
+
+        public void HeroMoveCommand(GameSession gameSession, Vector destination)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.HeroMoveCommand.write(destination.X, destination.Y).Bytes);
+            }
+        }
         #endregion
     }
 }

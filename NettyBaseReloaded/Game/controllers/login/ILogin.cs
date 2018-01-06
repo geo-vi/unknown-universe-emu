@@ -73,6 +73,8 @@ namespace NettyBaseReloaded.Game.controllers.login
             Packet.Builder.LegacyModule(GameSession
                 , "0|A|CC|" + GameSession.Player.CurrentConfig);
 
+            if (GameSession.Player.Group != null)
+                Packet.Builder.GroupInitializationCommand(GameSession);
         }
     } 
 }

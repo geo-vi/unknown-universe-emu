@@ -96,8 +96,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Group Group { get; set; }
 
-        public Dictionary<int, Group> GroupInvites = new Dictionary<int, Group>();
-
         /*********
          * STATS *
          *********/

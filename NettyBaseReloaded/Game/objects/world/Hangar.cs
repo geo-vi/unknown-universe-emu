@@ -50,7 +50,7 @@ namespace NettyBaseReloaded.Game.objects.world
             foreach (var drone in Drones)
             {
                 if (!World.StorageManager.Levels.DroneLevels.ContainsKey(drone.Level.Id + 1))
-                    return;
+                    continue;
 
                 foreach (var level in World.StorageManager.Levels.DroneLevels)
                 {
