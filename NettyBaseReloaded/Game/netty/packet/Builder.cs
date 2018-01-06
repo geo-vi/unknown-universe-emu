@@ -1075,5 +1075,37 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #endregion
 
+        #region KillScreenCommand
+
+        public void KillScreenCommand(GameSession gameSession, Character killer)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                var options = new List<netty.commands.old_client.KillScreenOptionModule>();
+
+                var optionModule = new netty.commands.old_client.KillScreenOptionModule(
+                    new netty.commands.old_client.KillScreenOptionTypeModule(netty.commands.old_client.KillScreenOptionTypeModule.BASIC_REPAIR),
+                    new netty.commands.old_client.PriceModule(netty.commands.old_client.PriceModule.URIDIUM, 0),
+                    true,
+                    0,
+                    new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
+                    new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
+                    new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
+                    new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()));
+
+                options.Add(optionModule);                
+
+                if (killer != null)
+                    gameSession.Client.Send(commands.old_client.KillScreenPostCommand.write(killer.Name, "http://ge1.univ3rse.com/internalHangar", "MISC", new netty.commands.old_client.DestructionTypeModule(netty.commands.old_client.DestructionTypeModule.PLAYER), options).Bytes);
+                else gameSession.Client.Send(commands.old_client.KillScreenPostCommand.write("", "http://ge1.univ3rse.com/internalHangar", "MISC", new netty.commands.old_client.DestructionTypeModule(netty.commands.old_client.DestructionTypeModule.PLAYER), options).Bytes);
+            }
+        }
+
+        #endregion
+
     }
 }
