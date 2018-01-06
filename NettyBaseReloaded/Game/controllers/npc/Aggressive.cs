@@ -13,6 +13,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public Aggressive(NpcController controller)
         {
             Controller = controller;
+            Controller.Checkers.VisibilityRange = -1;
         }
 
         public void Tick()

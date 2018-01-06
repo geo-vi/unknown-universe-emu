@@ -54,6 +54,8 @@ namespace NettyBaseReloaded.Game.objects.world
         //Used to store all the entities of the map
         public ConcurrentDictionary<int, Character> Entities = new ConcurrentDictionary<int, Character>();
 
+        public Dictionary<int, Spacemap> VirtualWorlds = new Dictionary<int, Spacemap>();
+
         public Spacemap(int id, string name, Faction faction, bool pvp, bool starter, int level, List<BaseNpc> npcs, List<PortalBase> portals)
         {
             Id = id;
@@ -468,6 +470,18 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             if (POIs.ContainsKey(poi.Id)) return;
             POIs.Add(poi.Id, poi);
+        }
+
+        #endregion
+
+        #region Virtual Worlds
+
+        public int AddVirtualWorld(out Spacemap map)
+        {
+            map = new Spacemap(Id, Name, Faction, Pvp, Starter, Level, new List<BaseNpc>(), new List<PortalBase>());
+            var id = VirtualWorlds.FirstOrDefault(x => x.Value == null).Key;
+            VirtualWorlds.Add(id, map);
+            return id;
         }
 
         #endregion

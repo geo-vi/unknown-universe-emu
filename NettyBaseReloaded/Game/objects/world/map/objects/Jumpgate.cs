@@ -34,6 +34,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public int DestinationMapId { get; set; }
 
+        public int DestinationVirtualWorldId { get; set; }
+
         public bool Visible { get; set; }
         
         public int FactionScrap { get; set; }

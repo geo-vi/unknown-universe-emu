@@ -86,7 +86,20 @@ namespace NettyBaseReloaded.Game.objects.world
          * POSITION *
          ************/
         public Vector Position { get; set; }
-        public Spacemap Spacemap { get; set; }
+
+        public int VirtualWorldId { get; set; }
+
+        private Spacemap _baseSpacemap;
+        public Spacemap Spacemap
+        {
+            get => GetVirtualWorld() ?? _baseSpacemap;
+            set
+            {
+                if (VirtualWorldId == 0)
+                    _baseSpacemap = value;
+                else Spacemap.VirtualWorlds[VirtualWorldId] = value;
+            }
+        }
 
         /*********
          * STATS *
@@ -145,8 +158,6 @@ namespace NettyBaseReloaded.Game.objects.world
          *********/
         public int RenderRange { get; set; }
         public Character Selected { get; set; }
-
-        public int VirtualWorldId { get; set; }
 
         public Range Range { get; }
 
@@ -346,6 +357,12 @@ namespace NettyBaseReloaded.Game.objects.world
             Moving = false;
 
             MovementController.Move(this, MovementController.ActualPosition(this));
+        }
+
+        private Spacemap GetVirtualWorld()
+        {
+            if (VirtualWorldId == 0) return Spacemap;
+            return Spacemap.VirtualWorlds.ContainsKey(VirtualWorldId) ? Spacemap.VirtualWorlds[VirtualWorldId] : null;
         }
     }
 }

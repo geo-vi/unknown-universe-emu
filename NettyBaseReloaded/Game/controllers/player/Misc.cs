@@ -142,6 +142,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             private PlayerController baseController;
 
+            private int TargetVirtualWorldId { get; set; }
             private Spacemap TargetMap { get; set; }
             private Vector TargetPosition { get; set; }
 
@@ -150,10 +151,11 @@ namespace NettyBaseReloaded.Game.controllers.player
                 this.baseController = baseController;
             }
 
-            public void Initiate(int targetMapId, Vector targetPos, int portalId = -1)
+            public void Initiate(int targetVW, int targetMapId, Vector targetPos, int portalId = -1)
             {
                 if (baseController.Dead || baseController.StopController) return;
 
+                TargetVirtualWorldId = targetVW;
                 TargetMap = World.StorageManager.Spacemaps[targetMapId];
                 TargetPosition = targetPos;
 
@@ -193,6 +195,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
                 if (DateTime.Now > JumpEndTime)
                 {
+                    baseController.Player.VirtualWorldId = TargetVirtualWorldId;
                     baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition);
                     Reset();
                 }
@@ -212,9 +215,9 @@ namespace NettyBaseReloaded.Game.controllers.player
             }
         }
 
-        public void Jump(int targetMapId, Vector targetPos, int portalId = -1)
+        public void Jump(int targetMapId, Vector targetPos, int targetVW = 0, int portalId = -1)
         {
-            JClass.Initiate(targetMapId, targetPos, portalId);
+            JClass.Initiate(targetVW, targetMapId, targetPos, portalId);
         }
 
         public void ForceChangeMap(Spacemap targetMap, Vector targetPosition)
