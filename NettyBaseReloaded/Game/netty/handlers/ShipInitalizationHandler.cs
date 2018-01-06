@@ -18,25 +18,32 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
         public ShipInitalizationHandler(GameClient client, int userId, string sessionId, bool newClient = false)
         {
-            Console.WriteLine("Connection Received, [USERID: " + userId + ", SESSIONID: " + sessionId +
-                                               "]");
+            //Console.WriteLine("Connection Received, [USERID: " + userId + ", SESSIONID: " + sessionId +
+            //                                   "]");
 
             client.UserId = userId;
 
             var tempSession = World.StorageManager.GetGameSession(userId);
-            if (tempSession != null && tempSession.InProcessOfReconection)
+            if (tempSession != null && (tempSession.InProcessOfReconection || tempSession.InProcessOfDisconnection))
             {
+                GameSession = tempSession;
                 Player = tempSession.Player;
-                Console.WriteLine("User relogged successfully");
-                World.StorageManager.GameSessions.Remove(userId);
+                tempSession.InProcessOfReconection = false;
+                tempSession.InProcessOfDisconnection = false;
+                tempSession.LastActiveTime = DateTime.Now;
+                //Console.WriteLine("User relogged successfully");
             }
 
             Player = GetAccount(userId);
-            if (Player != null) GameSession = CreateSession(client, Player);
-            else
+
+            if (GameSession == null)
             {
-                Console.WriteLine("Failed loading user ship / ShipInitializationHandler ERROR");
-                return;
+                if (Player != null) GameSession = CreateSession(client, Player);
+                else
+                {
+                    Console.WriteLine("Failed loading user ship / ShipInitializationHandler ERROR");
+                    return;
+                }
             }
 
             Player.Log.Write($"Session received: {sessionId}->Database session: {Player.SessionId}");
@@ -58,7 +65,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
         private void ExecuteWrongSession()
         {
-            Console.WriteLine($"{GameSession.Client.IPAddress} tried breaching into {GameSession.Client.UserId}'s account");
+            //Console.WriteLine($"{GameSession.Client.IPAddress} tried breaching into {GameSession.Client.UserId}'s account");
             Player.Log.Write($"Breach attempt by {GameSession.Client.IPAddress}");
         }
 
