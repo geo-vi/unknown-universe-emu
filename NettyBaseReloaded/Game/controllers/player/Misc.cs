@@ -215,7 +215,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             }
         }
 
-        public void Jump(int targetMapId, Vector targetPos, int targetVW = 0, int portalId = -1)
+        public void Jump(int targetMapId, Vector targetPos, int portalId = -1, int targetVW = 0)
         {
             JClass.Initiate(targetVW, targetMapId, targetPos, portalId);
         }

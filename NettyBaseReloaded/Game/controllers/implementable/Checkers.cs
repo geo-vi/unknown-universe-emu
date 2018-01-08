@@ -15,8 +15,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 {
     class Checkers : IAbstractCharacter, ITick
     {
+        public int VisibilityRange { get; set; }
+
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
+            VisibilityRange = 2000;
             Character.Spacemap.EntityAdded += (s, e) => AddedToSpacemap(e);
             Character.Spacemap.EntityRemoved += (s, e) => RemovedFromSpacemap(e);
         }
@@ -47,7 +50,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Character == null || !Controller.Active || Controller.Dead)
                 return;
 
-            if (args.Character.InRange(Character))
+            if (args.Character.InRange(Character, VisibilityRange))
                 AddCharacter(Character, args.Character);
         }
 
@@ -127,7 +130,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
-            if (Character.InRange(entity))
+            if (Character.InRange(entity, VisibilityRange))
             {
                 if (!Character.Range.Entities.ContainsKey(entity.Id))
                     AddCharacter(Character, entity);
@@ -227,9 +230,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             catch (Exception e)
             {
                 if (Character?.Position == null || Character?.Spacemap == null) return;
-                new ExceptionLog("checkers", "Object Checker", e);
+                //new ExceptionLog("checkers", "Object Checker", e);
                 //Error in checkers->Disconnecting player
-                World.StorageManager.GetGameSession(Character.Id)?.Disconnect(GameSession.DisconnectionType.ERROR);
+               // World.StorageManager.GetGameSession(Character.Id)?.Disconnect(GameSession.DisconnectionType.ERROR);
             }
         }
         #endregion

@@ -48,6 +48,7 @@ namespace NettyBaseReloaded.Game
                     //map.Value.CreatePirateStation(new Vector(2000, 5650));
                     //map.Value.CreateAsteroid("Metroid", new Vector(5000, 2500));
                     //map.Value.CreatePOI(new POI("Poi1", objects.world.map.pois.Types.NO_ACCESS, Designs.ASTEROIDS_MIXED_WITH_SCRAP, Shapes.RECTANGLE, new List<Vector> { new Vector(7680, 9216), new Vector(8192, 9216), new Vector(8192, 9728), new Vector(7680, 9728) }));
+                    //map.Value.CreateLoW(new Vector(4000,4000));
                 }
                 if (map.Key == 20)
                 {
@@ -70,7 +71,7 @@ namespace NettyBaseReloaded.Game
                 {
                     for (int i = 0; i <= BonusBox.SPAWN_COUNT; i++)
                     {
-                        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(1000, 19800, 1000, 11800));
+                        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value, 1000, 19800, 1000, 11800));
                     }
                 }
             }

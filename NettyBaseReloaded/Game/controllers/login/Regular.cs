@@ -34,7 +34,11 @@ namespace NettyBaseReloaded.Game.controllers.login
             {
                 player.Spacemap.AddEntity(player);
             }
-            else { Out.WriteLine("Player #" + player.Id + " already exists on the Spacemap (LoginController)", "ERROR", ConsoleColor.Red); }
+            else
+            {
+                player.Range.Clear();
+                player.Storage.Clean();
+            }
 
             Packet.Builder.ShipInitializationCommand(GameSession);
             Packet.Builder.DronesCommand(GameSession, GameSession.Player);

@@ -390,6 +390,7 @@
     <Compile Include="Game\objects\world\map\objects\assets\Asteroid.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\Module.cs" />
     <Compile Include="Game\objects\world\map\objects\IClickable.cs" />
+    <Compile Include="Game\objects\world\map\objects\jumpgates\LoWGate.cs" />
     <Compile Include="Game\objects\world\map\objects\PirateStation.cs" />
     <Compile Include="Game\objects\world\map\objects\StationModule.cs" />
     <Compile Include="Game\objects\world\map\Ore.cs" />

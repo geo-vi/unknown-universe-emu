@@ -20,6 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using NettyBaseReloaded.Game.objects.world.map;
+using NettyBaseReloaded.Game.objects.world.map.pois;
+using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
 
 namespace NettyBaseReloaded.Game.managers
 {
@@ -153,8 +156,12 @@ namespace NettyBaseReloaded.Game.managers
                     }
                 }
 
-                // Add 0-1 (prevents invalid mapId)
                 World.StorageManager.Spacemaps.Add(255, new Spacemap(255, "0-1", Faction.NONE, false, true, 0, null, null));
+                World.StorageManager.Spacemaps.Add(200, new Spacemap(200, "Lord of War", Faction.NONE, false, true, 0, new List<BaseNpc>(), new List<PortalBase>()) {POIs = new Dictionary<string, POI>
+                {
+                    {"border_1", new POI("border_1", Types.NO_ACCESS, Designs.ASTEROIDS, Shapes.RECTANGLE, new List<Vector>{new Vector(0,0), new Vector(-1, 0), new Vector(-1, 12800), new Vector(0, 12800)})},
+                    {"border_1", new POI("border_1", Types.NO_ACCESS, Designs.ASTEROIDS, Shapes.RECTANGLE, new List<Vector>{new Vector(0,0), new Vector(-1, 0), new Vector(-1, 12800), new Vector(0, 12800)})}
+                }});
 
                 Log.Write($"Loaded successfully {World.StorageManager.Spacemaps.Count} ships from DB.");
             }

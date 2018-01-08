@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world.map.objects.jumpgates;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
 namespace NettyBaseReloaded.Game.objects.world
@@ -34,7 +35,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public Faction Faction { get; }
         public bool Pvp { get; }
         public bool Starter { get; }
-        public string Limits { get; }
+        public Vector[] Limits { get; private set; }
         public int Level { get; }
         public bool Disabled { get; set; }
 
@@ -54,7 +55,10 @@ namespace NettyBaseReloaded.Game.objects.world
         //Used to store all the entities of the map
         public ConcurrentDictionary<int, Character> Entities = new ConcurrentDictionary<int, Character>();
 
-        public Dictionary<int, Spacemap> VirtualWorlds = new Dictionary<int, Spacemap>();
+        public Dictionary<int, Spacemap> VirtualWorlds = new Dictionary<int, Spacemap>()
+        {
+            {0, null} // Adding virtual worlds after id = 0 since it might cause bugs
+        };
 
         public Spacemap(int id, string name, Faction faction, bool pvp, bool starter, int level, List<BaseNpc> npcs, List<PortalBase> portals)
         {
@@ -63,12 +67,21 @@ namespace NettyBaseReloaded.Game.objects.world
             Faction = faction;
             Pvp = isPvp();
             Starter = starter;
-            Limits = "208x128";
+            ParseLimits();
             Level = level;
             PortalBase = portals;
             Npcs = npcs;
 
             Global.TickManager.Add(this);
+        }
+
+        private void ParseLimits()
+        {
+            Limits = new Vector[]{null, null};
+            Limits[0] = new Vector(0, 0);
+            if (Id == 16 || Id == 29)
+                Limits[1] = new Vector(41800, 26000);
+            else Limits[1] = new Vector(20800, 12800);
         }
 
         private bool isPvp()
@@ -106,7 +119,7 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 return position.X < 0 || position.X > 41800 || position.Y < 0 || position.Y > 26000;
             }
-            return position.X < 0 || position.X > 20900 || position.Y < 0 || position.Y > 13000;
+            return position.X < 0 || position.X > 20800 || position.Y < 0 || position.Y > 12800;
         }
 
         private DateTime LastTimeTickedPlayers = new DateTime();
@@ -266,8 +279,8 @@ namespace NettyBaseReloaded.Game.objects.world
                 var ship = World.StorageManager.Ships[baseNpc.NpcId];
                 var position = new Vector(0,0);
                 if (zone != null)
-                    position = Vector.Random(zone.TopLeft.X, zone.BottomRight.X, zone.TopLeft.Y, zone.BottomRight.Y);
-                else position = Vector.Random(1000, 20000, 1000, 12000);
+                    position = Vector.Random(this, zone.TopLeft.X, zone.BottomRight.X, zone.TopLeft.Y, zone.BottomRight.Y);
+                else position = Vector.Random(this, 1000, 20000, 1000, 12000);
                 CreateNpc(new Npc(id, ship.Name,
                     new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                         new Dictionary<string, Item>()),
@@ -279,7 +292,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateNpc(Ship ship)
         {
             var id = GetNextAvailableId();
-            var position = Vector.Random(1000, 20000, 1000, 12000);
+            var position = Vector.Random(this, 1000, 20000, 1000, 12000);
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
@@ -291,7 +304,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextAvailableId();
             ship.AI = (int)ai;
-            var position = Vector.Random(1000, 20000, 1000, 12000);
+            var position = Vector.Random(this, 1000, 20000, 1000, 12000);
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
@@ -369,6 +382,15 @@ namespace NettyBaseReloaded.Game.objects.world
             if (!Pvp)
                 Zones.Add(zoneId, new DemiZone(zoneId, new Vector(x - 500, y + 500), new Vector(x + 500, y - 500)));
             World.Log.Write("Created Portal on mapId " + Id);
+        }
+
+        public void CreateLoW(Vector pos)
+        {
+            var id = GetNextObjectId();
+            AddObject(new LoWGate(id, pos));
+
+            var zoneId = GetNextZoneId();
+                Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500)));
         }
 
         public void CreateStation(Faction faction, Vector position)
@@ -479,7 +501,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public int AddVirtualWorld(out Spacemap map)
         {
             map = new Spacemap(Id, Name, Faction, Pvp, Starter, Level, new List<BaseNpc>(), new List<PortalBase>());
-            var id = VirtualWorlds.FirstOrDefault(x => x.Value == null).Key;
+            var id = VirtualWorlds.FirstOrDefault(x => x.Value == null && x.Key != 0).Key;
             VirtualWorlds.Add(id, map);
             return id;
         }

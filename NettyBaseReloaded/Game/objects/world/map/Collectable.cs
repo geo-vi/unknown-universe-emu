@@ -52,7 +52,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         protected void Respawn()
         {
-            var newPos = Vector.Random(1000, 19800, 1000, 11800);
+            var newPos = Vector.Random(Spacemap, 1000, 19800, 1000, 11800);
             Position = newPos;
             Disposed = false;
             Spacemap.AddObject(this);

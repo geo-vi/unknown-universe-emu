@@ -92,7 +92,13 @@ namespace NettyBaseReloaded.Game.objects.world
         private Spacemap _baseSpacemap;
         public Spacemap Spacemap
         {
-            get => GetVirtualWorld() ?? _baseSpacemap;
+            get
+            {
+                var spacemap = _baseSpacemap;
+                if (VirtualWorldId != 0 && spacemap.VirtualWorlds.ContainsKey(VirtualWorldId))
+                    return spacemap.VirtualWorlds[VirtualWorldId];
+                return spacemap;
+            }
             set
             {
                 if (VirtualWorldId == 0)
@@ -357,12 +363,6 @@ namespace NettyBaseReloaded.Game.objects.world
             Moving = false;
 
             MovementController.Move(this, MovementController.ActualPosition(this));
-        }
-
-        private Spacemap GetVirtualWorld()
-        {
-            if (VirtualWorldId == 0) return Spacemap;
-            return Spacemap.VirtualWorlds.ContainsKey(VirtualWorldId) ? Spacemap.VirtualWorlds[VirtualWorldId] : null;
         }
     }
 }

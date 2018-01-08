@@ -52,7 +52,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 if (LastMovedTime.AddSeconds(45) <= DateTime.Now || keyValuePairs.Any())
                 {
                     newDest:
-                    var dest = Vector.Random(0, 20800, 0, 12800);
+                    var dest = Vector.Random(Controller.Npc.Spacemap);
                     if (keyValuePairs.Count(x => x.Value?.Position.DistanceTo(dest) < 1000) > 0)
                     {
                         goto newDest;
@@ -127,7 +127,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
                     if (npc.CurrentHealth < npc.MaxHealth * 0.1)
                     {
-                        MovementController.Move(npc, Vector.Random(0, 20800, 0, 12800));
+                        MovementController.Move(npc, Vector.Random(npc.Spacemap, 0, 20800, 0, 12800));
                     }
                     else if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
                         MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
@@ -149,7 +149,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             var selectedPlayer = (Player)Controller.Npc.Selected;
             selectedPlayer?.AttachedNpcs.Remove(Controller.Npc);
             Controller.Npc.Selected = null;
-            MovementController.Move(Controller.Npc, Vector.Random(0, 20800, 0, 12800));
+            MovementController.Move(Controller.Npc, Vector.Random(Controller.Npc.Spacemap));
         }
     }
 }

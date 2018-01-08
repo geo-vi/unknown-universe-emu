@@ -59,22 +59,14 @@ namespace NettyBaseReloaded.Game.objects.world
             return character1;
         }
 
-        public static Vector Random(int minX, int maxX, int minY, int maxY, string mapLimits = "208x128")
+        public static Vector Random(Spacemap map, int minX = 0, int maxX = 0, int minY = 0, int maxY = 0)
         {
-            var xLimit = int.Parse(mapLimits.Split('x')[0]);
-            if (minX < 0)
-                minX = 0;
-            if (maxX > xLimit * 100)
-                maxX = xLimit * 100;
-
-            var yLimit = int.Parse(mapLimits.Split('x')[1]);
-            if (minY < 0)
-                minY = 0;
-            if (maxY > yLimit * 100)
-                maxY = yLimit * 100;
+            if (minX == 0) minX = map.Limits[0].X;
+            if (minY == 0) minY = map.Limits[0].Y;
+            if (maxX == 0) maxX = map.Limits[1].X;
+            if (maxY == 0) maxY = map.Limits[1].Y;
 
             var posX = NettyBaseReloaded.Random.Next(minX, maxX);
-
             var posY = NettyBaseReloaded.Random.Next(minY, maxY);
             return new Vector(posX, posY);
         }

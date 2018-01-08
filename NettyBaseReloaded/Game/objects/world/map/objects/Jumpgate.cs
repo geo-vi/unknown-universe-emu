@@ -46,6 +46,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public bool Working { get; set; }
 
+        public Player Owner { get; set; }
+
         public Jumpgate(int id, Faction faction, Vector pos, Vector destinationPos, int destinationMapId, bool visible, int factionScrap, int requiredLevel, int gfx) : base(id, pos)
         {
             Faction = faction;
