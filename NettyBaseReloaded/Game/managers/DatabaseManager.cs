@@ -156,12 +156,16 @@ namespace NettyBaseReloaded.Game.managers
                     }
                 }
 
-                World.StorageManager.Spacemaps.Add(255, new Spacemap(255, "0-1", Faction.NONE, false, true, 0, null, null));
                 World.StorageManager.Spacemaps.Add(200, new Spacemap(200, "Lord of War", Faction.NONE, false, true, 0, new List<BaseNpc>(), new List<PortalBase>()) {POIs = new Dictionary<string, POI>
                 {
-                    {"border_1", new POI("border_1", Types.NO_ACCESS, Designs.ASTEROIDS, Shapes.RECTANGLE, new List<Vector>{new Vector(0,0), new Vector(-1, 0), new Vector(-1, 12800), new Vector(0, 12800)})},
-                    {"border_1", new POI("border_1", Types.NO_ACCESS, Designs.ASTEROIDS, Shapes.RECTANGLE, new List<Vector>{new Vector(0,0), new Vector(-1, 0), new Vector(-1, 12800), new Vector(0, 12800)})}
-                }});
+                    {"border1", new POI("border1", Types.NO_ACCESS, Designs.SIMPLE, Shapes.RECTANGLE, new List<Vector>{new Vector(0,0), new Vector(-1, 0), new Vector(-1, 12800), new Vector(0, 12800)})},
+                    {"border2", new POI("border2", Types.NO_ACCESS, Designs.SIMPLE, Shapes.RECTANGLE, new List<Vector>{new Vector(0,-1), new Vector(20800, -1), new Vector(0, 0), new Vector(20800, 0)})},
+                    {"wall1", new POI("wall1", Types.NO_ACCESS, Designs.SIMPLE, Shapes.RECTANGLE, new List<Vector>{new Vector(3600, 0), new Vector(5000, 0), new Vector(5000, 3000), new Vector(3600, 3000) })},
+                    {"rightmidwall1", new POI("rightmidwall1", Types.NO_ACCESS, Designs.SIMPLE, Shapes.RECTANGLE, new List<Vector>{new Vector(16000, 3000), new Vector(17200, 3000), new Vector(17200, 5000), new Vector(16000, 5000) })},
+                    {"midbot", new POI("midbot", Types.NO_ACCESS, Designs.SIMPLE, Shapes.RECTANGLE, new List<Vector>{new Vector(10400,12700), new Vector(12100, 12700), new Vector(12100, 7400), new Vector(10400, 7400) })},
+                }
+                });
+                World.StorageManager.Spacemaps.Add(255, new Spacemap(255, "0-1", Faction.NONE, false, true, 0, null, null));
 
                 Log.Write($"Loaded successfully {World.StorageManager.Spacemaps.Count} ships from DB.");
             }

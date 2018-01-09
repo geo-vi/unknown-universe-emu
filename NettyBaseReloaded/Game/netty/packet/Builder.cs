@@ -13,6 +13,7 @@ using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Game.objects.world.map.objects.stations;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.ammo;
 using NettyBaseReloaded.Game.objects.world.players.extra;
@@ -458,14 +459,14 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.AssetCreateCommand.write(new commands.new_client.AssetTypeModule(asset.Type), asset.Name, asset.FactionId, asset.ClanTag, asset.AssetId, asset.DesignId,
-                asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.ClanId, asset.Invisible, asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar, true,
+                gameSession.Client.Send(commands.new_client.AssetCreateCommand.write(new commands.new_client.AssetTypeModule((short)asset.Type), asset.Name, (int)asset.Faction, asset.Clan.Tag, asset.Id, asset.DesignId,
+                asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.Clan.Id, asset.Invisible, asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar, true,
                     new commands.new_client.ClanRelationModule(0), new List<commands.new_client.VisualModifierCommand>()).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AssetCreateCommand.write(new commands.old_client.AssetTypeModule(asset.Type), asset.Name, asset.FactionId, asset.ClanTag, asset.AssetId, asset.DesignId,
-                    asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.ClanId, asset.Invisible, asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar,
+                gameSession.Client.Send(commands.old_client.AssetCreateCommand.write(new commands.old_client.AssetTypeModule((short)asset.Type), asset.Name, (int)asset.Faction, asset.Clan.Tag, asset.Id, asset.DesignId,
+                    asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.Clan.Id, asset.Invisible, asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar,
                     new commands.old_client.ClanRelationModule(0), new List<commands.old_client.VisualModifierCommand>()).Bytes);
             }
         }
@@ -480,11 +481,19 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 6, 1500, station.Position.X, station.Position.Y));
                 }
+                else if (station is HealthStation)
+                {
+                    gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 4, 1500, station.Position.X, station.Position.Y));
+                }
+                else if (station is ReadyRelayStation)
+                {
+                    gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 5, 1500, station.Position.X, station.Position.Y));
+                }
                 else
                 {
                     foreach (var module in station.Modules)
                     {
-                        AssetCreateCommand(gameSession, new Asset(module.Id, "", module.Type, (int)station.Faction, "", module.Id, 0, 0, module.Position, 0, false, false, false));
+                        AssetCreateCommand(gameSession, new Asset(module.Id, "", module.Type, station.Faction, Global.StorageManager.Clans[0], 0, 0, module.Position, false, false, false));
                     }
                 }
             }

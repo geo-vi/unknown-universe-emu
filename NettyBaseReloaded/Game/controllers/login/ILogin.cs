@@ -8,6 +8,8 @@ using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
+using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Game.objects.world.map.objects.stations;
 
 namespace NettyBaseReloaded.Game.controllers.login
 {

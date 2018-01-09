@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty.commands.new_client;
+using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects
 {
     class StationModule : Object, IClickable
     {
-        public short Type { get; private set; }
+        public AssetTypes Type { get; private set; }
 
-        public StationModule(int id, Vector pos, short type) : base(id, pos)
+        public StationModule(int id, Vector pos, AssetTypes type) : base(id, pos)
         {
             Type = type;
         }
@@ -23,7 +24,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
         {
             switch (Type)
             {
-                case AssetTypeModule.REPAIR_DOCK:
+                case AssetTypes.REPAIR_DOCK:
                     character.Controller.Damage?.Area(character.MaxHealth, Id);
                     break;
             }

@@ -18,6 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.map.objects.jumpgates;
+using NettyBaseReloaded.Game.objects.world.map.objects.stations;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
 namespace NettyBaseReloaded.Game.objects.world
@@ -403,10 +404,10 @@ namespace NettyBaseReloaded.Game.objects.world
                 AddObject(id);
             }
 
-            var hqModule = new StationModule(assignedStationIds[0], position, AssetTypeModule.HQ);
-            var hangarModule = new StationModule(assignedStationIds[1], Vector.FromVector(position, 800, 0), AssetTypeModule.HANGAR);
-            var resourceModule = new StationModule(assignedStationIds[2], Vector.FromVector(position, 0, 800), AssetTypeModule.ORE_TRADE);
-            var repairModule = new StationModule(assignedStationIds[3], Vector.FromVector(position, 0, -800), AssetTypeModule.REPAIR_DOCK);
+            var hqModule = new StationModule(assignedStationIds[0], position, AssetTypes.HQ);
+            var hangarModule = new StationModule(assignedStationIds[1], Vector.FromVector(position, 800, 0), AssetTypes.HANGAR);
+            var resourceModule = new StationModule(assignedStationIds[2], Vector.FromVector(position, 0, 800), AssetTypes.ORE_TRADE);
+            var repairModule = new StationModule(assignedStationIds[3], Vector.FromVector(position, 0, -800), AssetTypes.REPAIR_DOCK);
 
             Objects[assignedStationIds[0]] = new Station(assignedStationIds[0], new List<StationModule>{hqModule, hangarModule, resourceModule, repairModule}, faction, position);
             Objects[assignedStationIds[1]] = hangarModule;
@@ -423,6 +424,27 @@ namespace NettyBaseReloaded.Game.objects.world
             var id = GetNextObjectId();
             AddObject(new PirateStation(id, vector));
             World.Log.Write("Created Pirate Station on mapId " + Id);
+        }
+
+        public void CreateHealthStation(Vector vector)
+        {
+            var id = GetNextObjectId();
+            AddObject(new HealthStation(id, vector));
+            World.Log.Write("Created Health Station on mapId " + Id);
+        }
+
+        public void CreateRelayStation(Vector vector)
+        {
+            var id = GetNextObjectId();
+            AddObject(new RelayStation(id, vector));
+            World.Log.Write("Created Relay Station on mapId " + Id);
+        }
+
+        public void CreateReadyRelayStation(Vector vector)
+        {
+            var id = GetNextObjectId();
+            AddObject(new ReadyRelayStation(id, vector));
+            World.Log.Write("Created Relay Station on mapId " + Id);
         }
 
         public void CreateQuestGiver(Faction faction, Vector pos)
@@ -507,6 +529,7 @@ namespace NettyBaseReloaded.Game.objects.world
         }
 
         #endregion
+
     }
 
 }

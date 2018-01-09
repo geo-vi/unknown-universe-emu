@@ -389,10 +389,14 @@
     <Compile Include="Game\objects\world\map\Object.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\Asteroid.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\Module.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\RelayStation.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\AssetTypes.cs" />
     <Compile Include="Game\objects\world\map\objects\IClickable.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\LoWGate.cs" />
-    <Compile Include="Game\objects\world\map\objects\PirateStation.cs" />
-    <Compile Include="Game\objects\world\map\objects\StationModule.cs" />
+    <Compile Include="Game\objects\world\map\objects\stations\HealthStation.cs" />
+    <Compile Include="Game\objects\world\map\objects\stations\PirateStation.cs" />
+    <Compile Include="Game\objects\world\map\objects\stations\ReadyRelayStation.cs" />
+    <Compile Include="Game\objects\world\map\objects\stations\StationModule.cs" />
     <Compile Include="Game\objects\world\map\Ore.cs" />
     <Compile Include="Game\objects\world\map\POI.cs" />
     <Compile Include="Game\objects\world\map\pois\Designs.cs" />

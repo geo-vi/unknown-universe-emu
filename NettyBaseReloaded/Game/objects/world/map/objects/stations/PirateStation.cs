@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NettyBaseReloaded.Game.objects.world.map.objects
+namespace NettyBaseReloaded.Game.objects.world.map.objects.stations
 {
     class PirateStation : Station
     {

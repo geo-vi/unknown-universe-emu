@@ -1,8 +1,10 @@
-﻿namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
+﻿using NettyBaseReloaded.Main.objects;
+
+namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
 {
     class ClanBattleStation : Asset, IClickable
     {
-        public ClanBattleStation() : base(0,"",0,0,"",0,0,0,new Vector(0,0), 0,false,false,false)
+        public ClanBattleStation(int id, string name, Faction faction, Clan clan, Vector position) : base(id, name, AssetTypes.BATTLESTATION, faction, clan, 0, 0, position, false, false, false)
         {
             
         }

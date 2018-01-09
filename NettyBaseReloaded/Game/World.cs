@@ -62,12 +62,18 @@ namespace NettyBaseReloaded.Game
                 {
                     map.Value.CreateStation(Faction.VRU, new Vector(20800 - 1000, 12800 / 2));
                 }
-
-                if (map.Key == -1)
+                if (map.Key == 200)
                 {
-                    // TODO Add PVP Spawn
+                    // Load LoW
+                    map.Value.CreateHealthStation(new Vector(10400, 6400));
+                    map.Value.CreateRelayStation(new Vector(5400, 6400));
                 }
-                else
+
+                if (map.Key == 42)
+                {
+                    // TODO Add >?? x4 Spawn
+                }
+                else if (map.Key != 200 && map.Key != 54 && map.Key != 53 && map.Key != 52 && map.Key != 51)
                 {
                     for (int i = 0; i <= BonusBox.SPAWN_COUNT; i++)
                     {

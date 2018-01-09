@@ -8,7 +8,9 @@ using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map.objects;
+using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Game.controllers.login
@@ -56,16 +58,15 @@ namespace NettyBaseReloaded.Game.controllers.login
             var m7Pos = new Vector(center.X - 171, center.Y + 235);
             var m8Pos = new Vector(center.X - 413, center.Y + 97);
 
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111111, "CBS-01", AssetTypeModule.BATTLESTATION, 3, "", 1111111, 0, 0, center, 0, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111112, "M-01", AssetTypeModule.SATELLITE, 3, "BETA", 1111112, 3, 0, m1Pos, 0, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111113, "M-02", AssetTypeModule.SATELLITE, 3, "BETA", 1111113, 4, 0, m2Pos, 0, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111114, "M-03", AssetTypeModule.SATELLITE, 3, "BETA", 1111114, 5, 0, m3Pos, 0, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111115, "M-04", AssetTypeModule.SATELLITE, 3, "BETA", 1111115, 6, 0, m4Pos, 0, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111116, "M-05", AssetTypeModule.SATELLITE, 3, "BETA", 1111116, 7, 0, m5Pos, 0, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111117, "M-06", AssetTypeModule.SATELLITE, 3, "BETA", 1111117, 8, 0, m6Pos, 0, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111118, "M-07", AssetTypeModule.SATELLITE, 3, "BETA", 1111118, 9, 0, m7Pos, 0, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111119, "M-08", AssetTypeModule.SATELLITE, 3, "BETA", 1111119, 10, 0, m8Pos, 0, false, false, true));
-
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111111, "CBS-01", AssetTypes.BATTLESTATION, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111112, "M-01", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111113, "M-02", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111114, "M-03", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111115, "M-04", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111116, "M-05", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111117, "M-06", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111118, "M-07", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111119, "M-08", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
         }
     }
 }

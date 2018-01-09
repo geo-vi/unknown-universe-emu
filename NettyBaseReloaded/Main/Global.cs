@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Main
         {
             InitiateGlobalQueries();
             InitiatePolicy();
-            //InitiateChat();
+            InitiateChat();
             InitiateGame();
             InitiateWebSocks();
             InitiateRandomResetTimer();

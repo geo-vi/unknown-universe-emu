@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NettyBaseReloaded.Game.netty.commands.new_client;
+using NettyBaseReloaded.Game.objects.world.map.objects.stations;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects
 {
@@ -44,6 +45,9 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
         public string GetString()
         {
             if (this is PirateStation) return "0|s|" + Id + "|1|pirateStation|6|1500|" + Position.X + "|" + Position.Y;
+            if (this is HealthStation) return "0|s|" + Id + "|1|healthStation|4|1500|" + Position.X + "|" + Position.Y;
+            if (this is ReadyRelayStation) return "0|s|" + Id + "|1|relayStation|5|1500|" + Position.X + "|" + Position.Y;
+
             return "0|s|" + Modules[0] + "|1|" + GetType() + "|" + (int)Faction + "|1500|" + Position.X + "|" + Position.Y;
         }
     }
