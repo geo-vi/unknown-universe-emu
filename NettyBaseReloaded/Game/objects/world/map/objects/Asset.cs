@@ -49,5 +49,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
         {
             
         }
+
+        public virtual void OnDestroyed()
+        {
+            
+        }
     }
 }

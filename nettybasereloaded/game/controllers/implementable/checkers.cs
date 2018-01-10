@@ -47,7 +47,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         #region Character related
         private void AddedToSpacemap(CharacterArgs args)
         {
-            if (Character == null || !Controller.Active || Controller.Dead)
+            if (Character == null || !Controller.Active || Character.EntityState == EntityStates.DEAD)
                 return;
 
             if (args.Character.InRange(Character, VisibilityRange))
@@ -56,7 +56,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void RemovedFromSpacemap(CharacterArgs args)
         {
-            if (Character == null || !Controller.Active || Controller.Dead)
+            if (Character == null || !Controller.Active || Character.EntityState == EntityStates.DEAD)
             {
                 return;
             }

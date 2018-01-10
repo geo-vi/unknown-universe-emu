@@ -153,7 +153,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             public void Initiate(int targetVW, int targetMapId, Vector targetPos, int portalId = -1)
             {
-                if (baseController.Dead || baseController.StopController) return;
+                if (baseController.Character.EntityState == EntityStates.DEAD || baseController.StopController) return;
 
                 TargetVirtualWorldId = targetVW;
                 TargetMap = World.StorageManager.Spacemaps[targetMapId];
@@ -181,7 +181,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             void Refresh()
             {
-                if (baseController.Dead || baseController.StopController)
+                if (baseController.Character.EntityState == EntityStates.DEAD || baseController.StopController)
                 {
                     Cancel();
                     return;

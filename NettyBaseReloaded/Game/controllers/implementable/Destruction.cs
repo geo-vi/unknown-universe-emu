@@ -34,7 +34,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             try
             {
                 Vector pos = target.Position;
-                if (target.CurrentHealth <= 0 && !target.Controller.Dead)
+                if (target.CurrentHealth <= 0 && target.EntityState == EntityStates.ALIVE)
                 {
                     var mainAttacker = target.Controller.Attack.MainAttacker;
                     var attackers = target.Controller.Attack.Attackers.ToList();
@@ -42,6 +42,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     target.Controller.Destruction.Kill();
                     if (Character is Player)
                     {
+
                         var player = Character as Player;
                         if (target.FactionId == player.FactionId)
                         {
@@ -133,7 +134,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 true);
 
             Remove();
-            Controller.Dead = true;
+            Character.EntityState = EntityStates.DEAD;
         }
 
         public void Remove()
@@ -179,7 +180,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void RespawnPlayer()
         {
-            Character.Controller.Dead = false;
+            Character.EntityState = EntityStates.ALIVE;
             Character.Range.Clear();
 
             var player = (Player) Character;
@@ -207,7 +208,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void RespawnAlien()
         {
-            Character.Controller.Dead = false;
+            Character.EntityState = EntityStates.ALIVE;
             Character.Range.Clear();
 
             Vector newPos;

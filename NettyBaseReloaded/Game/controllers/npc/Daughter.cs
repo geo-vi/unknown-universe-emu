@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Tick()
         {
             PositionChecker();
-            if (Controller.Npc.Selected == null)
+            if (Controller.Npc.SelectedCharacter == null)
                 Inactive();
             else Active();
         }
@@ -28,7 +28,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
         private DateTime LastActiveTime = new DateTime();
         public void Active()
         {
-            if (!Controller.Npc.Selected.InRange(Controller.Npc))
+            if (!Controller.Npc.SelectedCharacter.InRange(Controller.Npc))
             {
                 Controller.Npc.Selected = null;
                 return;

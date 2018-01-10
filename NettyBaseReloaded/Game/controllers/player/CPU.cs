@@ -142,7 +142,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             var cloakExtra = baseController.Player.Extras.FirstOrDefault(x => x.Value is Cloak);
             if (cloakExtra.Value != null && cloakExtra.Value.Amount > 0)
             {
-                baseController.Invisible = true;
+                baseController.Character.Invisible = true;
                 baseController.Player.Extras.FirstOrDefault(x => x.Value is Cloak).Value.Amount -= 1;
                 Update(Types.CLOAK);
                 baseController.Effects.UpdatePlayerVisibility();

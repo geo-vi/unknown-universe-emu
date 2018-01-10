@@ -8,6 +8,7 @@ using NettyBaseReloaded.Game.controllers.implementable.attack;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Networking;
 
@@ -17,13 +18,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public bool Attacking { get; set; }
 
-        public bool Invincible { get; set; }
-
-        public bool Targetable { get; set; }
-
         public int AttackRange = 700;
-
-        public DateTime LastTimeAttacked = new DateTime();
 
         public Player MainAttacker { get; set; }
 
@@ -31,7 +26,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public Attack(AbstractCharacterController controller) : base(controller)
         {
-            Targetable = true;
             if (controller is NpcController) AttackRange = 500;
         }
 
@@ -53,7 +47,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             List<Character> attackers = new List<Character>();
             foreach (var entity in Character.Range.Entities.Values)
             {
-                if (entity.Controller.Dead) return null;
+                if (entity.EntityState == EntityStates.DEAD) continue;
                 if (entity.Selected == Character && entity.Controller.Attack.Attacking)
                 {
                     attackers.Add(entity);
@@ -65,43 +59,25 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void LaserAttack()
         {
             var enemy = Character.Selected;
-            if (Controller.Dead || Controller.StopController || enemy == null || !Attacking) return;
-            if (!Character.Spacemap.Entities.ContainsKey(enemy.Id))
-            {
-                Character.Selected = null;
-                Attacking = false;
-                return;
-            }
-            if (Character.Spacemap.Starter && enemy.FactionId == Character.FactionId)
-            {
-                Attacking = false;
-                var player = Character as Player;
-                if (player != null)
-                    Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Can't attack members of your own company on starter maps.");
-                return;
-            }
+            if (!AssembleEnemy(enemy)) return;
 
+            bool isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
             if (Character.Cooldowns.Exists(cooldown => cooldown is LaserCooldown))
             {
-                if ((Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75")
+                if (isRsb)
                 {
                     if (Character.Cooldowns.Exists(cooldown => cooldown is RSBCooldown)) return;
 
                     var cld = new RSBCooldown();
-                    cld.Send(((Player) Character).GetGameSession());
+                    cld.Send(((Player)Character).GetGameSession());
                     Character.Cooldowns.Add(cld);
                 }
                 else return;
             }
-            var newCooldown = new LaserCooldown();
-            Character.Cooldowns.Add(newCooldown);
-
-
-            if (!Character.InRange(enemy, AttackRange))
+            if (!isRsb)
             {
-                var pCharacter = Character as Player;
-                pCharacter?.SendLogMessage("outofrange");
-                return;
+                var newCooldown = new LaserCooldown();
+                Character.Cooldowns.Add(newCooldown);
             }
 
             var damage = Character.Damage;
@@ -131,7 +107,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                     var index = getAmmo.FindIndex(x => x == gameSession.Player.Settings.CurrentAmmo.LootId) - 1;
                     gameSession.Player.Settings.CurrentAmmo =
-                            gameSession.Player.Information.Ammunitions[getAmmo[index]];
+                        gameSession.Player.Information.Ammunitions[getAmmo[index]];
                     gameSession.Player.Settings.OldClientShipSettingsCommand.selectedLaser = index;
                     Packet.Builder.SendSlotbars(gameSession);
                 }
@@ -143,7 +119,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         return;
                 }
 
-                bool isRsb = false;
                 var laserTypes = gameSession.Player.Equipment.LaserTypes();
                 switch (gameSession.Player.Settings.CurrentAmmo.LootId)
                 {
@@ -174,7 +149,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     case "ammunition_laser_rsb-75":
                         damage *= 6;
                         laserColor = 6;
-                        isRsb = true;
                         break;
                     case "ammunition_laser_job-100":
                         damage *= 4;
@@ -182,8 +156,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         break;
                 }
 
-
-
+                //TODO: RECODE!!!
                 if (gameSession.Player.Controller.CPUs.Active.Any(x => x == player.CPU.Types.AUTO_ROK))
                 {
                     LaunchMissle(gameSession.Player.Settings.CurrentRocket.LootId);
@@ -207,12 +180,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 //    }
                 //}
 
-                UpdateAttacker(enemy, gameSession.Player);
+                if (enemy is Character)
+                    UpdateAttacker(enemy as Character, gameSession.Player);
             }
             else if (Character is Pet)
             {
-                
+
             }
+
 
             damage = RandomizeDamage(damage);
             GameClient.SendRangePacket(Character,
@@ -224,27 +199,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             Controller.Damage?.Laser(enemy, damage, false);
             Controller.Damage?.Laser(enemy, absDamage, true);
-
-            enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
         }
 
         public void LaunchMissle(string missleId)
         {
             var enemy = Character.Selected;
-            if (enemy == null || enemy.Controller.Dead)
-                return;
+            if (!AssembleEnemy(enemy)) return;
 
-            var player = Character as Player;
-            GameSession gameSession = null;
-            if (player != null) gameSession = World.StorageManager.GetGameSession(player.Id);
-            if (!Character.InRange(enemy, AttackRange))
-            {
-                if (player != null)
-                {
-                    Packet.Builder.LegacyModule(gameSession, "0|A|STM|outofrange");
-                }
-                return;
-            }
+            Player player = Character as Player;
 
             int damage = -1;
             int rocketId = 0;
@@ -269,16 +231,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     break;
                 case "ammunition_specialammo_pld-8":
                     rocketId = 5;
-                    Plasma(enemy);
+                    Plasma(enemy as Character);
                     break;
                 case "ammunition_specialammo_dcr-250":
                     rocketId = 6;
-                    Decelerate(enemy);
+                    Decelerate(enemy as Character);
                     break;
                 case "ammunition_specialammo_wiz-x":
                     rocketId = 8;
                     if (Character.Cooldowns.Exists(c => c is WizardCooldown)) return;
-                    Wizard(enemy);
+                    Wizard(enemy as Character);
                     break;
             }
 
@@ -287,52 +249,33 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (player?.Settings.CurrentRocket.Shoot() == 0)
             {
                 // NOTHING TO SHOOT
-                Packet.Builder.LegacyModule(gameSession,
+                Packet.Builder.LegacyModule(player.GetGameSession(),
                     "0|A|STD|No more ammo (todo: find a proper STM message)");
                 return;
             }
 
-            RocketCooldown cooldown;
             double cooldown_time = 2;
             if (player != null && (player.Extras.ContainsKey("equipment_extra_cpu_rok-t01") || player.Information.Premium))
                 cooldown_time *= 0.5;
-            /*
-            if (player.Extras.ContainsKey("equipment_extra_cpu_rok-t01"))
-                cooldown_time *= 0.5;
-            */
 
-            cooldown = new RocketCooldown(cooldown_time);
+            var cooldown = new RocketCooldown(cooldown_time);
 
             if (player != null) cooldown.Send(World.StorageManager.GetGameSession(player.Id));
             Character.Cooldowns.Add(cooldown);
 
-            if (player != null) UpdateAttacker(enemy, player);
+            if (player != null && enemy is Character) UpdateAttacker(enemy as Character, player);
 
             GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|1"), true);
             GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|1"), true);
             Controller.Damage?.Rocket(enemy, damage, false);
-
-            enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
         }
 
         public void LaunchRocketLauncher()
         {
             var enemy = Character.Selected;
-            if (Character.RocketLauncher == null || enemy == null || enemy.Controller.Dead)
-                return;
+            if (!AssembleEnemy(enemy)) return;
 
             var player = Character as Player;
-            GameSession gameSession = null;
-            if (player != null) gameSession = World.StorageManager.GetGameSession(player.Id);
-            if (!Character.InRange(enemy, AttackRange))
-            {
-                if (player != null)
-                {
-                        Packet.Builder.LegacyModule(gameSession, "0|A|STM|outofrange");
-                    
-                }
-                return;
-            }
 
             int damage = 0;
             int absDamage = 0;
@@ -381,12 +324,32 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Controller.Damage?.Rocket(enemy, damage, false, dmgTypes);
 
             Character.RocketLauncher.CurrentLoad = 0;
-            if (player != null)
+            if (player != null && enemy is Character)
             {
                 Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
-                UpdateAttacker(enemy, player);
+                UpdateAttacker(enemy as Character, player);
             }
-            enemy.Controller.Attack.LastTimeAttacked = DateTime.Now;
+        }
+
+        private bool AssembleEnemy(IAttackable attacked)
+        {
+            if (attacked == null || attacked.EntityState == EntityStates.DEAD)
+                return false;
+            if (Character.Spacemap.Starter && attacked.FactionId == Character.FactionId)
+            {
+                Attacking = false;
+                var player = Character as Player;
+                if (player != null)
+                    Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Can't attack members of your own company on starter maps.");
+                return false;
+            }
+            if (!attacked.InRange(Character, Character.AttackRange))
+            {
+                var pCharacter = Character as Player;
+                pCharacter?.SendLogMessage("outofrange");
+                return false;
+            }
+            return true;
         }
 
         private int RandomizeDamage(int baseDmg, double missProbability = 1.00)

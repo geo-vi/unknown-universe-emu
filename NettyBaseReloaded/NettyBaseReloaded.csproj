@@ -380,7 +380,10 @@
     <Compile Include="Game\objects\world\characters\Range.cs" />
     <Compile Include="Game\objects\world\characters\Reward.cs" />
     <Compile Include="Game\objects\world\characters\RocketLauncher.cs" />
+    <Compile Include="Game\objects\world\characters\TickRates.cs" />
+    <Compile Include="Game\objects\world\EntityStates.cs" />
     <Compile Include="Game\objects\world\Events.cs" />
+    <Compile Include="Game\objects\world\IAttackable.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\CargoLoot.cs" />
     <Compile Include="Game\objects\world\map\collectables\Types.cs" />
@@ -480,6 +483,7 @@
     <Compile Include="Main\commands\Temp.cs" />
     <Compile Include="Main\ConsoleCommands.cs" />
     <Compile Include="Main\ConsoleMonitor.cs" />
+    <Compile Include="Main\global_managers\PerformanceManager.cs" />
     <Compile Include="Main\global_managers\QueryManager.cs" />
     <Compile Include="Main\global_managers\SqlDatabaseManager.cs" />
     <Compile Include="Main\global_storage\StorageManager.cs" />

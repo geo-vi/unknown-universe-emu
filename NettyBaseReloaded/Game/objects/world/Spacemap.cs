@@ -39,6 +39,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public Vector[] Limits { get; private set; }
         public int Level { get; }
         public bool Disabled { get; set; }
+        public bool RangeDisabled { get; set; }
 
         #region Base Storages [DB]
         private List<PortalBase> PortalBase { get; set; }

@@ -53,7 +53,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             while (Active)
             {
-                if (Dead || StopController)
+                if (Character.EntityState == EntityStates.DEAD || StopController)
                     Active = false;
                 else
                 {

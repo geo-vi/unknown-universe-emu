@@ -56,16 +56,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             GameClient.SendPacketSelected(Controller.Character,
                 netty.commands.old_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
-                                                             Convert.ToInt32(Controller.Invisible)));
+                                                             Convert.ToInt32(Controller.Character.Invisible)));
             GameClient.SendPacketSelected(Controller.Character,
                 netty.commands.new_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
-                                                             Convert.ToInt32(Controller.Invisible)));
+                                                             Convert.ToInt32(Controller.Character.Invisible)));
             GameClient.SendRangePacket(Controller.Character,
                 netty.commands.old_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
-                                                             Convert.ToInt32(Controller.Invisible)), true);
+                                                             Convert.ToInt32(Controller.Character.Invisible)), true);
             GameClient.SendRangePacket(Controller.Character,
                 netty.commands.new_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
-                                                             Convert.ToInt32(Controller.Invisible)), true);
+                                                             Convert.ToInt32(Controller.Character.Invisible)), true);
         }
     }
 }

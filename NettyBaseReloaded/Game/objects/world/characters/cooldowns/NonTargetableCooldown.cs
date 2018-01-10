@@ -10,12 +10,12 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void OnStart(Character character)
         {
-            character.Controller.Attack.Targetable = false;
+            character.Targetable = false;
         }
 
         public override void OnFinish(Character character)
         {
-            character.Controller.Attack.Targetable = true;
+            character.Targetable = true;
         }
 
         public override void Send(GameSession gameSession)

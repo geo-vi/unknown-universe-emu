@@ -44,6 +44,8 @@ namespace NettyBaseReloaded.Game.controllers.npc
         {
             try
             {
+                if (Controller.Npc.Spacemap.Entities.Count(x => x.Value is Player) == 0) return;
+
                 Controller.Attack.Attacking = false;
                 var noAccessObjects =
                     Controller.Npc.Range.Objects.Where(
@@ -66,7 +68,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     Player candidatePlayer = null;
                     foreach (var player in players)
                     {
-                        if (player.Value == null || player.Value.Controller.Dead || player.Value.Controller.Invisible) continue;
+                        if (player.Value == null || player.Value.EntityState == EntityStates.DEAD || player.Value.Invisible) continue;
                         if (candidatePlayer == null)
                         {
                             var _player = (Player) player.Value;
@@ -119,7 +121,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
                 if (target?.Position != null && target.Spacemap != null)
                 {
-                    if ((target.State.InDemiZone) || npc.Range.Zones.FirstOrDefault(x => x.Value is DemiZone).Value != null && Controller.Attack.GetActiveAttackers().Count == 0|| target.Controller.Dead)
+                    if ((target.State.InDemiZone) || npc.Range.Zones.FirstOrDefault(x => x.Value is DemiZone).Value != null && Controller.Attack.GetActiveAttackers().Count == 0|| target.EntityState == EntityStates.DEAD)
                     {
                         Exit();
                         return;

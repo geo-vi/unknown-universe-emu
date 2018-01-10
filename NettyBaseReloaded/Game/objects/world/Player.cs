@@ -293,7 +293,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public new void Tick()
         {
             // TODO -> Added ticked processes
-            if (!Controller.Active || Controller.Dead)
+            if (!Controller.Active || EntityState == EntityStates.DEAD)
                 return;
             LevelChecker();
             Storage.Tick();

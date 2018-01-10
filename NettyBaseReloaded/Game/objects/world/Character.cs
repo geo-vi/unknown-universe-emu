@@ -22,13 +22,12 @@ using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
-    class Character : ITick
+    class Character : IAttackable
     {
         /**********
          * BASICS *
          **********/
 
-        public int Id { get; }
         public string Name { get; set; }
 
         public Hangar _hangar;
@@ -54,7 +53,7 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public Faction FactionId { get; set; }
+        public override Faction FactionId { get; set; }
         public Reward Reward { get; }
 
         public Clan Clan { get; set; }
@@ -85,12 +84,12 @@ namespace NettyBaseReloaded.Game.objects.world
         /************
          * POSITION *
          ************/
-        public Vector Position { get; set; }
+        public override Vector Position { get; set; }
 
         public int VirtualWorldId { get; set; }
 
         private Spacemap _baseSpacemap;
-        public Spacemap Spacemap
+        public override Spacemap Spacemap
         {
             get
             {
@@ -110,11 +109,11 @@ namespace NettyBaseReloaded.Game.objects.world
         /*********
          * STATS *
          *********/
-        public virtual int MaxHealth { get; set; }
+        public override int MaxHealth { get; set; }
 
         private int _currentHealth;
 
-        public int CurrentHealth
+        public override int CurrentHealth
         {
             get { return _currentHealth; }
             set
@@ -124,17 +123,17 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public virtual int MaxShield { get; set; }
-        public virtual int CurrentShield { get; set; }
-        public virtual double ShieldAbsorption { get; set; }
-        public virtual double ShieldPenetration { get; set; }
+        public override int MaxShield { get; set; }
+        public override int CurrentShield { get; set; }
+        public override double ShieldAbsorption { get; set; }
+        public override double ShieldPenetration { get; set; }
 
         //The max amount of nanohull will be the max ship health
-        public int MaxNanoHull => Hangar.Ship.Health;
+        public override int MaxNanoHull => Hangar.Ship.Health;
 
         private int _currentNanoHull;
 
-        public int CurrentNanoHull
+        public override int CurrentNanoHull
         {
             get { return _currentNanoHull; }
             set
@@ -163,7 +162,8 @@ namespace NettyBaseReloaded.Game.objects.world
          * EXTRA *
          *********/
         public int RenderRange { get; set; }
-        public Character Selected { get; set; }
+        public IAttackable Selected { get; set; }
+        public Character SelectedCharacter => Selected as Character;
 
         public Range Range { get; }
 
@@ -171,15 +171,13 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public virtual Skilltree Skills { get; set; }
 
-        public DateTime LastCombatTime;
         public DroneFormation Formation = DroneFormation.STANDARD;
 
         public List<Cooldown> Cooldowns { get; set; }
 
         protected Character(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap,
-            Reward rewards, Clan clan = null)
+            Reward rewards, Clan clan = null) : base(id)
         {
-            Id = id;
             Name = name;
             Hangar = hangar;
             FactionId = factionId;
@@ -211,7 +209,7 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public void Tick()
+        public override void Tick()
         {
             if (this is Npc)
             {
@@ -323,15 +321,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
             }
         }
-
-        public bool InRange(Character character, int range = 2000)
-        {
-
-            if (character == null) return false;
-            if (range == -1) return true;
-            return character.Id != Id && character.Spacemap.Id == Spacemap.Id &&
-                   Position.DistanceTo(character.Position) <= range;
-        }
         
         public void TickCooldowns()
         {
@@ -363,6 +352,21 @@ namespace NettyBaseReloaded.Game.objects.world
             Moving = false;
 
             MovementController.Move(this, MovementController.ActualPosition(this));
+        }
+
+        public override void Destroy()
+        {
+            Controller.Destruction.Destroy(this);
+        }
+
+        public override void Destroy(Character destroyer)
+        {
+            if (destroyer == null)
+            {
+                Destroy();
+                return;
+            }
+            destroyer.Controller.Destruction.Destroy(this);
         }
     }
 }

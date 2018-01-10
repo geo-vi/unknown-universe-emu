@@ -27,5 +27,9 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             
         }
+
+        public virtual void Destroy()
+        {
+        }
     }
 }

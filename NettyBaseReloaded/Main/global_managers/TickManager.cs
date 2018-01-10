@@ -23,7 +23,7 @@ namespace NettyBaseReloaded.Main.global_managers
         private List<ITick> PendingRemoval = new List<ITick>();
 
         public void Add(ITick tick)
-        {
+        {           
             if (!Tickables.Contains(tick))
                 PendingToBeAdded.Add(tick);
         }

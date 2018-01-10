@@ -66,7 +66,10 @@ namespace NettyBaseReloaded.Game
                 {
                     // Load LoW
                     map.Value.CreateHealthStation(new Vector(10400, 6400));
-                    map.Value.CreateRelayStation(new Vector(5400, 6400));
+                    map.Value.CreateRelayStation(new Vector(2500, 2000));
+                    map.Value.CreateRelayStation(new Vector(6200, 11700));
+                    map.Value.CreateRelayStation(new Vector(18300, 10900));
+                    map.Value.CreateRelayStation(new Vector(18200, 4000));
                 }
 
                 if (map.Key == 42)

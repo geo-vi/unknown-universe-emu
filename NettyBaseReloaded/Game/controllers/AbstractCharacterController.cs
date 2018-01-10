@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world.characters;
 
 namespace NettyBaseReloaded.Game.controllers
 {
@@ -29,13 +30,9 @@ namespace NettyBaseReloaded.Game.controllers
 
         public Effects Effects { get; }
 
-        public bool Dead { get; set; }
-
         public bool StopController { get; set; }
 
         public bool Active { get; set; }
-
-        public bool Invisible { get; set; }
 
         public AbstractCharacterController(Character character)
         {
@@ -48,7 +45,6 @@ namespace NettyBaseReloaded.Game.controllers
             Destruction = new Destruction(this);
             Effects = new Effects(this);
 
-            Dead = false;
             StopController = false;
 
         }
@@ -65,7 +61,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             while (Active)
             {
-                if (StopController || Dead)
+                if (StopController || Character.EntityState == EntityStates.DEAD)
                 {
                     StopAll();
                     return;

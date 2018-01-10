@@ -101,7 +101,7 @@ namespace NettyBaseReloaded.Game.controllers
             ILogin type;
             if (Properties.Server.LOCKED)
                 type = new Locked(_gameSession);
-            else if (_gameSession.Player.CurrentHealth <= 0 || _gameSession.Player.Controller.Dead)
+            else if (_gameSession.Player.CurrentHealth <= 0 || _gameSession.Player.EntityState == EntityStates.DEAD)
                 type = new Killscreen(_gameSession);
             else type = new Regular(_gameSession);
             type.Execute();

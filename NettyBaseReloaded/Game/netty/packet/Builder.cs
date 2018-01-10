@@ -200,7 +200,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Clan.Tag, //clanTag
                         0, // player GG rings
                         true,
-                        player.Controller.Invisible, //cloaked
+                        player.Invisible, //cloaked
                         true,
                         new List<commands.new_client.VisualModifierCommand>()
                     ).Bytes);
@@ -238,7 +238,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Clan.Tag, 
                         0,
                         true,
-                        player.Controller.Invisible,
+                        player.Invisible,
                         new List<commands.old_client.VisualModifierCommand>()).Bytes);
         }
         #endregion
@@ -271,7 +271,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         pChar.Position.Y,
                         (int) pChar.FactionId, 0, (int) pChar.RankId, false,
                         new commands.new_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, false, pChar.Controller.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
+                        false, false, pChar.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
                 else if (character is Pet)
@@ -285,7 +285,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         character.Position.Y,
                         (int)character.FactionId, character.Clan.Id, 0, false,
                         new commands.new_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, true, character.Controller.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
+                        false, true, character.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
             }
@@ -299,7 +299,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         pChar.Position.Y,
                         (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
                         new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, false, character.Controller.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
+                        false, false, character.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
                 else if (character is Pet)
                 {
@@ -312,7 +312,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         character.Position.Y,
                         (int) character.FactionId, character.Clan.Id, 0, false,
                         new commands.old_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, true, character.Controller.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
+                        false, true, character.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
                 }
             }
             gameSession.Client.Send(bytes);
@@ -522,7 +522,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region AttackHitCommand
 
-        public void AttackHitCommand(GameSession gameSession, Character attacker, Character target, int damage,
+        public void AttackHitCommand(GameSession gameSession, int attackerId, IAttackable target, int damage,
             short effect)
         {
             if (gameSession.Player.UsingNewClient)
@@ -530,7 +530,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 if (damage == 0)
                     gameSession.Client.Send(commands.new_client.AttackMissedCommand.write(new commands.new_client.AttackTypeModule(effect), target.Id, 0).Bytes);
                 else gameSession.Client.Send(commands.new_client.AttackHitCommand.write(
-                    new commands.new_client.AttackTypeModule(effect), attacker.Id,
+                    new commands.new_client.AttackTypeModule(effect), attackerId,
                     target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true).Bytes);
             }
             else
@@ -538,7 +538,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 if (damage == 0)
                     gameSession.Client.Send(commands.old_client.AttackMissedCommand.write(new commands.old_client.AttackTypeModule(effect), target.Id, 0).Bytes);
                 else gameSession.Client.Send(commands.old_client.AttackHitCommand.write(
-                    new commands.old_client.AttackTypeModule(effect), attacker.Id,
+                    new commands.old_client.AttackTypeModule(effect), attackerId,
                     target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true).Bytes);
             }
         }
@@ -605,7 +605,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (hasPet)
             {
                 hasFuel = pet.HasFuel();
-                petIsAlive = !pet.Controller.Dead;
+                petIsAlive = pet.EntityState == EntityStates.ALIVE;
             }
 
             if (gameSession.Player.UsingNewClient)
@@ -628,13 +628,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
                 (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.new_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
-                pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Controller.Invisible, new commands.new_client.commandK13(0)).Bytes);
+                pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible, new commands.new_client.commandK13(0)).Bytes);
             }
             else
             {
                 gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
                     (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
-                    pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Controller.Invisible).Bytes);
+                    pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible).Bytes);
             }
         }
 
@@ -1146,7 +1146,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 var groupLeader = player.Group.Leader;
 
                 builder.Append(
-                    $"|{Encode.Base64(groupLeader.Name)}|{groupLeader.Id}|{groupLeader.CurrentHealth}|{groupLeader.MaxHealth}|{groupLeader.CurrentNanoHull}|{groupLeader.MaxNanoHull}|{groupLeader.CurrentShield}|{groupLeader.MaxShield}|{groupLeader.Spacemap.Id}|{groupLeader.Position.X}|{groupLeader.Position.Y}|{groupLeader.Information.Level.Id}|0|{Convert.ToInt32(groupLeader.Controller.Invisible)}|{Convert.ToInt32(groupLeader.Controller.Attack.Attacking)}|{Convert.ToInt32(groupLeader.FactionId)}|{groupLeader.Selected?.Hangar.Ship.Id}|{groupLeader.Clan.Tag}|{groupLeader.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupLeader.Id) == null)}|");
+                    $"|{Encode.Base64(groupLeader.Name)}|{groupLeader.Id}|{groupLeader.CurrentHealth}|{groupLeader.MaxHealth}|{groupLeader.CurrentNanoHull}|{groupLeader.MaxNanoHull}|{groupLeader.CurrentShield}|{groupLeader.MaxShield}|{groupLeader.Spacemap.Id}|{groupLeader.Position.X}|{groupLeader.Position.Y}|{groupLeader.Information.Level.Id}|0|{Convert.ToInt32(groupLeader.Invisible)}|{Convert.ToInt32(groupLeader.Controller.Attack.Attacking)}|{Convert.ToInt32(groupLeader.FactionId)}|{Convert.ToInt32((groupLeader.Selected as Player)?.Hangar.Ship.Id)}|{groupLeader.Clan.Tag}|{groupLeader.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupLeader.Id) == null)}|");
 
                 foreach (var grpMember in player.Group.Members)
                 {
@@ -1154,7 +1154,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                     if (groupMember.Id == player.Group.Leader.Id) continue;
 
                     builder.Append(
-                        $"|{Encode.Base64(groupMember.Name)}|{groupMember.Id}|{groupMember.CurrentHealth}|{groupMember.MaxHealth}|{groupMember.CurrentNanoHull}|{groupMember.MaxNanoHull}|{groupMember.CurrentShield}|{groupMember.MaxShield}|{groupMember.Spacemap.Id}|{groupMember.Position.X}|{groupMember.Position.Y}|{groupMember.Information.Level.Id}|0|{Convert.ToInt32(groupMember.Controller.Invisible)}|{Convert.ToInt32(groupMember.Controller.Attack.Attacking)}|{Convert.ToInt32(groupMember.FactionId)}|{groupMember.Selected?.Hangar.Ship.Id}|{groupMember.Clan.Tag}|{groupMember.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupMember.Id) == null)}|");
+                        $"|{Encode.Base64(groupMember.Name)}|{groupMember.Id}|{groupMember.CurrentHealth}|{groupMember.MaxHealth}|{groupMember.CurrentNanoHull}|{groupMember.MaxNanoHull}|{groupMember.CurrentShield}|{groupMember.MaxShield}|{groupMember.Spacemap.Id}|{groupMember.Position.X}|{groupMember.Position.Y}|{groupMember.Information.Level.Id}|0|{Convert.ToInt32(groupMember.Invisible)}|{Convert.ToInt32(groupMember.Controller.Attack.Attacking)}|{Convert.ToInt32(groupMember.FactionId)}|{Convert.ToInt32((groupLeader.Selected as Player)?.Hangar.Ship.Id)}|{groupMember.Clan.Tag}|{groupMember.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupMember.Id) == null)}|");
                 }
                 LegacyModule(gameSession, builder.ToString());
             }
