@@ -29,13 +29,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Global.TickManager.Add(this);
         }
 
+        private DateTime LastTick = new DateTime();
         public override void Tick()
         {
+            if (LastTick.AddMilliseconds(500) > DateTime.Now && (Character is Npc || Character is Pet)) return;
             MovementController.ActualPosition(Character);
             SpacemapChecker();
             RangeChecker();
             ZoneChecker();
             ObjectChecker();
+            LastTick = DateTime.Now;
         }
 
         public override void Stop()
@@ -47,7 +50,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         #region Character related
         private void AddedToSpacemap(CharacterArgs args)
         {
-            if (Character == null || !Controller.Active || Controller.Dead)
+            if (Character == null || !Controller.Active || Character.EntityState == EntityStates.DEAD)
                 return;
 
             if (args.Character.InRange(Character, VisibilityRange))
@@ -56,7 +59,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void RemovedFromSpacemap(CharacterArgs args)
         {
-            if (Character == null || !Controller.Active || Controller.Dead)
+            if (Character == null || !Controller.Active || Character.EntityState == EntityStates.DEAD)
             {
                 return;
             }

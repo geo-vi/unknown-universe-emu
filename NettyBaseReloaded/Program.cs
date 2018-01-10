@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
+using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Properties;
 using NettyBaseReloaded.Utils;
 using Newtonsoft.Json;
