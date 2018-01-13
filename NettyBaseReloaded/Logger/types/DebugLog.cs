@@ -1,5 +1,6 @@
 ﻿using NettyBaseReloaded.Logger;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace NettyBaseReloaded
@@ -7,6 +8,8 @@ namespace NettyBaseReloaded
     class DebugLog : Log
     {
         public const string SUB_DIR = "/debug/";
+
+        public static List<string> LogsProcessed = new List<string>();
 
         public DebugLog(string fileName)
         {
@@ -22,6 +25,7 @@ namespace NettyBaseReloaded
         {
             try
             {
+                LogsProcessed.Add(message);
                 Writer.Write(DateTime.Now + " - " + "(" + Out.GetCaller() + ") " + message);
                 LastLogTime = DateTime.Now;
             }

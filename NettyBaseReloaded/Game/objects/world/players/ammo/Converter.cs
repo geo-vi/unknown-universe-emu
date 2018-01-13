@@ -58,6 +58,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return "SAR_02";
                 case "ammunition_mine_acm-01":
                     return "ACM_01";
+                case "ammunition_mine_smb-01":
+                    return "SMB_01";
+                case "equipment_extra_cpu_ish-01":
+                    return "ISH_01";
+                case "ammunition_specialammo_emp-01":
+                    return "EMP_01";
                 default:
                     throw new NotImplementedException();
             }
@@ -111,6 +117,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return Slotbar.Items.RocketLauncherIds[5];
                 case AmmunitionTypeModule.MINE:
                     return Slotbar.Items.MinesIds[0];
+                case AmmunitionTypeModule.SMARTBOMB:
+                    return Slotbar.Items.SpecialItemsIds[0];
+                case AmmunitionTypeModule.INSTANT_SHIELD:
+                    return Slotbar.Items.SpecialItemsIds[1];
+                case AmmunitionTypeModule.EMP:
+                    return Slotbar.Items.SpecialItemsIds[2];
                 default:
                     throw new NotImplementedException();
             }
@@ -164,6 +176,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                     return new AmmunitionTypeModule(AmmunitionTypeModule.SAR02);
                 case "ammunition_mine_acm-01":
                     return new AmmunitionTypeModule(AmmunitionTypeModule.MINE);
+                case "ammunition_mine_smb-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.SMARTBOMB);
+                case "equipment_extra_cpu_ish-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.INSTANT_SHIELD);
+                case "ammunition_specialammo_emp-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.EMP);
                 default:
                     throw new NotImplementedException();
             }

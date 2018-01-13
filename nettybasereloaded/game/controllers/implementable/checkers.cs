@@ -29,13 +29,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Global.TickManager.Add(this);
         }
 
+        private DateTime LastTick = new DateTime();
         public override void Tick()
         {
+            if (LastTick.AddMilliseconds(500) > DateTime.Now && (Character is Npc || Character is Pet)) return;
             MovementController.ActualPosition(Character);
             SpacemapChecker();
             RangeChecker();
             ZoneChecker();
             ObjectChecker();
+            LastTick = DateTime.Now;
         }
 
         public override void Stop()

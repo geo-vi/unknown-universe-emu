@@ -115,7 +115,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 if (player.Information.Level.Id < 20) return amount * 2;
                 return amount;
             }
-            return amount * 2; // TODO: Reward levels
+            return amount * Properties.Game.REWARD_MULTIPLYER; // TODO: Reward levels
         }
 
         public void RewardPlayer(Player player, RewardType type, Item item, int amount)

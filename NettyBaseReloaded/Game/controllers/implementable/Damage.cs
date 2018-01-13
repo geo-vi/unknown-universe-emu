@@ -70,13 +70,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Laser(IAttackable attacked, int damage, bool absorb)
         {
-            if (attacked == null || attacked.EntityState == EntityStates.DEAD || damage == 0) return;
+            if (attacked == null || attacked.EntityState == EntityStates.DEAD) return;
             AddEntry(new DamageEntry {Absorb = absorb, Damage = damage, Target = attacked, Type = Types.LASER});
         }
 
         public void Rocket(IAttackable attacked, int damage, bool absorb, Types type = Types.ROCKET)
         {
-            if (attacked == null || attacked.EntityState == EntityStates.DEAD || damage == 0) return;
+            if (attacked == null || attacked.EntityState == EntityStates.DEAD) return;
             AddEntry(new DamageEntry { Absorb = absorb, Damage = damage, Target = attacked, Type = type });
         }
 

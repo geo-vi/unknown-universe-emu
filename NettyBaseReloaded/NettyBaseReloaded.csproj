@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BC7A9B59-2FF0-4D00-AE8E-0A9A31359536}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NettyBaseReloaded</RootNamespace>
     <AssemblyName>NettyBaseReloaded</AssemblyName>
@@ -70,7 +70,16 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AdministratePlayers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdministratePlayers.Designer.cs">
+      <DependentUpon>AdministratePlayers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Chat\Chat.cs" />
     <Compile Include="Chat\commands\Command.cs" />
     <Compile Include="Chat\controllers\AbstractCharacterController.cs" />
@@ -102,6 +111,12 @@
     <Compile Include="Chat\packet\handlers\UserMessageHandler.cs" />
     <Compile Include="Chat\packet\Packet.cs" />
     <Compile Include="ConfigFileReader.cs" />
+    <Compile Include="Controller.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controller.Designer.cs">
+      <DependentUpon>Controller.cs</DependentUpon>
+    </Compile>
     <Compile Include="Game\controllers\AbstractCharacterController.cs" />
     <Compile Include="Game\controllers\events\Puzzle.cs" />
     <Compile Include="Game\controllers\events\IEvent.cs" />
@@ -254,6 +269,7 @@
     <Compile Include="Game\netty\commands\old_client\CompanyHierarchyRankingModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DestructionTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DisplaySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\DroneFormationAvailableFormationsCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationChangeCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\GameplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\HellstormStatusCommand.cs" />
@@ -291,6 +307,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\ClientResolutionChangeRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\CollectBoxRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\DisplaySettingsRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\DroneFormationChangeRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\GameplaySettingsRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLaunchRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLoadRequest.cs" />
@@ -332,6 +349,7 @@
     <Compile Include="Game\netty\handlers\CollectBoxHandler.cs" />
     <Compile Include="Game\netty\handlers\command42JHandler.cs" />
     <Compile Include="Game\netty\handlers\DisplaySettingsHandler.cs" />
+    <Compile Include="Game\netty\handlers\DroneFormationChangeHandler.cs" />
     <Compile Include="Game\netty\handlers\ForceInitHandler.cs" />
     <Compile Include="Game\netty\handlers\GameplaySettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\GroupSystemHandler.cs" />
@@ -362,6 +380,7 @@
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationEffect.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\DroneFormationCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\RocketLauncherCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\WizardCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\WizardEffect.cs" />
@@ -515,6 +534,12 @@
     <Compile Include="Main\Global.cs" />
     <Compile Include="Main\objects\Clan.cs" />
     <Compile Include="Main\objects\State.cs" />
+    <Compile Include="MapEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MapEditor.Designer.cs">
+      <DependentUpon>MapEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Networking\ChatClient.cs" />
     <Compile Include="Networking\GameClient.cs" />
     <Compile Include="Networking\PolicyClient.cs" />
@@ -526,10 +551,28 @@
     <Compile Include="Properties\Chat.cs" />
     <Compile Include="Properties\Game.cs" />
     <Compile Include="Properties\Main.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Server.cs" />
+    <Compile Include="ServerEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerEditor.Designer.cs">
+      <DependentUpon>ServerEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Unused_Codes\Looping_through_constants.cs" />
     <Compile Include="Unused_Codes\Old_Destroy_Function.unused" />
     <Compile Include="Utils\Decode.cs" />
+    <Compile Include="Utils\form\MapDrawing.cs" />
+    <Compile Include="Utils\form\TextboxPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utils\form\TextboxPopup.Designer.cs">
+      <DependentUpon>TextboxPopup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Random.cs" />
     <Compile Include="WebSocks\objects\Payload.cs" />
     <Compile Include="WebSocks\objects\Server.cs" />
@@ -553,6 +596,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="MySql.Data, Version=6.10.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.10.5\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
@@ -561,6 +605,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Windows.Forms" />
@@ -582,6 +627,8 @@
     <Content Include="docs\MySqlParameter.xml" />
     <Content Include="docs\MySqlParameterCollection.xml" />
     <Content Include="docs\MySqlTransaction.xml" />
+    <None Include="Resources\univ3rse_logo.png" />
+    <None Include="Resources\gray_diagonal_stripes_seamless_background_pattern.jpg" />
     <Content Include="Unused_Codes\Old_Program_cs.unused" />
   </ItemGroup>
   <ItemGroup>
@@ -599,6 +646,27 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AdministratePlayers.resx">
+      <DependentUpon>AdministratePlayers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controller.resx">
+      <DependentUpon>Controller.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MapEditor.resx">
+      <DependentUpon>MapEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServerEditor.resx">
+      <DependentUpon>ServerEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utils\form\TextboxPopup.resx">
+      <DependentUpon>TextboxPopup.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

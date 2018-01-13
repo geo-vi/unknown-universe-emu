@@ -43,20 +43,11 @@ namespace NettyBaseReloaded
 
         public static void Main(string[] args)
         {
-            System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
-            DisableSizing();
-
             Console.SetOut(new Out());
-            Console.CursorVisible = false;
-
-            Draw.Logo();
-
-            //RewardBuilder();
-            InitiateSession();
-            ConsoleUpdater();
-            ConsoleCommands.Add();
-            KeepAlive();
-
+            System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Controller());
         }
 
         public static void RewardBuilder()
@@ -184,7 +175,7 @@ namespace NettyBaseReloaded
             if (File.Exists(Directory.GetCurrentDirectory() + "/mysql.cfg")) ConfigFileReader.ReadMySQLConfig();
         }
 
-        static void InitiateSession()
+        public static void InitiateSession()
         {
             SERVER_SESSION = Encode.MD5(DateTime.Now.ToLongTimeString());
             InitiateServer();
@@ -202,6 +193,7 @@ namespace NettyBaseReloaded
             LookForConfigFiles();
             Global.Start();
             ServerUp = true;
+            Server.RUNTIME = DateTime.Now;
         }
 
         public static void CloseForMaintenance()

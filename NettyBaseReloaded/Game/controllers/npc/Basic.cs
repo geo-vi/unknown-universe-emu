@@ -44,7 +44,10 @@ namespace NettyBaseReloaded.Game.controllers.npc
         {
             try
             {
-                if (Controller.Npc.Spacemap.Entities.Count(x => x.Value is Player) == 0) return;
+                if (Controller.Npc.Spacemap.Entities.Count(x => x.Value is Player) == 0)
+                {
+                    return;
+                }
 
                 Controller.Attack.Attacking = false;
                 var noAccessObjects =

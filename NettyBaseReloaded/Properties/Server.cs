@@ -32,11 +32,13 @@ namespace NettyBaseReloaded.Properties
         /// </summary>
         public static bool DEBUG = false;
 
+        public static bool CONSOLE_MODE = false;
+
         /// <summary>
         /// End of public beta (only whitelisted can login)
         /// </summary>
         public static DateTime PUBLIC_BETA_END = new DateTime(2017, 6, 28, 11, 30, 0);
 
-        public static DateTime RUNTIME = new DateTime(2017, 6, 28, 11, 30, 0);
+        public static DateTime RUNTIME { get; set; }
     }
 }

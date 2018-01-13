@@ -158,6 +158,9 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR01), player.Information.Ammunitions["ammunition_rocketlauncher_sar-01"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR02), player.Information.Ammunitions["ammunition_rocketlauncher_sar-02"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), player.Information.Ammunitions["ammunition_mine_acm-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SMARTBOMB), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), player.Information.Ammunitions["ammunition_specialammo_emp-01"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 player.Settings.Slotbar.GetCategories();
             }
@@ -1188,6 +1191,23 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 gameSession.Client.Send(commands.old_client.HeroMoveCommand.write(destination.X, destination.Y).Bytes);
+            }
+        }
+        #endregion
+
+        #region DroneFormationAvailableFormationsCommand
+
+        public void DroneFormationAvailableFormationsCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                var formations = new List<int>();
+                for (var i = 0; i <= 13; i++) formations.Add(i);
+                gameSession.Client.Send(commands.old_client.DroneFormationAvailableFormationsCommand.write(formations).Bytes);
             }
         }
         #endregion

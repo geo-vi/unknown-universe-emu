@@ -21,5 +21,7 @@
         /// Prints entities added / removed from range
         /// </summary>
         public static bool DEBUG_ENTITIES = false;
+
+        public static int REWARD_MULTIPLYER = 2;
     }
 }

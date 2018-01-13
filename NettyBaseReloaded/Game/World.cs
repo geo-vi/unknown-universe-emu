@@ -56,7 +56,7 @@ namespace NettyBaseReloaded.Game
                 }
                 if (map.Key == 24)
                 {
-                    map.Value.CreateStation(Faction.EIC, new Vector(20800 - 1000, 12800 / 2));
+                    map.Value.CreateStation(Faction.EIC, new Vector(20800 / 2, 1000));
                 }
                 if (map.Key == 28)
                 {

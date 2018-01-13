@@ -20,7 +20,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
             var gameSession = World.StorageManager.GameSessions[player.Id];
 
             Cooldown cooldown;
-
             switch (ItemId)
             {
                 case "equipment_extra_cpu_ish-01":

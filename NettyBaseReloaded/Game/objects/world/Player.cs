@@ -500,18 +500,18 @@ namespace NettyBaseReloaded.Game.objects.world
 
             foreach (var item in Extras)
             {
-                if (item.Value.Amount > 0) { 
-                var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
-                if (slotbarItem != null)
+                if (item.Value.Amount > 0)
                 {
-                    slotbarItem.CounterValue = item.Value.Amount;
-                    slotbarItem.Visible = true;
-                    if (UsingNewClient)
+                    var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
+                    if (slotbarItem != null)
                     {
-                        World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
+                        slotbarItem.CounterValue = item.Value.Amount;
+                        slotbarItem.Visible = true;
+                        if (UsingNewClient)
+                        {
+                            World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
+                        }
                     }
-                }
-
                     switch (item.Key)
                     {
                         case "equipment_extra_cpu_ajp-01":
@@ -557,9 +557,9 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
             }
 
-            return Convert.ToInt32(droneRep) + "|2|" + Convert.ToInt32(jumpToBase) + "|" +
+            return Convert.ToInt32(droneRep) + "|1|" + Convert.ToInt32(jumpToBase) + "|" +
                    Convert.ToInt32(ammoBuy) + "|" + Convert.ToInt32(rep) + "|" + Convert.ToInt32(tradeDrone) +
-                   "|0|" + Convert.ToInt32(smb) + "|" + Convert.ToInt32(ish) + "|0|" + Convert.ToInt32(aim) + "|" +
+                   "|0|" + 1 + "|" + 1 + "|0|" + Convert.ToInt32(aim) + "|" +
                    Convert.ToInt32(autoRocket) + "|" + Convert.ToInt32(cloak) + "|" +
                    Convert.ToInt32(autoRocketLauncer) + "|" + Convert.ToInt32(rocketBuy) + "|" +
                    Convert.ToInt32(jump) + "|" + Convert.ToInt32(petRefuel);

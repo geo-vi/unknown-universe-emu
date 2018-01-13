@@ -61,21 +61,18 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             var enemy = Character.Selected;
             if (!AssembleEnemy(enemy)) return;
 
-            bool isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
-            if (Character.Cooldowns.Exists(cooldown => cooldown is LaserCooldown))
+            var isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
+            if (isRsb)
             {
-                if (isRsb)
-                {
-                    if (Character.Cooldowns.Exists(cooldown => cooldown is RSBCooldown)) return;
+                if (Character.Cooldowns.Exists(cooldown => cooldown is RSBCooldown)) return;
 
-                    var cld = new RSBCooldown();
-                    cld.Send(((Player)Character).GetGameSession());
-                    Character.Cooldowns.Add(cld);
-                }
-                else return;
+                var cld = new RSBCooldown();
+                cld.Send(((Player)Character).GetGameSession());
+                Character.Cooldowns.Add(cld);
             }
-            if (!isRsb)
+            else
             {
+                if (Character.Cooldowns.Exists(cooldown => cooldown is LaserCooldown)) return;
                 var newCooldown = new LaserCooldown();
                 Character.Cooldowns.Add(newCooldown);
             }
@@ -162,23 +159,22 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     LaunchMissle(gameSession.Player.Settings.CurrentRocket.LootId);
                 }
 
-
-                //if (gameSession.Player.Controller.CPUs.Active.Any(x => x == player.CPU.Types.AUTO_ROCKLAUNCHER))
-                //{
-                //    var rocketLauncher = Character.RocketLauncher;
-                //    if (rocketLauncher?.Launchers != null)
-                //    {
-                //        //if(rocketLauncher.CurrentLoad != rocketLauncher.GetMaxLoad())
-                //        //{
-                //        //    rocketLauncher.Reload();
-                //        //}
-                //        //else
-                //        //{
-                //        //    LaunchRocketLauncher();
-                //        //    rocketLauncher.Reload();
-                //        //}
-                //    }
-                //}
+                if (gameSession.Player.Controller.CPUs.Active.Any(x => x == player.CPU.Types.AUTO_ROCKLAUNCHER))
+                {
+                    var rocketLauncher = Character.RocketLauncher;
+                    if (rocketLauncher?.Launchers != null)
+                    {
+                        if (rocketLauncher.CurrentLoad != rocketLauncher.GetMaxLoad())
+                        {
+                            rocketLauncher.Reload();
+                        }
+                        else
+                        {
+                            LaunchRocketLauncher();
+                            rocketLauncher.Reload();
+                        }
+                    }
+                }
 
                 if (enemy is Character)
                     UpdateAttacker(enemy as Character, gameSession.Player);

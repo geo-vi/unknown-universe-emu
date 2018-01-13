@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using NettyBaseReloaded.Game.netty.commands.new_client;
+using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 {
@@ -13,6 +15,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
         public override void Execute(Player player)
         {
+            if (player.Cooldowns.Exists(x => x is DroneFormationCooldown)) return;
+
             var gameSession = World.StorageManager.GameSessions[player.Id];
             var formationName = ItemId.Split('_')[2];
             var formation = DroneFormation.STANDARD;
@@ -67,22 +71,16 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
             player.Formation = formation;
 
-            //foreach (var item in player.SlotbarItems)
-            //{
-            //    var key = item.Key;
-            //    var value = item.Value;
+            var cld = new DroneFormationCooldown();
+            cld.Send(gameSession);
+            player.Cooldowns.Add(cld);
 
-            //    if (value is FormationItem)
-            //    {
-            //        player.Controller.SetCooldown(value, TimerState.COOLDOWN, 3000);
-            //        value.Selected = false;
-            //        gameSession.Client.Send(value.ChangeStatus());
-            //    }
-            //}
+            GameClient.SendRangePacket(player, netty.commands.old_client.DroneFormationChangeCommand.write(player.Id, (int)formation), true);
+            GameClient.SendRangePacket(player, netty.commands.new_client.DroneFormationChangeCommand.write(player.Id, (int)formation), true);
 
             //GameHandler.SendRangePacket(player, PacketBuilder.FormationChange(player.Id, (int)formation), true);
-            //player.Controller.Update();
-            //Selected = true;
+            player.Update();
+            Selected = true;
             //gameSession.GameHandler.sendPacket(ChangeStatus());
         }
     }

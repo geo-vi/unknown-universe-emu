@@ -38,6 +38,8 @@ namespace NettyBaseReloaded.Game.controllers.login
         public void SendLegacy()
         {
             SendLegacy(GameSession);
+            AddTempDroneFormations();
+            AddTempTechs();
         }
 
         public static void SendLegacy(GameSession GameSession)
@@ -63,7 +65,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             //MBA -> MenuButtonAccess
             //DB -> Disable button
             //EB -> Enable button
-            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
+            //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
             //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
@@ -77,6 +79,16 @@ namespace NettyBaseReloaded.Game.controllers.login
 
             if (GameSession.Player.Group != null)
                 Packet.Builder.GroupInitializationCommand(GameSession);
+        }
+
+        private void AddTempDroneFormations()
+        {
+            Packet.Builder.DroneFormationAvailableFormationsCommand(GameSession);
+        }
+
+        private void AddTempTechs()
+        {
+            
         }
     } 
 }

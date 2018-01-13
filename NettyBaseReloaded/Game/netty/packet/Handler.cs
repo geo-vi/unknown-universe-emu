@@ -54,6 +54,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.LogoutRequest.ID, new LogoutHandler());
             OldClientCommands.Add(commands.old_client.requests.ClientResolutionChangeRequest.ID, new ClientResolutionChangeHandler());
             LegacyCommands.Add(ClientCommands.GROUPSYSTEM, new GroupSystemHandler());
+            OldClientCommands.Add(commands.old_client.requests.DroneFormationChangeRequest.ID, new DroneFormationChangeHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

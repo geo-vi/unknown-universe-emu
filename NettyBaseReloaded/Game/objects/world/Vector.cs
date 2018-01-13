@@ -93,5 +93,11 @@ namespace NettyBaseReloaded.Game.objects.world
             return new Vector(origin.X + xDist, origin.Y + yDist);
         }
 
+        public double GetAngle(Vector secPoint)
+        {
+            float xDiff = secPoint.X - X;
+            float yDiff = secPoint.Y - Y;
+            return Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
+        }
     }
 }
