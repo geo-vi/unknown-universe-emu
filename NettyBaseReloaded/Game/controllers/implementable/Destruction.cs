@@ -105,9 +105,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                     else if (target is Player)
                     {
-                        // TODO: Send killscreen to target
                         //TEMP UNTIL KILLSCREEN IS ADDED
-                        target.Controller.Destruction.RespawnPlayer();
+                        var otherPlayer = target as Player;
+                        var gameSession = otherPlayer.GetGameSession();
+                        Packet.Builder.KillScreenCommand(gameSession, Character);
                     }
                 }
             }
@@ -178,7 +179,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
-        private void RespawnPlayer()
+        public void RespawnPlayer()
         {
             Character.EntityState = EntityStates.ALIVE;
             Character.Range.Clear();

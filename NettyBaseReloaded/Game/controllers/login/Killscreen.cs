@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Game.controllers.login
 {
@@ -11,12 +12,11 @@ namespace NettyBaseReloaded.Game.controllers.login
     {
         public Killscreen(GameSession gameSession) : base(gameSession)
         {
-
         }
 
         public override void Execute()
         {
-            
+            Packet.Builder.KillScreenCommand(GameSession, null);
         }
     }
 }

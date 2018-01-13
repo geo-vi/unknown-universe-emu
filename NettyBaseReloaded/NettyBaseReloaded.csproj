@@ -277,6 +277,7 @@
     <Compile Include="Game\netty\commands\old_client\HitpointInfoCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenOptionModule.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenOptionTypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\KillScreenUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenPostCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LegacyModule.cs" />
     <Compile Include="Game\netty\commands\old_client\LevelUpCommand.cs" />
@@ -321,6 +322,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\SelectRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipSelectionRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipSettingsRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\KillScreenRepairRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipWarpWindowRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\VersionRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\WindowSettingsRequest.cs" />
@@ -356,6 +358,7 @@
     <Compile Include="Game\netty\handlers\HellstormLaunchHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLoadHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormSelectRocketHandler.cs" />
+    <Compile Include="Game\netty\handlers\KillScreenRepairRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\JumpRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
@@ -460,6 +463,8 @@
     <Compile Include="Game\objects\world\players\informations\Uridium.cs" />
     <Compile Include="Game\objects\world\players\killscreen\Killscreen.cs" />
     <Compile Include="Game\objects\world\players\killscreen\KillscreenOption.cs" />
+    <Compile Include="Game\objects\world\players\killscreen\KillscreenOptions.cs" />
+    <Compile Include="Game\objects\world\players\killscreen\KillscreenTypes.cs" />
     <Compile Include="Game\objects\world\players\LogMessage.cs" />
     <Compile Include="Game\objects\world\players\Storage.cs" />
     <Compile Include="Game\objects\world\players\PlayerBaseClass.cs" />

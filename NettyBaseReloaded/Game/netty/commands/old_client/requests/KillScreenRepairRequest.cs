@@ -7,19 +7,17 @@ using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
 {
-    class LogoutRequest
+    class KillScreenRepairRequest
     {
-        public const short ID = 7987;
+        public const short ID = 3303;
 
-        public const short REQUEST_LOGOUT = 0;  
-        public const short ABORT_LOGOUT = 1;
-
-        public short request;
+        public KillScreenOptionTypeModule selection;
 
         public void readCommand(byte[] bytes)
         {
             var p = new ByteParser(bytes);
-            request = p.readShort();
+            p.readShort();
+            selection = new KillScreenOptionTypeModule(p.readShort());
         }
     }
 }
