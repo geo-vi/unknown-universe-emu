@@ -59,6 +59,7 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.MinimumPoolSize = 10; //I've been using 10-100, but you can play with them
                 ConnectionStringBuilder.MaximumPoolSize = 100;
                 ConnectionStringBuilder.Pooling = true;
+                ConnectionStringBuilder.ConvertZeroDateTime = true;
                 GlobalConnectionString = ConnectionStringBuilder.ToString();
             }
             return GlobalConnectionString;
@@ -79,6 +80,7 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.MinimumPoolSize = 10; //I've been using 10-100, but you can play with them
                 ConnectionStringBuilder.MaximumPoolSize = 100;
                 ConnectionStringBuilder.Pooling = true;
+                ConnectionStringBuilder.ConvertZeroDateTime = true;
                 ConnectionString = ConnectionStringBuilder.ToString();
             }
             return ConnectionString;

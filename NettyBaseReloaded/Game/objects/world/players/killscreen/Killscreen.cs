@@ -10,78 +10,31 @@ namespace NettyBaseReloaded.Game.objects.world.players.killscreen
 {
     class Killscreen
     {
-        public Character Killer { get; }
+        /// <summary>
+        /// If user connects for the 2nd time we should send him the option to repair at base only
+        /// Otherwise if player is fresh killed (didn't disconnect since death) we just send him the killscreen with the killer's details.
+        /// </summary>
+        // TODO: Recode it
 
-        private Player Player { get; }
+        public int Id { get; set; }
 
-        public KillscreenOptions DeathType { get; }
+        public string KillerName { get; set; }
+        public string KillerLink { get; set; }
 
-        private Killscreen(Player player)
-        {
-            if (player == null)
-                return;
-            Player = player;
-        }
+        public DeathType DeathType { get; set; }
 
-        public Killscreen(Player player, Player killer) : this(player)
-        {
-            DeathType = KillscreenOptions.KILLED_BY_PLAYER;
-            // TODO::Add Killscreen
+        public string Alias => "MISC"; // TEMPORARY until we find out what it is
 
-            //World.StorageManager.GetGameSession(player.Id).Disconnect(GameSession.DisconnectionType.NORMAL);
-        }
+        public DateTime TimeOfDeath { get; set; }
 
-        public Killscreen(Player player, Npc killer) : this(player)
-        {
-            DeathType = KillscreenOptions.KILLED_BY_NPC;
-        }
-
-        public Killscreen(Player player, Pet killer) : this(player)
-        {
-            DeathType = KillscreenOptions.KILLED_BY_PET;
-        }
-
-        public Killscreen(Player player, Mine killer) : this(player)
-        {
-            DeathType = KillscreenOptions.MINE;
-        }
-
-        public int CalculatePrice()
-        {
-            // default (we will code it together)
-            return 0;
-        }
-
-        public string BuildKillerLink()
-        {
-            // we will do that together too
-            
-            return "http://univ3rse.com/internalHangar";
-        }
-
-        public string GetAlias()
-        {
-            return "MISC";
-        }
-
-        public void Radiation()
-        {
-
-        }
-
-        public void Character()
+        public Killscreen()
         {
             
         }
 
-        public void Mine()
+        public static Killscreen Load(Player killedPlayer)
         {
-
-        }
-
-        public void Pet()
-        {
-
+            return World.DatabaseManager.GetLastKillscreen(killedPlayer.Id);
         }
     }
 }

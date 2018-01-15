@@ -20,8 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using MySql.Data.Types;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.pois;
+using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
 
 namespace NettyBaseReloaded.Game.managers
@@ -898,6 +900,30 @@ namespace NettyBaseReloaded.Game.managers
             {
                 
             }
+        }
+
+        public Killscreen GetLastKillscreen(int playerId)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow(
+                        $"SELECT * FROM player_deaths WHERE PLAYER_ID={playerId} ORDER BY id DESC LIMIT 1");
+                    var id = Convert.ToInt32(queryRow["ID"]);
+                    var killerName = queryRow["KILLER_NAME"].ToString();
+                    var killerLink = queryRow["KILLER_LINK"].ToString();
+                    var deathType = (DeathType) (Convert.ToInt32(queryRow["DEATH_TYPE"]));
+                    var alias = queryRow["ALIAS"].ToString();
+                    var tod = queryRow["TIME_OF_DEATH"].ToString();
+                    Console.WriteLine($"{id} -> {killerName} -> {killerLink} -> {deathType} -> {alias} -> {tod}");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return null;// TODO
         }
     }
 }

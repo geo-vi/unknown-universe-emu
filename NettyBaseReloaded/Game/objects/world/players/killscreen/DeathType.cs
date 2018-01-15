@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.objects.world.players.killscreen
 {
-    enum KillscreenTypes
+    enum DeathType
     {
-        FREE_PHOENIX,
-        BASIC_REPAIR
+        //TODO Add all death types
+        TEMPORARY
     }
 }
