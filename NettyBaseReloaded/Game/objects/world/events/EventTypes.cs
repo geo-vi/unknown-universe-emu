@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NettyBaseReloaded.Game.controllers.events
+namespace NettyBaseReloaded.Game.objects.world.events
 {
-    public enum Types
+    enum EventTypes
     {
-        SPACEBALL,
-        PUZZLE
+        SCOREMAGEDDON
     }
 }

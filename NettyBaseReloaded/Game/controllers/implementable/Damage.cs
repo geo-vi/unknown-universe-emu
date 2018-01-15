@@ -170,15 +170,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             if (target.CurrentShield > 0)
             {
-                if (totalAbsDamage > 0)
-                    totalDamage += totalAbsDamage;
+                //if (totalAbsDamage > 0)
+                //    totalDamage += totalAbsDamage;
                 //For example => Target has 80% abs but you' have moth (+20% penetration) :> damage * 0.6
 
-                var totalAbs = Math.Abs(shieldPenetration - target.ShieldAbsorption) + totalAbsDamage;
+                var totalAbs = Math.Abs(shieldPenetration - target.ShieldAbsorption);
 
                 if (totalAbs > 0)
                 {
-                    var _absDmg = (int)(totalAbs * totalAbs);
+                    var _absDmg = (int)(totalAbs * totalAbsDamage);
                     target.CurrentShield -= _absDmg;
                     if (attacker != null)
                         attacker.CurrentShield += _absDmg;

@@ -42,9 +42,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     target.Controller.Destruction.Kill();
                     if (Character is Player)
                     {
-
                         var player = Character as Player;
-                        if (target.FactionId == player.FactionId)
+                        if (target.FactionId == player.FactionId)//
                         {
                             Reward newReward = new Reward(new Dictionary<RewardType, int>());
                             var rewards = target.Hangar.Ship.Reward;
@@ -52,7 +51,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             {
                                 if (reward is int)
                                 {
-                                    newReward.Rewards.Add((int) reward * -1);
+                                    newReward.Rewards.Add((int) reward * 1); // * -1
                                 }
                                 else newReward.Rewards.Add(reward);
                             }
@@ -68,7 +67,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                     {
                                         if (target.Hangar.Ship.Id != 80)
                                             if (_attacker.Value.Player.Group != mainAttacker.Group)
-                                                continue;// TODO: Add proper mothership/ cubi                                          
+                                                continue; // TODO: Add proper mothership/ cubi                                          
 
                                         Reward reward = new Reward(new Dictionary<RewardType, int>());
                                         var baseReward = target.Hangar.Ship.Reward;
@@ -76,14 +75,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                         foreach (var rewardValue in baseReward.Rewards)
                                         {
                                             //TODO: Group reward modes & stuff
-                                            var percentageTotalDmgGiven = (double)_attacker.Value.TotalDamage / (double)(target.MaxHealth + target.MaxShield);
+                                            var percentageTotalDmgGiven =
+                                                (double) _attacker.Value.TotalDamage /
+                                                (double) (target.MaxHealth + target.MaxShield);
 
-                                            if (target.Hangar.Ship.Id != 80 && _attacker.Value.Player == mainAttacker) 
+                                            if (target.Hangar.Ship.Id != 80 && _attacker.Value.Player == mainAttacker)
                                                 percentageTotalDmgGiven = 1;
 
                                             if (rewardValue is int)
                                             {
-                                                reward.Rewards.Add(Convert.ToInt32((int) rewardValue * percentageTotalDmgGiven));
+                                                reward.Rewards.Add(Convert.ToInt32(
+                                                    (int) rewardValue * percentageTotalDmgGiven));
                                             }
                                             else reward.Rewards.Add(rewardValue);
                                         }
@@ -97,6 +99,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             }
                         }
                         Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
+                        foreach (var playerEvent in player.EventsPraticipating)
+                            playerEvent.Value.DestroyAttackable(target);
                     }
                     if (target is Npc)
                     {

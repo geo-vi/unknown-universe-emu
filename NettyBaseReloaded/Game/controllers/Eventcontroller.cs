@@ -4,28 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.events;
+using NettyBaseReloaded.Game.objects.world.players;
 
 namespace NettyBaseReloaded.Game.controllers
 {
-    class EventsController
+    class EventController
     {
+        public PlayerEvent Event { get; set; }
         private IEvent CurrentEvent { get; set; }
 
-        public EventsController()
+        public EventController(PlayerEvent gameEvent)
         {
+            Event = gameEvent;
         }
 
-        public void Set(Types types)
+        public void Set()
         {
-            switch (types)
-            {
-                case Types.SPACEBALL:
-                    CurrentEvent = new Spaceball();
-                    break;
-                case Types.PUZZLE:
-                    CurrentEvent = new Puzzle();
-                    break;
-            }
         }
 
         public void Start()

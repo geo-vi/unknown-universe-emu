@@ -4,6 +4,7 @@ using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.events;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.players;
@@ -21,6 +22,7 @@ namespace NettyBaseReloaded.Game.managers
         public Levels Levels = new Levels();
         public Dictionary<int, Title> Titles = new Dictionary<int, Title>();
         public List<Group> Groups = new List<Group>();
+        public Dictionary<int, GameEvent> Events = new Dictionary<int, GameEvent>();
 
         public GameSession GetGameSession(int userId)
         {

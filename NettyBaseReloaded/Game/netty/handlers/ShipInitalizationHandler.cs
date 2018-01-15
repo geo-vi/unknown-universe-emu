@@ -87,6 +87,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 World.StorageManager.GameSessions[Player.Id] = GameSession;
             }
 
+            Console.WriteLine("IM HERE");
             LoginController.Initiate(GameSession);
         }
     }

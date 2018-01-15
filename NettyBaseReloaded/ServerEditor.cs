@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.objects.world.events;
 
 namespace NettyBaseReloaded
 {
@@ -49,6 +51,12 @@ namespace NettyBaseReloaded
         private void rewardMultiplyer_Scroll(object sender, EventArgs e)
         {
             Properties.Game.REWARD_MULTIPLYER = rewardMultiplyer.Value;
+        }
+
+        private void startScoreMageddon_Click(object sender, EventArgs e)
+        {
+            World.StorageManager.Events.Add(0, new GameEvent(0, "Scoremageddon", EventTypes.SCOREMAGEDDON));
+            World.StorageManager.Events[0].Start();
         }
     }
 }

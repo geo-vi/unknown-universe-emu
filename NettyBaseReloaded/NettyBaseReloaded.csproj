@@ -118,10 +118,7 @@
       <DependentUpon>Controller.cs</DependentUpon>
     </Compile>
     <Compile Include="Game\controllers\AbstractCharacterController.cs" />
-    <Compile Include="Game\controllers\events\Puzzle.cs" />
     <Compile Include="Game\controllers\events\IEvent.cs" />
-    <Compile Include="Game\controllers\events\Spaceball.cs" />
-    <Compile Include="Game\controllers\events\Types.cs" />
     <Compile Include="Game\controllers\implementable\Attack.cs" />
     <Compile Include="Game\controllers\implementable\Checkers.cs" />
     <Compile Include="Game\controllers\implementable\Damage.cs" />
@@ -147,7 +144,7 @@
     <Compile Include="Game\controllers\pet\gears\Passive.cs" />
     <Compile Include="Game\controllers\pet\Gear.cs" />
     <Compile Include="Game\controllers\PlayerController.cs" />
-    <Compile Include="Game\controllers\EventsController.cs" />
+    <Compile Include="Game\controllers\EventController.cs" />
     <Compile Include="Game\controllers\player\CPU.cs" />
     <Compile Include="Game\controllers\implementable\IChecker.cs" />
     <Compile Include="Game\controllers\player\Misc.cs" />
@@ -277,8 +274,8 @@
     <Compile Include="Game\netty\commands\old_client\HitpointInfoCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenOptionModule.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenOptionTypeModule.cs" />
-    <Compile Include="Game\netty\commands\old_client\KillScreenUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenPostCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\KillScreenUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LegacyModule.cs" />
     <Compile Include="Game\netty\commands\old_client\LevelUpCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LogoutCommand.cs" />
@@ -313,6 +310,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLaunchRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLoadRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormSelectRocketRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\KillScreenRepairRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\LogoutRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\MoveRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetGearActivationRequest.cs" />
@@ -322,7 +320,6 @@
     <Compile Include="Game\netty\commands\old_client\requests\SelectRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipSelectionRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipSettingsRequest.cs" />
-    <Compile Include="Game\netty\commands\old_client\requests\KillScreenRepairRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipWarpWindowRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\VersionRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\WindowSettingsRequest.cs" />
@@ -358,9 +355,9 @@
     <Compile Include="Game\netty\handlers\HellstormLaunchHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLoadHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormSelectRocketHandler.cs" />
-    <Compile Include="Game\netty\handlers\KillScreenRepairRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\JumpRequestHandler.cs" />
+    <Compile Include="Game\netty\handlers\KillScreenRepairRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
     <Compile Include="Game\netty\handlers\LogoutHandler.cs" />
     <Compile Include="Game\netty\handlers\PetGearActivationHandler.cs" />
@@ -381,6 +378,7 @@
     <Compile Include="Game\netty\commands\ClientCommands.cs" />
     <Compile Include="Game\netty\commands\Command.cs" />
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\BattleRepairRobotCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationEffect.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DroneFormationCooldown.cs" />
@@ -405,6 +403,7 @@
     <Compile Include="Game\objects\world\characters\TickRates.cs" />
     <Compile Include="Game\objects\world\EntityStates.cs" />
     <Compile Include="Game\objects\world\Events.cs" />
+    <Compile Include="Game\objects\world\events\GameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\CargoLoot.cs" />
@@ -446,11 +445,18 @@
     <Compile Include="Game\objects\world\players\equipment\extras\Cloak.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\Robot.cs" />
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
+    <Compile Include="Game\objects\world\events\EventTypes.cs" />
+    <Compile Include="Game\objects\world\players\events\ScoreMageddon.cs" />
+    <Compile Include="Game\objects\world\players\extra\techs\RocketPrecission.cs" />
+    <Compile Include="Game\objects\world\players\extra\techs\ShieldBuff.cs" />
+    <Compile Include="Game\objects\world\players\PlayerEvent.cs" />
     <Compile Include="Game\objects\world\players\extra\Booster.cs" />
     <Compile Include="Game\objects\world\players\extra\boosters\DMGBO1.cs" />
     <Compile Include="Game\objects\world\players\extra\boosters\DMGBO2.cs" />
     <Compile Include="Game\objects\world\players\extra\GalaxyGate.cs" />
     <Compile Include="Game\objects\world\characters\Skilltree.cs" />
+    <Compile Include="Game\objects\world\players\extra\Tech.cs" />
+    <Compile Include="Game\objects\world\players\extra\techs\BattleRepairRobot.cs" />
     <Compile Include="Game\objects\world\players\Group.cs" />
     <Compile Include="Game\objects\world\players\Information.cs" />
     <Compile Include="Game\objects\world\players\informations\BaseInfo.cs" />

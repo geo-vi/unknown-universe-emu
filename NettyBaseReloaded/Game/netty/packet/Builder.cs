@@ -16,6 +16,7 @@ using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.map.objects.stations;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.ammo;
+using NettyBaseReloaded.Game.objects.world.players.events;
 using NettyBaseReloaded.Game.objects.world.players.extra;
 using NettyBaseReloaded.Game.objects.world.players.settings;
 using NettyBaseReloaded.Utils;
@@ -135,8 +136,9 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
-
+                
                 var ammo = new List<netty.commands.old_client.AmmunitionCountModule>();
+                gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X3), player.Information.Ammunitions["ammunition_laser_mcb-50"].Get()));
@@ -1211,8 +1213,6 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
-    }
-}
 
         #region KillScreenCommand
 
@@ -1236,7 +1236,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                     new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
                     new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()));
 
-                options.Add(optionModule);                
+                options.Add(optionModule);
 
                 if (killer != null)
                     gameSession.Client.Send(commands.old_client.KillScreenPostCommand.write(killer.Name, "http://ge1.univ3rse.com/internalHangar", "MISC", new netty.commands.old_client.DestructionTypeModule(netty.commands.old_client.DestructionTypeModule.PLAYER), options).Bytes);
@@ -1246,5 +1246,18 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #endregion
 
+        #region UpdateScoremageddonWindow
+        public void UpdateScoremageddonWindow(GameSession gameSession, ScoreMageddon scoreMageddon)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                LegacyModule(gameSession, $"0|A|SCE|{scoreMageddon.Lives}|{scoreMageddon.GetMaxLives()}|{scoreMageddon.Combo}|{scoreMageddon.GetMaxCombo()}|{scoreMageddon.GetComboTimeLeft()}|{ScoreMageddon.MAX_COMBO_TIME}|{scoreMageddon.Score}");
+            }
+        }
+        #endregion
     }
 }

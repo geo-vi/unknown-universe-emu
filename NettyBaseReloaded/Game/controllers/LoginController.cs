@@ -36,6 +36,7 @@ namespace NettyBaseReloaded.Game.controllers
             _gameSession = gameSession;
             LoadConfigs();
             CheckPos();
+            Console.WriteLine("Been through");
             LoadControllers();
             GetLoginType();
             LoadTicks();

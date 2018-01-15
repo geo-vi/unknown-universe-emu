@@ -860,6 +860,45 @@ namespace NettyBaseReloaded.Game.managers
             }
             return 0;
         }
+
+        public void UpdateEventForPlayer(PlayerEvent playerEvent)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"INSERT INTO player_event_info (PLAYER_ID, EVENT_ID, SCORE, DATA) VALUES('{playerEvent.Player.Id}', '{playerEvent.Id}', '{playerEvent.Score}', '{JsonConvert.SerializeObject(playerEvent)}') ON DUPLICATE KEY UPDATE SCORE='{playerEvent.Score}', DATA='{JsonConvert.SerializeObject(playerEvent)}'");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public void LoadEventForPlayer(int id, Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var query = mySqlClient.ExecuteQueryRow(
+                        $"SELECT * FROM player_event_info WHERE EVENT_ID={id} AND PLAYER_ID={player.Id}");
+                    var eventData = JsonConvert.DeserializeObject<PlayerEvent>(query["DATA"].ToString());
+
+                    if (eventData != null)
+                    {
+                        if (!player.EventsPraticipating.ContainsKey(id))
+                            player.EventsPraticipating.Add(id, eventData);
+                        else player.EventsPraticipating[id] = eventData;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                
+            }
+        }
     }
 }
 

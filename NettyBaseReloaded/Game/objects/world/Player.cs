@@ -96,6 +96,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Group Group { get; set; }
 
+        public List<Tech> Techs { get; set; }
+
         /*********
          * STATS *
          *********/
@@ -110,6 +112,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
                 switch (Formation)
                 {
+                    case DroneFormation.CHEVRON:
+                        value = (int) (value * 0.2); // -20%
+                        break;
                     case DroneFormation.DIAMOND:
                         value = (int) (value * 0.7); //-30%
                         break;
@@ -148,7 +153,17 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override int CurrentShield
         {
-            get { return Hangar.Configurations[CurrentConfig - 1].CurrentShield; }
+            get
+            {
+                var value = Hangar.Configurations[CurrentConfig - 1].CurrentShield;
+                switch (Formation)
+                {
+                    case DroneFormation.HEART:
+                        value = (int)(value * 1.1); // +10%
+                        break;
+                }
+                return value;
+            }
             set { Hangar.Configurations[CurrentConfig - 1].CurrentShield = value; }
         }
 
@@ -246,7 +261,9 @@ namespace NettyBaseReloaded.Game.objects.world
                     case DroneFormation.STAR:
                         value = (int) (value * 1.25); //+25%
                         break;
-
+                    case DroneFormation.CHEVRON:
+                        value = (int)(value * 1.5); //+50%
+                        break;
                 }
 
                 return value;
@@ -276,6 +293,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Npc> AttachedNpcs = new List<Npc>();
 
+        public Dictionary<int, PlayerEvent> EventsPraticipating = new Dictionary<int, PlayerEvent>();
+
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
             string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
@@ -303,6 +322,24 @@ namespace NettyBaseReloaded.Game.objects.world
             State.Tick();
             Hangar.DronesLevelChecker(this);
             Group?.Tick();
+            TickEvents();
+            //TickTechs();
+        }
+
+        private void TickTechs()
+        {
+            foreach (var tech in Techs)
+            {
+                tech.Tick();
+            }
+        }
+
+        private void TickEvents()
+        {
+            foreach (var gameEvent in EventsPraticipating.Values)
+            {
+                gameEvent.Tick();
+            }
         }
 
         private void InitializeClasses()

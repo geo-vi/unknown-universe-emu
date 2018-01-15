@@ -31,13 +31,14 @@
             this.performanceRate = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.rewardMultiplyer = new System.Windows.Forms.TrackBar();
             this.debugCommands = new System.Windows.Forms.CheckBox();
             this.debugLegacyCommands = new System.Windows.Forms.CheckBox();
             this.debugCheckbox = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.startScoreMageddon = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.performanceRate)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -75,6 +76,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(238, 93);
             this.panel1.TabIndex = 3;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(42, 65);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(152, 23);
+            this.button1.TabIndex = 2;
+            this.button1.Text = "Switch to Console mode";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel2
             // 
@@ -141,21 +152,22 @@
             this.debugCheckbox.UseVisualStyleBackColor = true;
             this.debugCheckbox.CheckedChanged += new System.EventHandler(this.debugCheckbox_CheckedChanged);
             // 
-            // button1
+            // startScoreMageddon
             // 
-            this.button1.Location = new System.Drawing.Point(42, 65);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(152, 23);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Switch to Console mode";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.startScoreMageddon.Location = new System.Drawing.Point(12, 158);
+            this.startScoreMageddon.Name = "startScoreMageddon";
+            this.startScoreMageddon.Size = new System.Drawing.Size(96, 34);
+            this.startScoreMageddon.TabIndex = 8;
+            this.startScoreMageddon.Text = "Start Scoremageddon";
+            this.startScoreMageddon.UseVisualStyleBackColor = true;
+            this.startScoreMageddon.Click += new System.EventHandler(this.startScoreMageddon_Click);
             // 
             // ServerEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(505, 146);
+            this.ClientSize = new System.Drawing.Size(505, 203);
+            this.Controls.Add(this.startScoreMageddon);
             this.Controls.Add(this.debugCheckbox);
             this.Controls.Add(this.debugLegacyCommands);
             this.Controls.Add(this.debugCommands);
@@ -186,5 +198,6 @@
         private System.Windows.Forms.CheckBox debugLegacyCommands;
         private System.Windows.Forms.CheckBox debugCheckbox;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button startScoreMageddon;
     }
 }

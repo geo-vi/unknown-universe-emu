@@ -10,6 +10,7 @@ using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.map.objects.stations;
+using NettyBaseReloaded.Game.objects.world.players.extra.techs;
 
 namespace NettyBaseReloaded.Game.controllers.login
 {
@@ -37,14 +38,16 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public void SendLegacy()
         {
+            Console.WriteLine("Legacy anals me");
             SendLegacy(GameSession);
             AddTempDroneFormations();
-            AddTempTechs();
+            //AddTempTechs();
         }
 
         public static void SendLegacy(GameSession GameSession)
         {
-            Packet.Builder.LegacyModule(GameSession, "0|n|t|" + GameSession.Player.Id + "|222|most_wanted");
+            Packet.Builder.DronesCommand(GameSession, GameSession.Player);
+            //Packet.Builder.LegacyModule(GameSession, "0|n|t|" + GameSession.Player.Id + "|222|most_wanted");
 
             Packet.Builder.LegacyModule(GameSession, "0|A|BK|0"); //green booty
             Packet.Builder.LegacyModule(GameSession, "0|A|BKR|0"); //red booty
@@ -69,7 +72,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
             //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
-            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
+            //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
 
             //Fix for 0 credits
             Packet.Builder.LegacyModule(GameSession, "0|A|C|" + GameSession.Player.Information.Credits.Get() + "|" + GameSession.Player.Information.Uridium.Get());
@@ -88,7 +91,33 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         private void AddTempTechs()
         {
-            
+            GameSession.Player.Techs.Add(new RocketPrecission(GameSession.Player));
+            GameSession.Player.Techs.Add(new ShieldBuff(GameSession.Player));
+            GameSession.Player.Techs.Add(new BattleRepairRobot(GameSession.Player));
+
+            var elaStatus = 0; // not equipped
+            var elaCount = 0; // count
+            var elaTimeLeft = 0;
+            var eciStatus = 0; // not equipped
+            var eciCount = 0;
+            var eciTimeLeft = 0;
+            var rpmStatus = 1; // not equipped
+            var rpmCount = 99;
+            var rpmTimeLeft = 0;
+            var sbuStatus = 1;
+            var sbuCount = 99;
+            var sbuTimeLeft = 0;
+            var brbStatus = 1;
+            var brbCount = 99;
+            var brbTimeLeft = 0;
+            //{rpmStatus}|{rpmCount}|{rpmTimeLeft}|{sbuStatus}|{sbuCount}|{sbuTimeLeft}|{brbStatus}|{brbCount}|{brbTimeLeft}
+            string techPacket = $"{elaStatus}|{elaCount}|{elaTimeLeft}|{eciStatus}|{eciCount}|{eciTimeLeft}|";
+            foreach (var tech in GameSession.Player.Techs)
+            {
+                techPacket += $"{tech.GetStatus()}|{99}|{tech.TimeLeft}";
+            }
+
+            Packet.Builder.LegacyModule(GameSession, $"0|TX|S|{techPacket}");
         }
     } 
 }

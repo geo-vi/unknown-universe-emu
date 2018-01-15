@@ -8,8 +8,8 @@ namespace NettyBaseReloaded.Game.controllers.events
 {
     interface IEvent
     {
+        void Tick();
         void Start();
-        void Update();
         void Finish();
     }
 }

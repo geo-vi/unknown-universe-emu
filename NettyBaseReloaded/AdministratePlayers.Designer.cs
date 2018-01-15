@@ -65,6 +65,7 @@
             this.nanoProgress = new System.Windows.Forms.ProgressBar();
             this.hpProgress = new System.Windows.Forms.ProgressBar();
             this.playerTicker = new System.Windows.Forms.Timer(this.components);
+            this.sendPacketBttn = new System.Windows.Forms.Button();
             this.tabController.SuspendLayout();
             this.playersView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.players)).BeginInit();
@@ -233,6 +234,7 @@
             // 
             // playerSelected
             // 
+            this.playerSelected.Controls.Add(this.sendPacketBttn);
             this.playerSelected.Controls.Add(this.closeTab);
             this.playerSelected.Controls.Add(this.playerState);
             this.playerSelected.Controls.Add(this.clan);
@@ -392,6 +394,16 @@
             // 
             this.playerTicker.Tick += new System.EventHandler(this.playerTicker_Tick);
             // 
+            // sendPacketBttn
+            // 
+            this.sendPacketBttn.Location = new System.Drawing.Point(526, 311);
+            this.sendPacketBttn.Name = "sendPacketBttn";
+            this.sendPacketBttn.Size = new System.Drawing.Size(75, 34);
+            this.sendPacketBttn.TabIndex = 16;
+            this.sendPacketBttn.Text = "Send Packet";
+            this.sendPacketBttn.UseVisualStyleBackColor = true;
+            this.sendPacketBttn.Click += new System.EventHandler(this.sendPacketBttn_Click);
+            // 
             // AdministratePlayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -450,5 +462,6 @@
         private System.Windows.Forms.ProgressBar hpProgress;
         private System.Windows.Forms.Button closeTab;
         private System.Windows.Forms.Timer playerTicker;
+        private System.Windows.Forms.Button sendPacketBttn;
     }
 }

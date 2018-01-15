@@ -287,7 +287,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 // Takes 25 secs to recover the shield
                 var amount = MaxShield / 25;
                 if (Formation == DroneFormation.DIAMOND)
-                    amount = amount*2;
+                    amount = (int)(MaxShield * 0.01);
 
                 if (Formation == DroneFormation.MOTH)
                 {
@@ -296,7 +296,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
                 else
                 {
-                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now ||
+                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now && Formation != DroneFormation.DIAMOND ||
                         CurrentShield >= MaxShield)
                         return;
 
@@ -361,6 +361,13 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Destroy(Character destroyer)
         {
+            if (this is Player)
+            {
+                var player = (Player)this;
+                foreach (var playerEvent in player.EventsPraticipating)
+                    playerEvent.Value.Destroyed();
+            }
+
             if (destroyer == null)
             {
                 Destroy();

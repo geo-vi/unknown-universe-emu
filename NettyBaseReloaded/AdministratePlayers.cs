@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Utils.form;
@@ -103,12 +104,19 @@ namespace NettyBaseReloaded
             playerState.Text = selectedPlayer.EntityState.ToString();
             mapName.Text = selectedPlayer.Spacemap.Name;
             pos.Text = selectedPlayer.Position.ToString();
-            hpProgress.Maximum = selectedPlayer.MaxHealth;
-            hpProgress.Value = selectedPlayer.CurrentHealth;
-            nanoProgress.Maximum = selectedPlayer.MaxNanoHull;
-            nanoProgress.Value = selectedPlayer.CurrentNanoHull;
-            shdProgress.Maximum = selectedPlayer.MaxShield;
-            shdProgress.Value = selectedPlayer.CurrentShield;
+            hpProgress.Value = GetProgressbarValue(selectedPlayer.CurrentHealth, selectedPlayer.MaxHealth);
+            nanoProgress.Value = GetProgressbarValue(selectedPlayer.CurrentNanoHull, selectedPlayer.MaxNanoHull);
+            shdProgress.Value = GetProgressbarValue(selectedPlayer.CurrentShield, selectedPlayer.MaxShield);
+        }
+
+        private int GetProgressbarValue(int current, int max)
+        {
+            var val = Convert.ToInt32((double)current / max * 100);
+            if (val > 100)
+                val = 100;
+            if (val < 0)
+                val = 0;
+            return val;
         }
 
         private void closeTab_Click(object sender, EventArgs e)
@@ -142,6 +150,17 @@ namespace NettyBaseReloaded
         {
             playerTicker.Dispose();
             playerTicker = null;
+        }
+
+        private void sendPacketBttn_Click(object sender, EventArgs e)
+        {
+            var txtBox = new TextBoxPopup("Legacy packet", "Write it in the form of 0|A|STD");
+            txtBox.PopupClosed += (s, val) =>
+            {
+                var gs = selectedPlayer.GetGameSession();
+                if (gs != null) Packet.Builder.LegacyModule(gs, val);
+            };
+            txtBox.Show();
         }
     }
 }

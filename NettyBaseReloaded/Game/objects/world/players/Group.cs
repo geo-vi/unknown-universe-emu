@@ -89,6 +89,11 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 foreach (var groupMemberInstance in Members.Values)
                 {
                     var instance = groupMemberInstance.GetGameSession();
+                    if (instance == null)
+                    {
+                        Leave(groupMemberInstance);
+                        continue;
+                    }
                     if (!instance.Player.Controller.Active && !instance.InProcessOfReconection && !instance.InProcessOfDisconnection)
                     {
                         Leave(instance.Player);
