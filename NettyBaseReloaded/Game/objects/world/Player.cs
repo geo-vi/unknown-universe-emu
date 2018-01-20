@@ -33,6 +33,11 @@ namespace NettyBaseReloaded.Game.objects.world
 {
     class Player : Character
     {
+        /// <summary>
+        /// TODO: RECODE the PlayerBase class for a bit more order
+        /// Ex: Tick all playerbased classes at once instead each one individually @Tick() method.
+        /// </summary>
+
         /**********
          * BASICS *
          **********/
@@ -295,6 +300,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Dictionary<int, PlayerEvent> EventsPraticipating = new Dictionary<int, PlayerEvent>();
 
+        public List<VisualEffect> Visuals = new List<VisualEffect>();
+
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
             string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
@@ -323,7 +330,16 @@ namespace NettyBaseReloaded.Game.objects.world
             Hangar.DronesLevelChecker(this);
             Group?.Tick();
             TickEvents();
+            TickVisuals();
             //TickTechs();
+        }
+
+        private void TickVisuals()
+        {
+            foreach (var visual in Visuals)
+            {
+                visual?.Tick();
+            }
         }
 
         private void TickTechs()

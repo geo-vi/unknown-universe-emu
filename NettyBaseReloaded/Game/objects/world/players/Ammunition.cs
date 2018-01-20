@@ -32,7 +32,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             SyncCheck();
             int fireCount;
-            if (LootId.Contains("laser"))
+            if (LootId.Contains("ammunition_laser"))
                 fireCount = Player.Equipment.LaserCount();
             else fireCount = 1;
             var newAmount = Amount - fireCount;

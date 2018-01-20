@@ -45,6 +45,31 @@ namespace NettyBaseReloaded
         {
             Console.SetOut(new Out());
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
+
+            Application.ThreadException += ApplicationOnThreadException;
+
+            InitiateConsole();
+        }
+
+
+        private static void InitiateConsole()
+        {
+            DisableSizing();
+
+            Console.SetOut(new Out());
+            Console.CursorVisible = false;
+
+            Draw.Logo();
+
+            //RewardBuilder();
+            InitiateSession();
+            ConsoleUpdater();
+            ConsoleCommands.Add();
+            KeepAlive();
+        }
+
+        private static void InitiatePanel()
+        {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Controller());
@@ -108,6 +133,13 @@ namespace NettyBaseReloaded
             new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
             Environment.Exit(0);
             // TODO: Save everything and then fuck up
+        }
+
+
+        private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs threadExceptionEventArgs)
+        {
+            new ExceptionLog("thread_exception", $"Unhandled thread exception trapped and logged", threadExceptionEventArgs.Exception);
+            Environment.Exit(0);
         }
 
         /// <summary>

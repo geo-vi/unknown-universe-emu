@@ -109,7 +109,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
         {
         }
 
-        public List<SlotbarCategoryModule> GetCategories()
+        public List<SlotbarCategoryModule> GetCategories(Player player)
         {
             var counterValue = 0;
 
@@ -120,13 +120,16 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             var maxCounter = 1000;
             foreach (var itemId in Items.LaserIds)
             {
+                if (!player.Information.Ammunitions.ContainsKey(itemId)) continue;
+                var ammo = player.Information.Ammunitions[itemId];
+
                 var item = new LaserItem(
                     itemId,
                     counterValue,
                     maxCounter
                 );
 
-                item.CounterValue = 1500;
+                item.CounterValue = ammo.Get();
 
                 item.Create();
                 items.Add(item.Object);
@@ -139,6 +142,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             maxCounter = 200;
             foreach (var itemId in Items.RocketIds)
             {
+                if (!player.Information.Ammunitions.ContainsKey(itemId)) continue;
+                var ammo = player.Information.Ammunitions[itemId];
+
+                counterValue = ammo.Get();
+
                 var item = new RocketItem(
                     itemId,
                     counterValue,

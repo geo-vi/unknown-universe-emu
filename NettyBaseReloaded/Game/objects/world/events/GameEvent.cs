@@ -15,7 +15,7 @@ namespace NettyBaseReloaded.Game.objects.world.events
         /// <summary>
         /// Event ID
         /// </summary>
-        public int Id { get; set; }
+        public int Id { get; }
 
         /// <summary>
         /// Event name
@@ -29,19 +29,24 @@ namespace NettyBaseReloaded.Game.objects.world.events
 
         public EventTypes EventType { get; set; }
 
-        public GameEvent(int id, string name, EventTypes eventType)
+        public bool Active { get; set; }
+
+        public GameEvent(int id, string name, EventTypes eventType, bool active)
         {
             Id = id;
             Name = name;
             EventType = eventType;
+            Active = active;
         }
 
         public void Start()
         {
+            Active = true;
+            World.DatabaseManager.UpdateServerEvent(Id, Active);
             foreach (var gameSession in World.StorageManager.GameSessions.Values)
             {
                 CreatePlayerEvent(gameSession.Player);
-                Packet.Builder.LegacyModule(gameSession, $"0|A|STD|{Name} STARTED!");
+                Packet.Builder.LegacyModule(gameSession, $"0|A|STD|{Name} have started!");
             }
         }
 

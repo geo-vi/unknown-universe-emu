@@ -15,7 +15,8 @@ namespace NettyBaseReloaded.Game.netty.handlers
         {
             if (gameSession.Player.UsingNewClient)
             {
-                new NotImplementedException();
+                Console.WriteLine("TODO: Update KillscreenRepairRequestHandler for new client");
+                //new NotImplementedException();
             }
             else
             {

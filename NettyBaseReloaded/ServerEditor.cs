@@ -55,8 +55,6 @@ namespace NettyBaseReloaded
 
         private void startScoreMageddon_Click(object sender, EventArgs e)
         {
-            World.StorageManager.Events.Add(0, new GameEvent(0, "Scoremageddon", EventTypes.SCOREMAGEDDON));
-            World.StorageManager.Events[0].Start();
         }
     }
 }

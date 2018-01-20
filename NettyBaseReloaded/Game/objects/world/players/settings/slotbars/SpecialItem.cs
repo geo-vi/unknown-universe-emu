@@ -39,7 +39,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
                     GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
                     GameClient.SendRangePacket(player, netty.commands.new_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
-                    player.Controller.Damage?.Area(20, 700, DamageType.PERCENTAGE);
+                    player.Controller.Damage?.Area(20, 1000, DamageType.PERCENTAGE);
 
                     cooldown = new SMBCooldown();
                     player.Cooldowns.Add(cooldown);
@@ -63,8 +63,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                         if (entity.Selected != null && entity.Selected.Id == player.Id && entity is Player)
                         {
                             var entitySession = World.StorageManager.GetGameSession(entity.Id);
-                            Packet.Builder.LegacyModule(entitySession, "0|A|STM|msg_own_targeting_harmed");
-                            Packet.Builder.ShipSelectionCommand(entitySession, null);
+                            if (entitySession != null)
+                            {
+                                Packet.Builder.LegacyModule(entitySession, "0|A|STM|msg_own_targeting_harmed");
+                                Packet.Builder.ShipSelectionCommand(entitySession, null);
+                            }
                             entity.Selected = null;
                         }
                     }

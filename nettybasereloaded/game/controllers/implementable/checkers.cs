@@ -133,6 +133,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
+            if (GetForSelection(entity)) return;
             if (Character.InRange(entity, VisibilityRange))
             {
                 if (!Character.Range.Entities.ContainsKey(entity.Id))

@@ -45,7 +45,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             if (Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: New client settings");
+                //throw new NotImplementedException();
             }
             else
             {

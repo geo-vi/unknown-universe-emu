@@ -42,7 +42,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 var ds = new commands.new_client.DisplaySettingsModule(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, 3, 4, 4, 3, 3, 4, 3, 3, true, true, true, true);
 
                 //TODO: Integrate it into the Settings 
-                //gameSession.Client.Send(commands.new_client.UserSettingsCommand.write(qs, asm, ws, gm, z9, ds).Bytes);
+                gameSession.Client.Send(commands.new_client.UserSettingsCommand.write(qs, asm, ws, gm, z9, ds).Bytes);
             }
             else
             {
@@ -129,7 +129,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                     new commands.new_client.SlotbarQuickslotModule("premiumSlotBar", player.Settings.Slotbar.PremiumQuickslotItems, "50,85|0,80", "0", true)
                 };
                 gameSession.Client.Send(
-                    commands.new_client.SlotbarsCommand.write(player.Settings.Slotbar.GetCategories(), "50,85", slotbars)
+                    commands.new_client.SlotbarsCommand.write(player.Settings.Slotbar.GetCategories(player), "50,85", slotbars)
                         .Bytes);
 
             }
@@ -138,7 +138,6 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
                 
                 var ammo = new List<netty.commands.old_client.AmmunitionCountModule>();
-                gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X3), player.Information.Ammunitions["ammunition_laser_mcb-50"].Get()));
@@ -147,6 +146,8 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.CBO), player.Information.Ammunitions["ammunition_laser_cbo-100"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.RSB), player.Information.Ammunitions["ammunition_laser_rsb-75"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.JOB100), player.Information.Ammunitions["ammunition_laser_job-100"].Get()));
+                gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
+                ammo.Clear();
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.R310), player.Information.Ammunitions["ammunition_rocket_r-310"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2021), player.Information.Ammunitions["ammunition_rocket_plt-2021"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2026), player.Information.Ammunitions["ammunition_rocket_plt-2026"].Get()));
@@ -159,12 +160,14 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.UBER_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_ubr-100"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR01), player.Information.Ammunitions["ammunition_rocketlauncher_sar-01"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR02), player.Information.Ammunitions["ammunition_rocketlauncher_sar-02"].Get()));
+                gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
+                ammo.Clear();
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), player.Information.Ammunitions["ammunition_mine_acm-01"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SMARTBOMB), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), player.Information.Ammunitions["ammunition_specialammo_emp-01"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
-                player.Settings.Slotbar.GetCategories();
+                player.Settings.Slotbar.GetCategories(player);
             }
         }
         #endregion
@@ -913,7 +916,8 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Update PetGearAddCommand");
+                //throw new NotImplementedException();
             }
             else
             {
@@ -929,7 +933,8 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Update PetGearSelectCommand");
+                //throw new NotImplementedException();
             }
             else
             {
@@ -945,7 +950,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         public void MapChangeCommand(GameSession gameSession)
         {
             if (gameSession.Player.UsingNewClient)
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find MapChangeCommand for new client");
             else
                 LegacyModule(gameSession, "0|z");
         }
@@ -956,7 +961,8 @@ namespace NettyBaseReloaded.Game.netty.packet
         public void PetDeactivationCommand(GameSession gameSession, Pet pet)
         {
             if (gameSession.Player.UsingNewClient)
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: PetDeactivation for new client");
+                //throw new NotImplementedException();
             else
                 gameSession.Client.Send(commands.old_client.PetDeactivationCommand.write(pet.Id).Bytes);
         }
@@ -968,7 +974,8 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find levelup for new client");
+                //throw new NotImplementedException();
             }
             else
             {
@@ -982,7 +989,8 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find ammo count update command for new client");
+                //throw new NotImplementedException();
             }
             else
             {
@@ -994,9 +1002,10 @@ namespace NettyBaseReloaded.Game.netty.packet
         #region HellstormStatusCommand
         public void HellstormStatusCommand(GameSession gameSession)
         {
+            // null error gamesession
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find hellstorm for new client");
             }
             else
             {
@@ -1024,7 +1033,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-
+                Console.WriteLine("TODO: Find booster attribute for new client");
             }
             else
             {
@@ -1051,7 +1060,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-
+                Console.WriteLine("TODO: Find UIFlash");
             }
             else
             {
@@ -1067,7 +1076,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-
+                Console.WriteLine("TODO: Find HideFlash for new client");
             }
             else
             {
@@ -1084,7 +1093,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if(gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find logout command");
             }
             else
             {
@@ -1100,7 +1109,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find invite group cmd for new client (1)");
             }
             else
             {
@@ -1109,7 +1118,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             if (invited.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find invite group cmd for new client (2)");
             }
             else
             {
@@ -1124,7 +1133,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find group delete invitation for new client");
             }
             else
             {
@@ -1141,7 +1150,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             var player = gameSession.Player;
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find groupinit for new client");
             }
             else
             {
@@ -1173,7 +1182,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             var player = gameSession.Player;
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find group update for new client");
             }
             else
             {
@@ -1188,7 +1197,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO Find hero move for new client");
             }
             else
             {
@@ -1203,7 +1212,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("TODO: Find a way to integrate DroneFormationAvailable for new client");
             }
             else
             {
@@ -1220,7 +1229,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("Find a way for killscreen to work on new client");
             }
             else
             {
@@ -1251,7 +1260,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                Console.WriteLine("Find scoremageddon for new client");
             }
             else
             {

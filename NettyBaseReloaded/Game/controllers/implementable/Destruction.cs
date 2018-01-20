@@ -112,7 +112,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         //TEMP UNTIL KILLSCREEN IS ADDED
                         var otherPlayer = target as Player;
                         var gameSession = otherPlayer.GetGameSession();
-                        Packet.Builder.KillScreenCommand(gameSession, Character);
+                        if (gameSession != null)
+                        {
+                            Packet.Builder.KillScreenCommand(gameSession, Character);
+                        }
                     }
                 }
             }

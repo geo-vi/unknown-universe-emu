@@ -109,13 +109,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     Packet.Builder.SendSlotbars(gameSession);
                 }
 
-                var pEnemy = enemy as Player;
-                if (pEnemy != null)
-                {
-                    if (pEnemy.State.InDemiZone)
-                        return;
-                }
-
                 var laserTypes = gameSession.Player.Equipment.LaserTypes();
                 switch (gameSession.Player.Settings.CurrentAmmo.LootId)
                 {
@@ -344,6 +337,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 var pCharacter = Character as Player;
                 pCharacter?.SendLogMessage("outofrange");
                 return false;
+            }
+            if (attacked is Player)
+            {
+                var attackedCharacter = (Player) attacked;
+                if (attackedCharacter.State.InDemiZone) return false;
             }
             return true;
         }

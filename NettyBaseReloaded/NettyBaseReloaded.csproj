@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BC7A9B59-2FF0-4D00-AE8E-0A9A31359536}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NettyBaseReloaded</RootNamespace>
     <AssemblyName>NettyBaseReloaded</AssemblyName>
@@ -490,6 +490,7 @@
     <Compile Include="Game\objects\world\players\State.cs" />
     <Compile Include="Game\objects\world\players\Statistics.cs" />
     <Compile Include="Game\objects\world\players\statistics\DeathStat.cs" />
+    <Compile Include="Game\objects\world\players\VisualEffect.cs" />
     <Compile Include="Logger\Creator.cs" />
     <Compile Include="Logger\Log.cs" />
     <Compile Include="Logger\types\DebugLog.cs" />

@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using MySql.Data.Types;
+using NettyBaseReloaded.Game.objects.world.events;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
@@ -37,6 +38,7 @@ namespace NettyBaseReloaded.Game.managers
             LoadSpacemaps();
             LoadLevels();
             LoadCollectableRewards();
+            LoadEvents();
         }
 
         public void SaveAll()
@@ -384,6 +386,31 @@ namespace NettyBaseReloaded.Game.managers
             return drones;
         }
 
+        public void LoadEvents()
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_events");
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow reader in queryTable.Rows)
+                        {
+                            int eventId = intConv(reader["ID"]);
+                            string name = reader["NAME"].ToString();
+                            EventTypes type = (EventTypes)intConv(reader["TYPE"]);
+                            bool active = Convert.ToBoolean(intConv(reader["ACTIVE"]));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager", "Failed loading events", e);
+            }
+        }
+
         public Player GetAccount(int playerId)
         {
             Player player = null;
@@ -663,7 +690,8 @@ namespace NettyBaseReloaded.Game.managers
                     string query = "";
                     if (settings.Player.UsingNewClient)
                     {
-                        throw new NotImplementedException();
+                        Console.WriteLine("TODO: Save new client gameplay settings");
+                        //throw new NotImplementedException();
                     }
                     else
                     {
@@ -715,7 +743,9 @@ namespace NettyBaseReloaded.Game.managers
                     string query = "";
                     if (settings.Player.UsingNewClient)
                     {
-                        throw new NotImplementedException();
+                        //TODO Save player ship settings for new client
+                        Console.WriteLine("TODO Save player ship settings for new client");
+                        //throw new NotImplementedException();
                     }
                     else
                     {
@@ -896,9 +926,24 @@ namespace NettyBaseReloaded.Game.managers
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                
+                new ExceptionLog("dbmanager_load_event", $"PlayerId: {player.Id}, EventId: {id}", e);
+            }
+        }
+
+        public void UpdateServerEvent(int id, bool active)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"UPDATE server_events SET ACTIVE={intConv(active)} WHERE ID={id}");
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager_server_event", "event", e);
             }
         }
 

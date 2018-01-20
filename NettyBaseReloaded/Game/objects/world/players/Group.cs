@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         /// <summary>
         /// Group members
         /// </summary>
-        public Dictionary<int, Player> Members = new Dictionary<int, Player>();
+        public ConcurrentDictionary<int, Player> Members = new ConcurrentDictionary<int, Player>();
 
         public bool LeaderInvitesOnly { get; set; }
 
@@ -63,7 +64,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         private void AddToGroup(Player player)
         {
-            Members.Add(player.Id, player);
+            Members.TryAdd(player.Id, player);
             player.Group = this;
         }
 
@@ -219,7 +220,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             }
 
             player.Group = null;
-            Members.Remove(player.Id);
+            //Members.Remove(player.Id);
             if (Members.Count > 1)
             {
                 if (Leader == player)
@@ -227,7 +228,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
                 if (Members.ContainsKey(player.Id))
                 {
-                    Members.Remove(player.Id);
+                    Members.TryRemove(player.Id, out player);
                 }
                 SendInitToAll();
             }

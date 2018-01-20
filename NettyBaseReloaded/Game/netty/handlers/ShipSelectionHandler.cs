@@ -33,7 +33,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 foreach (
                     var entry in
                     spacemap.Entities.Where(
-                        entry => entry.Value.Id == targetId && gameSession.Player.InRange(entry.Value)))
+                        entry => entry.Value.Id == targetId /*&& gameSession.Player.InRange(entry.Value)*/)) // temp
                 {
                     if (entry.Value is Player)
                     {

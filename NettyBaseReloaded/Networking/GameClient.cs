@@ -60,9 +60,9 @@ namespace NettyBaseReloaded.Networking
                     if (gameSession.InProcessOfReconection || gameSession.InProcessOfDisconnection) return;
                     if (gameSession.Player.Controller != null)
                         gameSession.LastActiveTime = DateTime.Now;
-                }
 
-                XSocket.Write(bytes);
+                    XSocket.Write(bytes);
+                }
             }
             catch (Exception e)
             {
