@@ -22,6 +22,8 @@ using NettyBaseReloaded.Game.objects.world.players.settings;
 using NettyBaseReloaded.Utils;
 using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
+using NettyBaseReloaded.Game.objects.world.players.killscreen;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 
 namespace NettyBaseReloaded.Game.netty.packet
 {
@@ -50,6 +52,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region Slotbars / Windows
         public void SendUserSettings(GameSession gameSession)
         {
@@ -168,6 +171,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region ShipInitializationCommand
         public void ShipInitializationCommand(GameSession gameSession)
         {
@@ -247,6 +251,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         new List<commands.old_client.VisualModifierCommand>()).Bytes);
         }
         #endregion
+
         #region commandX35
         public void commandX35(GameSession gameSession)
         {
@@ -256,9 +261,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region LegacyModule
 
         #endregion
+
         #region ShipCreateCommand
         public void ShipCreateCommand(GameSession gameSession, Character character)
         {
@@ -323,6 +330,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             gameSession.Client.Send(bytes);
         }
         #endregion
+
         #region ShipRemoveCommand
 
         public void ShipRemoveCommand(GameSession gameSession, Character character)
@@ -340,6 +348,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region MoveCommand
 
         public void MoveCommand(GameSession gameSession, Character character, int time)
@@ -358,6 +367,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region DronesCommand
 
         public void DronesCommand(GameSession gameSession, Character character)
@@ -381,6 +391,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region JumpgateCreateCommand
 
         public void JumpgateCreateCommand(GameSession gameSession, Jumpgate portal)
@@ -396,6 +407,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region ActivatePortalCommand
         public void ActivatePortalCommand(GameSession gameSession, Jumpgate portal)
         {
@@ -410,6 +422,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region MapAssetActionAvailableCommand
 
         public void MapAssetActionAvailableCommand(GameSession gameSession, Object _object, bool toggled, bool activatable)
@@ -424,6 +437,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region LegacyModule
 
         public void LegacyModule(GameSession gameSession, string message, bool toOldClientOnly = false)
@@ -439,6 +453,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
         #region ShipSelectionCommand
 
         public void ShipSelectionCommand(GameSession gameSession, Character character)
@@ -458,6 +473,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
         #region AssetCreateCommand
 
         public void AssetCreateCommand(GameSession gameSession, Asset asset)
@@ -476,6 +492,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region StationCreateCommand
 
         public void StationCreateCommand(GameSession gameSession, Station station)
@@ -508,6 +525,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region AttackLaserRunCommand
 
         public void AttackLaserRunCommand(GameSession gameSession, int attackerId, int targetId, int laserColor,
@@ -976,6 +994,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
         #region AmmunitionCountUpdateCommand
 
         public void AmmunitionCountUpdateCommand(GameSession gameSession, string lootId, int amount)
@@ -1216,7 +1235,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region KillScreenCommand
 
-        public void KillScreenCommand(GameSession gameSession, Character killer)
+        public void KillScreenCommand(GameSession gameSession, Killscreen killscreen)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -1224,23 +1243,23 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                var options = new List<netty.commands.old_client.KillScreenOptionModule>();
+                gameSession.Client.Send(commands.old_client.KillScreenPostCommand.write(killscreen.KillerName, killscreen.KillerLink, killscreen.Alias, new netty.commands.old_client.DestructionTypeModule(killscreen.GetDestructionType()), killscreen.GetOldOptions()).Bytes);
+            }
+        }
 
-                var optionModule = new netty.commands.old_client.KillScreenOptionModule(
-                    new netty.commands.old_client.KillScreenOptionTypeModule(netty.commands.old_client.KillScreenOptionTypeModule.BASIC_REPAIR),
-                    new netty.commands.old_client.PriceModule(netty.commands.old_client.PriceModule.URIDIUM, 0),
-                    true,
-                    0,
-                    new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
-                    new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
-                    new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
-                    new netty.commands.old_client.MessageLocalizedWildcardCommand("btn_killscreen_repair_for_free", new List<netty.commands.old_client.MessageWildcardReplacementModule>()));
+        #endregion
 
-                options.Add(optionModule);
+        #region KillScreenUpdateCommand
 
-                if (killer != null)
-                    gameSession.Client.Send(commands.old_client.KillScreenPostCommand.write(killer.Name, "http://ge1.univ3rse.com/internalHangar", "MISC", new netty.commands.old_client.DestructionTypeModule(netty.commands.old_client.DestructionTypeModule.PLAYER), options).Bytes);
-                else gameSession.Client.Send(commands.old_client.KillScreenPostCommand.write("", "http://ge1.univ3rse.com/internalHangar", "MISC", new netty.commands.old_client.DestructionTypeModule(netty.commands.old_client.DestructionTypeModule.PLAYER), options).Bytes);
+        public void KillScreenUpdateCommand(GameSession gameSession, List<KillScreenOptionModule> options)
+        {
+            if(gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.KillScreenUpdateCommand.write(options).Bytes);
             }
         }
 

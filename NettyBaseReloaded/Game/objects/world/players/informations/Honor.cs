@@ -10,7 +10,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
     {
         public Honor(Player player) : base(player)
         {
-
+            SqlName = "HONOR";
         }
 
         public override void Refresh()

@@ -10,7 +10,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
     {
         public Credits(Player player) : base(player)
         {
-
+            SqlName = "CREDITS";
         }
 
         public override void Refresh()

@@ -14,6 +14,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public DateTime LastTimeSynced { get; set; }
 
+        public string SqlName { get; set; }
+
         public BaseInfo(Player player) : base(player)
         {
             LastTimeSynced = DateTime.Now;

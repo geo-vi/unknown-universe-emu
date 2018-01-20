@@ -36,7 +36,6 @@ namespace NettyBaseReloaded.Game.controllers
             _gameSession = gameSession;
             LoadConfigs();
             CheckPos();
-            Console.WriteLine("Been through");
             LoadControllers();
             GetLoginType();
             LoadTicks();
@@ -103,7 +102,7 @@ namespace NettyBaseReloaded.Game.controllers
             if (Properties.Server.LOCKED)
                 type = new Locked(_gameSession);
             else if (_gameSession.Player.CurrentHealth <= 0 || _gameSession.Player.EntityState == EntityStates.DEAD)
-                type = new Killscreen(_gameSession);
+                type = new KilledLogin(_gameSession);
             else type = new Regular(_gameSession);
             type.Execute();
         }

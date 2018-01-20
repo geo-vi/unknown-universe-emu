@@ -532,7 +532,7 @@ namespace NettyBaseReloaded.Game.managers
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var getName = baseInfo.GetType().Name?.ToUpper();
+                    var getName = baseInfo.SqlName;
                     var queryRow = mySqlClient.ExecuteQueryRow("SELECT " + getName + " FROM player_data WHERE PLAYER_ID=" + player.Id);
                     baseInfo.SyncedValue = doubleConv(queryRow[getName].ToString());
                     baseInfo.LastTimeSynced = DateTime.Now;
@@ -540,7 +540,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                //Console.WriteLine("error " + e);
+                Console.WriteLine("error " + e);
             }
             return baseInfo;
         }
@@ -902,21 +902,29 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public Killscreen GetLastKillscreen(int playerId)
+        public Killscreen GetLastKillscreen(Player player)
         {
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     var queryRow = mySqlClient.ExecuteQueryRow(
-                        $"SELECT * FROM player_deaths WHERE PLAYER_ID={playerId} ORDER BY id DESC LIMIT 1");
+                        $"SELECT * FROM player_deaths WHERE PLAYER_ID={player.Id} ORDER BY id DESC LIMIT 1");
                     var id = Convert.ToInt32(queryRow["ID"]);
                     var killerName = queryRow["KILLER_NAME"].ToString();
                     var killerLink = queryRow["KILLER_LINK"].ToString();
                     var deathType = (DeathType) (Convert.ToInt32(queryRow["DEATH_TYPE"]));
                     var alias = queryRow["ALIAS"].ToString();
-                    var tod = queryRow["TIME_OF_DEATH"].ToString();
-                    Console.WriteLine($"{id} -> {killerName} -> {killerLink} -> {deathType} -> {alias} -> {tod}");
+                    var tod = Convert.ToDateTime(queryRow["TIME_OF_DEATH"]);
+                    return new Killscreen()
+                    {
+                        Id = id,
+                        KilledPlayer = player,
+                        KillerName = killerName,
+                        KillerLink = killerLink,
+                        DeathType = deathType,
+                        TimeOfDeath = tod
+                    };
                 }
             }
             catch (Exception e)
@@ -925,6 +933,23 @@ namespace NettyBaseReloaded.Game.managers
             }
             return null;// TODO
         }
+
+
+        public void AddKillScreen(Killscreen killscreen)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"INSERT INTO player_deaths (PLAYER_ID, KILLER_NAME, KILLER_LINK, DEATH_TYPE, ALIAS, TIME_OF_DEATH) VALUES('{killscreen.KilledPlayer.Id}', '{killscreen.KillerName}', '{killscreen.KillerLink}', '{(int)killscreen.DeathType}', '{killscreen.Alias}', '{killscreen.TimeOfDeath.ToString("yyyy-MM-dd H:mm:ss")}')");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
     }
 }
 

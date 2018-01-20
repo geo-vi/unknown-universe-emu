@@ -8,7 +8,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.killscreen
 {
     enum DeathType
     {
-        //TODO Add all death types
-        TEMPORARY
+        PLAYER,
+        NPC,
+        RADITATION,
+        MINE,
+        MISC,
+        BATTLESTATION
     }
 }
