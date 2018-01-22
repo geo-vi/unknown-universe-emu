@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.players.killscreen;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -101,10 +102,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             Packet.Builder.AttackHitCommand(player.GetGameSession(), 0, player, damage, (short)Types.RADIATION);
 
-            Character.Update();
-            if (Character.CurrentHealth <= 0 && Character.EntityState != EntityStates.DEAD)
+            player.Update();
+            if (player.CurrentHealth <= 0 && player.EntityState != EntityStates.DEAD)
             {
-                Controller.Destruction.Destroy();
+                Controller.Destruction.Destroy(player, DeathType.RADITATION);
             }
         }
 

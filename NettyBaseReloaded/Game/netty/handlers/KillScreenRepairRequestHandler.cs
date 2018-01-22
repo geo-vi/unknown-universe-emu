@@ -6,6 +6,8 @@ using NettyBaseReloaded.Game.objects.world.players.settings;
 using NettyBaseReloaded.Utils;
 using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.netty.commands.old_client;
+using NettyBaseReloaded.Game.objects.world.players.killscreen;
+using System.Collections.Generic;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
@@ -27,26 +29,70 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
                 short repairTypeValue = cmd.selection.repairTypeValue;
 
+                var killscreen = Killscreen.Load(player);
+              
                 switch (repairTypeValue)
                 {
                     case KillScreenOptionTypeModule.BASIC_REPAIR:
-                        player.Controller.Destruction.RespawnPlayer();
+                        killscreen.SelectedOption = 1;
                         break;
                     case KillScreenOptionTypeModule.AT_JUMPGATE_REPAIR:
-                        //TODO spawn at portal (no)
+                        killscreen.SelectedOption = 2;
                         break;
                     case KillScreenOptionTypeModule.AT_DEATHLOCATION_REPAIR:
-                        //TODO spawn at death location (no)
+                        killscreen.SelectedOption = 3;
                         break;
-                } // for now we won't add those 2. we want to make more time for repairing
-                // make like economy :D
-                // 1 hour repair / 30 mins dependsing on ship
-                // and every ship repair the ship max hp will decrease by 1-5% random
-                // if max hp gets < 1000 ship is not usable anymore
+                }
 
-            // you like it?
-            //you are crazy :D whybecause i like that
-            // =))
+                var price = killscreen.Price;
+                switch (price.Item1)
+                {
+                    case PriceModule.CREDITS:
+                        if (player.Information.Credits.Get() >= price.Item2)
+                        {
+                            player.Information.Credits.Remove(price.Item2);
+                            player.Controller.Destruction.RespawnPlayer();
+                            break;
+                        }
+                        SendRepairImpossible(gameSession, PriceModule.CREDITS);
+                        break;
+                    case PriceModule.URIDIUM:
+                        if (player.Information.Uridium.Get() >= price.Item2)
+                        {
+                            player.Information.Uridium.Remove(price.Item2);
+                            player.Controller.Destruction.RespawnPlayer();
+                            break;
+                        }
+                        SendRepairImpossible(gameSession, PriceModule.URIDIUM);
+                        break;
+                }
+            }
+        }
+
+        public void SendRepairImpossible(GameSession gameSession, short currency)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                new NotImplementedException();
+            }
+            else
+            {
+                var player = gameSession.Player;
+                var killscreen = Killscreen.Load(player);
+                var price = killscreen.Price;
+                var options = new List<netty.commands.old_client.KillScreenOptionModule>();
+                var optionModule = new netty.commands.old_client.KillScreenOptionModule(
+                    new netty.commands.old_client.KillScreenOptionTypeModule(netty.commands.old_client.KillScreenOptionTypeModule.BASIC_REPAIR),
+                    new netty.commands.old_client.PriceModule(price.Item1, price.Item2),
+                    true,
+                    0,
+                    new netty.commands.old_client.MessageLocalizedWildcardCommand(currency == PriceModule.URIDIUM ? "desc_killscreen_repair_impossible" : "desc_killscreen_repair_credits_impossible", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
+                    new netty.commands.old_client.MessageLocalizedWildcardCommand("", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
+                    new netty.commands.old_client.MessageLocalizedWildcardCommand("ttip_killscreen_free_phoenix", new List<netty.commands.old_client.MessageWildcardReplacementModule>()),
+                    new netty.commands.old_client.MessageLocalizedWildcardCommand(currency == PriceModule.URIDIUM ? "btn_killscreen_payment" : "btn_killscreen_get_phoenix", new List<netty.commands.old_client.MessageWildcardReplacementModule>()));
+                options.Add(optionModule);
+
+                Packet.Builder.KillScreenUpdateCommand(gameSession, options);
             }
         }
     }

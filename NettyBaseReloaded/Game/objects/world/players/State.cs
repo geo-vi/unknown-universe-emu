@@ -92,5 +92,16 @@ namespace NettyBaseReloaded.Game.objects.world.players
             }
             return false;
         }
+
+        public void Reset()
+        {
+            InDemiZone = false;
+            InTradeArea = false;
+            InRadiationArea = false;
+            InEquipmentArea = false;
+            InInstaRepairZone = false;
+            InPortalArea = false;
+            RadiationEntryTime = DateTime.Now;
+        }
     }
 }

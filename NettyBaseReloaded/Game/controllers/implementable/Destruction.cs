@@ -29,7 +29,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
         }
 
-        public void Destroy(Character target)
+        public void Destroy(Character target, DeathType deathType = DeathType.MISC)
         {
             try
             {
@@ -43,64 +43,68 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     if (Character is Player)
                     {
                         var player = Character as Player;
-                        if (target.FactionId == player.FactionId)//
+
+                        if (player != target)
                         {
-                            Reward newReward = new Reward(new Dictionary<RewardType, int>());
-                            var rewards = target.Hangar.Ship.Reward;
-                            foreach (var reward in rewards.Rewards)
+                            if (target.FactionId == player.FactionId)//
                             {
-                                if (reward is int)
+                                Reward newReward = new Reward(new Dictionary<RewardType, int>());
+                                var rewards = target.Hangar.Ship.Reward;
+                                foreach (var reward in rewards.Rewards)
                                 {
-                                    newReward.Rewards.Add((int) reward * 1); // * -1
-                                }
-                                else newReward.Rewards.Add(reward);
-                            }
-                            newReward.ParseRewards(player);
-                        }
-                        else
-                        {
-                            if (attackers.Count > 1)
-                            {
-                                if (target.Hangar.Ship.Id == 80 || mainAttacker.Group != null)
-                                {
-                                    foreach (var _attacker in attackers)
+                                    if (reward is int)
                                     {
-                                        if (target.Hangar.Ship.Id != 80)
-                                            if (_attacker.Value.Player.Group != mainAttacker.Group)
-                                                continue; // TODO: Add proper mothership/ cubi                                          
-
-                                        Reward reward = new Reward(new Dictionary<RewardType, int>());
-                                        var baseReward = target.Hangar.Ship.Reward;
-
-                                        foreach (var rewardValue in baseReward.Rewards)
-                                        {
-                                            //TODO: Group reward modes & stuff
-                                            var percentageTotalDmgGiven =
-                                                (double) _attacker.Value.TotalDamage /
-                                                (double) (target.MaxHealth + target.MaxShield);
-
-                                            if (target.Hangar.Ship.Id != 80 && _attacker.Value.Player == mainAttacker)
-                                                percentageTotalDmgGiven = 1;
-
-                                            if (rewardValue is int)
-                                            {
-                                                reward.Rewards.Add(Convert.ToInt32(
-                                                    (int) rewardValue * percentageTotalDmgGiven));
-                                            }
-                                            else reward.Rewards.Add(rewardValue);
-                                        }
-                                        reward.ParseRewards(_attacker.Value.Player);
+                                        newReward.Rewards.Add((int)reward * -1); // * -1
                                     }
+                                    else newReward.Rewards.Add(reward);
                                 }
+                                newReward.ParseRewards(player);
                             }
                             else
                             {
-                                target.Hangar.Ship.Reward.ParseRewards(player);
+                                if (attackers.Count > 1)
+                                {
+                                    if (target.Hangar.Ship.Id == 80 || mainAttacker.Group != null)
+                                    {
+                                        foreach (var _attacker in attackers)
+                                        {
+                                            if (target.Hangar.Ship.Id != 80)
+                                                if (_attacker.Value.Player.Group != mainAttacker.Group)
+                                                    continue; // TODO: Add proper mothership/ cubi                                          
+
+                                            Reward reward = new Reward(new Dictionary<RewardType, int>());
+                                            var baseReward = target.Hangar.Ship.Reward;
+
+                                            foreach (var rewardValue in baseReward.Rewards)
+                                            {
+                                                //TODO: Group reward modes & stuff
+                                                var percentageTotalDmgGiven =
+                                                    (double)_attacker.Value.TotalDamage /
+                                                    (double)(target.MaxHealth + target.MaxShield);
+
+                                                if (target.Hangar.Ship.Id != 80 && _attacker.Value.Player == mainAttacker)
+                                                    percentageTotalDmgGiven = 1;
+
+                                                if (rewardValue is int)
+                                                {
+                                                    reward.Rewards.Add(Convert.ToInt32(
+                                                        (int)rewardValue * percentageTotalDmgGiven));
+                                                }
+                                                else reward.Rewards.Add(rewardValue);
+                                            }
+                                            reward.ParseRewards(_attacker.Value.Player);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    target.Hangar.Ship.Reward.ParseRewards(player);
+                                }
                             }
+                            Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
+                            foreach (var playerEvent in player.EventsPraticipating)
+                                playerEvent.Value.DestroyAttackable(target);
                         }
-                        Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
-                        foreach (var playerEvent in player.EventsPraticipating)
-                            playerEvent.Value.DestroyAttackable(target);
                     }
                     if (target is Npc)
                     {
@@ -109,12 +113,37 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                     else if (target is Player)
                     {
-                        //TEMP UNTIL KILLSCREEN IS ADDED
-                        var otherPlayer = target as Player;
-                        var gameSession = otherPlayer.GetGameSession();
-                        if (gameSession != null)
+                        switch(deathType)
                         {
-                            Packet.Builder.KillScreenCommand(gameSession, Character);
+                            case DeathType.MINE:
+
+                                break;
+                            case DeathType.BATTLESTATION:
+
+                                break;
+                            case DeathType.RADITATION:
+                                new Killscreen(Character as Player, null, DeathType.RADITATION);
+                                break;
+                            default:
+                                var otherPlayer = target as Player;
+
+                                if (Character is Player)
+                                {
+                                    new Killscreen(otherPlayer, Character, DeathType.PLAYER);
+                                }
+                                else if (Character is Npc)
+                                {
+                                    new Killscreen(otherPlayer, Character, DeathType.NPC);
+                                }
+                                else if (Character is Pet)
+                                {
+                                    var baddog = (Pet)Character;
+                                    var gayowner = baddog.GetOwner();
+                                    if (gayowner != null)
+                                        new Killscreen(otherPlayer, gayowner, DeathType.PLAYER);
+                                    else new Killscreen(otherPlayer, baddog, DeathType.MISC);
+                                }
+                                break;
                         }
                     }
                 }
@@ -125,10 +154,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
-        public void Destroy()
+        public void SystemDestroy()
         {
             Character.Controller.Destruction.Kill();
-            RespawnPlayer();
+            if (Character is Player)
+                RespawnPlayer();
+            if (Character is Npc)
+                RespawnAlien();
         }
 
         public void Kill()
@@ -136,6 +168,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.CurrentHealth = 0;
             Character.CurrentNanoHull = 0;
             Character.CurrentShield = 0;
+
+            if (Character is Player)
+            {
+                var player = (Player)Character;
+                var closestStation = player.GetClosestStation();
+                var newPos = closestStation.Item1;
+                player.Spacemap = closestStation.Item2;
+                player.SetPosition(newPos);
+                player.Save();
+            }
 
             GameClient.SendRangePacket(Character, ShipDestroyedCommand.write(Character.Id, 0), true);
             GameClient.SendRangePacket(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 0),
@@ -192,7 +234,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.Range.Clear();
 
             var player = (Player) Character;
-            player.CurrentHealth = 1000;
+            var killscreen = Killscreen.Load(player);
+            player.CurrentHealth = killscreen.SelectedOption == netty.commands.old_client.KillScreenOptionTypeModule.AT_DEATHLOCATION_REPAIR ? (player.Hangar.Ship.Health / 100) * 10 : 1000; //if its location repair %10 of base ship hp else just 1000 hp
 
             if (player.Controller == null)
             {
@@ -211,6 +254,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             player.Controller.Setup();
             player.Controller.Initiate();
+            player.Save();
         }
 
 

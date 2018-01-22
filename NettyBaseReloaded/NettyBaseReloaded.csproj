@@ -128,7 +128,7 @@
     <Compile Include="Game\controllers\implementable\IAbstractCharacter.cs" />
     <Compile Include="Game\controllers\LoginController.cs" />
     <Compile Include="Game\controllers\login\ILogin.cs" />
-    <Compile Include="Game\controllers\login\Killscreen.cs" />
+    <Compile Include="Game\controllers\login\KilledLogin.cs" />
     <Compile Include="Game\controllers\login\Locked.cs" />
     <Compile Include="Game\controllers\login\Regular.cs" />
     <Compile Include="Game\controllers\MovementController.cs" />

@@ -8,9 +8,10 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 {
     class Uridium : BaseInfo
     {
+
         public Uridium(Player player) : base(player)
         {
-
+            SqlName = "URIDIUM";
         }
 
         public override void Refresh()
