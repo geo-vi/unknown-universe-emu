@@ -512,6 +512,7 @@
     <Compile Include="Main\commands\Temp.cs" />
     <Compile Include="Main\ConsoleCommands.cs" />
     <Compile Include="Main\ConsoleMonitor.cs" />
+    <Compile Include="Main\global_managers\CronjobManager.cs" />
     <Compile Include="Main\global_managers\PerformanceManager.cs" />
     <Compile Include="Main\global_managers\QueryManager.cs" />
     <Compile Include="Main\global_managers\SqlDatabaseManager.cs" />
@@ -539,6 +540,7 @@
     <Compile Include="Game\objects\world\Vector.cs" />
     <Compile Include="Game\World.cs" />
     <Compile Include="Main\objects\Diplomacy.cs" />
+    <Compile Include="Main\objects\ICron.cs" />
     <Compile Include="Main\objects\SqlDatabaseClient.cs" />
     <Compile Include="Main\tasks\Reader.cs" />
     <Compile Include="Main\Global.cs" />
