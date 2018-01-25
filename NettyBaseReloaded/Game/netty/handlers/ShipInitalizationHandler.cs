@@ -18,7 +18,8 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
         public ShipInitalizationHandler(GameClient client, int userId, string sessionId, bool newClient = false)
         {
-            Console.WriteLine("Connection Received, [USERID: " + userId + ", SESSIONID: " + sessionId +
+            if (Properties.Game.PRINTING_CONNECTIONS)
+                Console.WriteLine("Connection Received, [USERID: " + userId + ", SESSIONID: " + sessionId +
                               "]");
 
             client.UserId = userId;
@@ -87,7 +88,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 World.StorageManager.GameSessions[Player.Id] = GameSession;
             }
 
-            Console.WriteLine("IM HERE");
             LoginController.Initiate(GameSession);
         }
     }

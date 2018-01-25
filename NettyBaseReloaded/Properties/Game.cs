@@ -22,6 +22,11 @@
         /// </summary>
         public static bool DEBUG_ENTITIES = false;
 
+        /// <summary>
+        /// Printing once player connects
+        /// </summary>
+        public static bool PRINTING_CONNECTIONS = false;
+
         public static int REWARD_MULTIPLYER = 2;
     }
 }

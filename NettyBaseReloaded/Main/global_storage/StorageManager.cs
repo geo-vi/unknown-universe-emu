@@ -9,6 +9,13 @@ namespace NettyBaseReloaded.Main.global_storage
     {
         public Dictionary<int, Clan> Clans = new Dictionary<int, Clan>();
 
+        public Clan GetClan(int id)
+        {
+            if (Clans.ContainsKey(id))
+                return Clans[id];
+            return Global.QueryManager.GetClan(id);
+        }
+
         public Clan GetClan(string tag)
         {
             return Clans.Values.FirstOrDefault(x => x.Tag == tag);

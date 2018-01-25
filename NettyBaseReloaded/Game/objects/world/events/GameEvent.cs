@@ -31,6 +31,8 @@ namespace NettyBaseReloaded.Game.objects.world.events
 
         public bool Active { get; set; }
 
+        public bool Open => true; // TODO Change for some events which are opening only based on players who're active
+
         public GameEvent(int id, string name, EventTypes eventType, bool active)
         {
             Id = id;
@@ -48,9 +50,10 @@ namespace NettyBaseReloaded.Game.objects.world.events
                 CreatePlayerEvent(gameSession.Player);
                 Packet.Builder.LegacyModule(gameSession, $"0|A|STD|{Name} have started!");
             }
+            Console.WriteLine($"{EventType} started.");
         }
 
-        private void CreatePlayerEvent(Player player)
+        public void CreatePlayerEvent(Player player)
         {
             World.DatabaseManager.LoadEventForPlayer(Id, player);
             PlayerEvent playerEvent = null;
@@ -59,7 +62,6 @@ namespace NettyBaseReloaded.Game.objects.world.events
                 if (EventType == EventTypes.SCOREMAGEDDON)
                 {
                     playerEvent = new ScoreMageddon(player, Id);
-                    ((ScoreMageddon) playerEvent).Lives = 5;
                 }
                 if (playerEvent != null)
                 {
@@ -67,7 +69,7 @@ namespace NettyBaseReloaded.Game.objects.world.events
                 }
             }
             else playerEvent = player.EventsPraticipating[Id];
-            playerEvent?.Start();
+            playerEvent.Start();
         }
 
         public void End()

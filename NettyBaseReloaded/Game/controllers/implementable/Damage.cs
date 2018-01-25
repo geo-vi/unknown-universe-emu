@@ -270,7 +270,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             foreach (var entry in Character.Spacemap.Entities)
             {
-                if (Character.Position.DistanceTo(entry.Value.Position) > distance) return;
+                if (Character.Position.DistanceTo(entry.Value.Position) > distance) continue;
                 if (Character.Id == entry.Value.Id) continue;
 
                 var damage = 0;

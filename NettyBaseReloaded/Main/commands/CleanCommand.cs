@@ -3,9 +3,9 @@ using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Main.commands
 {
-    class Clean : Command
+    class CleanCommand : Command
     {
-        public Clean() : base("clean", "Clears the console")
+        public CleanCommand() : base("clean", "Clears the console")
         {
 
         }

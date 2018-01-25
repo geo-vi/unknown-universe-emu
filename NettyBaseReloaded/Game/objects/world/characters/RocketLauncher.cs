@@ -68,10 +68,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             if (player != null)
             {
                 if (player.Information.Ammunitions[LoadLootId].Get() > CurrentLoad)
+                {
                     CurrentLoad++;
+                    Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
+                }
                 else ReloadingActive = false;
-
-                Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
             }
             else CurrentLoad++;
 

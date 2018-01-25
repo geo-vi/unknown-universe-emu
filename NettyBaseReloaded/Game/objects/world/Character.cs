@@ -324,22 +324,16 @@ namespace NettyBaseReloaded.Game.objects.world
         
         public void TickCooldowns()
         {
-            try
+            if (Cooldowns == null) return;
+            for (int i = 0; i < Cooldowns.Count; i++)
             {
-                for (int i = 0; i < Cooldowns.Count(); i++)
+                var cooldown = Cooldowns[i];
+                if (cooldown == null) continue;
+                if (DateTime.Now > cooldown.EndTime)
                 {
-                    var cooldown = Cooldowns[i];
-                    if (DateTime.Now > cooldown.EndTime)
-                    {
-                        cooldown.OnFinish(this);
-                        Cooldowns.RemoveAt(i);
-                    }
+                    cooldown.OnFinish(this);
+                    Cooldowns.RemoveAt(i);
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(JsonConvert.SerializeObject(Cooldowns));
-                Console.WriteLine(e.StackTrace);
             }
         }
 
@@ -361,13 +355,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Destroy(Character destroyer)
         {
-            if (this is Player)
-            {
-                var player = (Player)this;
-                foreach (var playerEvent in player.EventsPraticipating)
-                    playerEvent.Value.Destroyed();
-            }
-
             if (destroyer == null)
             {
                 Destroy();

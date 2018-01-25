@@ -49,6 +49,7 @@ namespace NettyBaseReloaded
             Application.ThreadException += ApplicationOnThreadException;
 
             InitiateConsole();
+            //InitiatePanel();
         }
 
 

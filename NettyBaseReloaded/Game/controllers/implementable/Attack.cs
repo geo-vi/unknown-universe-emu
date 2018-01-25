@@ -417,6 +417,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void UpdateAttacker(Character target, Player player)
         {
+            if (target == null || player == null) return;
             if (target.Controller.Attack.MainAttacker == null)
             {
                 target.Controller.Attack.MainAttacker = player;

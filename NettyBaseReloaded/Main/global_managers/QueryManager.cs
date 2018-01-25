@@ -84,7 +84,7 @@ namespace NettyBaseReloaded.Main.global_managers
                         var open = Convert.ToBoolean(Convert.ToInt32(row["OPEN"]));
                         servers.Add(new Server{Id = id, Ip = ip, Name = name, Open = open, Region = region, Shortcut = shortcut});
                     }
-                    mySqlClient.Dispose();
+                    
                 }
             }
             catch (Exception e)
@@ -107,7 +107,7 @@ namespace NettyBaseReloaded.Main.global_managers
                         Id = id,
                         Name = queryRow["PLAYER_NAME"].ToString()
                     };
-                    mySqlClient.Dispose();
+                    
                     return user;
                 }
             }
@@ -115,6 +115,11 @@ namespace NettyBaseReloaded.Main.global_managers
             {
                 
             }
+            return null;
+        }
+
+        public Clan GetClan(int id)
+        {
             return null;
         }
     }

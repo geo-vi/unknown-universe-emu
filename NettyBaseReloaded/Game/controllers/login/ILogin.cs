@@ -38,7 +38,6 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public void SendLegacy()
         {
-            Console.WriteLine("Legacy anals me");
             SendLegacy(GameSession);
             AddTempDroneFormations();
             //AddTempTechs();
@@ -60,6 +59,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             GameSession.Player.LoadExtras();
             //Packet.Builder.VideoWindowCreateCommand(GameSession, 1, "c", true, new List<string> { "login_dialog_1", "login_dialog_2" }, 0, 1);
             //Packet.Builder.MineCreateCommand(GameSession, "asdf", 6, GameSession.Player.Position, false);
+
             Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
             Packet.Builder.HellstormStatusCommand(GameSession);
 
@@ -74,15 +74,24 @@ namespace NettyBaseReloaded.Game.controllers.login
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
             //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
 
-            //Fix for 0 credits
-            Packet.Builder.LegacyModule(GameSession, "0|A|C|" + GameSession.Player.Information.Credits.Get() + "|" + GameSession.Player.Information.Uridium.Get());
-
             Packet.Builder.LegacyModule(GameSession
                 , "0|A|CC|" + GameSession.Player.CurrentConfig);
 
             if (GameSession.Player.Group != null)
                 Packet.Builder.GroupInitializationCommand(GameSession);
         }
+
+        public void InitiateEvents()
+        {
+            foreach (var gameEvent in World.StorageManager.Events)
+            {
+                if (gameEvent.Value.Active)
+                    World.DatabaseManager.LoadEventForPlayer(gameEvent.Key, GameSession.Player);
+            }
+            foreach (var gameEvent in GameSession.Player.EventsPraticipating)
+                gameEvent.Value.Start();
+        }
+
 
         private void AddTempDroneFormations()
         {

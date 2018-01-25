@@ -46,8 +46,8 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (gameSession.Player.Information.Premium && LogoutStartTime.AddSeconds(5) < DateTime.Now
             || LogoutStartTime.AddSeconds(20) < DateTime.Now)
             {
+                Packet.Builder.LogoutCommand(gameSession);
                 gameSession.Disconnect(GameSession.DisconnectionType.NORMAL);
-                Packet.Builder.LegacyModule(gameSession, "0|l");
             }
 
         }
@@ -187,7 +187,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                     return;
                 }
 
-                if (baseController.Attack.Attacking && baseController.Player.Spacemap.Pvp)
+                if (baseController.Attack.GetActiveAttackers().Any(x => x.InRange(baseController.Character, x.Controller.Attack.AttackRange)) && baseController.Player.Spacemap.Pvp)
                 {
                     Cancel();
                     return;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Game.objects.world.players.informations
 {
@@ -16,8 +17,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public override void Refresh()
         {
+            bool upd = false;
             World.DatabaseManager.LoadInfo(Player, this);
+            if (Value != SyncedValue)
+                upd = true;
             Value = SyncedValue;
+            if (upd) Update();
         }
 
         public override void Add(double amount)
@@ -34,7 +39,17 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public override void Set(double value)
         {
-            throw new NotImplementedException();
+            World.DatabaseManager.SetInfo(Player, this, value);
+            Value = SyncedValue;
+            Update();
+        }
+
+
+        public override void Update()
+        {
+            var gameSession = Player.GetGameSession();
+            if (gameSession != null)
+                Packet.Builder.AttributeCurrencyCommand(gameSession);
         }
     }
 }

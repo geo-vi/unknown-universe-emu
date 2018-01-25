@@ -30,7 +30,11 @@ namespace NettyBaseReloaded.Properties
         /// Server is in DEBUG mode
         /// - will print out every possible shit
         /// </summary>
+        #if DEBUG
+        public static bool DEBUG = true;
+        #else
         public static bool DEBUG = false;
+        #endif
 
         public static bool CONSOLE_MODE = false;
 

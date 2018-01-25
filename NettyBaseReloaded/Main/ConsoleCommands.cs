@@ -10,13 +10,14 @@ namespace NettyBaseReloaded.Main
 
         public static void Add()
         {
-            Commands.Add("help", new Help());
-            Commands.Add("clean", new Clean());
-            Commands.Add("player", new Player());
-            Commands.Add("temp", new Temp());
-            Commands.Add("createdemizone", new CreateDemiZone());
-            Commands.Add("debug", new Debug());
-            Commands.Add("destroy", new Destroy());
+            Commands.Add("help", new HelpCommand());
+            Commands.Add("clean", new CleanCommand());
+            Commands.Add("player", new PlayerCommand());
+            Commands.Add("set", new SetCommand());
+            Commands.Add("debug", new DebugCommand());
+            Commands.Add("destroy", new DestroyCommand());
+            Commands.Add("start", new StartCommand());
+            Commands.Add("info", new InfoCommand());
         }
 
         public static void Handle(string txt)

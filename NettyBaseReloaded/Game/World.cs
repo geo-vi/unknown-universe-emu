@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.netty;
-using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world;
-using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
-using NettyBaseReloaded.Game.objects.world.map.pois;
 using Types = NettyBaseReloaded.Game.objects.world.map.collectables.Types;
 
 namespace NettyBaseReloaded.Game
@@ -106,7 +99,8 @@ namespace NettyBaseReloaded.Game
                     goto NEWHASH;
                 map.HashedObjects.TryAdd(hash, null);
             }
-            Console.WriteLine($"Created {HASHES-1} hashes.");
+            if (Properties.Server.DEBUG)
+                Console.WriteLine($"Created {HASHES-1} hashes.");
         }
     }
 }

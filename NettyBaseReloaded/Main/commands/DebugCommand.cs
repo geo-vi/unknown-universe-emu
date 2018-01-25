@@ -6,19 +6,36 @@ using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Main.commands
 {
-    class Debug : Command
+    class DebugCommand : Command
     {
-        public Debug() : base("debug", "Debug command")
+        public DebugCommand() : base("debug", "Debug command")
         {
             
         }
 
         public override void Execute(string[] args = null)
         {
-            if (args == null)
+            if (args == null || args.Length < 2)
             {
-                Console.WriteLine("Debug::No parameters");
+                if (Properties.Server.DEBUG)
+                {
+                    Properties.Server.DEBUG = false;
+                    Properties.Game.PRINTING_COMMANDS = false;
+                    Properties.Game.PRINTING_LEGACY_COMMANDS = false;
+                    Properties.Game.DEBUG_ENTITIES = false;
+                    Properties.Game.PRINTING_CONNECTIONS = false;
+                    Console.WriteLine("Debug::Session ended");
+                }
+                else
+                {
+                    Properties.Server.DEBUG = true;
+                    Console.WriteLine("Debug::Session started");
+                }
                 return;
+            }
+            if (!Properties.Server.DEBUG)
+            {
+                Console.WriteLine("Access Denied!");
             }
             switch (args[1])
             {
@@ -58,6 +75,17 @@ namespace NettyBaseReloaded.Main.commands
 
                     Properties.Game.DEBUG_ENTITIES = true;
                     Console.WriteLine("Debug::Range entities should now print");
+                    break;
+                case "connections":
+                    if (Properties.Game.PRINTING_CONNECTIONS)
+                    {
+                        Properties.Game.PRINTING_CONNECTIONS = false;
+                        Console.WriteLine("Debug::Stopped printing connections");
+                        break;
+                    }
+
+                    Properties.Game.PRINTING_CONNECTIONS = true;
+                    Console.WriteLine("Debug::Player connections are now printing");
                     break;
             }
         }

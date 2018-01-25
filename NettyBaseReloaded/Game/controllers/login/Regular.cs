@@ -23,21 +23,11 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public override void Execute()
         {
+            InitiateEvents();
             SendSettings();
             Spawn();
             SendLegacy();
-            InitiateEvents();
             //AddCBS();
-        }
-
-        private void InitiateEvents()
-        {
-            foreach (var gameEvent in World.StorageManager.Events)
-            {
-                World.DatabaseManager.LoadEventForPlayer(gameEvent.Key, GameSession.Player);
-            }
-            foreach (var gameEvent in GameSession.Player.EventsPraticipating)
-                gameEvent.Value.Start();
         }
 
         public void Spawn()

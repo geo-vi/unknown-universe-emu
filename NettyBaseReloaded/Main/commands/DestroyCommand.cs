@@ -9,9 +9,9 @@ using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Main.commands
 {
-    class Destroy : Command
+    class DestroyCommand : Command
     {
-        public Destroy() : base("destroy", "Destroy command")
+        public DestroyCommand() : base("destroy", "Destroy command")
         {
 
         }

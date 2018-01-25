@@ -4,9 +4,9 @@ using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Main.commands
 {
-    class Help : Command
+    class HelpCommand : Command
     {
-        public Help() : base("help", "Lists all the commands", false)
+        public HelpCommand() : base("help", "Lists all the commands", false)
         {
         }
 

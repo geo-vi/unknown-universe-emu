@@ -29,6 +29,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public abstract void Set(double value);
 
+        public virtual void Update()
+        {
+            // override it if needed
+        }
+
         public double Get()
         {
             return Value;

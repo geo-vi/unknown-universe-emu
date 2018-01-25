@@ -1,8 +1,8 @@
 ﻿namespace NettyBaseReloaded.Main.commands
 {
-    class CreateAsset : Command
+    class CreateCommand : Command
     {
-        public CreateAsset() : base("createasset", "Creates an asset") { }
+        public CreateCommand() : base("createasset", "Creates an asset") { }
 
         public override void Execute(string[] args = null)
         {

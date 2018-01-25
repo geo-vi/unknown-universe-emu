@@ -1,6 +1,6 @@
 ﻿namespace NettyBaseReloaded.Main.commands
 {
-    public class Spawn
+    public class SpawnCommand
     {
         //TODO
     }

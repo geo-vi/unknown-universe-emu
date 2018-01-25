@@ -270,7 +270,8 @@ namespace NettyBaseReloaded.Game.objects.world
                 npcSpawned += entry.Count;
             }
 
-            Out.WriteLine("Successfully spawned " + npcSpawned + " npcs on spacemap " + Name);
+            if (Properties.Server.DEBUG)
+                Out.WriteLine("Successfully spawned " + npcSpawned + " npcs on spacemap " + Name);
         }
 
         public void CreateNpcs(BaseNpc baseNpc, Zone zone = null)
@@ -332,7 +333,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var id = npc.Id;
             if (Entities.ContainsKey(npc.Id))
             {
-                Console.WriteLine("Failed adding NPC [ID: " + id + "]");
+                if (Properties.Server.DEBUG)
+                    Console.WriteLine("Failed adding NPC [ID: " + id + "]");
                 return;
             }
 

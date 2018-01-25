@@ -4,9 +4,9 @@ using NettyBaseReloaded.Game.objects.world;
 
 namespace NettyBaseReloaded.Main.commands
 {
-    class Player : Command
+    class PlayerCommand : Command
     {
-        public Player() : base("player", "Player [id + sub]", true, new []
+        public PlayerCommand() : base("player", "Player [id + sub]", true, new []
         {
             new SubHelp("tp", "Teleports player [x, y]"),
             new SubHelp("stats", "Player stats"),

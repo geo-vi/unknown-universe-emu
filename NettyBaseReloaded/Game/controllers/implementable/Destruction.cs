@@ -95,6 +95,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                             reward.ParseRewards(_attacker.Value.Player);
                                         }
                                     }
+                                    target.Hangar.Ship.Reward.ParseRewards(mainAttacker);
                                 }
                                 else
                                 {
@@ -102,8 +103,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 }
                             }
                             Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
-                            foreach (var playerEvent in player.EventsPraticipating)
-                                playerEvent.Value.DestroyAttackable(target);
+                            foreach (var eventP in player.EventsPraticipating)
+                                eventP.Value.DestroyAttackable(target);
                         }
                     }
                     if (target is Npc)
@@ -113,7 +114,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                     else if (target is Player)
                     {
-                        switch(deathType)
+                        var pTarget = target as Player;
+                        foreach (var eventP in pTarget.EventsPraticipating)
+                            eventP.Value.Destroyed();
+                        switch (deathType)
                         {
                             case DeathType.MINE:
 
@@ -125,23 +129,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 new Killscreen(Character as Player, null, DeathType.RADITATION);
                                 break;
                             default:
-                                var otherPlayer = target as Player;
-
                                 if (Character is Player)
                                 {
-                                    new Killscreen(otherPlayer, Character, DeathType.PLAYER);
+                                    new Killscreen(pTarget, Character, DeathType.PLAYER);
                                 }
                                 else if (Character is Npc)
                                 {
-                                    new Killscreen(otherPlayer, Character, DeathType.NPC);
+                                    new Killscreen(pTarget, Character, DeathType.NPC);
                                 }
                                 else if (Character is Pet)
                                 {
                                     var baddog = (Pet)Character;
                                     var gayowner = baddog.GetOwner();
                                     if (gayowner != null)
-                                        new Killscreen(otherPlayer, gayowner, DeathType.PLAYER);
-                                    else new Killscreen(otherPlayer, baddog, DeathType.MISC);
+                                        new Killscreen(pTarget, gayowner, DeathType.PLAYER);
+                                    else new Killscreen(pTarget, baddog, DeathType.MISC);
                                 }
                                 break;
                         }

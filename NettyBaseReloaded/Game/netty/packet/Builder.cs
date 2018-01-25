@@ -86,7 +86,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 new Window.New_Client("tdm", "title_tdm", false),
                 new Window.New_Client("ranked_hunt", "title_ranked_hunt", false),
                 new Window.New_Client("highscoregate", "title_highscoregate", false),
-                new Window.New_Client("scoreevent", "title_scoreevent", false),
+                new Window.New_Client("scoreevent", "title_scoreevent", gameSession.Player.EventsPraticipating.Any(x => x.Value is ScoreMageddon)),
                 new Window.New_Client("infiltration", "title_ifg", false),
                 new Window.New_Client("word_puzzle", "title_wordpuzzle", false),
                 new Window.New_Client("sectorcontrol", "title_sectorcontrol_ingame_status", false),
@@ -137,9 +137,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
             }
             else
-            {
-                gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
-                
+            {              
                 var ammo = new List<netty.commands.old_client.AmmunitionCountModule>();
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
@@ -158,6 +156,8 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLASMA), player.Information.Ammunitions["ammunition_specialammo_pld-8"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.WIZARD), player.Information.Ammunitions["ammunition_specialammo_wiz-x"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.DECELERATION), player.Information.Ammunitions["ammunition_specialammo_dcr-250"].Get()));
+                gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
+                ammo.Clear();
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.HELLSTORM), player.Information.Ammunitions["ammunition_rocketlauncher_hstrm-01"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.UBER_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_ubr-100"].Get()));
@@ -170,7 +170,9 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), player.Information.Ammunitions["ammunition_specialammo_emp-01"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
+
                 player.Settings.Slotbar.GetCategories(player);
+                gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
             }
         }
         #endregion
@@ -1021,14 +1023,12 @@ namespace NettyBaseReloaded.Game.netty.packet
         #region HellstormStatusCommand
         public void HellstormStatusCommand(GameSession gameSession)
         {
-            // null error gamesession
             if (gameSession.Player.UsingNewClient)
             {
-                Console.WriteLine("TODO: Find hellstorm for new client");
             }
             else
             {
-                if (gameSession.Player.RocketLauncher != null && gameSession.Player.RocketLauncher.Launchers != null)
+                if (gameSession.Player.RocketLauncher?.Launchers != null)
                 {
                     gameSession.Client.Send(commands.old_client.HellstormStatusCommand
                         .write(gameSession.Player.RocketLauncher.Launchers.ToList(),
@@ -1116,7 +1116,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                LegacyModule(gameSession, "0|l");
+                LegacyModule(gameSession, "0|l|" + gameSession.Player.Id);
             }
         }
 
@@ -1275,17 +1275,32 @@ namespace NettyBaseReloaded.Game.netty.packet
         #endregion
 
         #region UpdateScoremageddonWindow
+
         public void UpdateScoremageddonWindow(GameSession gameSession, ScoreMageddon scoreMageddon)
+        {
+            LegacyModule(gameSession,
+                $"0|A|SCE|{scoreMageddon.Lives}|{scoreMageddon.GetMaxLives()}|{scoreMageddon.Combo}|{scoreMageddon.GetMaxCombo()}|{scoreMageddon.GetComboTimeLeft()}|{ScoreMageddon.MAX_COMBO_TIME}|{scoreMageddon.Score}");
+
+        }
+
+        #endregion
+
+        #region AttributeCurrencyCommand
+
+        public void AttributeCurrencyCommand(GameSession gameSession)
         {
             if (gameSession.Player.UsingNewClient)
             {
-                Console.WriteLine("Find scoremageddon for new client");
+                Console.WriteLine("TODO Find match for new client");
             }
             else
             {
-                LegacyModule(gameSession, $"0|A|SCE|{scoreMageddon.Lives}|{scoreMageddon.GetMaxLives()}|{scoreMageddon.Combo}|{scoreMageddon.GetMaxCombo()}|{scoreMageddon.GetComboTimeLeft()}|{ScoreMageddon.MAX_COMBO_TIME}|{scoreMageddon.Score}");
+                Packet.Builder.LegacyModule(gameSession,
+                    "0|A|C|" + gameSession.Player.Information.Credits.Get() + "|" +
+                    gameSession.Player.Information.Uridium.Get());
             }
         }
+
         #endregion
     }
 }

@@ -40,7 +40,7 @@ namespace NettyBaseReloaded.Chat.managers
                             ));
                         }
                     }
-
+                    
                 }
             }
             catch (Exception e)
@@ -100,6 +100,7 @@ namespace NettyBaseReloaded.Chat.managers
                         Main.Global.StorageManager.Clans[0],
                         lvl
                     );
+                    
                 }
             }
             catch (Exception e)
@@ -116,6 +117,7 @@ namespace NettyBaseReloaded.Chat.managers
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     //mySqlClient.ExecuteQueryRow()
+                    
                 }
             }
             catch (Exception e)

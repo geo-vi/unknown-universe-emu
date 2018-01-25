@@ -150,7 +150,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             if (Character.Spacemap.Entities.ContainsKey(entity.Id))
             {
-                if (entity.Selected == Character || Character.Selected == entity)
+                if (entity.Selected == Character && Character.Selected == entity)
                 {
                     if (!Character.Range.Entities.ContainsKey(entity.Id))
                         Character.Range.AddEntity(entity);
