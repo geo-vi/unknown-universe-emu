@@ -79,10 +79,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 //Draws the entity ship for character
                 Packet.Builder.ShipCreateCommand(gameSession, entity);
                 Packet.Builder.DronesCommand(gameSession, entity);
-
+                                
                 //Send movement
                 var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
                 Packet.Builder.MoveCommand(gameSession, entity, (int)(entity.MovementTime - timeElapsed));
+
+                TitleCheck(gameSession.Player, entity);
             }
         }
 
@@ -150,7 +152,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             if (Character.Spacemap.Entities.ContainsKey(entity.Id))
             {
-                if (entity.Selected == Character || Character.Selected == entity)
+                if (entity.Selected == Character && Character.Selected == entity)
                 {
                     if (!Character.Range.Entities.ContainsKey(entity.Id))
                         Character.Range.AddEntity(entity);
@@ -161,6 +163,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             return false;
         }
+
+        private void TitleCheck(Player main, Character entity)
+        {
+            var player = entity as Player;
+            if (player?.Information.Title != null)
+            {
+                Packet.Builder.TitleCommand(main.GetGameSession(), player);
+            }
+        }
+
         #endregion
         #region Zone related
         private void ZoneChecker()

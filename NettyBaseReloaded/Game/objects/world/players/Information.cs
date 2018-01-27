@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Dictionary<string, Ammunition> Ammunitions { get; set; }
 
-        public bool Premium { get; set; }
+        public Premium Premium { get; set; }
 
         public DateTime RegisteredTime { get; set; }
 
@@ -37,7 +37,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Honor = new Honor(player);
             Credits = new Credits(player);
             Uridium = new Uridium(player);
-
+            Premium = new Premium();
             UpdateAll();
         }
 
@@ -60,7 +60,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Uridium.Refresh();
             Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
             Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
+            var premiumActive = Premium.Active;
             Premium = World.DatabaseManager.LoadPremium(Player);
+            if (Premium.Active != premiumActive) Premium.Update(Player);
             var oldTitle = Title;
             Title = World.DatabaseManager.LoadTitle(Player);
             if (Title != oldTitle) UpdateTitle();

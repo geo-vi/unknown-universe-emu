@@ -204,7 +204,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         (int) player.FactionId,
                         player.Clan.Id, //clan
                         player.Equipment.LaserCount(), //idk
-                        player.Information.Premium,
+                        player.Information.Premium.Active,
                         player.Information.Experience.Get(),
                         player.Information.Honor.Get(),
                         player.Information.Level.Id,
@@ -242,7 +242,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         0,
                         0,
                         player.Equipment.LaserCount(),
-                        player.Information.Premium,
+                        player.Information.Premium.Active,
                         player.Information.Experience.Get(),
                         player.Information.Honor.Get(),
                         player.Information.Level.Id,
@@ -1319,5 +1319,20 @@ namespace NettyBaseReloaded.Game.netty.packet
             LegacyModule(gameSession, $"0|n|t|{targetPlayer.Id}|{targetPlayer.Information.Title.ColorId}|{targetPlayer.Information.Title.Key}");
         }
         #endregion
+
+        #region QuickSlotPremiumCommand
+
+        public void QuickSlotPremiumCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                Console.WriteLine("TODO: Find QuickSlotPremium for new client");
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.QuickSlotPremiumCommand.write(gameSession.Player.Information.Premium.Active).Bytes);
+            }
+        }
+#endregion
     }
 }

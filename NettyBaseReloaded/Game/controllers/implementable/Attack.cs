@@ -244,7 +244,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
 
             double cooldown_time = 2;
-            if (player != null && (player.Extras.ContainsKey("equipment_extra_cpu_rok-t01") || player.Information.Premium))
+            if (player != null && (player.Extras.ContainsKey("equipment_extra_cpu_rok-t01") || player.Information.Premium.Active))
                 cooldown_time *= 0.5;
 
             var cooldown = new RocketCooldown(cooldown_time);

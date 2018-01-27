@@ -43,7 +43,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             var gameSession = baseController.Player.GetGameSession();
 
-            if (gameSession.Player.Information.Premium && LogoutStartTime.AddSeconds(5) < DateTime.Now
+            if (gameSession.Player.Information.Premium.Active && LogoutStartTime.AddSeconds(5) < DateTime.Now
             || LogoutStartTime.AddSeconds(20) < DateTime.Now)
             {
                 Packet.Builder.LogoutCommand(gameSession);

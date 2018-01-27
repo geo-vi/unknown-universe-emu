@@ -307,6 +307,7 @@
     <Compile Include="Game\netty\commands\old_client\QuestIconModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestInitializationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestTypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuickSlotPremiumCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackAbortLaserRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackLaserRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackRocketRequest.cs" />

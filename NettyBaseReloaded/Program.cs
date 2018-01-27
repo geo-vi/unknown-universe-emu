@@ -47,6 +47,7 @@ namespace NettyBaseReloaded
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
 
             Application.ThreadException += ApplicationOnThreadException;
+            Application.CurrentCulture = new CultureInfo("en-US");
 
             InitiateConsole();
             //InitiatePanel();

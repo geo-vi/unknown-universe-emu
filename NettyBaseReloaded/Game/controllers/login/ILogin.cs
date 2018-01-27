@@ -82,6 +82,7 @@ namespace NettyBaseReloaded.Game.controllers.login
 
             if (GameSession.Player.Information.Title != null)
                 Packet.Builder.TitleCommand(GameSession, GameSession.Player);
+            GameSession.Player.Information.Premium.Login(GameSession);
         }
 
         public void InitiateEvents()

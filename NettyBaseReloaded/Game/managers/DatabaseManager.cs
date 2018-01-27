@@ -989,16 +989,17 @@ namespace NettyBaseReloaded.Game.managers
             return null;
         }
 
-        public bool LoadPremium(Player player)
+        public Premium LoadPremium(Player player)
         {
-            bool premium = false;
+            Premium premium = new Premium();
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     var queryRow =
-                        mySqlClient.ExecuteQueryRow($"SELECT PREMIUM FROM player_data WHERE PLAYER_ID={player.Id}");
-                    premium = Convert.ToBoolean(intConv(queryRow["PREMIUM"]));
+                        mySqlClient.ExecuteQueryRow($"SELECT PREMIUM_UNTIL FROM player_data WHERE PLAYER_ID={player.Id}");
+                    var premiumExpiry = Convert.ToDateTime(queryRow["PREMIUM_UNTIL"]);
+                    premium.ExpiryDate = premiumExpiry;
                 }
             }
             catch (Exception e)
