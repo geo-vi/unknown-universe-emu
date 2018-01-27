@@ -24,6 +24,7 @@ using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Game.netty.commands.old_client;
+using NettyBaseReloaded.Game.objects.world.players.informations;
 
 namespace NettyBaseReloaded.Game.netty.packet
 {
@@ -768,6 +769,15 @@ namespace NettyBaseReloaded.Game.netty.packet
                 new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F1, 0,newClient),
                 new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F2, 1,newClient),
                 new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F3, 2,newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F4, 3,newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F5, 4,newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F6, 5,newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F7, 6,newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F8, 7,newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F9, 8,newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F10, 9,newClient),
+                new Hotkey(Hotkey.ZOOM_IN, (int) Keys.Oemplus,newClient),
+                new Hotkey(Hotkey.ZOOM_OUT, (int) Keys.OemMinus,newClient),
             };
 
             var keys = hotkeys.Select(hotkey => hotkey.Object).ToList();
@@ -1301,6 +1311,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
 
+        #endregion
+        
+        #region TitleCommand
+        public void TitleCommand(GameSession gameSession, Player targetPlayer)
+        {
+            LegacyModule(gameSession, $"0|n|t|{targetPlayer.Id}|{targetPlayer.Information.Title.ColorId}|{targetPlayer.Information.Title.Key}");
+        }
         #endregion
     }
 }

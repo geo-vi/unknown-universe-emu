@@ -10,8 +10,10 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Key { get; set; }
 
+        public string Name { get; set; }
+        
         /// <summary>
         /// Color ID
         /// Used for old client to identify the color
@@ -24,9 +26,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
         /// </summary>
         public string ColorHex { get; set; }
 
-        public Title(int id, string name, int colorId, string colorHex)
+
+        public Title(int id, string key, string name, int colorId, string colorHex)
         {
             Id = id;
+            Key = key;
             Name = name;
             ColorId = colorId;
             ColorHex = colorHex;

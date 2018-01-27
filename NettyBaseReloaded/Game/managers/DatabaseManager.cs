@@ -35,6 +35,7 @@ namespace NettyBaseReloaded.Game.managers
             LoadLevels();
             LoadCollectableRewards();
             LoadEvents();
+            LoadTitles();
         }
 
         public void SaveAll()
@@ -331,6 +332,33 @@ namespace NettyBaseReloaded.Game.managers
 
         public void LoadTitles()
         {
+            try
+            {
+                using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_titles");
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow reader in queryTable.Rows)
+                        {
+                            int title_id = intConv(reader["ID"]);
+                            string title_key = stringConv(reader["KEY"]);
+                            string title_name = stringConv(reader["TITLE_NAME"]);
+                            int title_color = intConv(reader["TITLE_COLOR"]);
+                            string title_color_hex = stringConv(reader["TITLE_COLOR_HEX"]);
+
+                            World.StorageManager.Titles.Add(title_id, new Title(title_id, title_key, title_name, title_color, title_color_hex));
+                        }
+                    }
+
+                }
+
+                Log.Write("Loaded successfully " + World.StorageManager.Titles.Count + " titles from DB.");
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("dbmanager", "Failed to load titles...", e);
+            }
 
         }
 
@@ -1180,6 +1208,26 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
+        public Title LoadTitle(Player player)
+        {
+            Title title = null;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow =
+                        mySqlClient.ExecuteQueryRow("SELECT TITLE_ID FROM player_data WHERE PLAYER_ID=" + player.Id);
+                    var titleId = intConv(queryRow["TITLE_ID"]);
+                    if (World.StorageManager.Titles.ContainsKey(titleId))
+                        title = World.StorageManager.Titles[titleId];
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("database_manager_title", "Title error", e);
+            }
+            return title;
+        }
     }
 }
 

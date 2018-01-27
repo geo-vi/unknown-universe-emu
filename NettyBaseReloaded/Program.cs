@@ -62,6 +62,7 @@ namespace NettyBaseReloaded
 
             Draw.Logo();
 
+            //TODO: Add QuestBuilder();
             //RewardBuilder();
             InitiateSession();
             ConsoleUpdater();

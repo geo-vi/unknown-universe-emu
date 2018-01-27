@@ -93,8 +93,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
             }
             else if (attackable is Character)
             {
-                if (Lives < MAX_LIVES)
-                    Lives++;
                 if (Combo < MAX_COMBO)
                     Combo++;
 

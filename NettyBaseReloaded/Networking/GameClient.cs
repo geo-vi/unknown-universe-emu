@@ -82,16 +82,17 @@ namespace NettyBaseReloaded.Networking
                 foreach (var entry in character.Spacemap.Entities)
                 {
                     var entity = entry.Value as Player;
+                    if (entity == null) continue;
 
-                    if (character.InRange(entry.Value) && entity != null && entity != character)
+                    if (character.InRange(entry.Value) && entity != character)
                     {
                         if (entity.UsingNewClient && command.IsNewClient)
                         {
-                            World.StorageManager.GameSessions[entity.Id]?.Client.Send(command.Bytes);
+                            entity.GetGameSession()?.Client.Send(command.Bytes);
                         }
                         if (!entity.UsingNewClient && !command.IsNewClient)
                         {
-                            World.StorageManager.GameSessions[entity.Id]?.Client.Send(command.Bytes);
+                            entity.GetGameSession()?.Client.Send(command.Bytes);
                         }
                     }
                 }
@@ -100,7 +101,7 @@ namespace NettyBaseReloaded.Networking
                 {
                     var player = (Player) character;
                     if (command.IsNewClient == player.UsingNewClient)
-                        World.StorageManager.GameSessions[character.Id]?.Client.Send(command.Bytes);
+                        player.GetGameSession()?.Client.Send(command.Bytes);
                 }
             }
             catch (Exception e)

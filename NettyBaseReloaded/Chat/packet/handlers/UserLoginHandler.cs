@@ -24,6 +24,7 @@ namespace NettyBaseReloaded.Chat.packet.handlers
             client.UserId = id;
 
             Character character = Chat.DatabaseManager.LoadCharacter(id);
+            if (character == null) return;
             if (!ValidateSession(character, sessionId))
             {
                 //send msg

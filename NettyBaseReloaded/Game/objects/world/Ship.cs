@@ -83,6 +83,10 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             switch (LootId)
             {
+                case "ship_goliath_design_saturn":
+                    return 1.2;
+                case "ship_goliath_design_centaur":
+                    return 1.1;
                 case "ship_leonov":
                     if (player.State.IsOnHomeMap())
                         return 2.0;
@@ -95,6 +99,17 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             switch (LootId)
             {
+                case "ship_goliath_design_diminisher":
+                case "ship_goliath_design_venom":
+                case "ship_goliath_design_referee":
+                case "ship_goliath_design_enforcer":
+                    return 1.05;
+                case "ship_goliath_design_crimson":
+                case "ship_goliath_design_independence":
+                    return 1.07;
+                case "ship_vengeance_design_revenge":
+                case "ship_vengeance_design_lightning":
+                    return 1.1;
                 case "ship_leonov":
                     if (player.State.IsOnHomeMap())
                         return 2.0;
@@ -107,6 +122,13 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             switch (LootId)
             {
+                case "ship_goliath_design_bastion":
+                case "ship_vengeance_design_avenger":
+                case "ship_goliath_design_solace":
+                case "ship_goliath_design_spectrum":
+                case "ship_goliath_design_sentinel":
+                case "ship_goliath_design_kick":
+                    return 1.1;
                 case "ship_leonov":
                     if (player.State.IsOnHomeMap())
                         return 2.0;
@@ -119,6 +141,11 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             switch (LootId)
             {
+                case "ship_vengeance_design_adept":
+                case "ship_goliath_design_veteran":
+                case "ship_goliath_design_ignite":
+                case "ship_goliath_design_goal":
+                    return 1.1;
                 case "ship_leonov":
                     if (player.State.IsOnHomeMap())
                         return 2.0;
@@ -131,6 +158,13 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             switch (LootId)
             {
+                case "ship_goliath_design_crimson":
+                case "ship_goliath_design_independence":
+                    return 1.03;
+                case "ship_vengeance_design_corsair":
+                case "ship_goliath_design_exalted":
+                case "ship_goliath_design_ignite":
+                    return 1.1;
                 case "ship_leonov":
                     if (player.State.IsOnHomeMap())
                         return 2.0;

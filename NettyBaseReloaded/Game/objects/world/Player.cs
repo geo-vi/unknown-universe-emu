@@ -182,7 +182,9 @@ namespace NettyBaseReloaded.Game.objects.world
                     case DroneFormation.CRAB:
                         value += 0.2;
                         break;
-
+                    case DroneFormation.BARRAGE:
+                        value -= 0.15;
+                        break;
                 }
 
                 return value;
@@ -214,6 +216,12 @@ namespace NettyBaseReloaded.Game.objects.world
             get
             {
                 var value = Hangar.Configurations[CurrentConfig - 1].Speed;
+                switch (Formation)
+                {
+                    case DroneFormation.BAT:
+                        value = (int)(value * 0.85);
+                        break;
+                }
                 if (BoostedAcceleration > 0)
                     value = (int) (value * (1 + BoostedAcceleration));
                 return value;
@@ -240,7 +248,14 @@ namespace NettyBaseReloaded.Game.objects.world
                     case DroneFormation.HEART:
                         value = (int) (value * 0.95); //-5%
                         break;
-
+                    case DroneFormation.BARRAGE:
+                        if (Selected is Npc)
+                            value = (int)(value * 1.05); //+5%
+                        break;
+                    case DroneFormation.BAT:
+                        if (Selected is Npc)
+                            value = (int)(value * 1.08); //+8%
+                        break;
                 }
 
                 if (BoostedDamage > 0)

@@ -279,6 +279,7 @@
     <Compile Include="Game\netty\commands\old_client\LegacyModule.cs" />
     <Compile Include="Game\netty\commands\old_client\LevelUpCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LogoutCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\LootModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MapAddPOICommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MessageLocalizedWildcardCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MessageWildcardReplacementModule.cs" />
@@ -298,6 +299,14 @@
     <Compile Include="Game\netty\commands\old_client\POITypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PriceModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QualitySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestCaseModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestConditionModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestConditionStateModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestDefinitionModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestElementModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestIconModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackAbortLaserRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackLaserRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackRocketRequest.cs" />
@@ -470,6 +479,14 @@
     <Compile Include="Game\objects\world\players\informations\Uridium.cs" />
     <Compile Include="Game\objects\world\players\killscreen\Killscreen.cs" />
     <Compile Include="Game\objects\world\players\LogMessage.cs" />
+    <Compile Include="Game\objects\world\players\Quest.cs" />
+    <Compile Include="Game\objects\world\players\quests\QuestCondition.cs" />
+    <Compile Include="Game\objects\world\players\quests\QuestConditions.cs" />
+    <Compile Include="Game\objects\world\players\quests\QuestElement.cs" />
+    <Compile Include="Game\objects\world\players\quests\QuestIcons.cs" />
+    <Compile Include="Game\objects\world\players\quests\QuestRoot.cs" />
+    <Compile Include="Game\objects\world\players\quests\QuestState.cs" />
+    <Compile Include="Game\objects\world\players\quests\QuestTypes.cs" />
     <Compile Include="Game\objects\world\players\Storage.cs" />
     <Compile Include="Game\objects\world\players\PlayerBaseClass.cs" />
     <Compile Include="Game\objects\world\players\Settings.cs" />

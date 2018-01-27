@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
 
@@ -27,7 +29,29 @@ namespace NettyBaseReloaded.Game.controllers.login
             SendSettings();
             Spawn();
             SendLegacy();
+            //SendTestQuest();
             //AddCBS();
+        }
+
+        private void SendTestQuest()
+        {
+            if (GameSession.Player.UsingNewClient) return;
+            int questId = 1;
+            QuestTypes type = QuestTypes.MISSION;
+            QuestIcons icon = QuestIcons.KILL;
+
+            var quest = new QuestDefinitionModule(questId, new List<QuestTypeModule>{new QuestTypeModule((short)type)}, new QuestCaseModule(questId * 100, false, true, false, 0, new List<QuestElementModule>
+            {
+                new QuestElementModule(new QuestCaseModule(0, true, true, false, 1, new List<QuestElementModule>()), new QuestConditionModule(questId * 100 + 1, new List<int>(), 6, 6, 100, true, 
+                    new QuestConditionStateModule(0, true, false), new List<QuestConditionModule>()))
+            }), new List<LootModule>
+            {
+                new LootModule("currency_uridium", 69)
+            }, new List<QuestIconModule>{new QuestIconModule((short) icon)});
+
+
+
+            GameSession.Client.Send(QuestInitializationCommand.write(quest).Bytes);
         }
 
         public void Spawn()

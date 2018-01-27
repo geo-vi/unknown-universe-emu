@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.informations;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
@@ -60,6 +61,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
             Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
             Premium = World.DatabaseManager.LoadPremium(Player);
+            var oldTitle = Title;
+            Title = World.DatabaseManager.LoadTitle(Player);
+            if (Title != oldTitle) UpdateTitle();
         }
 
         public void LevelUp(Level targetLevel)
@@ -67,6 +71,20 @@ namespace NettyBaseReloaded.Game.objects.world.players
             var amountChange = targetLevel.Id - Level.Id;
             Level = targetLevel;
             World.DatabaseManager.UpdateInfo(Player, "LVL", amountChange);
+        }
+
+        public void UpdateTitle()
+        {
+            if (Title != null)
+            {
+                GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write($"0|n|t|{Player.Id}|{Title.ColorId}|{Title.Key}"), true);
+                GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write($"0|n|t|{Player.Id}|{Title.ColorId}|{Title.Key}"), true);
+            }
+            else
+            {
+                GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write($"0|n|trm|{Player.Id}"), true);
+                GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write($"0|n|trm|{Player.Id}"), true);
+            }
         }
     }
 }

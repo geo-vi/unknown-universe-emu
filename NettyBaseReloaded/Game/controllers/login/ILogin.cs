@@ -79,6 +79,9 @@ namespace NettyBaseReloaded.Game.controllers.login
 
             if (GameSession.Player.Group != null)
                 Packet.Builder.GroupInitializationCommand(GameSession);
+
+            if (GameSession.Player.Information.Title != null)
+                Packet.Builder.TitleCommand(GameSession, GameSession.Player);
         }
 
         public void InitiateEvents()
