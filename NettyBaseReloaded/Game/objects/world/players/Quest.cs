@@ -34,6 +34,18 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public static Quest LoadQuest(int id)
         {
+            if (World.StorageManager.Quests.ContainsKey(id))
+            {
+                var quest = World.StorageManager.Quests[id];
+                return new Quest
+                {
+                    Icon = quest.Icon,
+                    Id = quest.Id,
+                    QuestType = quest.QuestType,
+                    Reward = quest.Reward,
+                    Root = quest.Root
+                };
+            }
             return null;
         }
     }

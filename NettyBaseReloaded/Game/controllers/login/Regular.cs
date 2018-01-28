@@ -36,22 +36,43 @@ namespace NettyBaseReloaded.Game.controllers.login
         private void SendTestQuest()
         {
             if (GameSession.Player.UsingNewClient) return;
+            var testQuest = Quest.LoadQuest(0);
+
+            var elements = QuestElement.ParseElementsOld(testQuest.Root.Elements);
+            var reward = Quest.GetReward(testQuest.Reward);
+            var quest = new QuestDefinitionModule(testQuest.Id,
+                new List<QuestTypeModule> { new QuestTypeModule((short)testQuest.QuestType) }, new QuestCaseModule(testQuest.Root.Id, testQuest.Root.Active,
+                    testQuest.Root.Mandatory, testQuest.Root.Ordered, testQuest.Root.MandatoryCount, elements), reward, new List<QuestIconModule> { new QuestIconModule((short)testQuest.Icon) });
+
+            GameSession.Client.Send(QuestInitializationCommand.write(quest).Bytes);
+        }
+
+        private void CoolExampleQuest()
+        {
             int questId = 1;
             QuestTypes type = QuestTypes.MISSION;
             QuestIcons icon = QuestIcons.KILL;
 
             // mandatory => {value}/{targetnumber}
             // for flying to pos (QuestConditions.TRAVEL) currentvalue = x, targetValue = y
-            
-            var quest = new QuestDefinitionModule(questId, new List<QuestTypeModule>{new QuestTypeModule((short)type)}, new QuestCaseModule(questId * 100, false, true, false, 0, new List<QuestElementModule>
-            {
-                new QuestElementModule(new QuestCaseModule(0, true, true, false, 1, new List<QuestElementModule>()), new QuestConditionModule(questId * 100 + 1, new List<int>{4}, 6, 6, 100, true, 
-                    new QuestConditionStateModule(0, true, false), new List<QuestConditionModule>())),
-                new QuestElementModule(new QuestCaseModule(0, false, true, true, 2, new List<QuestElementModule>()), new QuestConditionModule(questId * 100 + 2, new List<int>(), (short)QuestConditions.TRAVEL,(short)QuestConditions.TRAVEL, 3, true, new QuestConditionStateModule(5, false, false), new List<QuestConditionModule>()))
-            }), new List<LootModule>
-            {
-                new LootModule("currency_uridium", 69)
-            }, new List<QuestIconModule>{new QuestIconModule((short) icon)});
+
+            var quest = new QuestDefinitionModule(questId,
+                new List<QuestTypeModule> {new QuestTypeModule((short) type)}, new QuestCaseModule(questId * 100, false,
+                    true, false, 0, new List<QuestElementModule>
+                    {
+                        new QuestElementModule(
+                            new QuestCaseModule(0, true, true, false, 1, new List<QuestElementModule>()),
+                            new QuestConditionModule(questId * 100 + 1, new List<int> {4}, 6, 6, 100, true,
+                                new QuestConditionStateModule(0, true, false), new List<QuestConditionModule>())),
+                        new QuestElementModule(
+                            new QuestCaseModule(0, false, true, true, 2, new List<QuestElementModule>()),
+                            new QuestConditionModule(questId * 100 + 2, new List<int>(), (short) QuestConditions.TRAVEL,
+                                (short) QuestConditions.TRAVEL, 3, true, new QuestConditionStateModule(5, false, false),
+                                new List<QuestConditionModule>()))
+                    }), new List<LootModule>
+                {
+                    new LootModule("currency_uridium", 69)
+                }, new List<QuestIconModule> {new QuestIconModule((short) icon)});
 
 
 

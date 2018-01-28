@@ -23,6 +23,7 @@ namespace NettyBaseReloaded.Game.managers
         public Dictionary<int, Title> Titles = new Dictionary<int, Title>();
         public List<Group> Groups = new List<Group>();
         public Dictionary<int, GameEvent> Events = new Dictionary<int, GameEvent>();
+        public Dictionary<int, Quest> Quests = new Dictionary<int, Quest>();
 
         public GameSession GetGameSession(int userId)
         {
