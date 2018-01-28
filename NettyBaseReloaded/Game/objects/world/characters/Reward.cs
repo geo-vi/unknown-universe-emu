@@ -110,7 +110,10 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public int RewardMultiplyer(RewardType type, int amount, Player player)
         {
-            if (type == RewardType.EXPERIENCE) amount = (int)(amount * player.Hangar.Ship.GetExpBonus(player));
+            if (type == RewardType.EXPERIENCE)
+            {
+                amount = (int)(amount * player.Hangar.Ship.GetExpBonus(player));
+            }
             if (type == RewardType.HONOR) amount = (int)(amount * player.Hangar.Ship.GetHonorBonus(player));
             return amount * Properties.Game.REWARD_MULTIPLYER; // TODO: Reward levels
         }

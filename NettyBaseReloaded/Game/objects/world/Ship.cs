@@ -139,38 +139,46 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public double GetExpBonus(Player player)
         {
+            double totalBonus = 1;
             switch (LootId)
             {
                 case "ship_vengeance_design_adept":
                 case "ship_goliath_design_veteran":
                 case "ship_goliath_design_ignite":
                 case "ship_goliath_design_goal":
-                    return 1.1;
+                    totalBonus += 0.1;
+                    break;
                 case "ship_leonov":
                     if (player.State.IsOnHomeMap())
-                        return 2.0;
+                        totalBonus += 1;
                     break;
             }
-            return 1;
+            if (player.Formation == DroneFormation.BARRAGE) totalBonus += 0.05;
+            else if (player.Formation == DroneFormation.BAT) totalBonus += 0.08;
+            return totalBonus;
         }
 
         public double GetHonorBonus(Player player)
         {
+            double totalBonus = 1;
             switch (LootId)
             {
                 case "ship_goliath_design_crimson":
                 case "ship_goliath_design_independence":
-                    return 1.03;
+                    totalBonus += 0.03;
+                    break;
                 case "ship_vengeance_design_corsair":
                 case "ship_goliath_design_exalted":
                 case "ship_goliath_design_ignite":
-                    return 1.1;
+                    totalBonus += 0.1;
+                    break;
                 case "ship_leonov":
                     if (player.State.IsOnHomeMap())
-                        return 2.0;
+                        totalBonus += 1;
                     break;
             }
-            return 1;
+            if (player.Formation == DroneFormation.PINCER) totalBonus += 0.05;
+            return totalBonus;
         }
 
         public string ToStringLoot()
