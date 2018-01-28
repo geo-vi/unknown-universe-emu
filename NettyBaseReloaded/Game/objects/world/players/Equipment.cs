@@ -130,7 +130,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public string GetRobot()
         {
-            return Player.Extras.FirstOrDefault(x => x.Value is Robot).Key;
+            if (Player.Extras.Any(x => x.Value is Robot))
+                return Player.Extras.FirstOrDefault(x => x.Value is Robot).Key;
+            return "";
         }
 
         public int GetRobotLevel()
