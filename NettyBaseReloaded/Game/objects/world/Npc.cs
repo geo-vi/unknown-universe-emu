@@ -63,7 +63,6 @@ namespace NettyBaseReloaded.Game.objects.world
             CurrentShield = maxShield;
             MaxShield = maxShield;
             ShieldAbsorption = 0.5;
-            ShieldPenetration = 0.05;
             MotherShip = motherShip;
             RespawnTime = respawnTime;
         }

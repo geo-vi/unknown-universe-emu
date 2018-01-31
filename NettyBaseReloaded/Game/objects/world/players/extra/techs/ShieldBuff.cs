@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
+using NettyBaseReloaded.Networking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,12 +16,27 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 
         public override void Tick()
         {
-            throw new NotImplementedException();
         }
 
         public override void execute()
         {
-            throw new NotImplementedException();
+            if (Player.Cooldowns.Exists(x => x is ShieldBuffCooldown)) return;
+            GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write("0|TX|A|S|SBU|" + Player.Id), true);
+            GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write("0|TX|A|S|SBU|" + Player.Id), true);
+            ExecuteShield();
+            Disable();
+        }
+
+        private void ExecuteShield()
+        {
+            Player.Controller.Heal.Execute(75000, 0, HealType.SHIELD);
+        }
+
+        private void Disable()
+        {
+            var cld = new ShieldBuffCooldown();
+            cld.Send(Player.GetGameSession());
+            Player.Cooldowns.Add(cld);
         }
     }
 }

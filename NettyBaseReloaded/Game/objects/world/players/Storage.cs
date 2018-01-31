@@ -30,6 +30,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public bool BlockedGroupInvites { get; set; }
 
+        public bool EnergyLeechActivated = false;
+        public bool BattleRepairRobotActivated = false;
+        public bool PrecisionTargeterActivated = false;
+
         public Storage(Player player) : base(player)
         {
         }

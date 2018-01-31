@@ -378,6 +378,10 @@
     <Compile Include="Game\netty\commands\ClientCommands.cs" />
     <Compile Include="Game\netty\commands\Command.cs" />
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\EnergyLeechCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\PrecisionTargeterCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\ChainImpulseCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\ShieldBuffCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\BattleRepairRobotCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationEffect.cs" />
@@ -447,7 +451,9 @@
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
     <Compile Include="Game\objects\world\events\EventTypes.cs" />
     <Compile Include="Game\objects\world\players\events\ScoreMageddon.cs" />
+    <Compile Include="Game\objects\world\players\extra\techs\EnergyLeech.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\RocketPrecission.cs" />
+    <Compile Include="Game\objects\world\players\extra\techs\ChainImpulse.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\ShieldBuff.cs" />
     <Compile Include="Game\objects\world\players\killscreen\DeathType.cs" />
     <Compile Include="Game\objects\world\players\PlayerEvent.cs" />
