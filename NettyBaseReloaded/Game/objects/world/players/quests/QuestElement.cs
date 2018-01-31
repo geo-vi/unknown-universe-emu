@@ -22,13 +22,13 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
             return questElements;
         }
 
-        public static List<netty.commands.old_client.LootModule> ParseRewardsOld(Reward rewards)
-        {
-            foreach (var reward in rewards.Rewards)
-            {
+        //public static List<netty.commands.old_client.LootModule> ParseRewardsOld(Reward rewards)
+        //{
+        //    foreach (var reward in rewards.Rewards)
+        //    {
                 
-            }
-        }
+        //    }
+        //}
 
         //TODO: Add new
     }

@@ -14,7 +14,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
         public static string[] KEYS = { "epic_msg_killstreak_triplekill", "epic_msg_killstreak_unstoppable", "epic_msg_killstreak_godlike", "epic_msg_killstreak_likeaboss" };
         public const int MAX_COMBO = 10;
         public const int MAX_LIVES = 5;
-        public const int MAX_COMBO_TIME = 60;
+        public const int MAX_COMBO_TIME = 25;
 
         public int Lives { get; set; }
 
@@ -51,7 +51,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
 
         public override void Destroyed()
         {
-            Lives -= 1;
+            if (Lives > 0)
+                Lives -= 1;
             Combo = 0;
             ComboTimeEnd = DateTime.Now;
             World.DatabaseManager.UpdateEventForPlayer(this);
@@ -59,6 +60,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
 
         public override void Start()
         {
+            if (Lives <= 0)
+            {
+                if (Player.EventsPraticipating.ContainsKey(Id))
+                    Player.EventsPraticipating.Remove(Id);
+                return;
+            }
             UpdateCombo();
             UpdateWindow();
             World.DatabaseManager.UpdateEventForPlayer(this);
@@ -87,12 +94,13 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
 
                 var addedPoints = 0;
                 if (Combo > 0)
-                    addedPoints = 100 * Combo;
-                Score += 100 + addedPoints;
+                    addedPoints = 1000 * Combo;
+                Score += 1000 + addedPoints;
                 ComboTimeEnd = DateTime.Now.AddSeconds(MAX_COMBO_TIME);
             }
-            else if (attackable is Character)
+            else if (attackable is Npc)
             {
+                var npc = (Npc) attackable;
                 if (Combo < MAX_COMBO)
                     Combo++;
 
@@ -101,10 +109,39 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
                 if (Combo == 7) Packet.Builder.LegacyModule(Player.GetGameSession(), "0|n|KSMSG|" + KEYS[2]);
                 if (Combo == 9) Packet.Builder.LegacyModule(Player.GetGameSession(), "0|n|KSMSG|" + KEYS[3]);
 
+                int addBasePoints = 0;
+                switch (npc.Hangar.Ship.Id)
+                {
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 71:
+                    case 75:
+                    case 84:
+                        addBasePoints = 1;
+                        break;
+                    case 72:
+                    case 73:
+                    case 74:
+                        addBasePoints = 20;
+                        break;
+                    case 26:
+                    case 27:
+                    case 46:
+                        addBasePoints = 30;
+                        break;
+                    case 80:
+                        addBasePoints = 350;
+                        break;
+                    default:
+                        addBasePoints = 10;
+                        break;
+                }
+
                 var addedPoints = 0;
                 if (Combo > 0)
-                    addedPoints = 1 * Combo;
-                Score += 1 + addedPoints;
+                    addedPoints = addBasePoints * Combo;
+                Score += addBasePoints + addedPoints;
                 ComboTimeEnd = DateTime.Now.AddSeconds(MAX_COMBO_TIME);
             }
 

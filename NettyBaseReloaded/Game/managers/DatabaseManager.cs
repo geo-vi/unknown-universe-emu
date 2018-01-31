@@ -1097,14 +1097,13 @@ namespace NettyBaseReloaded.Game.managers
 
         public void LoadEventForPlayer(int id, Player player)
         {
+            var eventInfo = World.StorageManager.Events[id];
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     var query = mySqlClient.ExecuteQueryRow(
                         $"SELECT * FROM player_event_info WHERE EVENT_ID={id} AND PLAYER_ID={player.Id}");
-
-                    var eventInfo = World.StorageManager.Events[id];
 
                     if (query != null)
                     {
@@ -1130,15 +1129,12 @@ namespace NettyBaseReloaded.Game.managers
                             player.EventsPraticipating.Add(id, playerEventData);
                         else player.EventsPraticipating[id] = playerEventData;
                     }
-                    else
-                    {
-                        if (eventInfo.Open) eventInfo.CreatePlayerEvent(player);
-                    }
-
+                    else if (eventInfo.Open) eventInfo.CreatePlayerEvent(player);
                 }
             }
             catch (Exception e)
             {
+                new ExceptionLog("database_manager", "Events", e);
             }
         }
 

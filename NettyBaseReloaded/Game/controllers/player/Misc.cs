@@ -43,6 +43,12 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             var gameSession = baseController.Player.GetGameSession();
 
+            if (baseController.Attack.Attacking || baseController.Attack.GetActiveAttackers()?.Count > 0)
+            {
+                AbortLogout();
+                return;
+            }
+
             if (gameSession.Player.Information.Premium.Active && LogoutStartTime.AddSeconds(5) < DateTime.Now
             || LogoutStartTime.AddSeconds(20) < DateTime.Now)
             {

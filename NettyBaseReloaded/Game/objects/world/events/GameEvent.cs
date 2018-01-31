@@ -55,7 +55,6 @@ namespace NettyBaseReloaded.Game.objects.world.events
 
         public void CreatePlayerEvent(Player player)
         {
-            World.DatabaseManager.LoadEventForPlayer(Id, player);
             PlayerEvent playerEvent = null;
             if (!player.EventsPraticipating.ContainsKey(Id))
             {

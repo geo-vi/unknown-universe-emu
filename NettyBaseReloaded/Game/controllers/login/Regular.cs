@@ -35,16 +35,16 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         private void SendTestQuest()
         {
-            if (GameSession.Player.UsingNewClient) return;
-            var testQuest = Quest.LoadQuest(0);
+            //if (GameSession.Player.UsingNewClient) return;
+            //var testQuest = Quest.LoadQuest(0);
 
-            var elements = QuestElement.ParseElementsOld(testQuest.Root.Elements);
-            var reward = Quest.GetReward(testQuest.Reward);
-            var quest = new QuestDefinitionModule(testQuest.Id,
-                new List<QuestTypeModule> { new QuestTypeModule((short)testQuest.QuestType) }, new QuestCaseModule(testQuest.Root.Id, testQuest.Root.Active,
-                    testQuest.Root.Mandatory, testQuest.Root.Ordered, testQuest.Root.MandatoryCount, elements), reward, new List<QuestIconModule> { new QuestIconModule((short)testQuest.Icon) });
+            //var elements = QuestElement.ParseElementsOld(testQuest.Root.Elements);
+            //var reward = Quest.GetReward(testQuest.Reward);
+            //var quest = new QuestDefinitionModule(testQuest.Id,
+            //    new List<QuestTypeModule> { new QuestTypeModule((short)testQuest.QuestType) }, new QuestCaseModule(testQuest.Root.Id, testQuest.Root.Active,
+            //        testQuest.Root.Mandatory, testQuest.Root.Ordered, testQuest.Root.MandatoryCount, elements), reward, new List<QuestIconModule> { new QuestIconModule((short)testQuest.Icon) });
 
-            GameSession.Client.Send(QuestInitializationCommand.write(quest).Bytes);
+            //GameSession.Client.Send(QuestInitializationCommand.write(quest).Bytes);
         }
 
         private void CoolExampleQuest()
