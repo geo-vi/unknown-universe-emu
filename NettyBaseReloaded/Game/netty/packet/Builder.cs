@@ -653,17 +653,29 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void PetActivationCommand(GameSession gameSession, Pet pet)
         {
-            if (gameSession.Player.UsingNewClient)
+            if (pet.GetOwner() == gameSession.Player)
             {
-                gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
-                (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.new_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
-                pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible, new commands.new_client.commandK13(0)).Bytes);
+                PetHeroActivationCommand(gameSession, pet);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name,
-                    (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
-                    pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible).Bytes);
+                if (gameSession.Player.UsingNewClient)
+                {
+                    gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id,
+                        12, 1, pet.Name,
+                        (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
+                        new commands.new_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
+                        pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible,
+                        new commands.new_client.commandK13(0)).Bytes);
+                }
+                else
+                {
+                    gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id,
+                        12, 1, pet.Name,
+                        (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
+                        new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
+                        pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible).Bytes);
+                }
             }
         }
 
@@ -1333,7 +1345,25 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.QuickSlotPremiumCommand.write(gameSession.Player.Information.Premium.Active).Bytes);
             }
         }
-        #endregion
+#endregion
 
+        #region TechStatusCommand
+
+        public void TechStatusCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                int repairRobotStatus = gameSession.Player.Storage.BattleRepairRobotActivated ? 2 : 1;
+                int energyLeechStatus = gameSession.Player.Storage.EnergyLeechActivated ? 2 : 1;
+                int precisionTargeterStatus = gameSession.Player.Storage.PrecisionTargeterActivated ? 2 : 1;
+                gameSession.Client.Send(commands.old_client.LegacyModule.write("0|TX|S|"+ energyLeechStatus +"|99|0|1|99|0|"+ precisionTargeterStatus +"|99|0|1|99|0|"+ repairRobotStatus +"|99|0").Bytes);
+            }
+        }
+
+        #endregion
     }
 }

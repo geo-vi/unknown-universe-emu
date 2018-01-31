@@ -139,9 +139,10 @@
     <Compile Include="Game\controllers\npc\Basic.cs" />
     <Compile Include="Game\controllers\npc\Mothership.cs" />
     <Compile Include="Game\controllers\PetController.cs" />
-    <Compile Include="Game\controllers\pet\gears\AutoLoot.cs" />
-    <Compile Include="Game\controllers\pet\gears\Guard.cs" />
-    <Compile Include="Game\controllers\pet\gears\Passive.cs" />
+    <Compile Include="Game\controllers\pet\gears\AutoLootGear.cs" />
+    <Compile Include="Game\controllers\pet\gears\ComboRepairGear.cs" />
+    <Compile Include="Game\controllers\pet\gears\GuardGear.cs" />
+    <Compile Include="Game\controllers\pet\gears\PassiveGear.cs" />
     <Compile Include="Game\controllers\pet\Gear.cs" />
     <Compile Include="Game\controllers\PlayerController.cs" />
     <Compile Include="Game\controllers\EventController.cs" />
@@ -389,6 +390,7 @@
     <Compile Include="Game\netty\commands\Command.cs" />
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\EnergyLeechCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\PetComboRepairCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\PrecisionTargeterCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\ChainImpulseCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\ShieldBuffCooldown.cs" />

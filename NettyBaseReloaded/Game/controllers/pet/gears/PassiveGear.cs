@@ -7,9 +7,9 @@ using NettyBaseReloaded.Game.objects.world.pets;
 
 namespace NettyBaseReloaded.Game.controllers.pet.gears
 {
-    class Passive : Gear
+    class PassiveGear : Gear
     {
-        internal Passive(PetController controller) : base(controller, true, 1)
+        internal PassiveGear(PetController controller) : base(controller, true, 1)
         {
             Type = GearType.PASSIVE;
         }

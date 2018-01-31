@@ -9,9 +9,9 @@ using NettyBaseReloaded.Game.objects.world.pets;
 
 namespace NettyBaseReloaded.Game.controllers.pet.gears
 {
-    class AutoLoot : Gear
+    class AutoLootGear : Gear
     {
-        internal AutoLoot(PetController controller) : base(controller, true, 1)
+        internal AutoLootGear(PetController controller) : base(controller, true, 1)
         {
             Type = GearType.AUTO_LOOT;
         }
@@ -27,8 +27,9 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             {
                 // TODO
                 //Console.WriteLine(pet.Range.Collectables.Count + ":PET Boxes count");
-                var collectable = pet.Range.Collectables.FirstOrDefault();
-                MovementController.Move(pet, new Vector(collectable.Value.Position.X, collectable.Value.Position.Y - 50));
+                //var collectable = pet.Range.Collectables.FirstOrDefault();
+                //collectable.Value.Collect(pet);
+                //MovementController.Move(pet, new Vector(collectable.Value.Position.X, collectable.Value.Position.Y - 50));
             }
             else Follow(baseController.Pet.GetOwner());
         }

@@ -48,7 +48,8 @@ namespace NettyBaseReloaded.Game.controllers
             var config = World.DatabaseManager.LoadConfig(player);;
             player.Hangar.Configurations = config;
             player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
-            //player.Pet = new Pet(player.Id, player.Id, "JustAnotherPet", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), 1000, player.FactionId, new Level(1, 1000), 500, 1000, new List<Gear>());
+            if (player.RankId == Rank.ADMINISTRATOR)
+                player.Pet = new Pet(player.Id, player.Id, $"{player.Name}'s little toy", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), 1000, player.FactionId, new Level(1, 1000), 500, 1000, new List<Gear>());
         }
 
         private void CheckPos()

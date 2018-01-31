@@ -33,11 +33,23 @@ namespace NettyBaseReloaded.Game.objects.world.map
             if (Temporary && EstTimeOfDisposal < DateTime.Now) Dispose();
         }
 
-        public virtual void Collect(Player player)
+        public virtual void Collect(Character character)
         {
-            if (Disposed || player.Position.DistanceTo(Position) > 200) return;
-            Dispose();
-            Reward(player);
+            if (Disposed) return;
+            if (character is Player)
+            {
+                var player = (Player) character;
+                if (player.Position.DistanceTo(Position) > 200) return;
+                Dispose();
+                Reward(player);
+            }
+            if (character is Pet)
+            {
+                var pet = (Pet) character;
+                Dispose();
+                if (pet.GetOwner() != null)
+                    Reward(pet.GetOwner());
+            }
         }
 
         protected abstract void Reward(Player player);

@@ -34,9 +34,10 @@ namespace NettyBaseReloaded.Game.controllers
 
         private void LoadGears()
         {
-            Pet.Gears.Add(new Passive(this));
-            Pet.Gears.Add(new Guard(this));
-            Pet.Gears.Add(new AutoLoot(this));
+            Pet.Gears.Add(new PassiveGear(this));
+            Pet.Gears.Add(new GuardGear(this));
+            Pet.Gears.Add(new AutoLootGear(this));
+            Pet.Gears.Add(new ComboRepairGear(this));
             Gear = Pet.Gears[0];
             var owner = Pet.GetOwner();
             var gameSession = World.StorageManager.GetGameSession(owner.Id);

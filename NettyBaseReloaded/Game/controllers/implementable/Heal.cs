@@ -5,11 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
     class Heal : IAbstractCharacter
     {
+        public bool Healing = false;
+        public int HealingId { get; set; }
+        public int Amount { get; set; }
+        public HealType HealType { get; set; }
+
         public Heal(AbstractCharacterController controller) : base(controller)
         {
             
@@ -31,7 +37,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Pulse()
         {
-            
+            if (Healing)
+            {
+                var healedSession = World.StorageManager.GetGameSession(HealingId);
+                if (healedSession == null || Amount == 0) return;
+                healedSession.Player.Controller.Heal.Execute(Amount, Character.Id, HealType);
+                GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write($"0|n|HEAL_RAY|{Character.Id}|{HealingId}"));
+                GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write($"0|n|HEAL_RAY|{Character.Id}|{HealingId}"));
+            }
         }
 
         public void Execute(int amount, int healerId = 0, HealType healType = HealType.HEALTH)
@@ -39,16 +52,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (amount < 0)
                 return;
 
-            var newAmount = amount;
             switch (healType)
             {
                 case HealType.HEALTH:
-                    newAmount = Character.CurrentHealth + amount;
-                    Character.CurrentHealth = newAmount;
+                    if (Character.CurrentHealth + amount > Character.MaxHealth)
+                        amount = Character.MaxHealth - Character.CurrentHealth;
+                    Character.CurrentHealth += amount;
                     break;
                 case HealType.SHIELD:
-                    newAmount = Character.CurrentHealth + amount;
-                    Character.CurrentShield = newAmount;
+                    if (Character.CurrentShield + amount > Character.MaxShield)
+                        amount = Character.MaxShield - Character.CurrentShield;
+                    Character.CurrentShield += amount;
                     break;
             }
 
