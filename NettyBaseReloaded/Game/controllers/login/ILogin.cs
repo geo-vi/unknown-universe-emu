@@ -121,7 +121,6 @@ namespace NettyBaseReloaded.Game.controllers.login
             {
                 techPacket += $"{tech.GetStatus()}|{99}|{tech.TimeLeft}";
             }
-
             Packet.Builder.LegacyModule(GameSession, $"0|TX|S|{techPacket}");
             */
         }
