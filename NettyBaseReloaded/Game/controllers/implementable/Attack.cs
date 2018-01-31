@@ -175,9 +175,65 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             else if (Character is Pet)
             {
+                var pet = (Pet) Character;
+                if (pet.GetOwner() == null) return;
+                var gameSession = World.StorageManager.GetGameSession(pet.GetOwner().Id);
+                
+                if (gameSession.Player.Settings.CurrentAmmo.Shoot() == 0)
+                {
+                    // NOTHING TO SHOOT
+                    Packet.Builder.LegacyModule(gameSession,
+                        "0|A|STD|No more ammo (todo: find a proper STM message)");
+                    var getAmmo = gameSession.Player.Information.Ammunitions.Keys.ToList();
+                    if (gameSession.Player.Settings.CurrentAmmo.LootId == getAmmo[0])
+                    {
+                        Attacking = false;
+                        return;
+                    }
+                    var index = getAmmo.FindIndex(x => x == gameSession.Player.Settings.CurrentAmmo.LootId) - 1;
+                    gameSession.Player.Settings.CurrentAmmo =
+                        gameSession.Player.Information.Ammunitions[getAmmo[index]];
+                    gameSession.Player.Settings.OldClientShipSettingsCommand.selectedLaser = index;
+                    Packet.Builder.SendSlotbars(gameSession);
+                }
 
+                var laserTypes = gameSession.Player.Equipment.LaserTypes();
+                switch (gameSession.Player.Settings.CurrentAmmo.LootId)
+                {
+                    case "ammunition_laser_mcb-25":
+                        damage *= 2;
+                        if (laserTypes == 3)
+                            laserColor = 1;
+                        break;
+                    case "ammunition_laser_mcb-50":
+                        damage *= 3;
+                        if (laserTypes == 3)
+                            laserColor = 2;
+                        break;
+                    case "ammunition_laser_ucb-100":
+                        damage *= 4;
+                        laserColor = 3;
+                        break;
+                    case "ammunition_laser_sab-50":
+                        absDamage = damage * 2;
+                        damage *= 0;
+                        laserColor = 4;
+                        break;
+                    case "ammunition_laser_cbo-100":
+                        absDamage = damage;
+                        damage = damage * 2;
+                        laserColor = 8;
+                        break;
+                    case "ammunition_laser_rsb-75":
+                        damage *= 6;
+                        laserColor = 6;
+                        break;
+                    case "ammunition_laser_job-100":
+                        damage *= 4;
+                        laserColor = 9;
+                        break;
+                }
             }
-
 
             damage = RandomizeDamage(damage);
             GameClient.SendRangePacket(Character,

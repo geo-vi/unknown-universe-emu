@@ -135,6 +135,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
+            if (entity is Pet)
+            {
+                var pet = entity as Pet;
+                if (pet.GetOwner() == Character)
+                    return;
+            }
             if (GetForSelection(entity)) return;
             if (Character.InRange(entity, VisibilityRange))
             {

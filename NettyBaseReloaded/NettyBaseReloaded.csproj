@@ -463,6 +463,17 @@
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
     <Compile Include="Game\objects\world\events\EventTypes.cs" />
     <Compile Include="Game\objects\world\players\events\ScoreMageddon.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\AegisHealBeam.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\AegisShieldRecharge.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\CitadelDrawFire.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\CitadelProtection.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\CitadelTravelMode.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\NpcStickyBomb.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\SpearheadDoubleMinimap.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\SpearheadJAMX.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\SpearheadMarkTarget.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\SpearheadUltimateCloak.cs" />
+    <Compile Include="Game\objects\world\players\extra\Ability.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\EnergyLeech.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\RocketPrecission.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\ChainImpulse.cs" />
