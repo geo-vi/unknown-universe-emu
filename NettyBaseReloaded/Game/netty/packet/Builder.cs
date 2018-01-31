@@ -1333,6 +1333,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.QuickSlotPremiumCommand.write(gameSession.Player.Information.Premium.Active).Bytes);
             }
         }
-#endregion
+        #endregion
+
     }
 }

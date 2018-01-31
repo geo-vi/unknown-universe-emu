@@ -33,6 +33,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             NewClientCommands.Add(commands.new_client.requests.AttackRocketRequest.ID, new AttackRocketHandler());
             NewClientCommands.Add(commands.old_client.requests.AttackRocketRequest.ID, new AttackRocketHandler());
             LegacyCommands.Add(ClientCommands.SELECT, new LegacySelectHandler());
+            LegacyCommands.Add(ServerCommands.TECHS, new LegacySelectHandler());
             LegacyCommands.Add(ServerCommands.REQUEST_SHIP, new ForceInitHandler());
             NewClientCommands.Add(commands.new_client.requests.ClickableRequest.ID, new ClickableHandler());
             NewClientCommands.Add(commands.new_client.requests.commandHF.ID, new command42JHandler());

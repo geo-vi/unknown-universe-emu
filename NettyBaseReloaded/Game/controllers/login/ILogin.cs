@@ -40,7 +40,7 @@ namespace NettyBaseReloaded.Game.controllers.login
         {
             SendLegacy(GameSession);
             AddTempDroneFormations();
-            //AddTempTechs();
+            AddTempTechs();
         }
 
         public static void SendLegacy(GameSession GameSession)
@@ -107,7 +107,12 @@ namespace NettyBaseReloaded.Game.controllers.login
             GameSession.Player.Techs.Add(new RocketPrecission(GameSession.Player));
             GameSession.Player.Techs.Add(new ShieldBuff(GameSession.Player));
             GameSession.Player.Techs.Add(new BattleRepairRobot(GameSession.Player));
+            GameSession.Player.Techs.Add(new EnergyLeech(GameSession.Player));
+            GameSession.Player.Techs.Add(new ChainImpulse(GameSession.Player));
 
+            Packet.Builder.TechStatusCommand(GameSession);
+
+            /**
             var elaStatus = 0; // not equipped
             var elaCount = 0; // count
             var elaTimeLeft = 0;
@@ -129,8 +134,8 @@ namespace NettyBaseReloaded.Game.controllers.login
             {
                 techPacket += $"{tech.GetStatus()}|{99}|{tech.TimeLeft}";
             }
-
             Packet.Builder.LegacyModule(GameSession, $"0|TX|S|{techPacket}");
+            */
         }
     } 
 }

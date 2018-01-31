@@ -28,6 +28,7 @@ using ClanRelationModule = NettyBaseReloaded.Game.netty.commands.new_client.Clan
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using Range = NettyBaseReloaded.Game.objects.world.characters.Range;
 using State = NettyBaseReloaded.Game.objects.world.players.State;
+using NettyBaseReloaded.Game.objects.world.players.extra.techs;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -101,7 +102,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Group Group { get; set; }
 
-        public List<Tech> Techs { get; set; }
+        public List<Tech> Techs = new List<Tech>();
 
         /*********
          * STATS *
@@ -346,7 +347,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Group?.Tick();
             TickEvents();
             TickVisuals();
-            //TickTechs();
+            TickTechs();
         }
 
         private void TickVisuals()
@@ -361,7 +362,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             foreach (var tech in Techs)
             {
-                tech.Tick();
+                tech?.Tick();
             }
         }
 

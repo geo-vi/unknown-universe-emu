@@ -11,6 +11,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 {
     class BattleRepairRobot : Tech
     {
+        BattleRepairRobotCooldown cld = new BattleRepairRobotCooldown();
+
         public BattleRepairRobot(Player player) : base(player)
         {
         }
@@ -19,45 +21,43 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
         {
             if (Active)
             {
-                if (TimeFinish.AddSeconds(1) > DateTime.Now) CheckForEnd();
-                ExecuteHeal();
+                if (TimeFinish > DateTime.Now)
+                    ExecuteHeal();
+                else
+                    Disable();
             }
         }
 
         public override void execute()
         {
             if (Player.Cooldowns.Exists(x => x is BattleRepairRobotCooldown)) return;
-
             Active = true;
+            Player.Storage.BattleRepairRobotActivated = true;
+            Packet.Builder.TechStatusCommand(Player.GetGameSession());
             GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write("0|TX|A|S|BRB|" + Player.Id), true);
             GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write("0|TX|A|S|BRB|" + Player.Id), true);
-            ExecuteHeal();
-            TimeFinish = DateTime.Now.AddSeconds(9);
+            TimeFinish = DateTime.Now.AddSeconds(10);
+            Player.Cooldowns.Add(cld);
         }
 
         private DateTime LastHeal = new DateTime();
         private void ExecuteHeal()
         {
-            if (LastHeal.AddSeconds(1) > DateTime.Now)
+            if (LastHeal.AddSeconds(1) < DateTime.Now)
             {
-                return;
+                Player.Controller.Heal.Execute(10000);
+                LastHeal = DateTime.Now;
             }
-            Player.Controller.Heal.Execute(10000);
-            LastHeal = DateTime.Now;
         }
 
-        private void CheckForEnd()
+        private void Disable()
         {
-            if (TimeFinish.AddSeconds(10) < DateTime.Now)
-            {
-                Active = false;
-                GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write("0|TX|D|S|BRB|" + Player.Id), true);
-                GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write("0|TX|D|S|BRB|" + Player.Id), true);
-
-                var cld = new BattleRepairRobotCooldown();
-                cld.Send(Player.GetGameSession());
-                Player.Cooldowns.Add(cld);
-            }
+            Active = false;
+            Player.Storage.BattleRepairRobotActivated = false;
+            Packet.Builder.TechStatusCommand(Player.GetGameSession());
+            GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write("0|TX|D|S|BRB|" + Player.Id), true);
+            GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write("0|TX|D|S|BRB|" + Player.Id), true);
+            cld.Send(Player.GetGameSession());
         }
     }
 }

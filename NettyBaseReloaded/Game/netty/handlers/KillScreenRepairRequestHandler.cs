@@ -8,6 +8,7 @@ using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
@@ -22,6 +23,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             }
             else
             {
+                if (gameSession?.Client == null) return;
                 var player = gameSession.Player;
 
                 var cmd = new commands.old_client.requests.KillScreenRepairRequest();
@@ -30,7 +32,8 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 short repairTypeValue = cmd.selection.repairTypeValue;
 
                 var killscreen = Killscreen.Load(player);
-              
+                if (killscreen == null) throw new ArgumentNullException(); // handle null
+
                 switch (repairTypeValue)
                 {
                     case KillScreenOptionTypeModule.BASIC_REPAIR:
@@ -59,14 +62,20 @@ namespace NettyBaseReloaded.Game.netty.handlers
                     case PriceModule.URIDIUM:
                         if (player.Information.Uridium.Get() >= price.Item2)
                         {
-                            player.Information.Uridium.Remove(price.Item2);
+                            player.Information.Uridium.Remove(price.Item2);                           
                             player.Controller.Destruction.RespawnPlayer();
                             break;
                         }
                         SendRepairImpossible(gameSession, PriceModule.URIDIUM);
                         break;
                 }
+                player.Save();
             }
+        }
+
+        private async void PrepareRespawn()
+        {
+            await Task.Delay(1000);
         }
 
         public void SendRepairImpossible(GameSession gameSession, short currency)

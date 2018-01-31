@@ -8,6 +8,7 @@ using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -81,9 +82,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             AddEntry(new DamageEntry { Absorb = absorb, Damage = damage, Target = attacked, Type = type });
         }
 
-        public void Radiation(Character character, int damage)
+        public void Radiation(int damage)
         {
-            var player = character as Player;
+            var player = Character as Player;
             if (player == null) return;
             if (player.CurrentNanoHull > 0)
             {
@@ -107,6 +108,45 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 Controller.Destruction.Destroy(player, DeathType.RADITATION);
             }
+        }
+
+        public void ECI(int distance = 1000)
+        {
+            var player = Character as Player;
+            var targets = new Dictionary<int, Character>();
+
+            foreach (var entry in player.Spacemap.Entities)
+            {
+                if(entry.Value != null)
+                    if (entry.Value != player)
+                        if (player.Position.DistanceTo(entry.Value.Position) < distance)
+                            if (targets.Count < 7)
+                                targets.Add(entry.Value.Id, entry.Value);
+            }
+
+            foreach (var target in targets)
+            {
+                if (target.Value == null) return;
+
+                var damage = RandomizeDamage(10000);
+
+                string eciPacket = "0|TX|ECI||" + player.Id;
+                eciPacket += "|" + target.Value.Id;
+
+                target.Value.CurrentHealth -= damage;
+                target.Value.LastCombatTime = DateTime.Now;
+                GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write(eciPacket), true);
+                if (target.Value is Player) Packet.Builder.AttackHitCommand(player.GetGameSession(), player.Id, target.Value, damage, (short)Types.ECI);
+                if (player is Player) Packet.Builder.AttackHitCommand(player.GetGameSession(), player.Id, target.Value, damage, (short)Types.ECI);
+            }
+
+            foreach (var target in targets)
+            {
+                if (target.Value.CurrentHealth <= 0 && target.Value.EntityState != EntityStates.DEAD)
+                    Controller.Destruction.Destroy(target.Value);
+            }
+
+            targets.Clear();
         }
 
         private void DistributeDamage()
@@ -290,6 +330,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (entry.Value is Player) Packet.Builder.AttackHitCommand(World.StorageManager.GetGameSession(entry.Value.Id), Character.Id, entry.Value, damage, 14);
                 if (Character is Player) Packet.Builder.AttackHitCommand(World.StorageManager.GetGameSession(Character.Id), Character.Id, entry.Value, damage, 14);
             }
+        }
+
+        private int RandomizeDamage(int damage)
+        {
+            if (damage <= 0)
+                return 0;
+
+            int max = damage + 1000;
+            int min = damage - 1000;
+
+            if (min < 0)
+                min = 0;
+
+            int calculatedDamage = Random.Next(max - min) + min;
+            return calculatedDamage;
         }
     }
 }

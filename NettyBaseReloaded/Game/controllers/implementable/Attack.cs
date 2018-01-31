@@ -11,6 +11,7 @@ using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Networking;
+using NettyBaseReloaded.Game.objects.world.players.extra.techs;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -188,6 +189,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             Controller.Damage?.Laser(enemy, damage, false);
             Controller.Damage?.Laser(enemy, absDamage, true);
+
+            if (Character is Player)
+            {
+                var player = (Player)Character;
+                if (player.Settings.CurrentAmmo.LootId != "ammunition_laser_sab-50") {
+                    foreach (var tech in player.Techs)
+                    {
+                        if (tech is EnergyLeech)
+                        {
+                            var energyLeech = (EnergyLeech)tech;
+                            energyLeech.ExecuteHeal(damage);
+                        }
+                    }
+                }
+            }
         }
 
         public void LaunchMissle(string missleId)
@@ -204,19 +220,19 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 case "ammunition_rocket_r-310":
                     rocketId = 1;
-                    damage = RandomizeDamage(Character.RocketDamage);
+                    damage = RandomizeDamage(Character.RocketDamage, (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 0 : 1));
                     break;
                 case "ammunition_rocket_plt-2026":
                     rocketId = 2;
-                    damage = RandomizeDamage(Character.RocketDamage * 2);
+                    damage = RandomizeDamage(Character.RocketDamage * 2, (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 0 : 1));
                     break;
                 case "ammunition_rocket_plt-2021":
                     rocketId = 3;
-                    damage = RandomizeDamage(Character.RocketDamage * 3);
+                    damage = RandomizeDamage(Character.RocketDamage * 3, (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 0 : 1));
                     break;
                 case "ammunition_rocket_plt-3030":
                     rocketId = 4;
-                    damage = RandomizeDamage(Character.RocketDamage * 4);
+                    damage = RandomizeDamage(Character.RocketDamage * 4, (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 0 : 1));
                     break;
                 case "ammunition_specialammo_pld-8":
                     rocketId = 5;
@@ -254,8 +270,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             if (player != null && enemy is Character) UpdateAttacker(enemy as Character, player);
 
-            GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|1"), true);
-            GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|1"), true);
+            GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+            GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
             Controller.Damage?.Rocket(enemy, damage, false);
         }
 
@@ -350,7 +366,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             var randNums = Random.Next(0, 6);
 
-            if (missProbability < 1.00)
+            if (missProbability == 0)
+                randNums = Random.Next(0, 3) | Random.Next(4, 7);
+            if (missProbability < 1.00 && missProbability != 0)
                 randNums = Random.Next(0, 7);
             if (missProbability > 1.00 && missProbability < 2.00)
                 randNums = Random.Next(0, 4);
