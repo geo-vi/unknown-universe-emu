@@ -122,5 +122,51 @@ namespace NettyBaseReloaded.Main.global_managers
         {
             return null;
         }
+
+        public List<Cronjob> LoadCrons()
+        {
+            List<Cronjob> crons = new List<Cronjob>();
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetGlobalClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_crons");
+                    foreach (var row in queryTable.Rows)
+                    {
+                        int id = 0;
+
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("db_loadcrons", "Error loading crons", e);
+            }
+            return crons;
+        }
+
+        public void UpdateCronjob(Cronjob cronjob)
+        {
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                //TODO
+            }
+        }
+
+        public void DeleteCronjob(int id)
+        {
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                // TODO
+            }
+        }
     }
 }

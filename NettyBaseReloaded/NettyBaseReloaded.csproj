@@ -617,6 +617,7 @@
     <Compile Include="Unused_Codes\Looping_through_constants.cs" />
     <Compile Include="Unused_Codes\Old_Destroy_Function.unused" />
     <Compile Include="Utils\Decode.cs" />
+    <Compile Include="Utils\FileEssentials.cs" />
     <Compile Include="Utils\form\MapDrawing.cs" />
     <Compile Include="Utils\form\TextboxPopup.cs">
       <SubType>Form</SubType>

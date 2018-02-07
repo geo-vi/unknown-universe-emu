@@ -26,6 +26,12 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             Follow(baseController.Pet.GetOwner());
         }
 
+        public override void End()
+        {
+            baseController.Attack.Attacking = false;
+            baseController.Pet.Selected = null;
+        }
+
         private void CheckAttackables()
         {
             var owner = baseController.Pet.GetOwner();

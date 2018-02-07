@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Logger
 {
@@ -17,13 +18,12 @@ namespace NettyBaseReloaded.Logger
             Creator.New(FilePath);
         }
 
-        public async void Write(string message)
+        public void Write(string message)
         {
             try
             {
-                StreamWriter writer = new StreamWriter(FilePath, true);
-                await writer.WriteLineAsync(message);
-                writer.Dispose();
+                if (File.Exists(FilePath))
+                    FileEssentials.Write(FilePath, message);
             }
             catch (Exception e)
             {

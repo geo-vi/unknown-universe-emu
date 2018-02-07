@@ -21,17 +21,20 @@ namespace NettyBaseReloaded.Game.controllers.pet
 
         public bool Enabled { get; set; }
 
-        public Gear(PetController controller, bool enabled, int level, int amount = 1)
+        protected Gear(PetController controller, bool enabled, int level, int amount = 1)
         {
             baseController = controller;
             Enabled = enabled;
             Level = level;
             Amount = amount;
+            controller.Shutdown += (sender, args) => End();
         }
 
         public abstract void Activate();
 
         public abstract void Check();
+
+        public abstract void End();
 
         public void Follow(Character character)
         {

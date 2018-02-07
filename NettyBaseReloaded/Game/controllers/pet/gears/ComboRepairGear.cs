@@ -39,6 +39,12 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             Follow(baseController.Pet.GetOwner());
         }
 
+        public override void End()
+        {
+            Active = false;
+            baseController.Heal.Healing = false;
+        }
+
         private DateTime PulseActivationTime = new DateTime();
         public void CheckPulse()
         {

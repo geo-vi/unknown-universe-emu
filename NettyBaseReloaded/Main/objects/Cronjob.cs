@@ -12,17 +12,32 @@ namespace NettyBaseReloaded.Main.objects
     class Cronjob
     {
         public static DebugLog Log = new DebugLog("cronlog");
+
+        /// <summary>
+        /// Cronjob ID - used for SQL identification
+        /// </summary>
+        public int Id { get; set; }
+        /// <summary>
+        /// Name
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Time schuelded for execution of the cronjob
+        /// </summary>
         public DateTime ExecutionTime { get; set; }
 
+        /// <summary>
+        /// If it's gonna ever happen again
+        /// </summary>
         public bool RepeatedTask { get; set; }
 
+        /// <summary>
+        /// Time between executions / Delay (0 if a one time only execution)
+        /// </summary>
         public int Intervals { get; set; }
 
         public string ExecuteStr { get; set; }
-
-        public XElement Element { get; set; }
 
         protected Cronjob() { }
 
@@ -41,35 +56,16 @@ namespace NettyBaseReloaded.Main.objects
                 p.BeginErrorReadLine();
                 p.BeginOutputReadLine();
             }
-
-            if (!RepeatedTask)
-            {
-                Remove();
-            }
+            ExecutionTime = DateTime.Now;
+            PostExecution();
         }
 
-        public static Cronjob ParseCronjob(XElement element)
+        private void PostExecution()
         {
-            var cronjob = new Cronjob{Name = element.FirstAttribute.Value, Element = element};
-            foreach (var cron in element.Descendants())
-            {
-                switch (cron.Name.LocalName)
-                {
-                    case "repeat":
-                        cronjob.RepeatedTask = Convert.ToBoolean(int.Parse(cron.Value));
-                        break;
-                    case "time":
-                        cronjob.ExecutionTime = DateTime.Parse(cron.Value);
-                        break;
-                    case "interval":
-                        cronjob.Intervals = int.Parse(cron.Value);
-                        break;
-                    case "execute":
-                        cronjob.ExecuteStr = cron.Value;
-                        break;
-                }
-            }
-            return cronjob;
+            if (RepeatedTask)
+                Global.QueryManager.UpdateCronjob(this);
+            else
+                Remove();
         }
 
         /// <summary>

@@ -21,6 +21,8 @@ namespace NettyBaseReloaded.Game.controllers
         public Pet Pet { get; }
         private Gear Gear { get; set; }
 
+        internal event EventHandler Shutdown;
+
         public PetController(Character character) : base(character)
         {
             Pet = Character as Pet;
@@ -54,6 +56,7 @@ namespace NettyBaseReloaded.Game.controllers
             Checkers.Stop();
             Pet.Gears.Clear();
             Gear = null;
+            Shutdown?.Invoke(this, EventArgs.Empty);
         }
 
         public new void Tick()

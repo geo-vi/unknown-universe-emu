@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
@@ -14,16 +15,17 @@ namespace NettyBaseReloaded.Main.global_managers
     {
         public List<Cronjob> Cronjobs = new List<Cronjob>();
 
-        public void GetAllCrons()
+        public static void Initiate()
         {
-            if (!File.Exists(Directory.GetCurrentDirectory() + "/crons.xml")) return;
-            var xml = XDocument.Load(Directory.GetCurrentDirectory() + "/crons.xml");
-            foreach (var cronjob in xml.Elements("cronjob"))
+            var cron = new CronjobManager
             {
-                Cronjobs.Add(Cronjob.ParseCronjob(cronjob));
-            }
+                Cronjobs = Global.QueryManager.LoadCrons()
+            };
+            Global.TickManager.Add(cron);
         }
-
+        /// <summary>
+        /// Ticks the crons
+        /// </summary>
         public void Tick()
         {
             foreach (var cron in Cronjobs)
