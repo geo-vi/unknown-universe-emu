@@ -53,6 +53,10 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
         {
             if (Lives > 0)
                 Lives -= 1;
+            else
+            {
+                End();
+            }
             Combo = 0;
             ComboTimeEnd = DateTime.Now;
             World.DatabaseManager.UpdateEventForPlayer(this);
@@ -76,6 +80,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
             Lives = 0;
             Combo = 0;
             Packet.Builder.UpdateScoremageddonWindow(Player.GetGameSession(), this);
+
+            if (Player.EventsPraticipating.ContainsKey(Id))
+                Player.EventsPraticipating.Remove(Id);
         }
 
         public override void DestroyAttackable(IAttackable attackable)

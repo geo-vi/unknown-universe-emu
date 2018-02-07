@@ -18,9 +18,9 @@ namespace NettyBaseReloaded.Main.global_managers
         {
             if (!File.Exists(Directory.GetCurrentDirectory() + "/crons.xml")) return;
             var xml = XDocument.Load(Directory.GetCurrentDirectory() + "/crons.xml");
-            foreach (var cronjob in xml.Descendants())
+            foreach (var cronjob in xml.Elements("cronjob"))
             {
-                
+                Cronjobs.Add(Cronjob.ParseCronjob(cronjob));
             }
         }
 
