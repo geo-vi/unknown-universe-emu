@@ -18,6 +18,7 @@ namespace NettyBaseReloaded.Main
         public static QueryManager QueryManager = new QueryManager();
         public static TickManager TickManager = new TickManager();
         public static StorageManager StorageManager = new StorageManager();
+        public static CronjobManager CronjobManager = new CronjobManager();
         public static DebugLog Log = new DebugLog("global");
 
         public static State State = State.LOADING;
@@ -32,6 +33,7 @@ namespace NettyBaseReloaded.Main
             InitiateRandomResetTimer();
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
+            CronjobManager.Initiate();
             TickManager.Tick();
         }
 

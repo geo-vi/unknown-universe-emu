@@ -16,7 +16,8 @@ namespace NettyBaseReloaded.Main.objects
         /// <summary>
         /// Cronjob ID - used for SQL identification
         /// </summary>
-        public int Id { get; set; }
+        public int Id { get; }
+
         /// <summary>
         /// Name
         /// </summary>
@@ -39,7 +40,10 @@ namespace NettyBaseReloaded.Main.objects
 
         public string ExecuteStr { get; set; }
 
-        protected Cronjob() { }
+        public Cronjob(int id)
+        {
+            Id = id;
+        }
 
         public void Execute()
         {
@@ -96,7 +100,8 @@ namespace NettyBaseReloaded.Main.objects
 
         public void Remove()
         {
-            throw new NotImplementedException();
+            Global.CronjobManager.Cronjobs.Remove(this);
+            Global.QueryManager.UpdateCronjob(this);
         }
     }
 }
