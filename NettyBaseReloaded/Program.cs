@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
@@ -65,10 +66,10 @@ namespace NettyBaseReloaded
 
             //TODO: Add QuestBuilder();
             //RewardBuilder();
-            InitiateSession();
-            ConsoleUpdater();
-            ConsoleCommands.Add();
-            KeepAlive();
+            //InitiateSession();
+            //ConsoleUpdater();
+            //ConsoleCommands.Add();
+            //KeepAlive();
         }
 
         private static void InitiatePanel()
@@ -245,6 +246,19 @@ namespace NettyBaseReloaded
             Log = new DebugLog("core");
             Log.Write("Logger succesfully loaded.");
             Log.Write("Testing... 1 2 3");
+        }
+
+        static void ParseXML()
+        {
+            var xml = XDocument.Load("http://univ3rse.com/flashinput/translationTitles.php");
+            foreach (var element in xml.Descendants())
+            {
+                var titleId = element.Attribute("name")?.Value;
+                var id = titleId?.Replace("title_", "");
+                Console.WriteLine($"INSERT INTO server_titles VALUES ('{id}', '{titleId}','{element.Value}','0','#FFF');");
+            }
+            Console.Read();
+            //INSERT INTO server_titles (KEY,TITLE_NAME,TITLE_COLOR_HEX) VALUES ("", "","#FFF");
         }
     }
 }

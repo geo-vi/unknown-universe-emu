@@ -40,7 +40,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
                     GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
                     GameClient.SendRangePacket(player, netty.commands.new_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
-                    player.Controller.Damage?.Area(20, 1000, DamageType.PERCENTAGE);
+                    player.Controller.Damage?.Area(20, 1000, true, DamageType.PERCENTAGE);
 
                     cooldown = new SMBCooldown();
                     player.Cooldowns.Add(cooldown);

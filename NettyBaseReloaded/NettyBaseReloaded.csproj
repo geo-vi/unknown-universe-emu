@@ -424,6 +424,11 @@
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\CargoLoot.cs" />
     <Compile Include="Game\objects\world\map\collectables\Types.cs" />
+    <Compile Include="Game\objects\world\map\GalaxyGate.cs" />
+    <Compile Include="Game\objects\world\map\gg\AlphaGate.cs" />
+    <Compile Include="Game\objects\world\map\gg\BetaGate.cs" />
+    <Compile Include="Game\objects\world\map\gg\InvasionGate.cs" />
+    <Compile Include="Game\objects\world\map\gg\LowGate.cs" />
     <Compile Include="Game\objects\world\map\Mine.cs" />
     <Compile Include="Game\objects\world\map\mines\ACM01.cs" />
     <Compile Include="Game\objects\world\map\Object.cs" />
@@ -483,7 +488,6 @@
     <Compile Include="Game\objects\world\players\extra\Booster.cs" />
     <Compile Include="Game\objects\world\players\extra\boosters\DMGBO1.cs" />
     <Compile Include="Game\objects\world\players\extra\boosters\DMGBO2.cs" />
-    <Compile Include="Game\objects\world\players\extra\GalaxyGate.cs" />
     <Compile Include="Game\objects\world\characters\Skilltree.cs" />
     <Compile Include="Game\objects\world\players\extra\Tech.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\BattleRepairRobot.cs" />

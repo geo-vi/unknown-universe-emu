@@ -304,12 +304,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         /// <summary>
         /// Causes a damage in area.
         /// </summary>
-        public void Area(int amount, int distance = 0, DamageType damageType = DamageType.DEFINED)
+        public void Area(int amount, int distance = 0, bool playerOnly = false, DamageType damageType = DamageType.DEFINED)
         {
             if (distance == 0) distance = Controller.Attack.AttackRange;
 
             foreach (var entry in Character.Spacemap.Entities)
             {
+                if (playerOnly && !(entry.Value is Player)) return;
+
                 if (Character.Position.DistanceTo(entry.Value.Position) > distance) continue;
                 if (Character.Id == entry.Value.Id) continue;
 
