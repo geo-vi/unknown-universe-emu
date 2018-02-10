@@ -94,15 +94,15 @@ namespace NettyBaseReloaded.Game.objects.world
             get
             {
                 var spacemap = _baseSpacemap;
-                if (VirtualWorldId != 0 && spacemap.VirtualWorlds.ContainsKey(VirtualWorldId))
-                    return spacemap.VirtualWorlds[VirtualWorldId];
+                //if (VirtualWorldId != 0 && spacemap.VirtualWorlds.ContainsKey(VirtualWorldId))
+                //    return spacemap.VirtualWorlds[VirtualWorldId];
                 return spacemap;
             }
             set
             {
-                if (VirtualWorldId == 0)
+                //if (VirtualWorldId == 0)
                     _baseSpacemap = value;
-                else Spacemap.VirtualWorlds[VirtualWorldId] = value;
+                //else Spacemap.VirtualWorlds[VirtualWorldId] = value;
             }
         }
 

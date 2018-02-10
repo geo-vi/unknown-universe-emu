@@ -10,8 +10,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
 {
     class Asteroid : Asset, IClickable
     {
-        public Asteroid(int id, string name, Vector pos) : base(id, name, AssetTypes.ASTEROID, Faction.NONE,
-            Global.StorageManager.Clans[0], 1, 0, pos, false, false, false)
+        public Asteroid(int id, string name, Vector pos, Spacemap map) : base(id, name, AssetTypes.ASTEROID, Faction.NONE,
+            Global.StorageManager.Clans[0], 1, 0, pos, map, false, false, false)
         {
             
         }

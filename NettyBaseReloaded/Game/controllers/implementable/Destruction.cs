@@ -268,7 +268,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Vector newPos;
 
             var npc = (Npc) Character;
-
+            if (!npc.Respawning) return;
             if (npc.MotherShip != null)
             {
                 npc.Controller.StopController = true;

@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public Vector Position { get; }
 
-        public Station(int id, List<StationModule> modules, Faction faction, Vector position) : base(id, position)
+        public Station(int id, List<StationModule> modules, Faction faction, Vector position, Spacemap map) : base(id, position, map)
         {
             Modules = modules;
             Faction = faction;

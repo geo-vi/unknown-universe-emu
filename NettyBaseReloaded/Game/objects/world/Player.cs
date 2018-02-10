@@ -104,6 +104,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Tech> Techs = new List<Tech>();
 
+        public PlayerGates Gates { get; set; }
+
         /*********
          * STATS *
          *********/
@@ -318,6 +320,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<VisualEffect> Visuals = new List<VisualEffect>();
 
+        public List<GalaxyGate> OwnedGates = new List<GalaxyGate>();
+
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
             string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
@@ -348,6 +352,7 @@ namespace NettyBaseReloaded.Game.objects.world
             TickEvents();
             TickVisuals();
             TickTechs();
+            TickGates();
         }
 
         private void TickVisuals()
@@ -371,6 +376,14 @@ namespace NettyBaseReloaded.Game.objects.world
             foreach (var gameEvent in EventsPraticipating.Values)
             {
                 gameEvent.Tick();
+            }
+        }
+
+        private void TickGates()
+        {
+            foreach (GalaxyGate t in OwnedGates)
+            {
+                t.Tick();
             }
         }
 
@@ -734,6 +747,16 @@ namespace NettyBaseReloaded.Game.objects.world
         public GameSession GetGameSession()
         {
             return World.StorageManager.GetGameSession(Id);
+        }
+
+        public void MoveToMap(Spacemap map, Vector pos)
+        {
+            Storage.Clean();
+            State.Reset();
+            VirtualWorldId = 0;
+            Spacemap = map;
+            Position = pos;
+            Refresh();
         }
     }
 }

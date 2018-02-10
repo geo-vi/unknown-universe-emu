@@ -163,6 +163,8 @@ namespace NettyBaseReloaded.Game.controllers.player
 
                 TargetVirtualWorldId = targetVW;
                 TargetMap = World.StorageManager.Spacemaps[targetMapId];
+                if (targetVW != 0)
+                    TargetMap = TargetMap.VirtualWorlds[targetVW];
                 TargetPosition = targetPos;
 
                 var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);

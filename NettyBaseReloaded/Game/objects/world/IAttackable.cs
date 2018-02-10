@@ -48,7 +48,6 @@ namespace NettyBaseReloaded.Game.objects.world
         protected IAttackable(int id)
         {
             Id = id;
-
             EntityState = EntityStates.ALIVE;
             Targetable = true;
         }

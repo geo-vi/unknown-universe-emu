@@ -404,7 +404,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Can't attack members of your own company on starter maps.");
                 return false;
             }
-            if (!attacked.InRange(Character, Character.AttackRange))
+            if (attacked.Position.DistanceTo(Character.Position) > Character.AttackRange)
             {
                 var pCharacter = Character as Player;
                 pCharacter?.SendLogMessage("outofrange");

@@ -18,6 +18,7 @@ namespace NettyBaseReloaded.Main
             Commands.Add("destroy", new DestroyCommand());
             Commands.Add("start", new StartCommand());
             Commands.Add("info", new InfoCommand());
+            Commands.Add("create", new CreateCommand());
         }
 
         public static void Handle(string txt)

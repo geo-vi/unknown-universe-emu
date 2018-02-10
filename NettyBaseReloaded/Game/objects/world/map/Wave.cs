@@ -40,10 +40,35 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public List<Npc> Npcs { get; set; }
 
-        public Wave(int id, List<Npc> npcs)
+        public Vector Position { get; set; }
+
+        public Wave(int id, List<Npc> npcs, Vector position)
         {
             Id = id;
             Npcs = npcs;
+        }
+
+        public static List<Npc> CreateWave(Npc npc, int count)
+        {
+            List<Npc> waveNpcs = new List<Npc>();
+            for (int i = 0; i < count; i++)
+            {
+                waveNpcs.Add(npc);
+            }
+            return waveNpcs;
+        }
+
+        public void Create(Spacemap spacemap)
+        {
+            foreach (var npc in Npcs)
+            {
+                spacemap.CreateNpc(npc.Ship, AILevels.AGGRESSIVE, false, 0, Position);
+            }
+        }
+
+        internal void Create(Spacemap virtualMap, Vector vector, int r)
+        {
+            //TODO: Create with radius from vector
         }
     }
 }

@@ -13,7 +13,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public OreTypes Type { get; set; }
 
-        public Ore(int id, string hash, OreTypes type, Vector pos) : base(id, pos)
+        public Ore(int id, string hash, OreTypes type, Vector pos, Spacemap map) : base(id, pos, map)
         {
             Hash = hash;
             Type = type;

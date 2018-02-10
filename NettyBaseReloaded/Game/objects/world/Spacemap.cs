@@ -303,16 +303,18 @@ namespace NettyBaseReloaded.Game.objects.world
                 ship.Damage));
         }
 
-        public void CreateNpc(Ship ship, AILevels ai, int respawnTime)
+        public void CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null)
         {
             var id = GetNextAvailableId();
             ship.AI = (int)ai;
-            var position = Vector.Random(this, 1000, 20000, 1000, 12000);
+            if (pos == null)
+                pos = Vector.Random(this, 1000, 20000, 1000, 12000);
+            else pos = Vector.GetPosOnCircle(pos, 100);
             CreateNpc(new Npc(id, ship.Name,
-                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
+                new Hangar(ship, new List<Drone>(), pos, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
-                ship.Damage, respawnTime));
+                0, pos, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                ship.Damage, respawnTime, respawning));
         }
 
         public int CreateNpc(Ship ship, AILevels ai, Npc motherShip)
@@ -324,7 +326,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
                 0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
-                ship.Damage, 0, motherShip));
+                ship.Damage, 0, false, motherShip));
             return id;
         }
 
@@ -377,10 +379,10 @@ namespace NettyBaseReloaded.Game.objects.world
             World.Log.Write("Loaded objects on mapId " + Id);
         }
 
-        public void CreatePortal(int map, int x, int y, int newX, int newY)
+        public void CreatePortal(int map, int x, int y, int newX, int newY, int vwId = 0)
         {
             var id = GetNextObjectId();
-            AddObject(new Jumpgate(id, 0, new Vector(x, y), new Vector(newX, newY), map, true, 0, 0, 1));
+            AddObject(new Jumpgate(id, 0, new Vector(x, y), this, new Vector(newX, newY), map, true, 0, 0, 1));
 
             var zoneId = GetNextZoneId();
             if (!Pvp)
@@ -391,7 +393,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateLoW(Vector pos)
         {
             var id = GetNextObjectId();
-            AddObject(new LoWGate(id, pos));
+            AddObject(new LowPortal(id, pos, this, 0));
 
             var zoneId = GetNextZoneId();
                 Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500)));
@@ -407,12 +409,12 @@ namespace NettyBaseReloaded.Game.objects.world
                 AddObject(id);
             }
 
-            var hqModule = new StationModule(assignedStationIds[0], position, AssetTypes.HQ);
-            var hangarModule = new StationModule(assignedStationIds[1], Vector.FromVector(position, 800, 0), AssetTypes.HANGAR);
-            var resourceModule = new StationModule(assignedStationIds[2], Vector.FromVector(position, 0, 800), AssetTypes.ORE_TRADE);
-            var repairModule = new StationModule(assignedStationIds[3], Vector.FromVector(position, 0, -800), AssetTypes.REPAIR_DOCK);
+            var hqModule = new StationModule(assignedStationIds[0], position, this, AssetTypes.HQ);
+            var hangarModule = new StationModule(assignedStationIds[1], Vector.FromVector(position, 800, 0), this, AssetTypes.HANGAR);
+            var resourceModule = new StationModule(assignedStationIds[2], Vector.FromVector(position, 0, 800), this, AssetTypes.ORE_TRADE);
+            var repairModule = new StationModule(assignedStationIds[3], Vector.FromVector(position, 0, -800), this, AssetTypes.REPAIR_DOCK);
 
-            Objects[assignedStationIds[0]] = new Station(assignedStationIds[0], new List<StationModule>{hqModule, hangarModule, resourceModule, repairModule}, faction, position);
+            Objects[assignedStationIds[0]] = new Station(assignedStationIds[0], new List<StationModule>{hqModule, hangarModule, resourceModule, repairModule}, faction, position, this);
             Objects[assignedStationIds[1]] = hangarModule;
             Objects[assignedStationIds[2]] = resourceModule;
             Objects[assignedStationIds[3]] = repairModule;
@@ -425,42 +427,42 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreatePirateStation(Vector vector)
         {
             var id = GetNextObjectId();
-            AddObject(new PirateStation(id, vector));
+            AddObject(new PirateStation(id, vector, this));
             World.Log.Write("Created Pirate Station on mapId " + Id);
         }
 
         public void CreateHealthStation(Vector vector)
         {
             var id = GetNextObjectId();
-            AddObject(new HealthStation(id, vector));
+            AddObject(new HealthStation(id, vector, this));
             World.Log.Write("Created Health Station on mapId " + Id);
         }
 
         public void CreateRelayStation(Vector vector)
         {
             var id = GetNextObjectId();
-            AddObject(new RelayStation(id, vector));
+            AddObject(new RelayStation(id, vector, this));
             World.Log.Write("Created Relay Station on mapId " + Id);
         }
 
         public void CreateReadyRelayStation(Vector vector)
         {
             var id = GetNextObjectId();
-            AddObject(new ReadyRelayStation(id, vector));
+            AddObject(new ReadyRelayStation(id, vector, this));
             World.Log.Write("Created Relay Station on mapId " + Id);
         }
 
         public void CreateQuestGiver(Faction faction, Vector pos)
         {
             var id = GetNextObjectId();
-            AddObject(new QuestGiver(id, faction, pos));
+            AddObject(new QuestGiver(id, faction, pos, this));
             World.Log.Write("Created Quest Giver on mapId " + Id);
         }
 
         public void CreateAsteroid(string name, Vector pos)
         {
             var id = GetNextObjectId();
-            AddObject(new Asteroid(id, name, pos));
+            AddObject(new Asteroid(id, name, pos, this));
             World.Log.Write("Created Asteroid on mapId " + Id);
         }
 
@@ -472,7 +474,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
-            var box = new Ore(id, hash, type, pos);
+            var box = new Ore(id, hash, type, pos, this);
             HashedObjects[hash] = box;
             if(AddObject(box))
                 World.Log.Write("Created Ore["+type+"] on mapId " + Id);
@@ -533,6 +535,18 @@ namespace NettyBaseReloaded.Game.objects.world
 
         #endregion
 
+        public static void Duplicate(Spacemap map, out Spacemap duped)
+        {
+            duped = new Spacemap(map.Id, map.Name, map.Faction, map.Pvp, map.Starter, map.Level, map.Npcs,
+                map.PortalBase)
+            {
+                Disabled = false,
+                HashedObjects = map.HashedObjects,
+                POIs = map.POIs,
+                Limits = map.Limits,
+                RangeDisabled = map.RangeDisabled,
+                Objects = map.Objects
+            };
+        }
     }
-
 }

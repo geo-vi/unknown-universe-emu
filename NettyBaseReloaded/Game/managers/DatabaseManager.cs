@@ -162,7 +162,7 @@ namespace NettyBaseReloaded.Game.managers
                 }
 
                 World.StorageManager.Spacemaps.Add(200,
-                    new Spacemap(200, "Lord of War", Faction.NONE, false, true, 0, new List<BaseNpc>(),
+                    new Spacemap(200, "Lord of War", Faction.NONE, false, false, 0, new List<BaseNpc>(),
                         new List<PortalBase>())
                     {
                         POIs = new Dictionary<string, POI>
@@ -234,7 +234,8 @@ namespace NettyBaseReloaded.Game.managers
                                     })
                             },
                         },
-                        RangeDisabled = true
+                        RangeDisabled = true,
+                        Disabled = true
                     });
                 World.StorageManager.Spacemaps.Add(255,
                     new Spacemap(255, "0-1", Faction.NONE, false, true, 0, null, null));

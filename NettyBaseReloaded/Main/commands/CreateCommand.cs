@@ -1,17 +1,20 @@
-﻿namespace NettyBaseReloaded.Main.commands
+﻿using NettyBaseReloaded.Game;
+
+namespace NettyBaseReloaded.Main.commands
 {
     class CreateCommand : Command
     {
-        public CreateCommand() : base("createasset", "Creates an asset") { }
+        public CreateCommand() : base("create", "The God creator command") { }
 
         public override void Execute(string[] args = null)
         {
-            if (args != null && args.Length > 2)
+            if (args?.Length > 1)
             {
-                var mapId = args[1];
-                var assetType = args[2];
-                var x = args[3];
-                var y = args[4];
+                if (args[1] == "createlow")
+                {
+                    var playerSession = World.StorageManager.GetGameSession(int.Parse(args[2]));
+                    playerSession.Player.Spacemap.CreateLoW(playerSession.Player.Position);
+                }
             }
         }
     }

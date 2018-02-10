@@ -48,7 +48,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public Player Owner { get; set; }
 
-        public Jumpgate(int id, Faction faction, Vector pos, Vector destinationPos, int destinationMapId, bool visible, int factionScrap, int requiredLevel, int gfx) : base(id, pos)
+        public Jumpgate(int id, Faction faction, Vector pos, Spacemap map, Vector destinationPos, int destinationMapId, bool visible, int factionScrap, int requiredLevel, int gfx) : base(id, pos, map)
         {
             Faction = faction;
             Destination = destinationPos;
@@ -58,16 +58,17 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
             RequiredLevel = requiredLevel;
             Gfx = gfx;
             Working = true;
+            DestinationVirtualWorldId = 0;
         }
        
         public override void execute(Character character)
         {
         }
 
-        public void click(Character character)
+        public virtual void click(Character character)
         {
             var player = character as Player;
-            player?.Controller.Miscs.Jump(DestinationMapId, Destination, Id);
+            player?.Controller.Miscs.Jump(DestinationMapId, Destination, Id, DestinationVirtualWorldId);
         }
 
         public override string ToString()

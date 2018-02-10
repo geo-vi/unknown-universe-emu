@@ -421,6 +421,7 @@
     <Compile Include="Game\objects\world\Events.cs" />
     <Compile Include="Game\objects\world\events\GameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
+    <Compile Include="Game\objects\world\map\AttackableAsset.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\CargoLoot.cs" />
     <Compile Include="Game\objects\world\map\collectables\Types.cs" />
@@ -437,7 +438,7 @@
     <Compile Include="Game\objects\world\map\objects\assets\RelayStation.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\AssetTypes.cs" />
     <Compile Include="Game\objects\world\map\objects\IClickable.cs" />
-    <Compile Include="Game\objects\world\map\objects\jumpgates\LoWGate.cs" />
+    <Compile Include="Game\objects\world\map\objects\jumpgates\LowPortal.cs" />
     <Compile Include="Game\objects\world\map\objects\stations\HealthStation.cs" />
     <Compile Include="Game\objects\world\map\objects\stations\PirateStation.cs" />
     <Compile Include="Game\objects\world\map\objects\stations\ReadyRelayStation.cs" />
@@ -503,6 +504,7 @@
     <Compile Include="Game\objects\world\players\informations\Uridium.cs" />
     <Compile Include="Game\objects\world\players\killscreen\Killscreen.cs" />
     <Compile Include="Game\objects\world\players\LogMessage.cs" />
+    <Compile Include="Game\objects\world\players\PlayerGates.cs" />
     <Compile Include="Game\objects\world\players\Quest.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestCondition.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestConditions.cs" />

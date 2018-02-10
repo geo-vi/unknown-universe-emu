@@ -334,6 +334,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
+        public static void Area(Spacemap map, Vector center, int radius, int baseDamage, DamageType damageType = DamageType.DEFINED)
+        {
+            //TODO
+        }
+
         private int RandomizeDamage(int damage)
         {
             if (damage <= 0)

@@ -31,8 +31,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
         public bool VisibleOnWarnRadar { get; set; }
         public bool DetectedByWarnRadar { get; set; }
 
-        public Asset(int id, string name, AssetTypes type, Faction faction, Clan clan, int designId, int expansionStage, Vector position, bool invisible,
-            bool visibleOnWarnRadar, bool detectedByWarnRadar) : base(id, position)
+        public Asset(int id, string name, AssetTypes type, Faction faction, Clan clan, int designId, int expansionStage, Vector position, Spacemap map, bool invisible,
+            bool visibleOnWarnRadar, bool detectedByWarnRadar) : base(id, position, map)
         {
             Type = type;
             Name = name;

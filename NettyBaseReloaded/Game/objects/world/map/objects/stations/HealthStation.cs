@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.stations
     {
         public List<Player> PlayersInRangeOfStation = new List<Player>();
 
-        public HealthStation(int id, Vector pos) : base(id, new List<StationModule>(), Faction.NONE, pos)
+        public HealthStation(int id, Vector pos, Spacemap map) : base(id, new List<StationModule>(), Faction.NONE, pos, map)
         {
         }
 

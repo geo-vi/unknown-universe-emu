@@ -521,7 +521,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     foreach (var module in station.Modules)
                     {
-                        AssetCreateCommand(gameSession, new Asset(module.Id, "", module.Type, station.Faction, Global.StorageManager.Clans[0], 0, 0, module.Position, false, false, false));
+                        AssetCreateCommand(gameSession, new Asset(module.Id, "", module.Type, station.Faction, Global.StorageManager.Clans[0], 0, 0, module.Position, station.Spacemap, false, false, false));
                     }
                 }
             }

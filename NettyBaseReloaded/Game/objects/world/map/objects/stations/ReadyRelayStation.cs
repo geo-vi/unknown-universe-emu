@@ -8,7 +8,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.stations
 {
     class ReadyRelayStation : Station
     {
-        public ReadyRelayStation(int id, Vector pos) : base(id, new List<StationModule>(), Faction.NONE, pos)
+        public ReadyRelayStation(int id, Vector pos, Spacemap map) : base(id, new List<StationModule>(), Faction.NONE, pos, map)
         {
         }
     }

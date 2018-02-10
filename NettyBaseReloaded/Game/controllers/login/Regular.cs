@@ -99,6 +99,7 @@ namespace NettyBaseReloaded.Game.controllers.login
         public void AddCBS()
         {
             var center = GameSession.Player.Position;
+            var map = GameSession.Player.Spacemap;
             var m1Pos = new Vector(center.X - 413, center.Y - 98);
             var m2Pos = new Vector(center.X - 171, center.Y - 236);
             var m3Pos = new Vector(center.X + 170, center.Y + 236);
@@ -108,15 +109,15 @@ namespace NettyBaseReloaded.Game.controllers.login
             var m7Pos = new Vector(center.X - 171, center.Y + 235);
             var m8Pos = new Vector(center.X - 413, center.Y + 97);
 
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111111, "CBS-01", AssetTypes.BATTLESTATION, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111112, "M-01", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111113, "M-02", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111114, "M-03", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111115, "M-04", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111116, "M-05", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111117, "M-06", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111118, "M-07", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111119, "M-08", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111111, "CBS-01", AssetTypes.BATTLESTATION, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111112, "M-01", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111113, "M-02", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111114, "M-03", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111115, "M-04", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111116, "M-05", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111117, "M-06", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111118, "M-07", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111119, "M-08", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
         }
     }
 }

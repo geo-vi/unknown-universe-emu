@@ -84,8 +84,11 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void LoadPortal(Jumpgate portal)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
+
             if (!LoadedObjects.ContainsKey(portal.Id))
                 LoadedObjects.Add(portal.Id, portal);
+
+            if (portal.Owner != null && portal.Owner != Player) return;
             Packet.Builder.JumpgateCreateCommand(gameSession, portal);
         }
 

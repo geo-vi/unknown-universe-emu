@@ -10,14 +10,16 @@ namespace NettyBaseReloaded.Game.objects.world.map
     {
         public int Id { get; }
         public Vector Position { get; set; }
+        public Spacemap Spacemap { get; set; }
         public int Range { get; set; }
 
         public int VirtualWorldId { get; set; }
 
-        protected Object(int id, Vector pos, int range = 1000)
+        protected Object(int id, Vector pos, Spacemap map, int range = 1000)
         {
             Id = id;
             Position = pos;
+            Spacemap = map;
             Range = range;
         }
 

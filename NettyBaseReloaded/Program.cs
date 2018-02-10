@@ -66,10 +66,10 @@ namespace NettyBaseReloaded
 
             //TODO: Add QuestBuilder();
             //RewardBuilder();
-            //InitiateSession();
-            //ConsoleUpdater();
-            //ConsoleCommands.Add();
-            //KeepAlive();
+            InitiateSession();
+            ConsoleUpdater();
+            ConsoleCommands.Add();
+            KeepAlive();
         }
 
         private static void InitiatePanel()

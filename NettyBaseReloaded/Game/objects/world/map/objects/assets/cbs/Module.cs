@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets.cbs
 {
     class Module : Asset
     {
-        public Module(int id, string name, Faction faction, Clan clan, Vector position) : base(id, name, AssetTypes.SATELLITE, faction, clan, 1, 0, position, false, false, false)
+        public Module(int id, string name, Faction faction, Clan clan, Vector position, Spacemap map) : base(id, name, AssetTypes.SATELLITE, faction, clan, 1, 0, position, map, false, false, false)
         {
 
         }

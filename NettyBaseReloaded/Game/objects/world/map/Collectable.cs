@@ -21,7 +21,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public bool Temporary { get; set; }
 
-        public Collectable(int id, string hash, Types type, Vector pos, Spacemap map) : base(id, pos)
+        public Collectable(int id, string hash, Types type, Vector pos, Spacemap map) : base(id, pos, map)
         {
             Hash = hash;
             Type = type;
