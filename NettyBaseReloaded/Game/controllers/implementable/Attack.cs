@@ -19,15 +19,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public bool Attacking { get; set; }
 
-        public int AttackRange = 700;
-
         public Player MainAttacker { get; set; }
 
         public ConcurrentDictionary<int, Attacker> Attackers = new ConcurrentDictionary<int, Attacker>();
 
         public Attack(AbstractCharacterController controller) : base(controller)
         {
-            if (controller is NpcController) AttackRange = 500;
         }
 
         public override void Tick()
@@ -237,11 +234,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             damage = RandomizeDamage(damage);
             GameClient.SendRangePacket(Character,
-                netty.commands.old_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
-                    true), true);
+                netty.commands.old_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
+                    Character is Player), true);
             GameClient.SendRangePacket(Character,
-                netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, false,
-                    true), true);
+                netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
+                    Character is Player), true);
 
             Controller.Damage?.Laser(enemy, damage, false);
             Controller.Damage?.Laser(enemy, absDamage, true);

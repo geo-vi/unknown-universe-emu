@@ -303,6 +303,8 @@ namespace NettyBaseReloaded.Game.objects.world
             get { return Hangar.Configurations[CurrentConfig - 1].RocketLauncher; }
         }
 
+        public override int AttackRange => 1000;
+
         /// <summary>
         /// This is a for the multi-client support.
         /// - Work in progress -

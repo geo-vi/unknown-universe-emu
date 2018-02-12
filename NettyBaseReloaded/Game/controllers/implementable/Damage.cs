@@ -306,7 +306,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         /// </summary>
         public void Area(int amount, int distance = 0, bool playerOnly = false, DamageType damageType = DamageType.DEFINED)
         {
-            if (distance == 0) distance = Controller.Attack.AttackRange;
+            if (distance == 0) distance = Character.AttackRange;
 
             foreach (var entry in Character.Spacemap.Entities)
             {

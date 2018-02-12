@@ -195,7 +195,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                     return;
                 }
 
-                if (baseController.Attack.GetActiveAttackers().Any(x => x.InRange(baseController.Character, x.Controller.Attack.AttackRange)) && baseController.Player.Spacemap.Pvp)
+                if (baseController.Attack.GetActiveAttackers().Any(x => x.InRange(baseController.Character, x.AttackRange)) && baseController.Player.Spacemap.Pvp)
                 {
                     Cancel();
                     return;
