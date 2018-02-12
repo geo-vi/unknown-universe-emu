@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.map.objects;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
@@ -30,10 +31,22 @@ namespace NettyBaseReloaded.Game.netty.handlers
             var spacemap = gameSession.Player.Spacemap;
             try
             {
+                var entityEntries = spacemap.Entities.Where(
+                    entry => entry.Value.Id == targetId /*&& gameSession.Player.InRange(entry.Value)*/);
+
+                if (!entityEntries.Any())
+                {
+                    var selectedAsset = gameSession.Player.Spacemap.Objects.FirstOrDefault(x => x.Key == targetId).Value as AttackableAsset;
+                    if (selectedAsset != null)
+                    {
+                        gameSession.Player.Selected = selectedAsset.Core;
+                        Packet.Builder.AssetInfoCommand(gameSession, selectedAsset);
+                    }
+                    return;
+                }
+
                 foreach (
-                    var entry in
-                    spacemap.Entities.Where(
-                        entry => entry.Value.Id == targetId /*&& gameSession.Player.InRange(entry.Value)*/)) // temp
+                    var entry in entityEntries) // temp
                 {
                     if (entry.Value is Player)
                     {

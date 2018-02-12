@@ -134,7 +134,10 @@ namespace NettyBaseReloaded.Game.objects.world.map
         /// <summary>
         /// All functions here will be implemented in any GalaxyGate
         /// </summary>
+
         #region Abstracts
+        public abstract void Initiate();
+
         public abstract void Start();
 
         public abstract void SendWave();
@@ -165,7 +168,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Spacemap vwMap;
             Spacemap.Duplicate(Spacemap, out vwMap);
             Spacemap.VirtualWorlds[VWID] = vwMap;
-            Console.WriteLine("VWID: " + VWID);
+            Initiate();
         }
 
         protected event EventHandler AlmostNoNpcsLeft;
@@ -210,7 +213,6 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public void MoveOut()
         {
-            Owner?.OwnedGates.Remove(this);
             foreach (var joinedPlayer in JoinedPlayers)
             {
                 Vector targetPos;
@@ -234,6 +236,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 }
                 joinedPlayer.MoveToMap(targetMap, targetPos);
             }
+            JoinedPlayers.Clear();
+            Owner.OwnedGates.Remove(this);
         }
         #endregion
     }

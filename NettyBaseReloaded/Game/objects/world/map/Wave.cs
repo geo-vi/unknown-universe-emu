@@ -46,6 +46,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             Id = id;
             Npcs = npcs;
+            Position = position;
         }
 
         public static List<Npc> CreateWave(Npc npc, int count)
@@ -66,9 +67,13 @@ namespace NettyBaseReloaded.Game.objects.world.map
             }
         }
 
-        internal void Create(Spacemap virtualMap, Vector vector, int r)
+        internal void Create(Spacemap spacemap, Vector vector, int r)
         {
-            //TODO: Create with radius from vector
+            System.Random rnd = new System.Random();
+            foreach (var npc in Npcs)
+            {
+                spacemap.CreateNpc(npc.Ship, AILevels.AGGRESSIVE, false, 0, Vector.GetPosOnCircle(vector, rnd.Next(0,360), r));
+            }
         }
     }
 }

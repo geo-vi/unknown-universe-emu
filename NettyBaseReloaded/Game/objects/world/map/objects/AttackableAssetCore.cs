@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NettyBaseReloaded.Game.objects.world.map.objects;
 
-namespace NettyBaseReloaded.Game.objects.world.map
+namespace NettyBaseReloaded.Game.objects.world.map.objects
 {
-    class AttackableAsset : IAttackable
+    class AttackableAssetCore : IAttackable
     {
         public Asset BaseAsset;
 
@@ -32,21 +27,33 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public override double ShieldAbsorption { get; set; }
         public override double ShieldPenetration { get; set; }
 
-        public AttackableAsset(int id, Asset baseAsset) : base(id)
+        public AttackableAssetCore(int id, Asset baseAsset, int hp, int maxHp, int shield, int maxShield, int nano, int maxNano, double abs, double pen) : base(id)
         {
             BaseAsset = baseAsset;
+            CurrentHealth = hp;
+            MaxHealth = maxHp;
+            CurrentShield = shield;
+            MaxShield = maxShield;
+            CurrentNanoHull = nano;
+            MaxNanoHull = maxNano;
+            ShieldAbsorption = abs;
+            ShieldPenetration = pen;
         }
 
         public override void Tick()
         {
         }
 
+        public event EventHandler<Asset> Destroyed;
         public override void Destroy()
         {
+            EntityState = EntityStates.DEAD;
+            Destroyed?.Invoke(this, BaseAsset);
         }
 
         public override void Destroy(Character destroyer)
         {
+            Destroy();
         }
     }
 }

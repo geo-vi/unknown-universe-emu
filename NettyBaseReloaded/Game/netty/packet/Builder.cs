@@ -1365,5 +1365,20 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
+        #region AssetInfoCommand
+
+        public void AssetInfoCommand(GameSession gameSession, AttackableAsset asset)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AssetInfoCommand.write(asset.Id, new commands.old_client.AssetTypeModule((short)asset.Type), asset.DesignId, asset.ExpansionStage, asset.Core.CurrentHealth, asset.Core.MaxHealth, true, asset.Core.CurrentShield, asset.Core.MaxShield).Bytes);
+            }
+        }
+        #endregion
     }
 }

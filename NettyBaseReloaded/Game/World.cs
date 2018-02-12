@@ -43,6 +43,10 @@ namespace NettyBaseReloaded.Game
                     //map.Value.CreatePOI(new POI("Poi1", objects.world.map.pois.Types.NO_ACCESS, Designs.ASTEROIDS_MIXED_WITH_SCRAP, Shapes.RECTANGLE, new List<Vector> { new Vector(7680, 9216), new Vector(8192, 9216), new Vector(8192, 9728), new Vector(7680, 9728) }));
                     //map.Value.CreateLoW(new Vector(4000,4000));
                 }
+                if (map.Key == 16)
+                {
+                    map.Value.CreateLoW(new Vector(20800, 12800));
+                }
                 if (map.Key == 20)
                 {
                     map.Value.CreateStation(Faction.MMO, new Vector(1000, 12800 / 2));

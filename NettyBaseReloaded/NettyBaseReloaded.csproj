@@ -249,6 +249,7 @@
     <Compile Include="Game\netty\commands\old_client\AmmunitionCountUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AmmunitionTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AssetCreateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AssetInfoCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AssetTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackHitCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackLaserRunCommand.cs" />
@@ -421,7 +422,8 @@
     <Compile Include="Game\objects\world\Events.cs" />
     <Compile Include="Game\objects\world\events\GameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
-    <Compile Include="Game\objects\world\map\AttackableAsset.cs" />
+    <Compile Include="Game\objects\world\map\objects\AttackableAsset.cs" />
+    <Compile Include="Game\objects\world\map\objects\AttackableAssetCore.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\CargoLoot.cs" />
     <Compile Include="Game\objects\world\map\collectables\Types.cs" />

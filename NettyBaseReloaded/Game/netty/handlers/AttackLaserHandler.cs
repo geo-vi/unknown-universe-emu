@@ -29,7 +29,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             if (player.Selected == null) return;
 
-            if (!player.Spacemap.Entities.ContainsKey(targetId) || player.Selected.Id != targetId)
+            if (!player.Spacemap.Entities.ContainsKey(targetId) && !player.Spacemap.Objects.ContainsKey(targetId)|| player.Selected.Id != targetId)
             {
                 //Debug.WriteLine("Selected ID: " + player.Selected.Id + " Target ID: " + targetId);
                 return;
