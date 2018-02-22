@@ -14,7 +14,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
         public static string[] KEYS = { "epic_msg_killstreak_triplekill", "epic_msg_killstreak_unstoppable", "epic_msg_killstreak_godlike", "epic_msg_killstreak_likeaboss" };
         public const int MAX_COMBO = 10;
         public const int MAX_LIVES = 5;
-        public const int MAX_COMBO_TIME = 25;
+        public const int MAX_COMBO_TIME = 20;
 
         public int Lives { get; set; }
 

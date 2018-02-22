@@ -45,7 +45,7 @@ namespace NettyBaseReloaded.Game
                 }
                 if (map.Key == 16)
                 {
-                    map.Value.CreateLoW(new Vector(20800, 12800));
+                    //map.Value.CreateLoW(new Vector(20800, 12800));
                 }
                 if (map.Key == 20)
                 {

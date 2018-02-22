@@ -145,13 +145,13 @@ namespace NettyBaseReloaded.Game.objects.world
 
                 switch (Formation)
                 {
+                    case DroneFormation.HEART:
                     case DroneFormation.TURTLE:
                         value = (int) (value * 1.1); //+10%
                         break;
                     case DroneFormation.DOUBLE_ARROW:
                         value = (int) (value * 0.8); //-20%
                         break;
-
                 }
                 value = (int) (value * Hangar.Ship.GetShieldBonus(this));
 
@@ -164,12 +164,6 @@ namespace NettyBaseReloaded.Game.objects.world
             get
             {
                 var value = Hangar.Configurations[CurrentConfig - 1].CurrentShield;
-                switch (Formation)
-                {
-                    case DroneFormation.HEART:
-                        value = (int)(value * 1.1); // +10%
-                        break;
-                }
                 return value;
             }
             set { Hangar.Configurations[CurrentConfig - 1].CurrentShield = value; }
