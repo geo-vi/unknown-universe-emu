@@ -38,6 +38,9 @@ namespace NettyBaseReloaded.Main.commands
                     case "selected":
                         World.StorageManager.GetGameSession(targetId)?.Player.Selected?.Destroy();
                         break;
+                    case "poi":
+                        World.StorageManager.GetGameSession(targetId)?.Player.Spacemap.POIs.Remove(args[3]);
+                        break;
                 }
             }
             catch (Exception)

@@ -151,11 +151,11 @@ namespace NettyBaseReloaded.Game.managers
 
                             var npcs = JsonConvert.DeserializeObject<List<BaseNpc>>(row["NPCS"].ToString());
 
-                            var portals = JsonConvert.DeserializeObject<List<PortalBase>>(row["PORTALS"].ToString());
+                            //var portals = JsonConvert.DeserializeObject<List<PortalBase>>(row["PORTALS"].ToString());
 
                             World.StorageManager.Spacemaps.Add(map_id,
                                 new Spacemap(map_id, map_name, map_faction, map_pvp, map_starter, map_level, npcs,
-                                    portals));
+                                    new List<PortalBase>()));
                         }
                     }
 
@@ -237,6 +237,7 @@ namespace NettyBaseReloaded.Game.managers
                         RangeDisabled = true,
                         Disabled = true
                     });
+
                 World.StorageManager.Spacemaps.Add(255,
                     new Spacemap(255, "0-1", Faction.NONE, false, true, 0, null, null));
 

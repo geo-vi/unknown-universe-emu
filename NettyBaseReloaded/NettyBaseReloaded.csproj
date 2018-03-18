@@ -245,6 +245,7 @@
     <Compile Include="Game\netty\commands\new_client\WindowsCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\WindowSettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AddOreCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AlignmentModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AmmunitionCountModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AmmunitionCountUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AmmunitionTypeModule.cs" />
@@ -270,6 +271,7 @@
     <Compile Include="Game\netty\commands\old_client\DisplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationAvailableFormationsCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationChangeCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\EventActivationStateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\GameplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\HellstormStatusCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\HeroMoveCommand.cs" />
@@ -288,6 +290,7 @@
     <Compile Include="Game\netty\commands\old_client\MoveCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\NpcUndockCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\OreTypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\PartnerTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PetActivationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetDeactivationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearAddCommand.cs" />
@@ -344,9 +347,11 @@
     <Compile Include="Game\netty\commands\old_client\ShipWarpModule.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpNotAllowedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpWindowCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\UILayerAdvertisementCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\UserKeyBindingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\UserKeyBindingsUpdate.cs" />
     <Compile Include="Game\netty\commands\old_client\UserSettingsCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\MapAssetAddBillboardCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\VideoWindowCreateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\VisualModifierCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\WindowSettingsModule.cs" />
@@ -439,6 +444,7 @@
     <Compile Include="Game\objects\world\map\objects\assets\cbs\Module.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\RelayStation.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\AssetTypes.cs" />
+    <Compile Include="Game\objects\world\map\objects\Billboard.cs" />
     <Compile Include="Game\objects\world\map\objects\IClickable.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\LowPortal.cs" />
     <Compile Include="Game\objects\world\map\objects\stations\HealthStation.cs" />

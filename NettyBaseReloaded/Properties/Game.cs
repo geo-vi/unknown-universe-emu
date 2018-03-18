@@ -5,7 +5,7 @@
         /// <summary>
         /// This will toggle 1 map only "PvP" mode
         /// </summary>
-        public static bool PVP_MODE = false;
+        public static bool PVP_MODE = true;
 
         /// <summary>
         /// Prints command

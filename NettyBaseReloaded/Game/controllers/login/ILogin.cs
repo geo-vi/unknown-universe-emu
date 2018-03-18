@@ -7,10 +7,13 @@ using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.map.objects.stations;
+using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.players.extra.techs;
+using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
 
 namespace NettyBaseReloaded.Game.controllers.login
 {
@@ -60,7 +63,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             //Packet.Builder.VideoWindowCreateCommand(GameSession, 1, "c", true, new List<string> { "login_dialog_1", "login_dialog_2" }, 0, 1);
             //Packet.Builder.MineCreateCommand(GameSession, "asdf", 6, GameSession.Player.Position, false);
 
-            Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
+            //Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
             Packet.Builder.HellstormStatusCommand(GameSession);
 
             Packet.Builder.LegacyModule(GameSession, "0|n|w|0");
@@ -83,6 +86,8 @@ namespace NettyBaseReloaded.Game.controllers.login
             if (GameSession.Player.Information.Title != null)
                 Packet.Builder.TitleCommand(GameSession, GameSession.Player);
             GameSession.Player.Information.Premium.Login(GameSession);
+
+            Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
         }
 
         public void InitiateEvents()

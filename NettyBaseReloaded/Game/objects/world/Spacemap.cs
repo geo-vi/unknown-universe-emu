@@ -466,6 +466,12 @@ namespace NettyBaseReloaded.Game.objects.world
             World.Log.Write("Created Asteroid on mapId " + Id);
         }
 
+        public void CreateAdvertisementBanner(short advertiser, Vector pos)
+        {
+            var id = GetNextObjectId();
+            AddObject(new Billboard(id, pos, this, advertiser));
+        }
+
         #endregion
 
         #region Collectables

@@ -23,7 +23,6 @@ using NettyBaseReloaded.Utils;
 using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
-using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects.world.players.informations;
 
 namespace NettyBaseReloaded.Game.netty.packet
@@ -1282,7 +1281,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region KillScreenUpdateCommand
 
-        public void KillScreenUpdateCommand(GameSession gameSession, List<KillScreenOptionModule> options)
+        public void KillScreenUpdateCommand(GameSession gameSession, List<commands.old_client.KillScreenOptionModule> options)
         {
             if(gameSession.Player.UsingNewClient)
             {
@@ -1380,5 +1379,36 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
+        #region EventActivationStateCommand
+
+        public void EventActivationStateCommand(GameSession gameSession, short type, bool active)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.EventActivationStateCommand.write(type,active).Bytes);
+            }
+        }
+        #endregion
+
+        #region MapAssetAddBillboardCommand
+
+        public void MapAssetAddBillboardCommand(GameSession gameSession, Billboard billboard)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.MapAssetAddBillboardCommand.write("", new commands.old_client.AssetTypeModule(commands.old_client.AssetTypeModule.BILLBOARD_ASTEROID), new commands.old_client.PartnerTypeModule(billboard.Advertiser), billboard.Position.X, billboard.Position.Y, billboard.Id).Bytes);
+            }
+        }
+        #endregion
+
     }
 }

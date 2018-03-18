@@ -417,6 +417,7 @@ namespace NettyBaseReloaded.Game.objects.world
             else if (obj is Asset) Storage.LoadAsset(obj as Asset);
             else if (obj is Collectable) Storage.LoadCollectable(obj as Collectable);
             else if (obj is Ore) Storage.LoadResource(obj as Ore);
+            else if (obj is Billboard) Storage.LoadBillboard(obj as Billboard);
         }
 
         public void UnloadObject(Object obj)

@@ -135,5 +135,13 @@ namespace NettyBaseReloaded.Game.objects.world.players
             LoadedObjects = new Dictionary<int, Object>();
             LoadedPOI = new Dictionary<string, POI>();
         }
+
+        public void LoadBillboard(Billboard billboard)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (!LoadedObjects.ContainsKey(billboard.Id))
+                LoadedObjects.Add(billboard.Id, billboard);
+            Packet.Builder.MapAssetAddBillboardCommand(gameSession, billboard);
+        }
     }
 }

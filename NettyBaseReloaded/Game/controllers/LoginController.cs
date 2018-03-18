@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using NettyBaseReloaded.Game.controllers.login;
 using NettyBaseReloaded.Game.controllers.pet;
-using NettyBaseReloaded.Game.netty;
-using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
-using NettyBaseReloaded.Game.objects.world.map;
-using NettyBaseReloaded.Game.objects.world.map.collectables;
-using NettyBaseReloaded.Game.objects.world.map.objects;
-using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Main;
-using NettyBaseReloaded.Main.objects;
-using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.controllers
 {
@@ -54,32 +41,13 @@ namespace NettyBaseReloaded.Game.controllers
 
         private void CheckPos()
         {
+            //41600 * 25600
             var player = _gameSession.Player;
             if (Properties.Game.PVP_MODE && player.Spacemap.Id != 16)
             {
                 var closestStation = player.GetClosestStation();
                 player.Spacemap = closestStation.Item2;
                 player.Position = closestStation.Item1;
-            }
-            if (player.Spacemap.Id == 0 || player.Spacemap.Id == 255 || player.Spacemap.Disabled)
-            {
-                switch (player.FactionId)
-                {
-                    case Faction.MMO:
-                        player.Spacemap = World.StorageManager.Spacemaps[1];
-                        player.Position = new Vector(1000, 1000);
-                        break;
-                    case Faction.EIC:
-                        player.Spacemap = World.StorageManager.Spacemaps[5];
-                        player.Position = new Vector(19800, 1000);
-                        break;
-                    case Faction.VRU:
-                        player.Spacemap = World.StorageManager.Spacemaps[9];
-                        player.Position = new Vector(19800, 11800);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
             }
         }
 
