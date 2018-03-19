@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.Main.global_managers
 {
     class TickManager
     {
-        public static short TICKS_PER_SECOND = 32;
+        public static short TICKS_PER_SECOND = 64;
 
         /// <summary>
         /// ITick, Delay *TODO* 

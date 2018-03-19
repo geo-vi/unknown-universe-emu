@@ -487,13 +487,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 gameSession.Client.Send(commands.new_client.AssetCreateCommand.write(new commands.new_client.AssetTypeModule((short)asset.Type), asset.Name, (int)asset.Faction, asset.Clan.Tag, asset.Id, asset.DesignId,
                 asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.Clan.Id, asset.Invisible, asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar, true,
-                    new commands.new_client.ClanRelationModule(0), new List<commands.new_client.VisualModifierCommand>()).Bytes);
+                    new commands.new_client.ClanRelationModule(asset.Clan.GetRelation(gameSession.Player.Clan)), new List<commands.new_client.VisualModifierCommand>()).Bytes);
             }
             else
             {
                 gameSession.Client.Send(commands.old_client.AssetCreateCommand.write(new commands.old_client.AssetTypeModule((short)asset.Type), asset.Name, (int)asset.Faction, asset.Clan.Tag, asset.Id, asset.DesignId,
                     asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.Clan.Id, asset.Invisible, asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar,
-                    new commands.old_client.ClanRelationModule(0), new List<commands.old_client.VisualModifierCommand>()).Bytes);
+                    new commands.old_client.ClanRelationModule(asset.Clan.GetRelation(gameSession.Player.Clan)), new List<commands.old_client.VisualModifierCommand>()).Bytes);
             }
         }
         #endregion
@@ -1410,5 +1410,19 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
         #endregion
 
+        #region EquipReadyCommand
+
+        public void EquipReadyCommand(GameSession gameSession, bool ready)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.EquipReadyCommand.write(ready).Bytes);
+            }
+        }
+#endregion
     }
 }

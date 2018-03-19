@@ -19,7 +19,10 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.map.objects.jumpgates;
 using NettyBaseReloaded.Game.objects.world.map.objects.stations;
+using NettyBaseReloaded.Game.objects.world.map.pois;
+using NettyBaseReloaded.Game.objects.world.map.zones.pallazones;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
+using Types = NettyBaseReloaded.Game.objects.world.map.collectables.Types;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -525,6 +528,42 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             if (POIs.ContainsKey(poi.Id)) return;
             POIs.Add(poi.Id, poi);
+        }
+
+        public void CreatePalladiumField()
+        {
+            if (Id != 16)
+                return;
+
+            var zoneId = GetNextZoneId();
+            PalladiumZone zone = new PalladiumZone1(zoneId);
+            Zones.Add(zoneId, zone);
+            CreatePOI(new POI("smoke_01", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(0, 16200), new Vector(5000, 25500), new Vector(0, 25500), new Vector(5000, 16200) }));
+
+            zoneId = GetNextZoneId();
+            zone = new PalladiumZone2(zoneId);
+            Zones.Add(zoneId, zone);
+            CreatePOI(new POI("smoke_02", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(4900, 17700), new Vector(5800, 25400), new Vector(4900, 25400), new Vector(5800, 17700) }));
+
+            zoneId = GetNextZoneId();
+            zone = new PalladiumZone3(zoneId);
+            Zones.Add(zoneId, zone);
+            CreatePOI(new POI("smoke_03", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(5700, 18800), new Vector(7700, 25500), new Vector(5700, 25500), new Vector(7700, 18800) }));
+
+            zoneId = GetNextZoneId();
+            zone = new PalladiumZone4(zoneId);
+            Zones.Add(zoneId, zone);
+            CreatePOI(new POI("smoke_04", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(7600, 21100), new Vector(24700, 25500), new Vector(7600, 25500), new Vector(24700, 21100) }));
+
+            zoneId = GetNextZoneId();
+            zone = new PalladiumZone5(zoneId);
+            Zones.Add(zoneId, zone);
+            CreatePOI(new POI("smoke_05", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(14600, 20600), new Vector(24700, 21100), new Vector(14600, 21100), new Vector(24700, 20600) }));
+
+            zoneId = GetNextZoneId();
+            zone = new PalladiumZone6(zoneId);
+            Zones.Add(zoneId, zone);
+            CreatePOI(new POI("smoke_06", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(7600, 20700), new Vector(12300, 21500), new Vector(7600, 21500), new Vector(12300, 20700) }));
         }
 
         #endregion

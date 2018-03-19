@@ -271,6 +271,7 @@
     <Compile Include="Game\netty\commands\old_client\DisplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationAvailableFormationsCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationChangeCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\EquipReadyCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\EventActivationStateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\GameplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\HellstormStatusCommand.cs" />
@@ -461,6 +462,13 @@
     <Compile Include="Game\objects\world\map\zones\DemiZone.cs" />
     <Compile Include="Game\objects\world\map\zones\NpcZone.cs" />
     <Compile Include="Game\controllers\implementable\attack\Attacker.cs" />
+    <Compile Include="Game\objects\world\map\zones\PalladiumZone.cs" />
+    <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone1.cs" />
+    <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone2.cs" />
+    <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone3.cs" />
+    <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone4.cs" />
+    <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone5.cs" />
+    <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone6.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
     <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
@@ -592,6 +600,8 @@
     <Compile Include="Game\objects\world\Spacemap.cs" />
     <Compile Include="Game\objects\world\Vector.cs" />
     <Compile Include="Game\World.cs" />
+    <Compile Include="Main\objects\ClanDiplomacy.cs" />
+    <Compile Include="Main\objects\ClanMember.cs" />
     <Compile Include="Main\objects\Diplomacy.cs" />
     <Compile Include="Main\objects\Cronjob.cs" />
     <Compile Include="Main\objects\SqlDatabaseClient.cs" />

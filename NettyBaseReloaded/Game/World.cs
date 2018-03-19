@@ -423,13 +423,8 @@ namespace NettyBaseReloaded.Game
                             new Vector(19600, 1100),
                             new Vector(20000, 600)
                         }));
-                    map.Value.CreatePOI(new POI("smoke_01", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(0, 16200), new Vector(5000, 25500), new Vector(0, 25500), new Vector(5000, 16200) }));
-                    map.Value.CreatePOI(new POI("smoke_02", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(4900, 17700), new Vector(5800, 25400), new Vector(4900, 25400), new Vector(5800, 17700) }));
-                    map.Value.CreatePOI(new POI("smoke_03", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(5700, 18800), new Vector(7700, 25500), new Vector(5700, 25500), new Vector(7700, 18800) }));
-                    map.Value.CreatePOI(new POI("smoke_04", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(7600, 21100), new Vector(24700, 25500), new Vector(7600, 25500), new Vector(24700, 21100) }));
-                    map.Value.CreatePOI(new POI("smoke_05", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(14600, 20600), new Vector(24700, 21100), new Vector(14600, 21100), new Vector(24700, 20600) }));
-                    map.Value.CreatePOI(new POI("smoke_06", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(7600, 20700), new Vector(12300, 21500), new Vector(7600, 21500), new Vector(12300, 20700) }));
                     map.Value.CreateLoW(new Vector(17300, 1900));
+                    map.Value.CreatePalladiumField();
                     map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));
                     //map.Value.CreatePOI(new POI("billboard", objects.world.map.pois.Types.NO_ACCESS, Designs.SIMPLE, Shapes.CIRCLE, new List<Vector> { new Vector(15800, 13500), new Vector(15000, 13500) }));
                 }

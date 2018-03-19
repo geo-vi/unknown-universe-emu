@@ -30,7 +30,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             Spawn();
             SendLegacy();
             //SendTestQuest();
-            //AddCBS();
+            AddCBS();
         }
 
         private void SendTestQuest()
@@ -98,7 +98,7 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public void AddCBS()
         {
-            var center = GameSession.Player.Position;
+            var center = new Vector(30100, 8900);
             var map = GameSession.Player.Spacemap;
             var m1Pos = new Vector(center.X - 413, center.Y - 98);
             var m2Pos = new Vector(center.X - 171, center.Y - 236);
@@ -109,15 +109,15 @@ namespace NettyBaseReloaded.Game.controllers.login
             var m7Pos = new Vector(center.X - 171, center.Y + 235);
             var m8Pos = new Vector(center.X - 413, center.Y + 97);
 
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111111, "CBS-01", AssetTypes.BATTLESTATION, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111112, "M-01", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111113, "M-02", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111114, "M-03", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111115, "M-04", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111116, "M-05", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111117, "M-06", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111118, "M-07", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
-            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111119, "M-08", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[0], 0, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111111, "Kureboec", AssetTypes.BATTLESTATION, Faction.VRU, Global.StorageManager.Clans[3], 2, 0, center, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111112, "Maikati-01", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[3], 0, 0, m1Pos, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111113, "Maikati-02", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[3], 3, 0, m2Pos, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111114, "Maikati-03", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[3], 4, 0, m3Pos, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111115, "Maikati-04", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[3], 5, 0, m4Pos, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111116, "Maikati-05", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[3], 6, 0, m5Pos, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111117, "Maikati-06", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[3], 7, 0, m6Pos, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111118, "Maikati-07", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[3], 8, 0, m7Pos, map, false, false, true));
+            Packet.Builder.AssetCreateCommand(GameSession, new Asset(1111119, "Maikati-08", AssetTypes.SATELLITE, Faction.VRU, Global.StorageManager.Clans[3], 9, 0, m8Pos, map, false, false, true));
         }
     }
 }

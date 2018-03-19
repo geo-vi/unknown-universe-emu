@@ -140,6 +140,9 @@ namespace NettyBaseReloaded.Game.controllers.player
                 , "0|A|CC|" + baseController.Player.CurrentConfig);
 
             baseController.Player.UpdateExtras();
+
+            if (baseController.Player.Moving)
+                MovementController.Move(baseController.Player, baseController.Player.Destination);
         }
 
         private class jClass

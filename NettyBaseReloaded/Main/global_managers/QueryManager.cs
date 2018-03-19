@@ -52,10 +52,13 @@ namespace NettyBaseReloaded.Main.global_managers
         public void LoadClans()
         {
             Global.StorageManager.Clans.Add(0, new Clan(0, "", "",0));
-            //Global.StorageManager.Clans.Add(1, new Clan(1, "Administrators", "ADM",0));
-            //Global.StorageManager.Clans.Add(2, new Clan(2, "Developers", "DEV",0));
-            foreach (var clan in Global.StorageManager.Clans)
-                clan.Value.LoadDiplomacy();
+            Global.StorageManager.Clans.Add(1, new Clan(1, "Administrators", "ADM",0));
+            Global.StorageManager.Clans.Add(2, new Clan(2, "Developers", "DEV",0));
+            Global.StorageManager.Clans.Add(3, new Clan(3, "Bulgarian United Legends^", "BUL*", 1000));
+            Global.StorageManager.Clans[3].Diplomacy.Add(2, Diplomacy.ALLIED);
+            Global.StorageManager.Clans[2].Diplomacy.Add(3, Diplomacy.ALLIED);
+            Global.StorageManager.Clans[3].Diplomacy.Add(1, Diplomacy.ALLIED);
+            Global.StorageManager.Clans[1].Diplomacy.Add(3, Diplomacy.ALLIED);
         }
 
         public void SaveAll()

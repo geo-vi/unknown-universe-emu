@@ -69,7 +69,7 @@ namespace NettyBaseReloaded.Game.controllers
                     var pet = (Pet) Character;
                     pet.Controller.Tick();
                 }
-                await Task.Delay(100);
+                await Task.Delay(50);
             }
         }
 

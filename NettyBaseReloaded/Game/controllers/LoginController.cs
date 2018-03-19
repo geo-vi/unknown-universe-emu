@@ -60,9 +60,7 @@ namespace NettyBaseReloaded.Game.controllers
             }
             if (player.Pet != null && player.Pet.Controller == null)
                 player.Pet.Controller = new PetController(player.Pet);
-
             player.Controller.Setup();
-            player.Controller.Initiate();
         }
 
         private void GetLoginType()
@@ -79,6 +77,7 @@ namespace NettyBaseReloaded.Game.controllers
         private void LoadTicks()
         {
             Global.TickManager.Add(_gameSession.Player);
+            _gameSession.Player.Controller.Initiate();
         }
     }
 }

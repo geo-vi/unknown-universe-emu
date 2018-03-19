@@ -10,9 +10,10 @@ namespace NettyBaseReloaded.Main.objects
 {
     class SqlDatabaseClient : IDisposable
     {
-        private MySqlConnection mConnection;
+        public MySqlConnection mConnection;
         private MySqlCommand mCommand;
 
+        public bool AttachedToPlayer;
 
         public SqlDatabaseClient(MySqlConnection Connection)
         {
@@ -26,7 +27,7 @@ namespace NettyBaseReloaded.Main.objects
         /// </summary>
         public void Dispose()
         {
-            if (mConnection != null)
+            if (mConnection != null && !AttachedToPlayer)
             {
                 mConnection.Close();
                 mConnection = null;

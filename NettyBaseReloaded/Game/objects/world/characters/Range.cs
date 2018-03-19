@@ -15,8 +15,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public Dictionary<string, Collectable> Collectables = new Dictionary<string, Collectable>();
         public Dictionary<string, Ore> Resources = new Dictionary<string, Ore>();
         public Dictionary<int, Zone> Zones = new Dictionary<int, Zone>();
-
-
+       
         public Character Character { get; set; }
 
         public Character GetEntity(int id)

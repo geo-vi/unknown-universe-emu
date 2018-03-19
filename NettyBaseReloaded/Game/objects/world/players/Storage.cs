@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
 using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
@@ -11,6 +12,7 @@ using NettyBaseReloaded.Game.netty.handlers;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Main.objects;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using Range = NettyBaseReloaded.Game.objects.world.characters.Range;
 
@@ -36,6 +38,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Storage(Player player) : base(player)
         {
+            
         }
 
         public void Tick()

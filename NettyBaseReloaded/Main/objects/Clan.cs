@@ -15,7 +15,9 @@ namespace NettyBaseReloaded.Main.objects
         /// <summary>
         /// Clan id, diplomacy relations
         /// </summary>
-        private Dictionary<int,Diplomacy> Diplomacy { get; set; }
+        public Dictionary<int,Diplomacy> Diplomacy { get; set; }
+
+        public Dictionary<int, ClanMember> Members { get; set; }
 
         public Clan(int id, string name, string tag, int rankPoints)
         {
@@ -23,15 +25,10 @@ namespace NettyBaseReloaded.Main.objects
             Name = name;
             Tag = tag;
             Diplomacy = new Dictionary<int, Diplomacy>();
+            Members = new Dictionary<int, ClanMember>();
             RankPoints = rankPoints;
         }
-
-        public void LoadDiplomacy()
-        {
-            //TODO
-            // Query clan ALLY, NAP, ENEMY in server_clans table
-        }
-
+        
         public short GetRelation(Clan clan)
         {
             if (clan == this && clan.Id != 0)

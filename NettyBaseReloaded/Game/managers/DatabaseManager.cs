@@ -557,7 +557,7 @@ namespace NettyBaseReloaded.Game.managers
                         var factionId = (Faction) intConv(querySet["FACTION_ID"]);
                         var rank = (Rank) (intConv(querySet["RANK"]));
                         var sessionId = stringConv(querySet["SESSION_ID"]);
-                        var clan = Global.StorageManager.Clans[0];
+                        var clan = Global.StorageManager.Clans[(intConv(querySet["CLAN_ID"]))];
                         //var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
 
                         player = new Player(playerId, name, clan, hangar, currentHealth, currentNanohull, factionId,
