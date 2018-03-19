@@ -7,6 +7,7 @@ using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map;
+using NettyBaseReloaded.Game.objects.world.map.zones;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
@@ -17,9 +18,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public int VisibilityRange { get; set; }
 
+        public bool InVisibleZone => true; /*!Character.Range.Zones.Any(x => x.Value is PalladiumZone);*/
+
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
-            VisibilityRange = 2000;
+            VisibilityRange = -1;//900
             Character.Spacemap.EntityAdded += (s, e) => AddedToSpacemap(e);
             Character.Spacemap.EntityRemoved += (s, e) => RemovedFromSpacemap(e);
         }
@@ -50,20 +53,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         #region Character related
         private void AddedToSpacemap(CharacterArgs args)
         {
-            if (Character == null || !Controller.Active || Character.EntityState == EntityStates.DEAD)
-                return;
-
-            if (args.Character.InRange(Character, VisibilityRange))
-                AddCharacter(Character, args.Character);
+            //if (!InVisibleZone && args.Character.InRange(Character, VisibilityRange) || InVisibleZone && args.Character.Controller.Checkers.InVisibleZone)
+            AddCharacter(Character, args.Character);
         }
 
         private void RemovedFromSpacemap(CharacterArgs args)
         {
-            if (Character == null || !Controller.Active || Character.EntityState == EntityStates.DEAD)
-            {
-                return;
-            }
-
             RemoveCharacter(args.Character, Character);
         }
 
@@ -129,29 +124,30 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (entity == Character)
                 return;
 
-            if (entity.Spacemap != Character.Spacemap && entity.Range.Entities.ContainsKey(Character.Id))
-            {
-                RemoveCharacter(entity, Character);
-                return;
-            }
+            //if (entity.Spacemap != Character.Spacemap && entity.Range.Entities.ContainsKey(Character.Id))
+            //{
+            //    RemoveCharacter(entity, Character);
+            //    return;
+            //}
 
-            if (entity is Pet)
-            {
-                var pet = entity as Pet;
-                if (pet.GetOwner() == Character)
-                    return;
-            }
-            if (GetForSelection(entity)) return;
-            if (Character.InRange(entity, VisibilityRange))
-            {
+            //if (entity is Pet)
+            //{
+            //    var pet = entity as Pet;
+            //    if (pet.GetOwner() == Character)
+            //        return;
+            //}
+            //if (GetForSelection(entity)) return;
+
+            //if (Character.InRange(entity, VisibilityRange) && !InVisibleZone || InVisibleZone && entity.Controller.Checkers.InVisibleZone)
+            //{
                 if (!Character.Range.Entities.ContainsKey(entity.Id))
                     AddCharacter(Character, entity);
-            }
-            else
-            {
-                if (Character.Range.Entities.ContainsKey(entity.Id))
-                    RemoveCharacter(entity, Character);
-            }
+            //}
+            //else
+            //{
+            //    if (Character.Range.Entities.ContainsKey(entity.Id))
+            //        RemoveCharacter(entity, Character);
+            //}
         }
 
         private bool GetForSelection(Character entity)
