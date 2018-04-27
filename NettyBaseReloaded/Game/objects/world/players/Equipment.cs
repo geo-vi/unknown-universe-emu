@@ -20,10 +20,32 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public Dictionary<int, Hangar> Hangars { get; set; }
         #endregion
 
+        public Dictionary<int, Module> Modules = new Dictionary<int, Module>();
+
+        public bool ModuleEquipping = false;
+
         public Equipment(Player player) : base(player)
         {
             Player = player;
             RefreshHangars();
+            AddModules();
+        }
+
+        private void AddModules()
+        {
+            Modules.Add(0, new Module(Module.Types.LASER_HIGH_RANGE, new Item(0, "", 0), false));
+            Modules.Add(1, new Module(Module.Types.DAMAGE_BOOSTER, new Item(1, "", 0), false));
+            Modules.Add(2, new Module(Module.Types.ROCKET_MID_ACCURACY, new Item(2, "", 0), false));
+            Modules.Add(3, new Module(Module.Types.HULL, new Item(3, "", 0), false));
+            Modules.Add(4, new Module(Module.Types.DEFLECTOR, new Item(4, "", 0), false));
+            Modules.Add(5, new Module(Module.Types.DAMAGE_BOOSTER, new Item(5, "", 0), false));
+            Modules.Add(6, new Module(Module.Types.EXPERIENCE_BOOSTER, new Item(6, "", 0), false));
+            Modules.Add(7, new Module(Module.Types.REPAIR, new Item(7, "", 0), false));
+            Modules.Add(8, new Module(Module.Types.ROCKET_LOW_ACCURACY, new Item(8, "", 0), false));
+            Modules.Add(9, new Module(Module.Types.LASER_LOW_RANGE, new Item(9, "", 0), false));
+            Modules.Add(10, new Module(Module.Types.HONOR_BOOSTER, new Item(10, "", 0), true));
+            Modules.Add(12, new Module(Module.Types.ROCKET_MID_ACCURACY, new Item(12, "", 0), false));
+            Modules.Add(11, new Module(Module.Types.ROCKET_LOW_ACCURACY, new Item(11, "", 0), false));
         }
 
         public void RefreshHangars()

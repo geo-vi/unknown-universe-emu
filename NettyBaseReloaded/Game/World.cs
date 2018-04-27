@@ -426,9 +426,12 @@ namespace NettyBaseReloaded.Game
                     map.Value.CreateLoW(new Vector(17300, 1900));
                     map.Value.CreatePalladiumField();
                     map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));
+                    map.Value.CreateHiddenPortal(42, 15800, 13500, 10400, 12800);
+                    map.Value.CreateAsteroid("Shock", new Vector(28000, 7000));
                     //map.Value.CreatePOI(new POI("billboard", objects.world.map.pois.Types.NO_ACCESS, Designs.SIMPLE, Shapes.CIRCLE, new List<Vector> { new Vector(15800, 13500), new Vector(15000, 13500) }));
                 }
 
+                if (map.Key == 42) map.Value.CreatePortal(16, 10400, 12800, 0,0);
                 if (map.Key == 200)
                 {
                     // Load LoW

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 
 namespace NettyBaseReloaded.Main.objects
 {
@@ -10,7 +11,7 @@ namespace NettyBaseReloaded.Main.objects
 
         public int RankPoints { get; set; }
 
-        // TODO: Add owned BattleStations
+        public Dictionary<int, ClanBattleStation> OwnedBattleStations = new Dictionary<int, ClanBattleStation>();
 
         /// <summary>
         /// Clan id, diplomacy relations

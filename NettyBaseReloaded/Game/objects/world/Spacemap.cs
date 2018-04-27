@@ -402,6 +402,14 @@ namespace NettyBaseReloaded.Game.objects.world
                 Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500)));
         }
 
+        public void CreateHiddenPortal(int map, int x, int y, int newX, int newY, int vwId = 0)
+        {
+            var id = GetNextObjectId();
+            AddObject(new Jumpgate(id, 0, new Vector(x, y), this, new Vector(newX, newY), map, false, 0, 0, 0));
+            World.Log.Write("Created Portal on mapId " + Id);
+        }
+
+
         public void CreateStation(Faction faction, Vector position)
         {
             var assignedStationIds = new List<int>();
@@ -465,7 +473,9 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateAsteroid(string name, Vector pos)
         {
             var id = GetNextObjectId();
-            AddObject(new Asteroid(id, name, pos, this));
+            var bStation = World.StorageManager.ClanBattleStations.Count;
+            World.StorageManager.ClanBattleStations.Add(bStation, null);
+            AddObject(new Asteroid(id, bStation, name, pos, this));
             World.Log.Write("Created Asteroid on mapId " + Id);
         }
 

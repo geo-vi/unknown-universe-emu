@@ -7,6 +7,7 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.events;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
+using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.informations;
 using NettyBaseReloaded.Main.objects;
@@ -24,6 +25,8 @@ namespace NettyBaseReloaded.Game.managers
         public List<Group> Groups = new List<Group>();
         public Dictionary<int, GameEvent> Events = new Dictionary<int, GameEvent>();
         public Dictionary<int, Quest> Quests = new Dictionary<int, Quest>();
+
+        public Dictionary<int, ClanBattleStation> ClanBattleStations = new Dictionary<int, ClanBattleStation>();
 
         public GameSession GetGameSession(int userId)
         {

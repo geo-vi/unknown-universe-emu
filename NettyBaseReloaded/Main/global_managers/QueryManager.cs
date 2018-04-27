@@ -57,8 +57,8 @@ namespace NettyBaseReloaded.Main.global_managers
             Global.StorageManager.Clans.Add(3, new Clan(3, "Bulgarian United Legends^", "BUL*", 1000));
             Global.StorageManager.Clans[3].Diplomacy.Add(2, Diplomacy.ALLIED);
             Global.StorageManager.Clans[2].Diplomacy.Add(3, Diplomacy.ALLIED);
-            Global.StorageManager.Clans[3].Diplomacy.Add(1, Diplomacy.ALLIED);
-            Global.StorageManager.Clans[1].Diplomacy.Add(3, Diplomacy.ALLIED);
+            Global.StorageManager.Clans[3].Diplomacy.Add(1, Diplomacy.AT_WAR);
+            Global.StorageManager.Clans[1].Diplomacy.Add(3, Diplomacy.AT_WAR);
         }
 
         public void SaveAll()

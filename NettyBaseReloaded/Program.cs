@@ -44,6 +44,7 @@ namespace NettyBaseReloaded
 
         public static void Main(string[] args)
         {
+            
             Console.SetOut(new Out());
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
 

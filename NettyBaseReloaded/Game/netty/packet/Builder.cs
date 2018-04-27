@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using NettyBaseReloaded.Chat.objects.chat.rooms;
 using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.netty.commands;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map;
@@ -24,6 +25,7 @@ using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Game.objects.world.players.informations;
+using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Game.netty.packet
 {
@@ -1421,6 +1423,90 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 gameSession.Client.Send(commands.old_client.EquipReadyCommand.write(ready).Bytes);
+            }
+        }
+        #endregion
+
+        #region BattleStationBuildingUiInitializationCommand
+
+        public void BattleStationBuildingUiInitializationCommand(GameSession gameSession, Asteroid asteroid)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                List<commands.old_client.StationModuleModule> installedModules = new List<StationModuleModule>();
+                foreach (var moduleEquipped in asteroid.EquippedModules.Values.Where(x =>
+                    x.Clan == gameSession.Player.Clan))
+                {
+                    installedModules.Add(new commands.old_client.StationModuleModule(asteroid.Id, moduleEquipped.Id, moduleEquipped.SlotId, (short)moduleEquipped.ModuleType, moduleEquipped.Core.CurrentHealth, moduleEquipped.Core.MaxHealth, moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield, moduleEquipped.UpgradeLevel, moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(), moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(), moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
+                }
+                List<commands.old_client.StationModuleModule> ownedModules = new List<StationModuleModule>();
+                foreach (var ownedModule in gameSession.Player.Equipment.Modules.Values)
+                {
+                    if (!ownedModule.Equipped) ownedModules.Add(new commands.old_client.StationModuleModule(ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1, (short)ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1, -1, -1, 1));
+                }
+                var bestProgresing = asteroid.BestProgressingClan();
+                var bestClan = bestProgresing.Item1 ?? gameSession.Player.Clan;
+                gameSession.Client.Send(commands.old_client.BattleStationBuildingUiInitializationCommand.write(asteroid.Id, asteroid.AssignedBattleStationId, asteroid.Name, new commands.old_client.AsteroidProgressCommand(asteroid.AssignedBattleStationId, asteroid.GetClanProgress(gameSession.Player.Clan), asteroid.GetClanProgress(bestClan), gameSession.Player.Clan.Name, bestClan.Name, new commands.old_client.EquippedModulesModule(installedModules), asteroid.Buildable(gameSession.Player)), new commands.old_client.AvailableModulesCommand(ownedModules), 0, 120, 1).Bytes);
+            }
+        }
+        #endregion
+
+        #region BattleStationBuildingStateCommand
+
+        public void BattleStationBuildingStateCommand(GameSession gameSession, Asteroid asteroid)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.BattleStationBuildingStateCommand.write(asteroid.Id, asteroid.AssignedBattleStationId, asteroid.Name, asteroid.EndOfBuild, asteroid.BuildTime, asteroid.Clan.Name, new commands.old_client.FactionModule(2)).Bytes);
+            }
+        }
+        #endregion
+
+        #region BattleStationManagementUiInitializationCommand
+
+        public void BattleStationManagementUiInitializationCommand(GameSession gameSession,
+            ClanBattleStation battleStation)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                List<commands.old_client.StationModuleModule> equipment = new List<StationModuleModule>();
+                foreach (var moduleEquipped in battleStation.EquippedModules.Values)
+                {
+                    equipment.Add(new commands.old_client.StationModuleModule(battleStation.BattleStationId, moduleEquipped.Id, moduleEquipped.SlotId, (short)moduleEquipped.ModuleType, moduleEquipped.Core.CurrentHealth, moduleEquipped.Core.MaxHealth, moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield, moduleEquipped.UpgradeLevel, moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(), moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(), moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
+                }
+                List<commands.old_client.StationModuleModule> availableModules = new List<StationModuleModule>();
+                foreach (var ownedModule in gameSession.Player.Equipment.Modules.Values)
+                {
+                    if (!ownedModule.Equipped) availableModules.Add(new commands.old_client.StationModuleModule(ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1, (short)ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1, -1, -1, 1));
+                }
+                gameSession.Client.Send(commands.old_client.BattleStationManagementUiInitializationCommand.write(battleStation.Id, battleStation.BattleStationId, battleStation.Name, battleStation.Clan.Name, new commands.old_client.FactionModule((short)battleStation.Faction), new commands.old_client.BattleStationStatusCommand(battleStation.Id, battleStation.BattleStationId, battleStation.Name, battleStation.DeflectorShieldActive, battleStation.GetDeflectorShieldSeconds(), battleStation.DeflectorShieldSecondsMax(), battleStation.GetAttackRating(), battleStation.GetDefenceRating(), battleStation.GetRepairRating(), battleStation.GetHonorBoostRating(), battleStation.GetExperienceBoostRating(), battleStation.GetDamageBoostRating(), battleStation.DeflectorShieldRate, battleStation.RepairPrice, new commands.old_client.EquippedModulesModule(equipment)), new commands.old_client.AvailableModulesCommand(availableModules), battleStation.DeflectorShieldMin, battleStation.DeflectorShieldMax, battleStation.DeflectorShieldIncrement, battleStation.DeflectorDeactivationPossible()).Bytes);
+            }
+        }
+        #endregion
+
+        #region AttackHitAssetCommand
+
+        public void AttackHitAssetCommand(GameSession gameSession, int assetId, int hitpointsNow, int hitpointsMax)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AttackHitAssetCommand.write(assetId, hitpointsNow, hitpointsMax).Bytes);
             }
         }
 #endregion

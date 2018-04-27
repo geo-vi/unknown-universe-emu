@@ -251,7 +251,10 @@
     <Compile Include="Game\netty\commands\old_client\AmmunitionTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AssetCreateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AssetInfoCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AssetRemoveCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AssetTypeModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\AsteroidProgressCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AttackHitAssetCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackHitCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackLaserRunCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackMissedCommand.cs" />
@@ -260,7 +263,13 @@
     <Compile Include="Game\netty\commands\old_client\AttributeShieldUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttributeShipSpeedUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AudioSettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\AvailableModulesCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\BattleStationBuildingStateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\BattleStationBuildingUiInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\BattleStationErrorCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\BattleStationManagementUiInitializationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\BattleStationNoClanUiInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\BattleStationStatusCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\BoostedAttributeTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\BoosterTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\BoosterUpdateModule.cs" />
@@ -271,8 +280,10 @@
     <Compile Include="Game\netty\commands\old_client\DisplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationAvailableFormationsCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\DroneFormationChangeCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\EquippedModulesModule.cs" />
     <Compile Include="Game\netty\commands\old_client\EquipReadyCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\EventActivationStateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\FactionModule.cs" />
     <Compile Include="Game\netty\commands\old_client\GameplaySettingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\HellstormStatusCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\HeroMoveCommand.cs" />
@@ -318,10 +329,12 @@
     <Compile Include="Game\netty\commands\old_client\requests\AttackLaserRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AttackRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AudioSettingsRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\BuildStationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ClientResolutionChangeRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\CollectBoxRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\DisplaySettingsRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\DroneFormationChangeRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\EquipModuleRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\GameplaySettingsRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLaunchRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLoadRequest.cs" />
@@ -348,6 +361,7 @@
     <Compile Include="Game\netty\commands\old_client\ShipWarpModule.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpNotAllowedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpWindowCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\StationModuleModule.cs" />
     <Compile Include="Game\netty\commands\old_client\UILayerAdvertisementCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\UserKeyBindingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\UserKeyBindingsUpdate.cs" />
@@ -361,6 +375,8 @@
     <Compile Include="Game\netty\handlers\AttackRocketHandler.cs" />
     <Compile Include="Game\netty\handlers\AttackRocketLegacyHandler.cs" />
     <Compile Include="Game\netty\handlers\AudioSettingsHandler.cs" />
+    <Compile Include="Game\netty\handlers\BattleStationEquipHandler.cs" />
+    <Compile Include="Game\netty\handlers\BuildStationHandler.cs" />
     <Compile Include="Game\netty\handlers\ClickableHandler.cs" />
     <Compile Include="Game\netty\handlers\ClientResolutionChangeHandler.cs" />
     <Compile Include="Game\netty\handlers\CollectBoxHandler.cs" />
@@ -428,6 +444,9 @@
     <Compile Include="Game\objects\world\Events.cs" />
     <Compile Include="Game\objects\world\events\GameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\cbs\BoosterStationModule.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\cbs\LaserStationModule.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\cbs\RocketStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\AttackableAsset.cs" />
     <Compile Include="Game\objects\world\map\objects\AttackableAssetCore.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
@@ -442,7 +461,6 @@
     <Compile Include="Game\objects\world\map\mines\ACM01.cs" />
     <Compile Include="Game\objects\world\map\Object.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\Asteroid.cs" />
-    <Compile Include="Game\objects\world\map\objects\assets\cbs\Module.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\RelayStation.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\AssetTypes.cs" />
     <Compile Include="Game\objects\world\map\objects\Billboard.cs" />
@@ -474,6 +492,7 @@
     <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
     <Compile Include="Game\objects\world\players\Ammunition.cs" />
     <Compile Include="Game\objects\world\players\Equipment.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\BattleStationModule.cs" />
     <Compile Include="Game\objects\world\players\equipment\Configuration.cs" />
     <Compile Include="Game\objects\world\players\equipment\Drone.cs" />
     <Compile Include="Game\objects\world\players\equipment\Extra.cs" />
@@ -484,6 +503,7 @@
     <Compile Include="Game\objects\world\players\equipment\extras\Robot.cs" />
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
     <Compile Include="Game\objects\world\events\EventTypes.cs" />
+    <Compile Include="Game\objects\world\players\equipment\Module.cs" />
     <Compile Include="Game\objects\world\players\events\ScoreMageddon.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\AegisHealBeam.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\AegisShieldRecharge.cs" />
@@ -676,8 +696,8 @@
     <Reference Include="MySql.Data, Version=6.10.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.10.5\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

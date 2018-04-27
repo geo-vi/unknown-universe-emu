@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Networking;
 
@@ -279,6 +280,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             foreach (var session in AssembleSelectedSessions(target))
                 Packet.Builder.AttackHitCommand(session, attackerId, target, totalDamage, (short)damageType);
+
+            if (target is AttackableAssetCore)
+                foreach (var session in target.Spacemap.Entities.Values.Where(x => x is Player))
+                {
+                    var player = session as Player;
+                    var gameSession = player?.GetGameSession();
+                    if (gameSession != null)
+                        Packet.Builder.AttackHitAssetCommand(gameSession, target.Id, target.CurrentHealth, target.MaxHealth);
+                }
 
             if (target.CurrentHealth <= 0 && target.EntityState == EntityStates.ALIVE)
             {

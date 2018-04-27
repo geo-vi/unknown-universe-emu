@@ -2,7 +2,7 @@
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects
 {
-    class AttackableAssetCore : IAttackable
+    sealed class AttackableAssetCore : IAttackable
     {
         public Asset BaseAsset;
 
@@ -42,6 +42,13 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public override void Tick()
         {
+            Update();
+        }
+
+        public void Update()
+        {
+            if (CurrentHealth < 0) CurrentHealth = 0;
+            if (CurrentShield < 0) CurrentShield = 0;
         }
 
         public event EventHandler<Asset> Destroyed;

@@ -98,7 +98,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void LoadAsteroid(Asteroid asteroid)
         {
             LoadAsset(asteroid);
-            Packet.Builder.BattleStationNoClanUiInitializationCommand(World.StorageManager.GetGameSession(Player.Id), asteroid);
+            //Packet.Builder.BattleStationNoClanUiInitializationCommand(World.StorageManager.GetGameSession(Player.Id), asteroid);
         }
 
         public void LoadAsset(Asset asset)
@@ -106,6 +106,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(asset.Id))
                 LoadedObjects.Add(asset.Id, asset);
+            Console.WriteLine("Loading " + asset.Type);
             Packet.Builder.AssetCreateCommand(gameSession, asset);
         }
 
