@@ -42,8 +42,6 @@ namespace NettyBaseReloaded.Game.controllers.login
         public void SendLegacy()
         {
             SendLegacy(GameSession);
-            AddTempDroneFormations();
-            AddTempTechs();
         }
 
         public static void SendLegacy(GameSession GameSession)
@@ -72,7 +70,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             //DB -> Disable button
             //EB -> Enable button
             //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
-            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
+            //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
             //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
             Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
             //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
@@ -87,7 +85,10 @@ namespace NettyBaseReloaded.Game.controllers.login
                 Packet.Builder.TitleCommand(GameSession, GameSession.Player);
             GameSession.Player.Information.Premium.Login(GameSession);
 
-            Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
+            CreateFormations(GameSession);
+            CreateTechs(GameSession);
+            CreateAbilities(GameSession);
+            //Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
         }
 
         public void InitiateEvents()
@@ -101,46 +102,25 @@ namespace NettyBaseReloaded.Game.controllers.login
                 gameEvent.Value.Start();
         }
 
-
-        private void AddTempDroneFormations()
+        private static void CreateTechs(GameSession session)
         {
-            Packet.Builder.DroneFormationAvailableFormationsCommand(GameSession);
+            session.Player.Techs.Add(new RocketPrecission(session.Player));
+            session.Player.Techs.Add(new ShieldBuff(session.Player));
+            session.Player.Techs.Add(new BattleRepairRobot(session.Player));
+            session.Player.Techs.Add(new EnergyLeech(session.Player));
+            session.Player.Techs.Add(new ChainImpulse(session.Player));
+
+            Packet.Builder.TechStatusCommand(session);
         }
 
-        private void AddTempTechs()
+        private static void CreateFormations(GameSession session)
         {
-            GameSession.Player.Techs.Add(new RocketPrecission(GameSession.Player));
-            GameSession.Player.Techs.Add(new ShieldBuff(GameSession.Player));
-            GameSession.Player.Techs.Add(new BattleRepairRobot(GameSession.Player));
-            GameSession.Player.Techs.Add(new EnergyLeech(GameSession.Player));
-            GameSession.Player.Techs.Add(new ChainImpulse(GameSession.Player));
+            Packet.Builder.DroneFormationAvailableFormationsCommand(session);
+        }
 
-            Packet.Builder.TechStatusCommand(GameSession);
-
-            /**
-            var elaStatus = 0; // not equipped
-            var elaCount = 0; // count
-            var elaTimeLeft = 0;
-            var eciStatus = 0; // not equipped
-            var eciCount = 0;
-            var eciTimeLeft = 0;
-            var rpmStatus = 1; // not equipped
-            var rpmCount = 99;
-            var rpmTimeLeft = 0;
-            var sbuStatus = 1;
-            var sbuCount = 99;
-            var sbuTimeLeft = 0;
-            var brbStatus = 1;
-            var brbCount = 99;
-            var brbTimeLeft = 0;
-            //{rpmStatus}|{rpmCount}|{rpmTimeLeft}|{sbuStatus}|{sbuCount}|{sbuTimeLeft}|{brbStatus}|{brbCount}|{brbTimeLeft}
-            string techPacket = $"{elaStatus}|{elaCount}|{elaTimeLeft}|{eciStatus}|{eciCount}|{eciTimeLeft}|";
-            foreach (var tech in GameSession.Player.Techs)
-            {
-                techPacket += $"{tech.GetStatus()}|{99}|{tech.TimeLeft}";
-            }
-            Packet.Builder.LegacyModule(GameSession, $"0|TX|S|{techPacket}");
-            */
+        private static void CreateAbilities(GameSession session)
+        {
+            Packet.Builder.AbilityStatusFullCommand(session, session.Player.Abilities);
         }
     } 
 }

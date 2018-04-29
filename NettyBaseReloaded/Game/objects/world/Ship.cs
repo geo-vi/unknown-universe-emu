@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.extra;
+using NettyBaseReloaded.Game.objects.world.players.extra.abilities;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -186,6 +188,19 @@ namespace NettyBaseReloaded.Game.objects.world
             if (LootId == "ship_goliath") return "ship_goliath_design_goliath-frost";
             if (LootId != "") return LootId;
             return Id.ToString();
+        }
+
+        public List<Ability> Abilities(Player player)
+        {
+            List<Ability> abilities = new List<Ability>();
+            switch (Id)
+            {
+                case 59:
+                    abilities.Add(new AegisHealBeam(player));
+                    break;
+            }
+
+            return abilities;
         }
     }
 }

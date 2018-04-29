@@ -15,7 +15,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
     {
         private GameSession GameSession { get; set; }
         private Player Player { get; set; }
-
+        
         public ShipInitalizationHandler(GameClient client, int userId, string sessionId, bool newClient = false)
         {
             if (Properties.Game.PRINTING_CONNECTIONS)

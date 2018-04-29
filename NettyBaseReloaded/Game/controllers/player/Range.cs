@@ -69,6 +69,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                     if (session != null)
                     {
                         Packet.Builder.EquipReadyCommand(session, true);
+                        World.DatabaseManager.Refresh(baseController.Player);
                         //baseController.Player.Equipment.Hangars =
                         //    World.DatabaseManager.LoadHangars(baseController.Player);
                         //baseController.Player.Hangar.Drones = World.DatabaseManager.LoadDrones(baseController.Player);

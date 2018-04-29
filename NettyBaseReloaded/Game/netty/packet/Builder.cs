@@ -172,7 +172,6 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), player.Information.Ammunitions["ammunition_specialammo_emp-01"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
-
                 player.Settings.Slotbar.GetCategories(player);
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
             }
@@ -1509,6 +1508,99 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.AttackHitAssetCommand.write(assetId, hitpointsNow, hitpointsMax).Bytes);
             }
         }
-#endregion
+        #endregion
+
+        #region AbilityStatusFullCommand
+
+        public void AbilityStatusFullCommand(GameSession gameSession, List<Ability> abilities)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                List<commands.old_client.AbilityStatusSingleCommand> abilitiesModule = new List<AbilityStatusSingleCommand>();
+                foreach (var ability in abilities)
+                {
+                    abilitiesModule.Add(new commands.old_client.AbilityStatusSingleCommand(ability.AbilityId, ability.Enabled));
+                }
+                gameSession.Client.Send(commands.old_client.AbilityStatusFullCommand.write(abilitiesModule).Bytes);
+            }
+        }
+        #endregion
+
+        #region AbilityStartCommand
+
+        public void AbilityStartCommand(GameSession gameSession, Ability ability)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AbilityStartCommand.write(ability.AbilityId, ability.Player.Id, ability.IsStoppable).Bytes);
+            }
+        }
+        #endregion
+
+        #region AbilityStopCommand
+
+        public void AbilityStopCommand(GameSession gameSession, Ability ability)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AbilityStopCommand.write(ability.AbilityId, ability.Player.Id, ability.TargetIds).Bytes);
+            }
+        }
+        #endregion
+        #region AbilityEffectActivationCommand
+
+        public void AbilityEffectActivationCommand(GameSession gameSession, Ability ability)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AbilityEffectActivationCommand.write(ability.AbilityId, ability.Player.Id, ability.TargetIds).Bytes);
+            }
+        }
+        #endregion
+        #region AbilityEffectDeActivationCommand
+
+        public void AbilityEffectDeActivation(GameSession gameSession, Ability ability)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AbilityEffectDeActivationCommand.write(ability.AbilityId, ability.Player.Id,ability.TargetIds).Bytes);
+            }
+        }
+        #endregion
+
+        #region AbilityStatusSingleCommand
+
+        public void AbilityStatusSingleCommand(GameSession gameSession, Ability ability)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AbilityStatusSingleCommand.write(ability.AbilityId, ability.Enabled).Bytes);
+            }
+        }
+        #endregion
     }
 }

@@ -300,7 +300,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                 _items[item.ClickedId] = item;
             }
             categories.Add(new SlotbarCategoryModule("drone_formations", items));
-
+            
             return categories;
         }
     }

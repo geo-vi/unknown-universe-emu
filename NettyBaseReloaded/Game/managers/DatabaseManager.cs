@@ -526,44 +526,40 @@ namespace NettyBaseReloaded.Game.managers
                     string sql =
                         "SELECT * FROM player_data, player_extra_data, player_hangar WHERE player_hangar.PLAYER_ID = player_data.PLAYER_ID AND player_extra_data.PLAYER_ID = player_data.PLAYER_ID AND player_hangar.ACTIVE=1 AND player_data.PLAYER_ID = " +
                         playerId;
-                    var querySet = mySqlClient.ExecuteQueryReader(sql);
+                    var querySet = mySqlClient.ExecuteQueryRow(sql);
 
-                    while (querySet.Read())
+                    var name = stringConv(querySet["PLAYER_NAME"]);
+                    var shipId = intConv(querySet["SHIP_DESIGN"]);
+                    var ship = World.StorageManager.Ships[shipId];
+                    var position = new Vector(intConv(querySet["SHIP_X"]), intConv(querySet["SHIP_Y"]));
+                    var mapId = intConv(querySet["SHIP_MAP_ID"]);
+                    var levelId = intConv(querySet["LVL"]);
+
+                    if (!World.StorageManager.Spacemaps.ContainsKey(mapId))
                     {
-                        var name = stringConv(querySet["PLAYER_NAME"]);
-                        var shipId = intConv(querySet["SHIP_DESIGN"]);
-                        var ship = World.StorageManager.Ships[shipId];
-                        var position = new Vector(intConv(querySet["SHIP_X"]), intConv(querySet["SHIP_Y"]));
-                        var mapId = intConv(querySet["SHIP_MAP_ID"]);
-                        var levelId = intConv(querySet["LVL"]);
-
-                        if (!World.StorageManager.Spacemaps.ContainsKey(mapId))
-                        {
-                            Console.WriteLine("PROBLEM -> MAPID " + mapId + " DOESN'T EXIST!");
-                            return null;
-                        }
-
-                        if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(levelId))
-                        {
-                            Console.WriteLine("PROBLEM -> LEVELID " + levelId + " DOESN'T EXIST!");
-                            return null;
-                        }
-
-                        var spacemap = World.StorageManager.Spacemaps[mapId];
-                        var currentHealth = intConv(querySet["SHIP_HP"]);
-                        var currentNanohull = intConv(querySet["SHIP_NANO"]);
-                        var hangar = new Hangar(ship, new List<Drone>(), position, spacemap, currentHealth,
-                            currentNanohull, new Dictionary<string, Item>());
-                        var factionId = (Faction) intConv(querySet["FACTION_ID"]);
-                        var rank = (Rank) (intConv(querySet["RANK"]));
-                        var sessionId = stringConv(querySet["SESSION_ID"]);
-                        var clan = Global.StorageManager.Clans[(intConv(querySet["CLAN_ID"]))];
-                        //var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
-
-                        player = new Player(playerId, name, clan, hangar, currentHealth, currentNanohull, factionId,
-                            position, spacemap, null, sessionId, rank, false);
+                        Console.WriteLine("PROBLEM -> MAPID " + mapId + " DOESN'T EXIST!");
+                        return null;
                     }
-                    querySet.Dispose();
+
+                    if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(levelId))
+                    {
+                        Console.WriteLine("PROBLEM -> LEVELID " + levelId + " DOESN'T EXIST!");
+                        return null;
+                    }
+
+                    var spacemap = World.StorageManager.Spacemaps[mapId];
+                    var currentHealth = intConv(querySet["SHIP_HP"]);
+                    var currentNanohull = intConv(querySet["SHIP_NANO"]);
+                    var hangar = new Hangar(ship, new List<Drone>(), position, spacemap, currentHealth,
+                        currentNanohull, new Dictionary<string, Item>());
+                    var factionId = (Faction) intConv(querySet["FACTION_ID"]);
+                    var rank = (Rank) (intConv(querySet["RANK"]));
+                    var sessionId = stringConv(querySet["SESSION_ID"]);
+                    var clan = Global.StorageManager.Clans[(intConv(querySet["CLAN_ID"]))];
+                    //var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
+
+                    player = new Player(playerId, name, clan, hangar, currentHealth, currentNanohull, factionId,
+                        position, spacemap, null, sessionId, rank, false);
 
                 }
 
@@ -1226,6 +1222,70 @@ namespace NettyBaseReloaded.Game.managers
                 new ExceptionLog("database_manager_title", "Title error", e);
             }
             return title;
+        }
+
+        public void Refresh(Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow(
+                        $"SELECT * FROM player_hangar, player_ship_config WHERE player_hangar.PLAYER_ID={player.Id} AND ACTIVE=1 AND player_ship_config.PLAYER_ID={player.Id}");
+
+                    var hangarId = intConv(queryRow["HANGAR_COUNT"]);
+                    if (player.Equipment.ActiveHangar != hangarId && player.Equipment.Hangars.ContainsKey(hangarId))
+                        player.Equipment.ActiveHangar = hangarId;
+                    else
+                    {
+                        player.Equipment.Hangars = LoadHangars(player);
+                        player.Equipment.ActiveHangar = hangarId;
+                    } 
+
+                    int dmg1 = intConv(queryRow["CONFIG_1_DMG"]);
+                    int velocity1 = intConv(queryRow["CONFIG_1_SPEED"]);
+                    string extras1 = queryRow["CONFIG_1_EXTRAS"].ToString();
+                    int shield1 = intConv(queryRow["CONFIG_1_SHIELD"]);
+                    int shieldLeft1 = intConv(queryRow["CONFIG_1_SHIELD_LEFT"]);
+                    int absorb1 = intConv(queryRow["CONFIG_1_SHIELDABSORB"]);
+                    int lcount1 = intConv(queryRow["CONFIG_1_LASERCOUNT"]);
+                    int ltypes1 = intConv(queryRow["CONFIG_1_LASER_TYPES"]);
+                    string rlTypes1 = queryRow["CONFIG_1_HEAVY"].ToString();
+
+                    if (rlTypes1 == "") rlTypes1 = "[]";
+                    if (extras1 == "") extras1 = "[]";
+                    if (velocity1 == 0) velocity1 = player.Hangar.Ship.Speed;
+                    var config1 = new Configuration(player, 1, dmg1, velocity1, shield1, shieldLeft1, absorb1,
+                        lcount1,
+                        ltypes1, JsonConvert.DeserializeObject<int[]>(rlTypes1),
+                        JsonConvert.DeserializeObject<List<Item>>(extras1).ToDictionary(x => x.LootId));
+
+                    int dmg2 = intConv(queryRow["CONFIG_2_DMG"]);
+                    int velocity2 = intConv(queryRow["CONFIG_2_SPEED"]);
+                    string extras2 = queryRow["CONFIG_2_EXTRAS"].ToString();
+                    int shield2 = intConv(queryRow["CONFIG_2_SHIELD"]);
+                    int shieldLeft2 = intConv(queryRow["CONFIG_2_SHIELD_LEFT"]);
+                    int absorb2 = intConv(queryRow["CONFIG_2_SHIELDABSORB"]);
+                    int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
+                    int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
+                    string rlTypes2 = queryRow["CONFIG_2_HEAVY"].ToString();
+                    if (velocity2 == 0) velocity2 = player.Hangar.Ship.Speed;
+                    if (rlTypes2 == "") rlTypes2 = "[]";
+                    if (extras2 == "") extras2 = "[]";
+                    var config2 = new Configuration(player, 2, dmg2, velocity2, shield2, shieldLeft2, absorb2,
+                        lcount2,
+                        ltypes2, JsonConvert.DeserializeObject<int[]>(rlTypes2),
+                        JsonConvert.DeserializeObject<List<Item>>(extras2).ToDictionary(x => x.LootId));
+                    player.Hangar.Configurations = new[] {config1, config2};
+                    player.Hangar.Drones = LoadDrones(player);
+                    player.Hangar.RefineNewData(player);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                new ExceptionLog("database_refresh_player", "Error refreshing players", e);
+            }
         }
     }
 }

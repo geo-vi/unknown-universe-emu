@@ -59,6 +59,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.KillScreenRepairRequest.ID, new KillScreenRepairRequestHandler());
             OldClientCommands.Add(commands.old_client.requests.EquipModuleRequest.ID, new BattleStationEquipHandler());
             OldClientCommands.Add(commands.old_client.requests.BuildStationRequest.ID, new BuildStationHandler());
+            OldClientCommands.Add(commands.old_client.requests.AbilityLaunchRequest.ID, new AbilityLaunchHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

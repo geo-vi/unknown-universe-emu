@@ -74,5 +74,11 @@ namespace NettyBaseReloaded.Game.objects.world
                 drone.Experience += points;
             }
         }
+
+        public void RefineNewData(Player player)
+        {
+            player.Update();
+            player.Refresh();
+        }
     }
 }

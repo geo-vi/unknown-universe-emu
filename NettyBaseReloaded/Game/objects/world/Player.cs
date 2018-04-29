@@ -96,6 +96,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Booster> Boosters { get; set; }
 
+        public List<Ability> Abilities { get; set; }
+
         public ConcurrentDictionary<Player, Booster> InheritedBoosters = new ConcurrentDictionary<Player, Booster>();
 
         public override Skilltree Skills { get; set; }
@@ -121,17 +123,17 @@ namespace NettyBaseReloaded.Game.objects.world
                 switch (Formation)
                 {
                     case DroneFormation.CHEVRON:
-                        value = (int) (value * 0.2); // -20%
+                        value = (int)(value * 0.2); // -20%
                         break;
                     case DroneFormation.DIAMOND:
-                        value = (int) (value * 0.7); //-30%
+                        value = (int)(value * 0.7); //-30%
                         break;
                     case DroneFormation.MOTH:
                     case DroneFormation.HEART:
-                        value = (int) (value * 1.2); // +20%
+                        value = (int)(value * 1.2); // +20%
                         break;
                 }
-                value = (int) (value * Hangar.Ship.GetHealthBonus(this));
+                value = (int)(value * Hangar.Ship.GetHealthBonus(this));
 
                 return value;
             }
@@ -147,13 +149,13 @@ namespace NettyBaseReloaded.Game.objects.world
                 {
                     case DroneFormation.HEART:
                     case DroneFormation.TURTLE:
-                        value = (int) (value * 1.1); //+10%
+                        value = (int)(value * 1.1); //+10%
                         break;
                     case DroneFormation.DOUBLE_ARROW:
-                        value = (int) (value * 0.8); //-20%
+                        value = (int)(value * 0.8); //-20%
                         break;
                 }
-                value = (int) (value * Hangar.Ship.GetShieldBonus(this));
+                value = (int)(value * Hangar.Ship.GetShieldBonus(this));
 
                 return value;
             }
@@ -220,7 +222,7 @@ namespace NettyBaseReloaded.Game.objects.world
                         break;
                 }
                 if (BoostedAcceleration > 0)
-                    value = (int) (value * (1 + BoostedAcceleration));
+                    value = (int)(value * (1 + BoostedAcceleration));
                 return value;
             }
         }
@@ -234,16 +236,16 @@ namespace NettyBaseReloaded.Game.objects.world
                 switch (Formation)
                 {
                     case DroneFormation.TURTLE:
-                        value = (int) (value * 0.925); //-7.5%
+                        value = (int)(value * 0.925); //-7.5%
                         break;
                     case DroneFormation.ARROW:
-                        value = (int) (value * 0.97); //-3%
+                        value = (int)(value * 0.97); //-3%
                         break;
                     case DroneFormation.PINCER:
-                        value = (int) (value * 1.03); //+3%
+                        value = (int)(value * 1.03); //+3%
                         break;
                     case DroneFormation.HEART:
-                        value = (int) (value * 0.95); //-5%
+                        value = (int)(value * 0.95); //-5%
                         break;
                     case DroneFormation.BARRAGE:
                         if (Selected is Npc)
@@ -256,8 +258,8 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
 
                 if (BoostedDamage > 0)
-                    value = (int) (value * Hangar.Ship.GetDamageBonus(this) * (1 + BoostedDamage));
-                else value = (int) (value * Hangar.Ship.GetDamageBonus(this));
+                    value = (int)(value * Hangar.Ship.GetDamageBonus(this) * (1 + BoostedDamage));
+                else value = (int)(value * Hangar.Ship.GetDamageBonus(this));
                 return value;
             }
         }
@@ -270,13 +272,13 @@ namespace NettyBaseReloaded.Game.objects.world
                 switch (Formation)
                 {
                     case DroneFormation.TURTLE:
-                        value = (int) (value * 0.925); //-7.5%
+                        value = (int)(value * 0.925); //-7.5%
                         break;
                     case DroneFormation.ARROW:
-                        value = (int) (value * 1.2); //+20%
+                        value = (int)(value * 1.2); //+20%
                         break;
                     case DroneFormation.STAR:
-                        value = (int) (value * 1.25); //+25%
+                        value = (int)(value * 1.25); //+25%
                         break;
                     case DroneFormation.CHEVRON:
                         value = (int)(value * 1.5); //+50%
@@ -349,6 +351,7 @@ namespace NettyBaseReloaded.Game.objects.world
             TickVisuals();
             TickTechs();
             TickGates();
+            TickAbilities();
         }
 
         private void TickVisuals()
@@ -383,6 +386,12 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        private void TickAbilities()
+        {
+            foreach (var ability in Abilities)
+                ability.Tick();
+        }
+
         private void InitializeClasses()
         {
             Equipment = new Equipment(this);
@@ -393,6 +402,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Storage = new Storage(this);
             Log = new PlayerLog(SessionId);
             Boosters = new List<Booster>(); // TODO: Load from SQL
+            Abilities = Hangar.Ship.Abilities(this);
             Settings = new Settings(this);
             Range.EntityAdded += CharacterEnteredRange;
             Range.EntityRemoved += CharacterExitedRange;
@@ -755,6 +765,5 @@ namespace NettyBaseReloaded.Game.objects.world
             Position = pos;
             Refresh();
         }
-
     }
 }
