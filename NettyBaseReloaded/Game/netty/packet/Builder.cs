@@ -1360,7 +1360,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 int repairRobotStatus = gameSession.Player.Storage.BattleRepairRobotActivated ? 2 : 1;
                 int energyLeechStatus = gameSession.Player.Storage.EnergyLeechActivated ? 2 : 1;
                 int precisionTargeterStatus = gameSession.Player.Storage.PrecisionTargeterActivated ? 2 : 1;
-                gameSession.Client.Send(commands.old_client.LegacyModule.write("0|TX|S|"+ energyLeechStatus +"|99|0|1|99|0|"+ precisionTargeterStatus +"|99|0|1|99|0|"+ repairRobotStatus +"|99|0").Bytes);
+                gameSession.Client.Send(commands.old_client.LegacyModule.write("0|TX|S|0|0|0|1|99|0|"+ precisionTargeterStatus +"|99|0|1|99|0|"+ repairRobotStatus +"|99|0").Bytes);
             }
         }
 

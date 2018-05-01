@@ -1233,6 +1233,8 @@ namespace NettyBaseReloaded.Game.managers
                     var queryRow = mySqlClient.ExecuteQueryRow(
                         $"SELECT * FROM player_hangar, player_ship_config WHERE player_hangar.PLAYER_ID={player.Id} AND ACTIVE=1 AND player_ship_config.PLAYER_ID={player.Id}");
 
+                    int shieldLeft1 = player.Hangar.Configurations[0].CurrentShield;
+                    int shieldLeft2 = player.Hangar.Configurations[1].CurrentShield;
                     var hangarId = intConv(queryRow["HANGAR_COUNT"]);
                     if (player.Equipment.ActiveHangar != hangarId && player.Equipment.Hangars.ContainsKey(hangarId))
                         player.Equipment.ActiveHangar = hangarId;
@@ -1246,7 +1248,6 @@ namespace NettyBaseReloaded.Game.managers
                     int velocity1 = intConv(queryRow["CONFIG_1_SPEED"]);
                     string extras1 = queryRow["CONFIG_1_EXTRAS"].ToString();
                     int shield1 = intConv(queryRow["CONFIG_1_SHIELD"]);
-                    int shieldLeft1 = intConv(queryRow["CONFIG_1_SHIELD_LEFT"]);
                     int absorb1 = intConv(queryRow["CONFIG_1_SHIELDABSORB"]);
                     int lcount1 = intConv(queryRow["CONFIG_1_LASERCOUNT"]);
                     int ltypes1 = intConv(queryRow["CONFIG_1_LASER_TYPES"]);
@@ -1264,7 +1265,6 @@ namespace NettyBaseReloaded.Game.managers
                     int velocity2 = intConv(queryRow["CONFIG_2_SPEED"]);
                     string extras2 = queryRow["CONFIG_2_EXTRAS"].ToString();
                     int shield2 = intConv(queryRow["CONFIG_2_SHIELD"]);
-                    int shieldLeft2 = intConv(queryRow["CONFIG_2_SHIELD_LEFT"]);
                     int absorb2 = intConv(queryRow["CONFIG_2_SHIELDABSORB"]);
                     int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
                     int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);

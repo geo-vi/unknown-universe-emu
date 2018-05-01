@@ -138,7 +138,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 target.Value.LastCombatTime = DateTime.Now;
                 GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write(eciPacket), true);
                 if (target.Value is Player) Packet.Builder.AttackHitCommand(player.GetGameSession(), player.Id, target.Value, damage, (short)Types.ECI);
-                if (player is Player) Packet.Builder.AttackHitCommand(player.GetGameSession(), player.Id, target.Value, damage, (short)Types.ECI);
+                Packet.Builder.AttackHitCommand(player.GetGameSession(), player.Id, target.Value, damage, (short)Types.ECI);
             }
 
             foreach (var target in targets)
@@ -203,6 +203,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public static void Entity(IAttackable target, int totalDamage, Types damageType, int attackerId = 0, double shieldPenetration = 1, int totalAbsDamage = 0, bool direct = false)
         {
+            if (totalDamage == 0) Console.WriteLine("MISS");
             if (target == null) return;
             Character attacker = null;
             if (attackerId != 0 && target.Spacemap.Entities.ContainsKey(attackerId))

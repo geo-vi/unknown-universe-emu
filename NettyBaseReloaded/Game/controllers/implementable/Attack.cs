@@ -54,6 +54,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             return attackers;
         }
 
+        private DateTime LastLaserAttack = new DateTime();
+
+        private DateTime RSBCooldownEnd = new DateTime();
+
         public void LaserAttack()
         {
             var enemy = Character.Selected;
@@ -62,17 +66,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             var isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
             if (isRsb)
             {
-                if (Character.Cooldowns.Exists(cooldown => cooldown is RSBCooldown)) return;
+                if (RSBCooldownEnd > DateTime.Now) return;
 
                 var cld = new RSBCooldown();
                 cld.Send(((Player)Character).GetGameSession());
                 Character.Cooldowns.Add(cld);
+                RSBCooldownEnd = cld.EndTime;
             }
             else
             {
-                if (Character.Cooldowns.Exists(cooldown => cooldown is LaserCooldown)) return;
-                var newCooldown = new LaserCooldown();
-                Character.Cooldowns.Add(newCooldown);
+                if (LastLaserAttack.AddMilliseconds(750) > DateTime.Now) return;
+                LastLaserAttack = DateTime.Now;
             }
 
             var damage = Character.Damage;
@@ -233,6 +237,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
 
             damage = RandomizeDamage(damage);
+            absDamage = RandomizeDamage(absDamage);
             GameClient.SendRangePacket(Character,
                 netty.commands.old_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
                     Character is Player), true);

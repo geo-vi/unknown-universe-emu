@@ -20,10 +20,10 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
         {
             var player = gameSession.Player;
 
-            var item = player.Settings.Slotbar._items["ammunition_laser_rsb-75"];
+            var item = player.Settings.CurrentAmmo;
             if (player.UsingNewClient)
             {
-                gameSession.Client.Send(SetCooldown(item.ItemId, TimerState.COOLDOWN, 3000, 3000, true));
+                gameSession.Client.Send(SetCooldown(item.LootId, TimerState.COOLDOWN, 3000, 3000, true));
             }
             else
             {

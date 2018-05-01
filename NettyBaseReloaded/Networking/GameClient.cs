@@ -84,7 +84,7 @@ namespace NettyBaseReloaded.Networking
                     var entity = entry.Value as Player;
                     if (entity == null) continue;
 
-                    if (character.InRange(entry.Value, character.Controller.Checkers.VisibilityRange) && entity != character)
+                    if (character.Position.DistanceTo(entry.Value.Position) < character.Controller.Checkers.PacketSendRange && entity != character)
                     {
                         if (entity.UsingNewClient && command.IsNewClient)
                         {

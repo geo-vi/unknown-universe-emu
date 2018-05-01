@@ -18,6 +18,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public int VisibilityRange { get; set; }
 
+        public int PacketSendRange => 1000;
+
         public bool InVisibleZone => !Character.Range.Zones.Any(x => x.Value is PalladiumZone);
 
         public Checkers(AbstractCharacterController controller) : base(controller)

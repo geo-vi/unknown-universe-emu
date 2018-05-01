@@ -36,8 +36,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
                 if (!entityEntries.Any())
                 {
-                    var selectedAsset = gameSession.Player.Spacemap.Objects.FirstOrDefault(x => x.Key == targetId).Value as AttackableAsset;
-                    if (selectedAsset != null)
+                    if (gameSession.Player.Spacemap.Objects.FirstOrDefault(x => x.Key == targetId).Value is AttackableAsset selectedAsset)
                     {
                         gameSession.Player.Selected = selectedAsset.Core;
                         Packet.Builder.AssetInfoCommand(gameSession, selectedAsset);
