@@ -78,7 +78,7 @@ namespace NettyBaseReloaded.Game.objects.world
             return World.StorageManager.GameSessions[OwnerId].Player;
         }
 
-        public void Tick()
+        public override void Tick()
         {
             FuelReduction();
         }

@@ -195,7 +195,7 @@ namespace NettyBaseReloaded.Game.objects.world
             List<Ability> abilities = new List<Ability>();
             switch (Id)
             {
-                case 59:
+                case 49:
                     abilities.Add(new AegisHealBeam(player));
                     break;
             }

@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.map.objects.jumpgates;
 using NettyBaseReloaded.Game.objects.world.map.objects.stations;
+using NettyBaseReloaded.Game.objects.world.map.ores;
 using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.map.zones.pallazones;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
@@ -489,21 +490,21 @@ namespace NettyBaseReloaded.Game.objects.world
 
         #region Collectables
 
-        public void CreateOre(OreTypes type, Vector pos)
+        public void CreateOre(OreTypes type, Vector pos, int[] limits)
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
-            var box = new Ore(id, hash, type, pos, this);
+            var box = new PalladiumOre(id, hash, type, pos, this, limits);
             HashedObjects[hash] = box;
             if(AddObject(box))
                 World.Log.Write("Created Ore["+type+"] on mapId " + Id);
         }
 
-        public void CreateBox(Types type, Vector pos)
+        public void CreateBox(Types type, Vector pos, int[] limits)
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
-            var box = new BonusBox(id, hash, pos, this, true);
+            var box = new BonusBox(id, hash, pos, this, limits,true);
             HashedObjects[hash] = box;
             if (AddObject(box))
                 World.Log.Write("Created Box[" + type + "] on mapId " + Id);
@@ -574,6 +575,12 @@ namespace NettyBaseReloaded.Game.objects.world
             zone = new PalladiumZone6(zoneId);
             Zones.Add(zoneId, zone);
             CreatePOI(new POI("smoke_06", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(7600, 20700), new Vector(12300, 21500), new Vector(7600, 21500), new Vector(12300, 20700) }));
+
+            foreach (var _zone in Zones.Where(x => x.Value is PalladiumZone))
+            {
+                for (var i = 0; i < 60; i++)
+                    CreateOre(OreTypes.PALLADIUM, Vector.Random(this, _zone.Value.TopLeft.X, _zone.Value.BottomRight.X, _zone.Value.TopLeft.Y, _zone.Value.BottomRight.Y), new [] { _zone.Value.TopLeft.X, _zone.Value.BottomRight.X, _zone.Value.TopLeft.Y, _zone.Value.BottomRight.Y });
+            }
         }
 
         #endregion

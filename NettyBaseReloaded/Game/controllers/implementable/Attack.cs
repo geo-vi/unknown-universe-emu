@@ -336,7 +336,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void LaunchRocketLauncher()
         {
             var enemy = Character.Selected;
-            if (!AssembleEnemy(enemy)) return;
+            if (Character.RocketLauncher == null || !AssembleEnemy(enemy)) return;
 
             var player = Character as Player;
 

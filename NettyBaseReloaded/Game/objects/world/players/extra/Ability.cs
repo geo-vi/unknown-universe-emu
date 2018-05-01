@@ -49,10 +49,21 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
                 if (targetSession != null)
                 {
                     Packet.Builder.AbilityStartCommand(targetSession, this);
-                    Packet.Builder.AbilityEffectActivationCommand(targetSession, this);
                 }
             }
             Packet.Builder.AbilityStartCommand(Player.GetGameSession(), this);
+        }
+
+        protected void ShowEffect()
+        {
+            foreach (var target in TargetIds)
+            {
+                var targetSession = World.StorageManager.GetGameSession(target);
+                if (targetSession != null)
+                {
+                    Packet.Builder.AbilityEffectActivationCommand(targetSession, this);
+                }
+            }
             Packet.Builder.AbilityEffectActivationCommand(Player.GetGameSession(), this);
         }
 

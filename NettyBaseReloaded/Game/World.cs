@@ -35,7 +35,7 @@ namespace NettyBaseReloaded.Game
                     map.Value.CreateStation(Faction.MMO, new Vector(4000, 4000));
                     map.Value.CreateStation(Faction.EIC, new Vector(37600, 4000));
                     map.Value.CreateStation(Faction.VRU, new Vector(37600, 21600));
-                    //map.Value.CreateLoW(new Vector(20800, 12800));
+                    #region POIs
                     map.Value.CreatePOI(new POI("poi_01", objects.world.map.pois.Types.NO_ACCESS,
                         Designs.SIMPLE, Shapes.RECTANGLE,
                         new List<Vector>
@@ -423,12 +423,12 @@ namespace NettyBaseReloaded.Game
                             new Vector(19600, 1100),
                             new Vector(20000, 600)
                         }));
+                    #endregion
                     map.Value.CreateLoW(new Vector(17300, 1900));
                     map.Value.CreatePalladiumField();
                     map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));
                     map.Value.CreateHiddenPortal(42, 15800, 13500, 10400, 12800);
                     map.Value.CreateAsteroid("Shock", new Vector(28000, 7000));
-                    //map.Value.CreatePOI(new POI("billboard", objects.world.map.pois.Types.NO_ACCESS, Designs.SIMPLE, Shapes.CIRCLE, new List<Vector> { new Vector(15800, 13500), new Vector(15000, 13500) }));
                 }
 
                 if (map.Key == 42) map.Value.CreatePortal(16, 10400, 12800, 0,0);

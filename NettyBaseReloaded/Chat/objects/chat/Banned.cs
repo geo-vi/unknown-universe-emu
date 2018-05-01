@@ -5,11 +5,6 @@ namespace NettyBaseReloaded.Chat.objects.chat
     class Banned : Character
     {
         /// <summary>
-        /// Banned character id
-        /// </summary>
-        public int Id { get; }
-
-        /// <summary>
         /// Database ban id
         /// </summary>
         private int BanId { get; }

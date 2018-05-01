@@ -152,6 +152,14 @@ namespace NettyBaseReloaded.Game.objects.world
         NPC_DECLOAK_ZONE = 34,
         LEGENDARY_NPC_NAME = 35
     }
+
+    enum OreCollection
+    {
+        IN_PROGRESS,
+        FINISHED,
+        FAILED_CARGO_FULL,
+        FAILED_ALREADY_COLLECTED
+    }
     #pragma warning restore 1591
 
 }

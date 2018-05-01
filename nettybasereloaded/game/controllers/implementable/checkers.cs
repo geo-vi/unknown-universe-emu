@@ -18,7 +18,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public int VisibilityRange { get; set; }
 
-        public bool InVisibleZone => true; /*!Character.Range.Zones.Any(x => x.Value is PalladiumZone);*/
+        public int PacketSendRange => 1000;
+
+        public bool InVisibleZone => !Character.Range.Zones.Any(x => x.Value is PalladiumZone);
 
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
@@ -41,6 +43,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             RangeChecker();
             ZoneChecker();
             ObjectChecker();
+            //Console.WriteLine("VISIBILITY:" + InVisibleZone);
+
             LastTick = DateTime.Now;
         }
 
@@ -124,30 +128,30 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (entity == Character)
                 return;
 
-            //if (entity.Spacemap != Character.Spacemap && entity.Range.Entities.ContainsKey(Character.Id))
-            //{
-            //    RemoveCharacter(entity, Character);
-            //    return;
-            //}
+            if (entity.Spacemap != Character.Spacemap && entity.Range.Entities.ContainsKey(Character.Id))
+            {
+                RemoveCharacter(entity, Character);
+                return;
+            }
 
-            //if (entity is Pet)
-            //{
-            //    var pet = entity as Pet;
-            //    if (pet.GetOwner() == Character)
-            //        return;
-            //}
-            //if (GetForSelection(entity)) return;
+            if (entity is Pet)
+            {
+                var pet = entity as Pet;
+                if (pet.GetOwner() == Character)
+                    return;
+            }
+            if (GetForSelection(entity)) return;
 
-            //if (Character.InRange(entity, VisibilityRange) && !InVisibleZone || InVisibleZone && entity.Controller.Checkers.InVisibleZone)
-            //{
+            if (Character.InRange(entity, VisibilityRange) && !InVisibleZone || InVisibleZone && entity.Controller.Checkers.InVisibleZone)
+            {
                 if (!Character.Range.Entities.ContainsKey(entity.Id))
                     AddCharacter(Character, entity);
-            //}
-            //else
-            //{
-            //    if (Character.Range.Entities.ContainsKey(entity.Id))
-            //        RemoveCharacter(entity, Character);
-            //}
+            }
+            else
+            {
+                if (Character.Range.Entities.ContainsKey(entity.Id))
+                    RemoveCharacter(entity, Character);
+            }
         }
 
         private bool GetForSelection(Character entity)

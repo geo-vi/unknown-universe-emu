@@ -38,8 +38,16 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             foreach (string activeCPU in activeCPUs)
             {
-                if (activeCPU == "equipment_extra_cpu_arol-x") Active.Add(Types.AUTO_ROK);
-                else if (activeCPU == "equipment_extra_cpu_rllb-x") Active.Add(Types.AUTO_ROCKLAUNCHER);
+                if (activeCPU == "equipment_extra_cpu_arol-x")
+                {
+                    Active.Add(Types.AUTO_ROK);
+                    Update(Types.AUTO_ROK);
+                }
+                else if (activeCPU == "equipment_extra_cpu_rllb-x")
+                {
+                    Active.Add(Types.AUTO_ROCKLAUNCHER);
+                    Update(Types.AUTO_ROCKLAUNCHER);
+                }
             }
         }
 

@@ -303,6 +303,7 @@
     <Compile Include="Game\netty\commands\old_client\LogoutCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LootModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MapAddPOICommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\MapEventOreCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MessageLocalizedWildcardCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MessageWildcardReplacementModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MoveCommand.cs" />
@@ -480,6 +481,7 @@
     <Compile Include="Game\objects\world\map\objects\stations\ReadyRelayStation.cs" />
     <Compile Include="Game\objects\world\map\objects\stations\StationModule.cs" />
     <Compile Include="Game\objects\world\map\Ore.cs" />
+    <Compile Include="Game\objects\world\map\ores\PalladiumOre.cs" />
     <Compile Include="Game\objects\world\map\POI.cs" />
     <Compile Include="Game\objects\world\map\pois\Designs.cs" />
     <Compile Include="Game\objects\world\map\pois\Shapes.cs" />

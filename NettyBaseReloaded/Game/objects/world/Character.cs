@@ -337,7 +337,7 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public void SetPosition(Vector targetPosition)
+        public virtual void SetPosition(Vector targetPosition)
         {
             Destination = targetPosition;
             Position = targetPosition;

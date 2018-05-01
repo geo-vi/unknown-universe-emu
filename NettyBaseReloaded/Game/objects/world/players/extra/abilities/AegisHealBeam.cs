@@ -33,7 +33,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
                 return;
             Active = true;
             Selection = Player.SelectedCharacter;
-            if (Selection != null)
+            if (Selection != null && (Selection.FactionId == Player.FactionId || Player.Clan.GetRelation(Selection.Clan) == 1 || Player.Group != null && Player.Group.Members.ContainsKey(Selection.Id)))
             {
                 BeamStrenght = 2;
                 TargetIds.Add(Selection.Id);
@@ -53,10 +53,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
                 End();
                 Cooldown = new AegisHealBeamCooldown(this);
             }
+            ShowEffect();
             Player.Controller.Heal.Execute(BEAM_POWER * BeamStrenght, Player.Id);
             if (Selection == null || Selection != Player.SelectedCharacter)
                 return;
             Selection.Controller.Heal.Execute(BEAM_POWER * BeamStrenght, Player.Id);
+            
             //Heal selected
             
         }

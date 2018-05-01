@@ -60,8 +60,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public State State { get; private set; }
 
-        private Hangar _hangar;
-
         public override Hangar Hangar
         {
             get
@@ -461,7 +459,7 @@ namespace NettyBaseReloaded.Game.objects.world
             ILogin.SendLegacy(gameSession);
         }
 
-        public void SetPosition(Vector targetPosition)
+        public override void SetPosition(Vector targetPosition)
         {
             Position = targetPosition;
             OldPosition = targetPosition;

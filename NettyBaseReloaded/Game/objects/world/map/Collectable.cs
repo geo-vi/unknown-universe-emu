@@ -12,8 +12,6 @@ namespace NettyBaseReloaded.Game.objects.world.map
     {
         public string Hash { get; set; }
 
-        public Spacemap Spacemap { get; set; }
-
         public Types Type { get; set; }
 
         public bool Disposed { get; set; }
@@ -21,11 +19,13 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public bool Temporary { get; set; }
 
-        public Collectable(int id, string hash, Types type, Vector pos, Spacemap map) : base(id, pos, map)
+        public int[] Limits;
+
+        public Collectable(int id, string hash, Types type, Vector pos, Spacemap map, int[] limits) : base(id, pos, map)
         {
             Hash = hash;
             Type = type;
-            Spacemap = map;
+            Limits = limits;
         }
 
         public override void Tick()
@@ -64,7 +64,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         protected void Respawn()
         {
-            var newPos = Vector.Random(Spacemap, 1000, 19800, 1000, 11800);
+            var newPos = Vector.Random(Spacemap, Limits[0], Limits[1], Limits[2], Limits[3]);
             Position = newPos;
             Disposed = false;
             Spacemap.AddObject(this);

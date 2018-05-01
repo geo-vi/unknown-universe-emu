@@ -12,8 +12,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
 {
     class Equipment : PlayerBaseClass
     {
-        protected Player Player { get; }
-
         #region Hangars
         public int ActiveHangar = 0;
 
@@ -26,7 +24,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Equipment(Player player) : base(player)
         {
-            Player = player;
             RefreshHangars();
             AddModules();
         }

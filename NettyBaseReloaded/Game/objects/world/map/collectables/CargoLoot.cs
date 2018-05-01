@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
     {
         private Character Killer { get; }
         private DropableRewards Rewards { get; }
-        public CargoLoot(int id, string hash, Vector pos, DropableRewards dropableRewards, Character killer) : base(id,hash,Types.SHIP_LOOT, pos, killer.Spacemap)
+        public CargoLoot(int id, string hash, Vector pos, DropableRewards dropableRewards, Character killer) : base(id,hash,Types.SHIP_LOOT, pos, killer.Spacemap, null)
         {
             Rewards = dropableRewards;
             Killer = killer;
