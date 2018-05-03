@@ -197,6 +197,8 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 case 49:
                     abilities.Add(new AegisHealBeam(player));
+                    abilities.Add(new AegisShieldRecharge(player));
+                    abilities.Add(new AegisHealPod(player));
                     break;
             }
 

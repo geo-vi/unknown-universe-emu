@@ -1360,7 +1360,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 int repairRobotStatus = gameSession.Player.Storage.BattleRepairRobotActivated ? 2 : 1;
                 int energyLeechStatus = gameSession.Player.Storage.EnergyLeechActivated ? 2 : 1;
                 int precisionTargeterStatus = gameSession.Player.Storage.PrecisionTargeterActivated ? 2 : 1;
-                gameSession.Client.Send(commands.old_client.LegacyModule.write("0|TX|S|0|0|0|1|99|0|"+ precisionTargeterStatus +"|99|0|1|99|0|"+ repairRobotStatus +"|99|0").Bytes);
+                gameSession.Client.Send(commands.old_client.LegacyModule.write("0|TX|S|" + energyLeechStatus + "|99|0|1|99|0|" + precisionTargeterStatus + "|99|0|1|99|0|"+ repairRobotStatus +"|99|0").Bytes);
             }
         }
 
@@ -1559,6 +1559,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+        
         #region AbilityEffectActivationCommand
 
         public void AbilityEffectActivationCommand(GameSession gameSession, Ability ability)
@@ -1569,10 +1570,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AbilityEffectActivationCommand.write(ability.AbilityId, ability.Player.Id, ability.TargetIds).Bytes);
+                gameSession.Client.Send(commands.old_client.AbilityEffectActivationCommand.write(ability.AbilityId, ability.ActivatorId, ability.TargetIds).Bytes);
             }
         }
         #endregion
+
         #region AbilityEffectDeActivationCommand
 
         public void AbilityEffectDeActivation(GameSession gameSession, Ability ability)
@@ -1583,7 +1585,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AbilityEffectDeActivationCommand.write(ability.AbilityId, ability.Player.Id,ability.TargetIds).Bytes);
+                gameSession.Client.Send(commands.old_client.AbilityEffectDeActivationCommand.write(ability.AbilityId, ability.ActivatorId, ability.TargetIds).Bytes);
             }
         }
         #endregion
@@ -1602,5 +1604,35 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
+        #region MapEventOreCommand
+
+        public void MapEventOreCommand(GameSession gameSession, Ore ore, OreCollection eventType)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.MapEventOreCommand.write((short) eventType, new commands.old_client.OreTypeModule((short)ore.Type), ore.Hash).Bytes);
+            }
+        }
+        #endregion
+
+        #region AssetRemoveCommand
+
+        public void AssetRemoveCommand(GameSession gameSession, Asset asset)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AssetRemoveCommand.write(new commands.old_client.AssetTypeModule((short)asset.Type), asset.Id).Bytes);
+            }
+        }
+#endregion
     }
 }

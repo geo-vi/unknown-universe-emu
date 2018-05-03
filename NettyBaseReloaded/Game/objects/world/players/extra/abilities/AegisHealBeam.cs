@@ -55,8 +55,13 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
             }
             ShowEffect();
             Player.Controller.Heal.Execute(BEAM_POWER * BeamStrenght, Player.Id);
-            if (Selection == null || Selection != Player.SelectedCharacter)
+            if (Selection == null || Selection != Player.SelectedCharacter || Player.Controller.Attack.GetActiveAttackers().Contains(Selection))
+            {
+                BeamStrenght = 1;
+                Selection = null;
                 return;
+            }
+
             Selection.Controller.Heal.Execute(BEAM_POWER * BeamStrenght, Player.Id);
             
             //Heal selected

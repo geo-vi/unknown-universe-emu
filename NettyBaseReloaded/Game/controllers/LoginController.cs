@@ -44,7 +44,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             //41600 * 25600
             var player = _gameSession.Player;
-            if (Properties.Game.PVP_MODE && player.Spacemap.Id != 16)
+            if (Properties.Game.PVP_MODE && player.Spacemap.Id == 255)
             {
                 var closestStation = player.GetClosestStation();
                 player.Spacemap = closestStation.Item2;

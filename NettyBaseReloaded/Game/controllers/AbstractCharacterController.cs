@@ -43,7 +43,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Active = true;
             StopController = false;
-            Checkers.Start();
+            Task.Factory.StartNew(Checkers.Start);
             Task.Factory.StartNew(Tick);
         }
 

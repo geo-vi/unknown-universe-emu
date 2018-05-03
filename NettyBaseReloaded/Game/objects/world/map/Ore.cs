@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Networking;
 
@@ -31,13 +32,23 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public virtual void Collect(Character character)
         {
-            if (Disposed) return;
+            var player = character as Player;
+            if (Disposed)
+            {
+                if (player != null)
+                    Packet.Builder.MapEventOreCommand(player.GetGameSession(), this, OreCollection.FAILED_ALREADY_COLLECTED);
+                return;
+            }
+            if (player != null)
+            {
+                Packet.Builder.MapEventOreCommand(player.GetGameSession(), this, OreCollection.FINISHED);
+            }
             Dispose();
         }
 
         public void Dispose()
         {
-            GameClient.SendToSpacemap(Spacemap, netty.commands.old_client.LegacyModule.write("0|2|" + Hash));
+            GameClient.SendToSpacemap(Spacemap, netty.commands.old_client.LegacyModule.write("0|q|" + Hash));
             Spacemap.RemoveObject(this);
             Disposed = true;
         }

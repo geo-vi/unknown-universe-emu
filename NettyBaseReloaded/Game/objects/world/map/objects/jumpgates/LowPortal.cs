@@ -16,7 +16,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
 
         public override void click(Character character)
         {
-            var player =  character as Player;
+            var player = character as Player;
             if (player == null) return;
             if (player.Group == null)
             {
@@ -26,26 +26,25 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
 
             // If any other group member has the gate
             var groupMemberWithGateInitiated =
-                player.Group.Members.FirstOrDefault(x => x.Value.OwnedGates.Any(y => y is LowGate));
+                player.Group.Members.FirstOrDefault(x => x.Value.OwnedGates.Any(y => y.Value is LowGate));
 
             if (groupMemberWithGateInitiated.Value != null)
             {
-                var low = groupMemberWithGateInitiated.Value.OwnedGates.FirstOrDefault(x => x is LowGate);
-                if (low.VWID != 0 && low.VirtualMap != null)
+                var low = groupMemberWithGateInitiated.Value.OwnedGates.FirstOrDefault(x => x.Value is LowGate);
+                if (low.Value.VWID != 0 && low.Value.VirtualMap != null)
                 {
-                    player.Controller.Miscs.Jump(low.VirtualMap.Id, Destination, Id, low.VWID);
-                    low.PendingPlayers.Add(player);
+                    player.Controller.Miscs.Jump(low.Value.VirtualMap.Id, Destination, Id, low.Value.VWID);
+                    low.Value.PendingPlayers.TryAdd(player.Id, player);
                 }
                 else Console.WriteLine("Escape");
             }
             else
             {
                 var low = new LowGate(0, World.StorageManager.Spacemaps[200]);
-                low.DefineOwner(player);
+                player.CreateGalaxyGate(low);
                 low.InitiateVirtualWorld();
-                Console.WriteLine(low.VWID.ToString());
                 player.Controller.Miscs.Jump(low.VirtualMap.Id, Destination, Id, low.VWID);
-                low.PendingPlayers.Add(player);
+                low.PendingPlayers.TryAdd(player.Id, player);
             }
         }
     }

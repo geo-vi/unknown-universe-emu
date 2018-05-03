@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Game.objects.world.players.equipment;
 
 namespace NettyBaseReloaded.Game.objects.world.map.gg
 {
@@ -75,19 +78,25 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
             }
         };
 
-
+        public int RelaysDown = 0;
         public LowGate(int wave, Spacemap baseMap) : base(baseMap, wave)
         {
             AlmostNoNpcsLeft += LowGate_AlmostNoNpcsLeft;
         }
 
-        private int DestroyedRelays = 0;
+        public override void Tick()
+        {
+            base.Tick();
+            if (RelaysDown == 4 && (!Active || VirtualMap.Entities.Count(x => x.Value is Npc) == 0) && Waves.ContainsKey(Wave))
+            {
+                Start();
+            }
+        }
+
         private void DestroyedRelay(object sender, Asset asset)
         {
             Start();
-            DestroyedRelays++;
-            if (DestroyedRelays == 4)
-                WavesLeftTillEnd = 10;
+            RelaysDown++;
         }
 
         private void LowGate_AlmostNoNpcsLeft(object sender, EventArgs e)
@@ -113,27 +122,57 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
 
         public override void SendWave()
         {
-            if (!Waves.ContainsKey(Wave) || WavesLeftTillEnd <= 0)
+            try
             {
-                return;
+                if (!Waves.ContainsKey(Wave) || WavesLeftTillEnd <= 0 && RelaysDown != 4)
+                {
+                    return;
+                }
+                Waves[Wave].Create(VirtualMap);
+                Wave++;
+                WavesLeftTillEnd--;
+                foreach (var joined in JoinedPlayers.Values)
+                {
+                    if (joined.GetGameSession() == null) continue;
+                    Packet.Builder.LegacyModule(joined.GetGameSession(), "0|A|STD|Wave " + Wave);
+                }
             }
-            Waves[Wave].Create(VirtualMap);
-            Wave++;
-            WavesLeftTillEnd--;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                new ExceptionLog("low", "", e);
+            }
         }
 
         public override void End()
         {
             Active = false;
-            Console.WriteLine("END");
             WaitingPhaseEnd = DateTime.MaxValue;
-            Console.WriteLine("Initiated wait phase");
         }
 
         public override void Reward()
         {
-            //TODO: Add rewards
-            MoveOut();
+            Finished = true;
+
+            var hit = Random.Next(0, 100);
+            foreach (var joined in JoinedPlayers.Values)
+            {
+                var currencyReward = new Reward(new Dictionary<RewardType, int> { { RewardType.CREDITS, 2500000 }, { RewardType.URIDIUM, 25000 } });
+                var ammoReward = new Reward(RewardType.AMMO, new Item(-1, "ammunition_laser_ucb-100", 25000), 25000);
+                var specialReward = new characters.Reward(RewardType.ITEM, new Item(-1, "equipment_weapon_laser_lf-4", 1), 1);
+                if (joined?.GetGameSession() == null) continue;
+                var joinedSession = joined.GetGameSession();
+                if (hit == 15)
+                {
+                    Packet.Builder.LegacyModule(joinedSession, "0|A|STD|You've won a LF4!");
+                    specialReward.ParseRewards(joined);
+                }
+                //TODO
+                MoveOut(joined);
+                ammoReward.ParseRewards(joined);
+                currencyReward.ParseRewards(joined);
+            }
+            JoinedPlayers.Clear();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.jumpgates;
+using NettyBaseReloaded.Main.interfaces;
 
 namespace NettyBaseReloaded.Game.objects.world.map
 {
@@ -28,10 +30,14 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public int WavesLeftTillEnd = 0;
 
-        public List<Player> JoinedPlayers = new List<Player>();
-        public List<Player> PendingPlayers = new List<Player>();
+        public ConcurrentDictionary<int, Player> JoinedPlayers = new ConcurrentDictionary<int, Player>();
+        public ConcurrentDictionary<int, Player> PendingPlayers = new ConcurrentDictionary<int, Player>();
 
         public bool Active { get; set; }
+
+        public bool Finished { get; set; }
+
+        public bool Rewarded { get; set; }
 
         /// <summary>
         /// Overriden for the GG Location (where portal will be created)
@@ -39,7 +45,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public virtual Vector Location { get; set; }
 
         public DateTime WaitingPhaseEnd = new DateTime();
-        
+
         protected Player Owner { get; private set; }
 
         protected GalaxyGate(Spacemap coreMap, int wave)
@@ -50,51 +56,71 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public virtual void Tick()
         {
-            if (PendingPlayers.Count != 0)
+            try
             {
-                for (int i = 0; i < PendingPlayers.Count; i++)
+                if (Finished && Rewarded)
                 {
-                    var p = PendingPlayers[i];
-                    if (!p.Controller.Jumping && p.Spacemap != VirtualMap)
+                    foreach (var joined in JoinedPlayers)
+                        MoveOut(joined.Value);
+                    return;
+                }
+                if (PendingPlayers.Count > 0)
+                {
+                    foreach (var pendingPlayer in PendingPlayers.Values)
                     {
-                        PendingPlayers.RemoveAt(i);
-                        continue;
-                    }
-                    if (p.Spacemap == VirtualMap)
-                    {
-                        PendingPlayers.RemoveAt(i);
-                        JoinedPlayers.Add(p);
+                        Player removedCharacter = null;
+                        if (!pendingPlayer.Controller.Jumping && pendingPlayer.Spacemap != VirtualMap)
+                        {
+                            PendingPlayers.TryRemove(pendingPlayer.Id, out removedCharacter);
+                            continue;
+                        }
+                        if (pendingPlayer.Spacemap == VirtualMap)
+                        {
+                            PendingPlayers.TryRemove(pendingPlayer.Id, out removedCharacter);
+                            JoinedPlayers.TryAdd(pendingPlayer.Id, pendingPlayer);
+                        }
                     }
                 }
-            }
-            if (JoinedPlayers.Count == 0)
-            {
-                //TODO
-                return;
-            }
-            if (CountdownInProcess)
-            {
-                Count();
-                return;
-            }
-
-            if (Active)
-            {
-                if (!VirtualMap.Entities.Any(pair => pair.Value is Npc))
-                    End();
-                else NpcChecker();
-                CheckOwnerActivity();
-            }
-            else if (!CountdownInProcess && DateTime.Now > WaitingPhaseEnd && Waves.ContainsKey(Wave))
-            {
+                if (JoinedPlayers.Count == 0)
+                {
+                    //TODO
+                    CheckOwnerActivity();
+                    return;
+                }
                 if (JoinedPlayers.Count > 0)
                 {
-                    CountdownEnd = DateTime.Now.AddSeconds(30);
-                    CountdownInProcess = true;
+                    CheckPlayersActivity();
                 }
+                if (CountdownInProcess)
+                {
+                    Count();
+                    return;
+                }
+
+                if (Active)
+                {
+                    if (!VirtualMap.Entities.Any(pair => pair.Value is Npc))
+                        End();
+                    else NpcChecker();
+                    CheckOwnerActivity();
+                }
+                else if (!CountdownInProcess && DateTime.Now > WaitingPhaseEnd && Waves.ContainsKey(Wave))
+                {
+                    if (JoinedPlayers.Count > 0)
+                    {
+                        CountdownEnd = DateTime.Now.AddSeconds(30);
+                        CountdownInProcess = true;
+                    }
+                }
+                if (!Waves.ContainsKey(Wave + 1) && VirtualMap.Entities.Count(x => x.Value is Npc) == 0)
+                    Reward();
             }
-            else if (!Waves.ContainsKey(Wave))
-                Reward();
+            catch (Exception e)
+            {
+                Console.WriteLine("TICK");
+                Console.WriteLine(e);
+                new ExceptionLog("low-tick", "", e);
+            }
         }
 
         /// <summary>
@@ -104,7 +130,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public bool CountdownInProcess { get; set; }
         public DateTime CountdownEnd { get; set; }
 
-        private int LastCldSent = 0; 
+        private int LastCldSent = 0;
         public void Count()
         {
             if (CountdownEnd < DateTime.Now)
@@ -115,7 +141,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
             }
 
             var secs = (CountdownEnd - DateTime.Now).Seconds;
-            foreach (var player in JoinedPlayers)
+            foreach (var player in JoinedPlayers.Values)
             {
                 var playerSession = player.GetGameSession();
                 if (playerSession != null)
@@ -151,6 +177,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public virtual void Reward()
         {
             //Override if needed
+            Rewarded = true;
         }
 
         #region Core
@@ -168,77 +195,139 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Spacemap vwMap;
             Spacemap.Duplicate(Spacemap, out vwMap);
             Spacemap.VirtualWorlds[VWID] = vwMap;
+            vwMap.CreateHealthStation(new Vector(10400, 6400));
+            vwMap.CreateRelayStation(new Vector(2500, 2000));
+            vwMap.CreateRelayStation(new Vector(6200, 11700));
+            vwMap.CreateRelayStation(new Vector(18300, 10900));
+            vwMap.CreateRelayStation(new Vector(18200, 4000));
             Initiate();
         }
 
         protected event EventHandler AlmostNoNpcsLeft;
+
         private void NpcChecker()
         {
-            if (VirtualMap.Entities.Count(x => x.Value is Npc) < 0.15 * Waves[Wave].Npcs.Count)
+            if (VirtualMap.Entities.Count(x => x.Value is Npc) < 0.15 * Waves[Wave - 1].Npcs.Count)
                 AlmostNoNpcsLeft?.Invoke(this, EventArgs.Empty);
+
+        }
+
+        private void CheckPlayersActivity()
+        {
+            try
+            {
+                foreach (var joined in JoinedPlayers.Values)
+                {
+                    Player player = joined;
+                    if (joined.Spacemap != VirtualMap)
+                    {
+                        JoinedPlayers.TryRemove(player.Id, out player);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error here");
+                Console.WriteLine(e);
+            }
         }
 
         private void CheckOwnerActivity()
         {
-            if (Owner == null && JoinedPlayers.Count > 0)
+            try
             {
-                var player = JoinedPlayers.FirstOrDefault(x => x?.GetGameSession() != null);
-                if (player != null)
-                    DefineOwner(player);
-                return;
-            }
-            if (Owner == null || JoinedPlayers.Count == 0) return;
-            if (Owner.Spacemap != VirtualMap)
-            {
-                Player player = JoinedPlayers.FirstOrDefault(x => x?.Spacemap == VirtualMap);
-                if (player != null)
-                    DefineOwner(player);
+                if (JoinedPlayers.Count > 0)
+                {
+                    foreach (var joinedPlayer in JoinedPlayers.Values)
+                    {
+                        Player player = joinedPlayer;
+                        if (player.GetGameSession() == null)
+                        {
+                            JoinedPlayers.TryRemove(joinedPlayer.Id, out player);
+                            continue;
+                        }
+
+                        if (player == Owner)
+                        {
+                            if (player.Spacemap.Id != VirtualMap.Id)
+                            {
+                                if (JoinedPlayers.Count > 1)
+                                {
+                                    DefineOwner(JoinedPlayers.FirstOrDefault(x => x.Value != player).Value);
+                                }
+                                else
+                                {
+                                    Active = false;
+                                    Finished = true;
+                                    CheckAndRemove(player);
+                                    return;
+                                }
+                            }
+                        }
+
+                        if (Owner == null)
+                        {
+                            if (JoinedPlayers.Count > 0)
+                                DefineOwner(JoinedPlayers.FirstOrDefault().Value);
+                        }
+                    }
+                }
                 else
                 {
-                    Owner.OwnedGates.Remove(this);
+                    CheckAndRemove(Owner);
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Owner activity");
+                Console.WriteLine(e);
             }
         }
 
         public void DefineOwner(Player player)
         {
-            if (Owner != null)
+            if (player.OwnedGates.ContainsKey(Id))
             {
-                if (Owner.OwnedGates.Contains(this))
-                    Owner.OwnedGates.Remove(this);
+                Owner = player;
+                return;
             }
+            player.CreateGalaxyGate(this);
             Owner = player;
-            player.OwnedGates.Add(this);
         }
 
-        public void MoveOut()
+        public void CheckAndRemove(Player player)
         {
-            foreach (var joinedPlayer in JoinedPlayers)
+            if (player == null) return;
+            if (player.OwnedGates.ContainsKey(Id))
             {
-                Vector targetPos;
-                Spacemap targetMap;
-                switch (joinedPlayer.FactionId)
-                {
-                    case Faction.MMO:
-                        targetMap = World.StorageManager.Spacemaps[1];
-                        targetPos = new Vector(1000, 1000);
-                        break;
-                    case Faction.EIC:
-                        targetMap = World.StorageManager.Spacemaps[5];
-                        targetPos = new Vector(19800, 1000);
-                        break;
-                    case Faction.VRU:
-                        targetMap = World.StorageManager.Spacemaps[9];
-                        targetPos = new Vector(19800, 11800);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                joinedPlayer.MoveToMap(targetMap, targetPos);
+                GalaxyGate removedGate = null;
+                player.OwnedGates.TryRemove(Id, out removedGate);
             }
-            JoinedPlayers.Clear();
-            Owner.OwnedGates.Remove(this);
         }
+
+        public void MoveOut(Player player)
+        {
+            if (player?.GetGameSession() == null) return;
+            Vector targetPos = null;
+            Spacemap targetMap = null;
+            switch (player.FactionId)
+            {
+                case Faction.MMO:
+                    targetMap = World.StorageManager.Spacemaps[1];
+                    targetPos = new Vector(1000, 1000);
+                    break;
+                case Faction.EIC:
+                    targetMap = World.StorageManager.Spacemaps[5];
+                    targetPos = new Vector(19800, 1000);
+                    break;
+                case Faction.VRU:
+                    targetMap = World.StorageManager.Spacemaps[9];
+                    targetPos = new Vector(19800, 11800);
+                    break;
+            }
+            player.MoveToMap(targetMap, targetPos, 0);
+        }
+
         #endregion
     }
 }

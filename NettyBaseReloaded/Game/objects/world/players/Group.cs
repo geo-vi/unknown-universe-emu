@@ -53,6 +53,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             DeleteInvitation(player, acceptedPlayer);
 
             SendInitToAll();
+            Update();
         }
 
         private int FindId()
@@ -68,11 +69,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
             player.Group = this;
         }
 
-        public void Tick()
-        {
-            Update();
-        }
-
         public void SendInitToAll()
         {
             foreach (var player in Members)
@@ -82,10 +78,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
             }
         }
 
-        private DateTime LastUpdate = new DateTime();
-        public void Update()
+        public async void Update()
         {
-            if (LastUpdate.AddSeconds(1) < DateTime.Now)
+            while (Members.Count > 1)
             {
                 foreach (var groupMemberInstance in Members.Values)
                 {
@@ -95,25 +90,31 @@ namespace NettyBaseReloaded.Game.objects.world.players
                         Leave(groupMemberInstance);
                         continue;
                     }
-                    if (!instance.Player.Controller.Active && !instance.InProcessOfReconection && !instance.InProcessOfDisconnection)
+
+                    if (!instance.Player.Controller.Active && !instance.InProcessOfReconection &&
+                        !instance.InProcessOfDisconnection)
                     {
                         Leave(instance.Player);
                         continue;
                     }
+
                     if (instance.Player.Group == null)
                     {
                         instance.Player.Group = this;
                         SendInitToAll(); // TEMP FIX
                     }
+
                     foreach (var _member in Members.Values)
                     {
                         if (_member == null) continue;
-                        
+
                         Packet.Builder.GroupUpdateCommand(instance, _member, GetStats(_member));
                     }
                 }
-                LastUpdate = DateTime.Now;
+
+                await Task.Delay(1000);
             }
+            Destroy();
         }
 
         private XElement GetStats(Player player)

@@ -316,7 +316,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<VisualEffect> Visuals = new List<VisualEffect>();
 
-        public List<GalaxyGate> OwnedGates = new List<GalaxyGate>();
+        public ConcurrentDictionary<int, GalaxyGate> OwnedGates = new ConcurrentDictionary<int, GalaxyGate>();
 
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
@@ -344,7 +344,6 @@ namespace NettyBaseReloaded.Game.objects.world
             Information.Timer();
             State.Tick();
             Hangar.DronesLevelChecker(this);
-            Group?.Tick();
             TickEvents();
             TickVisuals();
             TickTechs();
@@ -378,9 +377,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         private void TickGates()
         {
-            foreach (GalaxyGate t in OwnedGates)
+            foreach (var t in OwnedGates)
             {
-                t.Tick();
+                t.Value.Tick();
             }
         }
 
@@ -431,6 +430,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void UnloadObject(Object obj)
         {
             if (obj is Collectable) Storage.UnLoadCollectable(obj as Collectable);
+            if (obj is Asset) Storage.UnloadAsset(obj as Asset);
             else
             {
                 if (Storage.LoadedObjects.ContainsKey(obj.Id))
@@ -754,14 +754,33 @@ namespace NettyBaseReloaded.Game.objects.world
             return World.StorageManager.GetGameSession(Id);
         }
 
-        public void MoveToMap(Spacemap map, Vector pos)
+        public void MoveToMap(Spacemap map, Vector pos, int vwid)
         {
             Storage.Clean();
             State.Reset();
-            VirtualWorldId = 0;
+            VirtualWorldId = vwid;
             Spacemap = map;
             Position = pos;
             Refresh();
+        }
+
+        public int CreateGalaxyGate(GalaxyGate gate)
+        {
+            int id = 0;
+            if (gate.Id == 0)
+            {
+                var lastId = 0;
+                foreach (var obj in OwnedGates.Keys)
+                {
+                    if (obj == lastId + 1)
+                        lastId++;
+                    else return lastId + 1;
+                }
+                id = lastId + 1;
+                gate.Id = id;
+            }
+            OwnedGates.TryAdd(id, gate);
+            return id;
         }
     }
 }

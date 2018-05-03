@@ -51,7 +51,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         private DateTime LastInviteClean = new DateTime();
         public void CleanInvites()
         {
-            if (LastInviteClean.AddSeconds(10) < DateTime.Now)
+            if (LastInviteClean.AddSeconds(30) < DateTime.Now)
             {
                 foreach (var invite in GroupInvites.ToList())
                 {
@@ -106,7 +106,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(asset.Id))
                 LoadedObjects.Add(asset.Id, asset);
-            Console.WriteLine("Loading " + asset.Type);
             Packet.Builder.AssetCreateCommand(gameSession, asset);
         }
 
@@ -132,6 +131,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
             if (!LoadedObjects.ContainsKey(ore.Id))
                 LoadedObjects.Add(ore.Id, ore);
             Packet.Builder.AddOreCommand(gameSession, ore);
+        }
+
+        public void UnloadAsset(Asset asset)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (LoadedObjects.ContainsKey(asset.Id))
+                LoadedObjects.Remove(asset.Id);
+            Packet.Builder.AssetRemoveCommand(gameSession, asset);
         }
 
         public void Clean()

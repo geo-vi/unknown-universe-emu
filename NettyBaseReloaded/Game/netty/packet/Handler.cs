@@ -60,6 +60,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.EquipModuleRequest.ID, new BattleStationEquipHandler());
             OldClientCommands.Add(commands.old_client.requests.BuildStationRequest.ID, new BuildStationHandler());
             OldClientCommands.Add(commands.old_client.requests.AbilityLaunchRequest.ID, new AbilityLaunchHandler());
+            OldClientCommands.Add(commands.old_client.requests.HarvestRequest.ID, new HarvestHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

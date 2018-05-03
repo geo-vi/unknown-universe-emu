@@ -344,6 +344,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\DroneFormationChangeRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\EquipModuleRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\GameplaySettingsRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\HarvestRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLaunchRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLoadRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormSelectRocketRequest.cs" />
@@ -395,6 +396,7 @@
     <Compile Include="Game\netty\handlers\ForceInitHandler.cs" />
     <Compile Include="Game\netty\handlers\GameplaySettingsHandler.cs" />
     <Compile Include="Game\netty\handlers\GroupSystemHandler.cs" />
+    <Compile Include="Game\netty\handlers\HarvestHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLaunchHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormLoadHandler.cs" />
     <Compile Include="Game\netty\handlers\HellstormSelectRocketHandler.cs" />
@@ -422,6 +424,8 @@
     <Compile Include="Game\netty\commands\Command.cs" />
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\AegisHealBeamCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\AegisHealPodCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\AegisShieldRechargeCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\EnergyLeechCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\PetComboRepairCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\PrecisionTargeterCooldown.cs" />
@@ -449,7 +453,7 @@
     <Compile Include="Game\objects\world\characters\Range.cs" />
     <Compile Include="Game\objects\world\characters\Reward.cs" />
     <Compile Include="Game\objects\world\characters\RocketLauncher.cs" />
-    <Compile Include="Game\objects\world\characters\TickRates.cs" />
+    <Compile Include="Game\objects\world\characters\Updaters.cs" />
     <Compile Include="Game\objects\world\EntityStates.cs" />
     <Compile Include="Game\objects\world\Events.cs" />
     <Compile Include="Game\objects\world\events\GameEvent.cs" />
@@ -457,6 +461,7 @@
     <Compile Include="Game\objects\world\map\objects\assets\cbs\BoosterStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\LaserStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\RocketStationModule.cs" />
+    <Compile Include="Game\objects\world\map\objects\assets\WreckAsset.cs" />
     <Compile Include="Game\objects\world\map\objects\AttackableAsset.cs" />
     <Compile Include="Game\objects\world\map\objects\AttackableAssetCore.cs" />
     <Compile Include="Game\objects\world\map\collectables\BonusBox.cs" />
@@ -518,6 +523,7 @@
     <Compile Include="Game\objects\world\players\events\ScoreMageddon.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\Abilities.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\AegisHealBeam.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\AegisHealPod.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\AegisShieldRecharge.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\CitadelDrawFire.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\CitadelProtection.cs" />

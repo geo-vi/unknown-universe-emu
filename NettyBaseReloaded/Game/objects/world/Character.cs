@@ -12,6 +12,7 @@ using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
+using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;

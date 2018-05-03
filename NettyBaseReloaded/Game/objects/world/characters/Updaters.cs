@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.objects.world.characters
 {
-    enum TickRates
+    class Updaters
     {
-        ECO = 500,
-        NORMAL = 250,
-        HIGH_PERFORMANCE = 100,
-        MAX = 50
     }
 }

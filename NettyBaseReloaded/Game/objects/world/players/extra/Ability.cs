@@ -23,6 +23,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
 
         public int AbilityId => (int) AbilityType;
 
+        public virtual int ActivatorId => Player.Id;
+
         private bool CooldownActive => Cooldown?.EndTime  > DateTime.Now;
 
         private bool LastStatusSent;
