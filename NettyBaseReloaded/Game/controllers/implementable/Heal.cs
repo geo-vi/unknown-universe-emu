@@ -73,7 +73,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Character.Id), "0|A|HL|" + healerId + "|" + Character.Id + "|SHD|" + Character.CurrentShield + "|" +
                                                                                                amount);
 
-            Character.Update();
         }
     }
 }

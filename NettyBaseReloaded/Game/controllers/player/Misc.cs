@@ -134,8 +134,6 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             baseController.Player.CurrentConfig = targetConfigId;
 
-            baseController.Player.Update();
-
             Packet.Builder.LegacyModule(gameSession
                 , "0|A|CC|" + baseController.Player.CurrentConfig);
 

@@ -10,7 +10,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void OnStart(Character character)
         {
-
+            base.OnStart(character);
         }
 
         public override void OnFinish(Character character)

@@ -176,6 +176,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Cooldown> Cooldowns { get; set; }
 
+        public Updaters Updaters { get; set; }
+
         protected Character(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap,
             Reward rewards, Clan clan = null) : base(id)
         {
@@ -199,7 +201,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Range = new Range {Character = this};
 
             Skills = new Skilltree(this);
-
+            Updaters = new Updaters(this);
             LastCombatTime = DateTime.Now;
 
             Cooldowns = new List<Cooldown>();
@@ -210,57 +212,10 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public EventHandler Ticked;
         public override void Tick()
         {
-            if (this is Npc)
-            {
-                //((Npc) this).Tick();
-            }
-            else if (this is Player)
-            {
-                ((Player) this).Tick();
-            }
-            else if (this is Pet)
-            {
-                ((Pet) this).Tick();
-            }
-            //Update();
-            Regenerate();
-            TickCooldowns();
-            RocketLauncher?.Tick();
-        }
-
-        public void Update()
-        {
-            try
-            {
-                if (CurrentHealth > MaxHealth) CurrentHealth = MaxHealth;
-                if (CurrentHealth < 0) CurrentHealth = 0;
-                if (CurrentShield > MaxShield) CurrentShield = MaxShield;
-                if (CurrentShield < 0) CurrentShield = 0;
-
-
-                if (this is Player)
-                {
-                    var player = (Player) this;
-                    var gameSession = World.StorageManager.GetGameSession(Id);
-                    if (gameSession == null) return;
-
-                    Packet.Builder.HitpointInfoCommand(gameSession, player.CurrentHealth, player.MaxHealth, player.CurrentNanoHull, player.MaxNanoHull);
-                    //Update shield
-                    Packet.Builder.AttributeShieldUpdateCommand(gameSession, player.CurrentShield, player.MaxShield);
-                    //Update speed
-                    Packet.Builder.AttributeShipSpeedUpdateCommand(gameSession, player.Speed);
-                }
-
-                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
-                    CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
-                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
-                    CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
-            }
-            catch (Exception)
-            {
-            }
+            Ticked?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateShip()
@@ -277,52 +232,6 @@ namespace NettyBaseReloaded.Game.objects.world
                 Packet.Builder.ShipInitializationCommand(World.StorageManager.GetGameSession(Id));
         }
 
-        private DateTime LastRegeneratedTime = new DateTime(2016, 12, 24, 0, 0,0);
-        private void Regenerate()
-        {
-            try
-            {
-                if (Controller == null || LastRegeneratedTime.AddSeconds(1) >= DateTime.Now) return;
-                LastRegeneratedTime = DateTime.Now;
-
-                // Takes 25 secs to recover the shield
-                var amount = MaxShield / 25;
-                if (Formation == DroneFormation.DIAMOND)
-                    amount = (int)(MaxShield * 0.01);
-
-                if (Formation == DroneFormation.MOTH)
-                {
-                    if (CurrentShield <= 0) return;
-                    CurrentShield -= amount;
-                }
-                else
-                {
-                    if (LastCombatTime.AddSeconds(5) >= DateTime.Now && Formation != DroneFormation.DIAMOND ||
-                        CurrentShield >= MaxShield)
-                        return;
-
-                    //If the amount + currentShield is more than the maxShield adjusts it
-                    if ((CurrentShield + amount) > MaxShield)
-                        amount = MaxShield - CurrentShield;
-
-                    CurrentShield += amount;
-                }
-
-                //Updates the shield for the users who have 'you' clicked
-                GameClient.SendPacketSelected(this, netty.commands.old_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
-                    CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
-                GameClient.SendPacketSelected(this, netty.commands.new_client.ShipSelectionCommand.write(Id, Hangar.ShipDesign.Id, CurrentShield, MaxShield,
-                    CurrentHealth, MaxHealth, CurrentNanoHull, MaxNanoHull, false));
-
-                Update();
-
-            }
-            catch (Exception)
-            {
-
-            }
-        }
-        
         public void TickCooldowns()
         {
             if (Cooldowns == null) return;

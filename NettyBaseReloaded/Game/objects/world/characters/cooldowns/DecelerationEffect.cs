@@ -17,6 +17,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
         private double OldBoost = 0;
         public override void OnStart(Character character)
         {
+            base.OnStart(character);
+
             var player = character as Player;
             if (player != null)
             {

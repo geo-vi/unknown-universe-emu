@@ -77,7 +77,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void RefineNewData(Player player)
         {
-            player.Update();
             player.Refresh();
         }
     }

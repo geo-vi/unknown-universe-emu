@@ -10,6 +10,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void OnStart(Character character)
         {
+            base.OnStart(character);
             character.Targetable = false;
         }
 

@@ -16,6 +16,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void OnStart(Character character)
         {
+            base.OnStart(character);
+
             //character.Hangar.ShipDesign = World.StorageManager.Ships[POSSIBLE_SHIPS[Random.Next(0, POSSIBLE_SHIPS.Length - 1)]];
             //character.UpdateShip();
         }

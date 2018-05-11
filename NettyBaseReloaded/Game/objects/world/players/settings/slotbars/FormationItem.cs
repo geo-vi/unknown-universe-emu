@@ -79,7 +79,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
             GameClient.SendRangePacket(player, netty.commands.new_client.DroneFormationChangeCommand.write(player.Id, (int)formation), true);
 
             //GameHandler.SendRangePacket(player, PacketBuilder.FormationChange(player.Id, (int)formation), true);
-            player.Update();
             Selected = true;
             //gameSession.GameHandler.sendPacket(ChangeStatus());
         }

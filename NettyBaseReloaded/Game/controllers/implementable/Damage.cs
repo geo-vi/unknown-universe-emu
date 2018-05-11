@@ -104,7 +104,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             Packet.Builder.AttackHitCommand(player.GetGameSession(), 0, player, damage, (short)Types.RADIATION);
 
-            player.Update();
             if (player.CurrentHealth <= 0 && player.EntityState != EntityStates.DEAD)
             {
                 Controller.Destruction.Destroy(player, DeathType.RADITATION);
@@ -198,7 +197,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     cTarget.Controller.Attack.Attackers[player.Id].Damage(totalDamage + totalAbsDamage);
                 }
             }
-            Character.Update();
         }
 
         public static void Entity(IAttackable target, int totalDamage, Types damageType, int attackerId = 0, double shieldPenetration = 1, int totalAbsDamage = 0, bool direct = false)
@@ -294,8 +292,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 target.Destroy(attacker);
             }
-
-            (target as Character)?.Update();
         }
 
         private static GameSession[] AssembleSelectedSessions(IAttackable target)
