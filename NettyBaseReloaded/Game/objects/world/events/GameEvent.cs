@@ -64,7 +64,7 @@ namespace NettyBaseReloaded.Game.objects.world.events
                 }
                 if (playerEvent != null)
                 {
-                    player.EventsPraticipating.Add(Id, playerEvent);
+                    player.EventsPraticipating.TryAdd(Id, playerEvent);
                 }
             }
             else playerEvent = player.EventsPraticipating[Id];

@@ -38,7 +38,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
             Beacon = new Asset(id, "", AssetTypes.HEALING_POD, Player.FactionId, Player.Clan, 1, 1, Player.Position,
                 Player.Spacemap, false, false, false);
             Player.Spacemap.AddObject(Beacon);
-            Packet.Builder.AssetCreateCommand(Player.GetGameSession(), Beacon);
             Start();
         }
 

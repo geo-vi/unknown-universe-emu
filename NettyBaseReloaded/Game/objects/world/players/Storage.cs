@@ -38,10 +38,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Storage(Player player) : base(player)
         {
-            
+            player.Ticked += Ticked;
         }
 
-        public void Tick()
+        private void Ticked(object sender, EventArgs eventArgs)
         {
             if (DistancePassed > 1000)
                 World.DatabaseManager.SavePlayerHangar(Player);
@@ -153,6 +153,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
             if (!LoadedObjects.ContainsKey(billboard.Id))
                 LoadedObjects.Add(billboard.Id, billboard);
             Packet.Builder.MapAssetAddBillboardCommand(gameSession, billboard);
+        }
+
+        public void LoadMine(Mine mine)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (!LoadedObjects.ContainsKey(mine.Id))
+                LoadedObjects.Add(mine.Id, mine);
+            Packet.Builder.MineCreateCommand(gameSession, mine.Hash, mine.MineType, mine.Position, mine.PulseActive);
         }
     }
 }

@@ -237,14 +237,30 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int GetNextObjectId()
         {
-            var lastId = 0;
-            foreach (var obj in Objects.Keys)
+            using (var enumerator = Objects.GetEnumerator())
             {
-                if (obj == lastId + 1)
-                    lastId++;
-                else return lastId + 1;
+                if (!enumerator.MoveNext())
+                    return 0;
+
+                var nextKeyInSequence = enumerator.Current.Key + 1;
+
+                if (nextKeyInSequence < 1)
+                    throw new InvalidOperationException("The dictionary contains keys less than 0");
+
+                if (nextKeyInSequence != 1)
+                    return 0;
+
+                while (enumerator.MoveNext())
+                {
+                    var key = enumerator.Current.Key;
+                    if (key > nextKeyInSequence)
+                        return nextKeyInSequence;
+
+                    ++nextKeyInSequence;
+                }
+
+                return nextKeyInSequence;
             }
-            return lastId + 1;
         }
 
         public int GetNextZoneId()

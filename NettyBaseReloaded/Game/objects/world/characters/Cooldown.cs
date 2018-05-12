@@ -17,20 +17,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public virtual void OnStart(Character character)
         {
-            character.Ticked += Ticked;
-        }
-
-        private void Ticked(object sender, EventArgs eventArgs)
-        {
-            Console.WriteLine("Verified");
-            if (DateTime.Now > EndTime)
-            {
-                Console.WriteLine("End");
-                var character = sender as Character;
-                character.Ticked -= Ticked;
-                character.Cooldowns.Remove(this);
-                OnFinish(character);
-            }
         }
 
         public abstract void OnFinish(Character character);

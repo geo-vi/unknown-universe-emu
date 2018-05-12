@@ -20,6 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             LootId = lootId;
             Amount = amount;
             SyncedAmount = amount;
+            LastSynchronizationTime = DateTime.Now;
         }
 
         public int Get()
@@ -58,6 +59,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             {
                 SyncedAmount = World.DatabaseManager.UpdateAmmo(this, SyncedAmount - Amount);
                 Amount = SyncedAmount;
+                LastSynchronizationTime = DateTime.Now;
             }
         }
 

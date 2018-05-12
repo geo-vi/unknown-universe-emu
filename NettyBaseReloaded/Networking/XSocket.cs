@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -325,8 +324,6 @@ namespace NettyBaseReloaded.Networking
 
                 if (bytesRead <= 0)
                 {
-                    Console.WriteLine("?1");
-
                     Close();
                     return;
                 }
@@ -346,11 +343,7 @@ namespace NettyBaseReloaded.Networking
                 _socket.BeginReceive(_readBuffer, 0, _readBuffer.Length, 0, OnReceiveCallback, this);
 
             }
-            catch
-            {
-                Console.WriteLine("?");
-                Close();
-            }
+            catch { Close(); }
         }
 
         /// <summary>

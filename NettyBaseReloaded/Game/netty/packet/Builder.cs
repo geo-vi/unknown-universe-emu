@@ -139,7 +139,8 @@ namespace NettyBaseReloaded.Game.netty.packet
 
             }
             else
-            {              
+            {
+                var time = DateTime.Now;
                 var ammo = new List<netty.commands.old_client.AmmunitionCountModule>();
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
@@ -167,11 +168,12 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR02), player.Information.Ammunitions["ammunition_rocketlauncher_sar-02"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 ammo.Clear();
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), player.Information.Ammunitions["ammunition_mine_acm-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SMARTBOMB), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), player.Information.Ammunitions["ammunition_specialammo_emp-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), 100));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
+                Console.WriteLine((DateTime.Now - time).ToString());
                 player.Settings.Slotbar.GetCategories(player);
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
             }
@@ -886,13 +888,14 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void MineCreateCommand(GameSession gameSession, string hash, int mineType, Vector pos, bool pulse)
         {
+            Console.WriteLine($"0|L|{hash}|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.MineCreateCommand.write(hash, pulse, false, mineType, pos.Y, pos.X).Bytes);
             }
             else
             {
-                LegacyModule(gameSession, $"0|L|asdf|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
+                LegacyModule(gameSession, $"0|L|{hash}|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
             }
         }
 

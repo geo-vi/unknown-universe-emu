@@ -557,10 +557,8 @@ namespace NettyBaseReloaded.Game.managers
                     var sessionId = stringConv(querySet["SESSION_ID"]);
                     var clan = Global.StorageManager.Clans[(intConv(querySet["CLAN_ID"]))];
                     //var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
-
                     player = new Player(playerId, name, clan, hangar, currentHealth, currentNanohull, factionId,
                         position, spacemap, null, sessionId, rank, false);
-
                 }
 
             }
@@ -802,9 +800,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
             }
             return -1;
         }
@@ -1124,7 +1119,7 @@ namespace NettyBaseReloaded.Game.managers
                         }
 
                         if (!player.EventsPraticipating.ContainsKey(id))
-                            player.EventsPraticipating.Add(id, playerEventData);
+                            player.EventsPraticipating.TryAdd(id, playerEventData);
                         else player.EventsPraticipating[id] = playerEventData;
                     }
                     else if (eventInfo.Open) eventInfo.CreatePlayerEvent(player);

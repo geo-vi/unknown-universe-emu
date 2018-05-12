@@ -312,7 +312,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Npc> AttachedNpcs = new List<Npc>();
 
-        public Dictionary<int, PlayerEvent> EventsPraticipating = new Dictionary<int, PlayerEvent>();
+        public ConcurrentDictionary<int, PlayerEvent> EventsPraticipating = new ConcurrentDictionary<int, PlayerEvent>();
 
         public List<VisualEffect> Visuals = new List<VisualEffect>();
 
@@ -332,17 +332,15 @@ namespace NettyBaseReloaded.Game.objects.world
             CurrentNanoHull = currentNano;
         }
 
-        public new void Tick()
+        public override void AssembleTick(object sender, EventArgs eventArgs)
         {
-            // TODO -> Added ticked processes
             if (!Controller.Active || EntityState == EntityStates.DEAD)
                 return;
+
+            base.AssembleTick(sender, eventArgs);
             LevelChecker();
-            Storage.Tick();
             TickBoosters();
             AssembleEnemyWarn();
-            Information.Timer();
-            State.Tick();
             Hangar.DronesLevelChecker(this);
             TickEvents();
             TickVisuals();
@@ -363,7 +361,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             foreach (var tech in Techs)
             {
-                tech?.Tick();
+                tech.Tick();
             }
         }
 
@@ -398,11 +396,9 @@ namespace NettyBaseReloaded.Game.objects.world
             Skills = World.DatabaseManager.LoadSkilltree(this);
             Storage = new Storage(this);
             Log = new PlayerLog(SessionId);
-            Boosters = new List<Booster>(); // TODO: Load from SQL
+            Boosters = new List<Booster>();
             Abilities = Hangar.Ship.Abilities(this);
             Settings = new Settings(this);
-            Range.EntityAdded += CharacterEnteredRange;
-            Range.EntityRemoved += CharacterExitedRange;
         }
 
         public void ClickableCheck(Object obj)
@@ -425,6 +421,7 @@ namespace NettyBaseReloaded.Game.objects.world
             else if (obj is Collectable) Storage.LoadCollectable(obj as Collectable);
             else if (obj is Ore) Storage.LoadResource(obj as Ore);
             else if (obj is Billboard) Storage.LoadBillboard(obj as Billboard);
+            else if (obj is Mine) Storage.LoadMine(obj as Mine);
         }
 
         public void UnloadObject(Object obj)
@@ -664,26 +661,6 @@ namespace NettyBaseReloaded.Game.objects.world
             foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Update((CPU.Types)type);
         }
 
-        private void CharacterEnteredRange(object s, CharacterArgs e)
-        {
-            var charAsPlayer = e.Character as Player;
-            if (charAsPlayer != null)
-            {
-                //if (charAsPlayer.Boosters.Count > 0)
-                Booster.CalculateTotalBoost(charAsPlayer);
-            }
-        }
-
-        private void CharacterExitedRange(object s, CharacterArgs e)
-        {
-            var charAsPlayer = e.Character as Player;
-            if (charAsPlayer != null)
-            {
-                //if (charAsPlayer.Boosters.Count > 0)
-                Booster.CalculateTotalBoost(charAsPlayer);
-            }
-        }
-
         private void TickBoosters()
         {
             foreach (var booster in Boosters)
@@ -696,7 +673,7 @@ namespace NettyBaseReloaded.Game.objects.world
         private DateTime LastTimeCheckedBoosters = new DateTime();
         private void CheckForBoosters()
         {
-            if (LastTimeCheckedBoosters.AddMilliseconds(5000) < DateTime.Now)
+            if (LastTimeCheckedBoosters.AddMilliseconds(250) < DateTime.Now)
             {
                 // TODO: Get boosters from mysql
                 Booster.CalculateTotalBoost(this);

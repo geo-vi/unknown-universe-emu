@@ -39,19 +39,19 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Uridium = new Uridium(player);
             Premium = new Premium();
             UpdateAll();
+            player.Ticked += Ticked;
         }
 
-        private DateTime LastUpd = new DateTime();
-
-        public void Timer()
+        private void Ticked(object sender, EventArgs eventArgs)
         {
             if (LastUpd.AddSeconds(3) > DateTime.Now) return;
 
             UpdateAll();
             LastUpd = DateTime.Now;
-
         }
 
+        private DateTime LastUpd = new DateTime();
+        
         public void UpdateAll()
         {
             Experience.Refresh();

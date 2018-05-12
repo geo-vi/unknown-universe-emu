@@ -64,10 +64,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
 
         public override void Start()
         {
+            PlayerEvent pEvent;
             if (Lives <= 0)
             {
                 if (Player.EventsPraticipating.ContainsKey(Id))
-                    Player.EventsPraticipating.Remove(Id);
+                    Player.EventsPraticipating.TryRemove(Id, out pEvent);
                 return;
             }
             UpdateCombo();
@@ -77,12 +78,14 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
 
         public override void End()
         {
+            PlayerEvent pEvent;
+
             Lives = 0;
             Combo = 0;
             Packet.Builder.UpdateScoremageddonWindow(Player.GetGameSession(), this);
 
             if (Player.EventsPraticipating.ContainsKey(Id))
-                Player.EventsPraticipating.Remove(Id);
+                Player.EventsPraticipating.TryRemove(Id, out pEvent);
         }
 
         public override void DestroyAttackable(IAttackable attackable)
