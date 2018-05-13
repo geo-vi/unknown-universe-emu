@@ -476,6 +476,7 @@ namespace NettyBaseReloaded.Game
                     goto NEWHASH;
                 map.HashedObjects.TryAdd(hash, null);
             }
+            map.Objects.TryAdd(0, null);
             if (Properties.Server.DEBUG)
                 Console.WriteLine($"Created {HASHES-1} hashes.");
         }

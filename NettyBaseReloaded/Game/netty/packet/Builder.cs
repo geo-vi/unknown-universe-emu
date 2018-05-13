@@ -1287,7 +1287,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if(gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                //throw new NotImplementedException();
             }
             else
             {
@@ -1354,7 +1354,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                throw new NotImplementedException();
+                //throw new NotImplementedException();
             }
             else
             {
