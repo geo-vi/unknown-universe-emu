@@ -292,6 +292,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 target.Destroy(attacker);
             }
+            (target as Character)?.Updaters.Update();
         }
 
         private static GameSession[] AssembleSelectedSessions(IAttackable target)
