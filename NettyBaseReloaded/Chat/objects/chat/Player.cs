@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Chat.objects.chat
         /// </summary>
         public new PlayerController Controller { get; set; }
 
-        public Player(int id, string name, Clan clan) : base(id, name, "", clan)
+        public Player(int id, string name, string sessionId, Clan clan) : base(id, name, sessionId, clan)
         {
 
         }

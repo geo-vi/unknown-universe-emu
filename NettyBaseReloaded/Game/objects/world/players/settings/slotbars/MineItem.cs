@@ -20,9 +20,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
             switch (ItemId)
             {
                 case "ammunition_mine_acm-01":
-                    id = player.Spacemap.GetNextObjectId();
-                    hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
-                    player.Spacemap.AddObject(new ACM01(id, hash, player.Position, player.Spacemap));
+                    //id = player.Spacemap.GetNextObjectId();
+                    //hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
+                    //player.Spacemap.AddObject(new ACM01(id, hash, player.Position, player.Spacemap));
                     break;
             }
         }

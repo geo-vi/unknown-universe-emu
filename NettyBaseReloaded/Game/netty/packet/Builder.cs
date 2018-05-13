@@ -140,7 +140,6 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                var time = DateTime.Now;
                 var ammo = new List<netty.commands.old_client.AmmunitionCountModule>();
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
@@ -173,7 +172,6 @@ namespace NettyBaseReloaded.Game.netty.packet
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), 100));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
-                Console.WriteLine((DateTime.Now - time).ToString());
                 player.Settings.Slotbar.GetCategories(player);
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
             }

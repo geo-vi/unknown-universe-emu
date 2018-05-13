@@ -171,6 +171,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.CurrentNanoHull = 0;
             Character.CurrentShield = 0;
 
+            GameClient.SendRangePacket(Character, ShipDestroyedCommand.write(Character.Id, 1), true);
+            GameClient.SendRangePacket(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 1),
+                true);
+
+            Remove();
+
             if (Character is Player)
             {
                 var player = (Player)Character;
@@ -180,12 +186,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 player.SetPosition(newPos);
                 player.Save();
             }
-
-            GameClient.SendRangePacket(Character, ShipDestroyedCommand.write(Character.Id, 0), true);
-            GameClient.SendRangePacket(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 0),
-                true);
-
-            Remove();
             Character.EntityState = EntityStates.DEAD;
         }
 

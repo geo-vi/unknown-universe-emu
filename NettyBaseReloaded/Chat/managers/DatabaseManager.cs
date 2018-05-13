@@ -116,12 +116,18 @@ namespace NettyBaseReloaded.Chat.managers
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    //mySqlClient.ExecuteQueryRow()
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_data,server_chat_moderators WHERE player_data.PLAYER_ID=" + id);
+                    string name = queryRow["PLAYER_NAME"].ToString();
+                    string sessionId = queryRow["SESSION_ID"].ToString();
+                    int clanId = intConv(queryRow["CLAN_ID"]);
+                    var clan = Main.Global.StorageManager.GetClan(clanId);
                     
+                    character = new Player(id, name, sessionId, clan);
                 }
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 new ExceptionLog("dbmanager", "Failed to load character...", e);
             }
             return character;
