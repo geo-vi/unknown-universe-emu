@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.characters;
@@ -43,8 +44,19 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
 
         public abstract void execute();
 
+        public virtual void ThreadUpdate() { }
+
         public void Start()
         {
+            Task.Factory.StartNew(() =>
+            {
+                while (Active)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    ThreadUpdate();
+                }
+            });
+
             foreach (var target in TargetIds)
             {
                 var targetSession = World.StorageManager.GetGameSession(target);
@@ -54,6 +66,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
                 }
             }
             Packet.Builder.AbilityStartCommand(Player.GetGameSession(), this);
+        }
+
+        private void TickTimer(object state)
+        {
+            
         }
 
         protected void ShowEffect()

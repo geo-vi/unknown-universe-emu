@@ -80,6 +80,7 @@ namespace NettyBaseReloaded.Game.controllers
             Heal?.Tick();
             Destruction?.Tick();
             Effects?.Tick();
+            Character.Position = MovementController.ActualPosition(Character);
         }
 
         public void StopAll()

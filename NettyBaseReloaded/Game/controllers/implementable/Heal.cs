@@ -72,6 +72,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             else if (Character is Player && healType == HealType.SHIELD)
                 Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Character.Id), "0|A|HL|" + healerId + "|" + Character.Id + "|SHD|" + Character.CurrentShield + "|" +
                                                                                                amount);
+            Character.Updaters.Update();
 
         }
     }

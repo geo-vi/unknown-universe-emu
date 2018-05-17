@@ -9,11 +9,13 @@ namespace NettyBaseReloaded.Utils
 {
     class FileEssentials
     {
-        public static async void Write(string path, string text)
+        public static void Write(string path, string text)
         {
-            StreamWriter writer = new StreamWriter(path);
-            await writer.WriteAsync(text);
-            writer.Close();
+            using (var writer = new StreamWriter(path))
+            {
+                writer.Write(text);
+                writer.Close();
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
             switch (ItemId)
             {
                 case "equipment_extra_cpu_ish-01":
-                    if (player.Cooldowns.Exists(x => x is ISHCooldown)) return;
+                    if (player.Cooldowns.Any(x => x is ISHCooldown)) return;
 
                     GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|n|ISH|" + player.Id), true);
                     GameClient.SendRangePacket(player, netty.commands.new_client.LegacyModule.write("0|n|ISH|" + player.Id), true);
@@ -35,7 +35,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                     break;
 
                 case "ammunition_mine_smb-01":
-                    if (player.Cooldowns.Exists(x => x is SMBCooldown)) return;
+                    if (player.Cooldowns.Any(x => x is SMBCooldown)) return;
                     if (player.State.InDemiZone) return;
 
                     GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
@@ -48,7 +48,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                     break;
 
                 case "ammunition_specialammo_emp-01":
-                    if (player.Cooldowns.Exists(x => x is EMPCooldown)) return;
+                    if (player.Cooldowns.Any(x => x is EMPCooldown)) return;
                     if (player.State.InDemiZone) return;
 
                     GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|n|EMP|" + player.Id), true);

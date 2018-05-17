@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 
         public override void execute()
         {
-            if (Player.Cooldowns.Exists(x => x is ChainImpulseCooldown)) return;
+            if (Player.Cooldowns.Any(x => x is ChainImpulseCooldown)) return;
             Player.Controller.Damage?.ECI();
             Disable();
         }

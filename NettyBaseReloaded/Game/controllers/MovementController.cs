@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world;
@@ -11,6 +12,7 @@ namespace NettyBaseReloaded.Game.controllers
         // TODO: Send local movement sent with MoveHero Command in order to *remove* lag
         public static void Move(Character character, Vector destination)
         {
+
             //Gets the movement time
             character.MovementTime = GetTime(character, destination);
 
@@ -19,10 +21,15 @@ namespace NettyBaseReloaded.Game.controllers
             character.Moving = true;
 
             //sends the movement to the rest of the players in range if both are on the same map
-            GameClient.SendToPlayerRange(character, netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime));
+            GameClient.SendToSpacemap(character.Spacemap,
+                netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y,
+                    character.MovementTime));
             //GameClient.SendToSpacemap(character.Spacemap, netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
-            GameClient.SendToPlayerRange(character, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime));
+            GameClient.SendToSpacemap(character.Spacemap,
+                netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y,
+                    character.MovementTime));
             //GameClient.SendToSpacemap(character.Spacemap, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
+
         }
 
         public static int GetTime(Character character, Vector destination)
@@ -90,6 +97,7 @@ namespace NettyBaseReloaded.Game.controllers
 
             //updates the actual position into the character
             character.Position = actualPosition;
+
             return actualPosition;
         }
     }

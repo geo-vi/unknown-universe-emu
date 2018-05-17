@@ -174,7 +174,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public DroneFormation Formation = DroneFormation.STANDARD;
 
-        public List<Cooldown> Cooldowns { get; set; }
+        public CooldownsAssembly Cooldowns;
 
         public Updaters Updaters { get; set; }
 
@@ -202,21 +202,24 @@ namespace NettyBaseReloaded.Game.objects.world
 
             Skills = new Skilltree(this);
             Updaters = new Updaters(this);
+            Cooldowns = new CooldownsAssembly(this);
+
             LastCombatTime = DateTime.Now;
-
-            Cooldowns = new List<Cooldown>();
-
             if (clan == null)
             {
                 Clan = Global.StorageManager.Clans[0];
             }
-
+            
             Ticked += AssembleTick;
         }
 
         public virtual void AssembleTick(object sender, EventArgs eventArgs)
         {
-            TickCooldowns();
+            Parallel.Invoke(() =>
+            {
+                Cooldowns.Tick();
+                RocketLauncher?.Tick();
+            });
         }
 
         public EventHandler Ticked;
@@ -237,21 +240,8 @@ namespace NettyBaseReloaded.Game.objects.world
             }
             if (this is Player)
                 Packet.Builder.ShipInitializationCommand(World.StorageManager.GetGameSession(Id));
-        }
 
-        public void TickCooldowns()
-        {
-            if (Cooldowns == null) return;
-            for (int i = 0; i < Cooldowns.Count; i++)
-            {
-                var cooldown = Cooldowns[i];
-                if (cooldown == null) continue;
-                if (DateTime.Now > cooldown.EndTime)
-                {
-                    cooldown.OnFinish(this);
-                    Cooldowns.RemoveAt(i);
-                }
-            }
+            Updaters.Update();
         }
 
         public virtual void SetPosition(Vector targetPosition)

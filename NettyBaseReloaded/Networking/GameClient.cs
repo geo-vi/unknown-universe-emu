@@ -110,44 +110,7 @@ namespace NettyBaseReloaded.Networking
                 Debug.WriteLine(e.Message, "Debug Error");
             }
         }
-
-        public static void SendToPlayerRange(Character character, Command command, bool sendCharacter = false)
-        {
-            if (character == null) return;
-            try
-            {
-                foreach (var entry in character.Range.Entities)
-                {
-                    var entity = entry.Value as Player;
-                    if (entity == null) continue;
-
-                    if (entity != character)
-                    {
-                        if (entity.UsingNewClient && command.IsNewClient)
-                        {
-                            entity.GetGameSession()?.Client.Send(command.Bytes);
-                        }
-                        if (!entity.UsingNewClient && !command.IsNewClient)
-                        {
-                            entity.GetGameSession()?.Client.Send(command.Bytes);
-                        }
-                    }
-                }
-
-                if (sendCharacter && character is Player)
-                {
-                    var player = (Player)character;
-                    if (command.IsNewClient == player.UsingNewClient)
-                        player.GetGameSession()?.Client.Send(command.Bytes);
-                }
-            }
-            catch (Exception e)
-            {
-                Out.WriteLine("Something went wrong sending a player range packet.", "ERROR", ConsoleColor.Red);
-                Debug.WriteLine(e.Message, "Debug Error");
-            }
-        }
-
+        
         public static void SendPacketSelected(Character character, Command command)
         {
             try

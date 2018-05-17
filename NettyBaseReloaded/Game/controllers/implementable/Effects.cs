@@ -36,7 +36,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void SetInvincible(int time, bool showEffect = false)
         {
-            if (Character.Cooldowns.Exists(x => x is InvincibilityCooldown)) return;
+            if (Character.Cooldowns.Any(x => x is InvincibilityCooldown)) return;
 
             var cooldown = new InvincibilityCooldown(showEffect, DateTime.Now.AddMilliseconds(time));
             Character.Cooldowns.Add(cooldown);
@@ -45,7 +45,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void NotTargetable(int time)
         {
-            if (Character.Cooldowns.Exists(x => x is NonTargetableCooldown)) return;
+            if (Character.Cooldowns.Any(x => x is NonTargetableCooldown)) return;
 
             var cooldown = new NonTargetableCooldown(DateTime.Now.AddMilliseconds(time));
             Character.Cooldowns.Add(cooldown);

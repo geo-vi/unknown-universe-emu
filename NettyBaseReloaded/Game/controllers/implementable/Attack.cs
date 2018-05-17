@@ -302,12 +302,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     break;
                 case "ammunition_specialammo_wiz-x":
                     rocketId = 8;
-                    if (Character.Cooldowns.Exists(c => c is WizardCooldown)) return;
+                    if (Character.Cooldowns.Any(c => c is WizardCooldown)) return;
                     Wizard(enemy as Character);
                     break;
             }
 
-            if (Character.Cooldowns.Exists(c => c is RocketCooldown)) return;
+            if (Character.Cooldowns.Any(c => c is RocketCooldown)) return;
 
             if (player?.Settings.CurrentRocket.Shoot() == 0)
             {
@@ -373,7 +373,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     break;
             }
 
-            if (Character.Cooldowns.Exists(cooldown => cooldown is RocketLauncherCooldown)) return;
+            if (Character.Cooldowns.Any(cooldown => cooldown is RocketLauncherCooldown)) return;
 
             var newCooldown = new RocketLauncherCooldown();
             Character.Cooldowns.Add(newCooldown);

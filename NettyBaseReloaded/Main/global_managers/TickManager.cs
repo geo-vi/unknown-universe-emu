@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Main.interfaces;
 using System.Diagnostics;
+using System.Threading;
 
 namespace NettyBaseReloaded.Main.global_managers
 {
@@ -46,11 +47,11 @@ namespace NettyBaseReloaded.Main.global_managers
             while (true)
             {
                 UpdateCollection();
-                foreach (var tick in Tickables)
+                Parallel.ForEach(Tickables, (t) =>
                 {
-                    tick.Tick();
-                }
-                await Task.Delay(1000 / TICKS_PER_SECOND);
+                    t.Tick();
+                });
+                await Task.Delay(84);
             }
         }
 

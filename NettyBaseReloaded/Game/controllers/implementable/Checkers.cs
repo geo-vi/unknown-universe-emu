@@ -18,7 +18,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public int VisibilityRange { get; set; }
 
-        public int PacketSendRange => 1000;
+        //public int PacketSendRange => 1000;
 
         public bool InVisibleZone => !Character.Range.Zones.Any(x => x.Value is PalladiumZone);
 
@@ -38,7 +38,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public override void Tick()
         {
             if (LastTick.AddMilliseconds(500) > DateTime.Now && (Character is Npc || Character is Pet)) return;
-            MovementController.ActualPosition(Character);
+            var pos = MovementController.ActualPosition(Character);
+            if (pos != Character.Position)
+                MovementController.Move(Character, pos);
             SpacemapChecker();
             RangeChecker();
             ZoneChecker();
@@ -142,7 +144,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             if (GetForSelection(entity)) return;
 
-            if (Character.InRange(entity, VisibilityRange) && !InVisibleZone || InVisibleZone && entity.Controller.Checkers.InVisibleZone)
+            if (Character.InRange(entity, VisibilityRange))
             {
                 if (!Character.Range.Entities.ContainsKey(entity.Id))
                     AddCharacter(Character, entity);

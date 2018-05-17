@@ -21,16 +21,14 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
         {
             if (Active)
             {
-                if (TimeFinish > DateTime.Now)
-                    ExecuteHeal();
-                else
+                if (TimeFinish < DateTime.Now)
                     Disable();
             }
         }
 
         public override void execute()
         {
-            if (Player.Cooldowns.Exists(x => x is BattleRepairRobotCooldown)) return;
+            if (Player.Cooldowns.Any(x => x is BattleRepairRobotCooldown)) return;
             Active = true;
             Player.Storage.BattleRepairRobotActivated = true;
             Packet.Builder.TechStatusCommand(Player.GetGameSession());
@@ -38,16 +36,14 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
             GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write("0|TX|A|S|BRB|" + Player.Id), true);
             TimeFinish = DateTime.Now.AddSeconds(10);
             Player.Cooldowns.Add(cld);
+            Start();
         }
 
-        private DateTime LastHeal = new DateTime();
+        public override void ThreadUpdate() => ExecuteHeal();
+
         private void ExecuteHeal()
         {
-            if (LastHeal.AddSeconds(1) < DateTime.Now)
-            {
-                Player.Controller.Heal.Execute(10000);
-                LastHeal = DateTime.Now;
-            }
+            Player.Controller.Heal.Execute(10000);
         }
 
         private void Disable()

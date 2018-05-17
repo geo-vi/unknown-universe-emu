@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Networking;
@@ -15,7 +16,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
         public override void Execute(Player player)
         {
-            if (player.Cooldowns.Exists(x => x is DroneFormationCooldown)) return;
+            if (player.Cooldowns.Any(x => x is DroneFormationCooldown)) return;
 
             var gameSession = World.StorageManager.GameSessions[player.Id];
             var formationName = ItemId.Split('_')[2];
@@ -80,6 +81,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
             //GameHandler.SendRangePacket(player, PacketBuilder.FormationChange(player.Id, (int)formation), true);
             Selected = true;
+            player.Updaters.Update();
             //gameSession.GameHandler.sendPacket(ChangeStatus());
         }
     }

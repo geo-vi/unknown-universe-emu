@@ -22,10 +22,10 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
         {
         }
 
+        public override void ThreadUpdate() => Pulse();
+
         public override void Tick()
         {
-            if (Active)
-                Pulse();
             Update();
         }
 
@@ -41,13 +41,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
             Start();
         }
 
-        private DateTime LastPulse = new DateTime();
-
         private void Pulse()
         {
-            if (LastPulse.AddSeconds(1) > DateTime.Now) return;
-            LastPulse = DateTime.Now;
-
             if (TimeFinish < DateTime.Now)
             {
                 Active = false;

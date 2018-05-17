@@ -22,6 +22,20 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
 
         public abstract void execute();
 
+        public virtual void ThreadUpdate() { }
+
+        public void Start()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                while (Active)
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    ThreadUpdate();
+                }
+            });
+        }
+
         public int GetStatus()
         {
             if (Active) return 2;

@@ -34,7 +34,8 @@ namespace NettyBaseReloaded.Main
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
             CronjobManager.Initiate();
-            TickManager.Tick();
+            var task = new Task(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
+            task.Start();
         }
 
         static void InitiateGlobalQueries()

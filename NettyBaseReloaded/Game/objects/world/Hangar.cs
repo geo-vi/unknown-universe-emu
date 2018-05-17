@@ -47,19 +47,19 @@ namespace NettyBaseReloaded.Game.objects.world
         public void DronesLevelChecker(Player player)
         {
             if (Drones.Count == 0) return;
-            foreach (var drone in Drones)
-            {
-                if (!World.StorageManager.Levels.DroneLevels.ContainsKey(drone.Level.Id + 1))
-                    continue;
+            //foreach (var drone in Drones)
+            //{
+            //    if (!World.StorageManager.Levels.DroneLevels.ContainsKey(drone.Level.Id + 1))
+            //        continue;
 
-                foreach (var level in World.StorageManager.Levels.DroneLevels)
-                {
-                    if (drone.Experience > level.Value.Experience && level.Key > drone.Level.Id)
-                        drone.LevelUp(player);
-                }
+            //    foreach (var level in World.StorageManager.Levels.DroneLevels)
+            //    {
+            //        if (drone.Experience > level.Value.Experience && level.Key > drone.Level.Id)
+            //            drone.LevelUp(player);
+            //    }
 
-                drone.Update(player);
-            }
+            //    drone.Update(player);
+            //}
         }
 
         public void AddDronePoints(int points)

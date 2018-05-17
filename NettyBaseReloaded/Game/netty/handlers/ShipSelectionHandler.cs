@@ -29,40 +29,33 @@ namespace NettyBaseReloaded.Game.netty.handlers
             }
 
             var spacemap = gameSession.Player.Spacemap;
-            try
+            if (spacemap.Entities.ContainsKey(targetId))
             {
-                var entityEntries = spacemap.Entities.Where(
-                    entry => entry.Value.Id == targetId /*&& gameSession.Player.InRange(entry.Value)*/);
-
-                if (!entityEntries.Any())
+                var entity = spacemap.Entities[targetId];
+                if (entity.Position.DistanceTo(gameSession.Player.Position) > 1250)
                 {
-                    if (gameSession.Player.Spacemap.Objects.FirstOrDefault(x => x.Key == targetId).Value is AttackableAsset selectedAsset)
-                    {
-                        gameSession.Player.Selected = selectedAsset.Core;
-                        Packet.Builder.AssetInfoCommand(gameSession, selectedAsset);
-                    }
-                    return;
+                    //AUTOLOCK
                 }
-
-                foreach (
-                    var entry in entityEntries) // temp
+                else
                 {
-                    if (entry.Value is Player)
+                    if (!entity.Targetable)
                     {
-                        if (!entry.Value.Targetable)
-                        {
-                            Packet.Builder.LegacyModule(gameSession, "0|A|STM|msg_own_targeting_harmed");
-                            return;
-                        }
+                        Packet.Builder.LegacyModule(gameSession, "0|A|STM|msg_own_targeting_harmed");
+                        return;
                     }
-                    gameSession.Player.Selected = entry.Value;
-                    Packet.Builder.ShipSelectionCommand(gameSession, entry.Value);
-                    return;
+
+                    gameSession.Player.Selected = entity;
+                    Packet.Builder.ShipSelectionCommand(gameSession, entity);
                 }
             }
-            catch (Exception e)
+            else if (spacemap.Objects.ContainsKey(targetId))
             {
-                Debug.WriteLine(e.StackTrace);
+                var targetObject = spacemap.Objects[targetId];
+                if (targetObject is AttackableAsset attackable)
+                {
+                    gameSession.Player.Selected = attackable.Core;
+                    Packet.Builder.AssetInfoCommand(gameSession, attackable);
+                }
             }
         }
     }

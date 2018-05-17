@@ -19,7 +19,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         private void Ticked(object sender, EventArgs eventArgs)
         {
-            Update();
             Regenerate();
         }
 
@@ -93,7 +92,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 GameClient.SendPacketSelected(Character, netty.commands.new_client.ShipSelectionCommand.write(Character.Id, Character.Hangar.ShipDesign.Id, Character.CurrentShield, Character.MaxShield,
                     Character.CurrentHealth, Character.MaxHealth, Character.CurrentNanoHull, Character.MaxNanoHull, true));
 
-
+                Update();
             }
             catch (Exception)
             {

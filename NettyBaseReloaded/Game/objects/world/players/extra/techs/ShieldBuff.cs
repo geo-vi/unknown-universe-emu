@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 
         public override void execute()
         {
-            if (Player.Cooldowns.Exists(x => x is ShieldBuffCooldown)) return;
+            if (Player.Cooldowns.Any(x => x is ShieldBuffCooldown)) return;
             GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write("0|TX|A|S|SBU|" + Player.Id), true);
             GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write("0|TX|A|S|SBU|" + Player.Id), true);
             ExecuteShield();

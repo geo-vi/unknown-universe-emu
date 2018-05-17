@@ -234,25 +234,25 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             categories.Add(new SlotbarCategoryModule("cpus", items));
 
             //BUY NOW
-            items = new List<SlotbarCategoryItemModule>();
-            maxCounter = 0;
-            foreach (var itemId in Items.BuyNowIds)
-            {
-                var item = new BuyItem(
-                    itemId,
-                    counterValue,
-                    maxCounter
-                );
+            //items = new List<SlotbarCategoryItemModule>();
+            //maxCounter = 0;
+            //foreach (var itemId in Items.BuyNowIds)
+            //{
+            //    var item = new BuyItem(
+            //        itemId,
+            //        counterValue,
+            //        maxCounter
+            //    );
 
-                item.Create();
-                items.Add(item.Object);
-                _items[item.ClickedId] = item;
-            }
-            categories.Add(new SlotbarCategoryModule("buy_now", items));
+            //    item.Create();
+            //    items.Add(item.Object);
+            //    _items[item.ClickedId] = item;
+            //}
+            //categories.Add(new SlotbarCategoryModule("buy_now", items));
 
             //TECH ITEMS
             items = new List<SlotbarCategoryItemModule>();
-            maxCounter = 0;
+            maxCounter = 99;
             foreach (var itemId in Items.TechIds)
             {
                 var item = new TechItem(
@@ -262,6 +262,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                 );
 
                 item.Create();
+                item.CounterValue = 99;
                 items.Add(item.Object);
                 _items[item.ClickedId] = item;
             }

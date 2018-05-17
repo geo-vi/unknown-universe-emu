@@ -121,7 +121,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 switch (Formation)
                 {
                     case DroneFormation.CHEVRON:
-                        value = (int)(value * 0.2); // -20%
+                        value = (int)(value * 0.8); // -20%
                         break;
                     case DroneFormation.DIAMOND:
                         value = (int)(value * 0.7); //-30%
@@ -338,53 +338,43 @@ namespace NettyBaseReloaded.Game.objects.world
                 return;
 
             base.AssembleTick(sender, eventArgs);
-            LevelChecker();
-            TickBoosters();
-            AssembleEnemyWarn();
-            Hangar.DronesLevelChecker(this);
-            TickEvents();
-            TickVisuals();
-            TickTechs();
-            TickGates();
-            TickAbilities();
+            Parallel.Invoke(() =>
+            {
+                LevelChecker();
+                TickBoosters();
+                AssembleEnemyWarn();
+                Hangar.DronesLevelChecker(this);
+                TickEvents();
+                TickVisuals();
+                TickTechs();
+                TickGates();
+                TickAbilities();
+            });
         }
 
         private void TickVisuals()
         {
-            foreach (var visual in Visuals)
-            {
-                visual?.Tick();
-            }
+            Parallel.ForEach(Visuals, visual => { visual.Tick(); });
         }
 
         private void TickTechs()
         {
-            foreach (var tech in Techs)
-            {
-                tech.Tick();
-            }
+            Parallel.ForEach(Techs, tech => { tech.Tick(); });
         }
 
         private void TickEvents()
         {
-            foreach (var gameEvent in EventsPraticipating.Values)
-            {
-                gameEvent.Tick();
-            }
+            Parallel.ForEach(EventsPraticipating, gameEvent => { gameEvent.Value.Tick(); });
         }
 
         private void TickGates()
         {
-            foreach (var t in OwnedGates)
-            {
-                t.Value.Tick();
-            }
+            Parallel.ForEach(OwnedGates, ownedGate => { ownedGate.Value.Tick(); });
         }
 
         private void TickAbilities()
         {
-            foreach (var ability in Abilities)
-                ability.Tick();
+            Parallel.ForEach(Abilities, ability => { ability.Tick(); });
         }
 
         private void InitializeClasses()
@@ -663,10 +653,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         private void TickBoosters()
         {
-            foreach (var booster in Boosters)
-            {
-                booster.Tick();
-            }
+            Parallel.ForEach(Boosters, booster => { booster.Tick(); });
             CheckForBoosters();
         }
 

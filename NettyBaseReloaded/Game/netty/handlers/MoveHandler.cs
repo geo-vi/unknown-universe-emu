@@ -34,7 +34,9 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             //Console.WriteLine("{0}, {1}", gameSession.Player.Id, newVector);
             if (!gameSession.InProcessOfDisconnection)
+            {
                 MovementController.Move(gameSession.Player, newVector);
+            }
         }
 
     }

@@ -22,10 +22,10 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
 
         public override void Tick()
         {
-            if (Active)
-                Beam();
             Update();
         }
+
+        public override void ThreadUpdate() => Beam();
 
         public override void execute()
         {
@@ -42,11 +42,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
             TimeFinish = DateTime.Now.AddSeconds(7);
         }
 
-        private DateTime LastBeam = new DateTime();
         private void Beam()
         {
-            if (LastBeam.AddSeconds(1) > DateTime.Now) return;
-            LastBeam = DateTime.Now;
             if (TimeFinish < DateTime.Now)
             {
                 Active = false;

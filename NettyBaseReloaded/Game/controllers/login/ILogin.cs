@@ -42,6 +42,15 @@ namespace NettyBaseReloaded.Game.controllers.login
         public void SendLegacy()
         {
             SendLegacy(GameSession);
+            SendCooldowns(GameSession);
+        }
+
+        private void SendCooldowns(GameSession gameSession)
+        {
+            foreach (var cooldown in gameSession.Player.Cooldowns.Cooldowns)
+            {
+                cooldown.Send(gameSession);
+            }
         }
 
         public static void SendLegacy(GameSession GameSession)

@@ -423,6 +423,7 @@
     <Compile Include="Game\netty\commands\ClientCommands.cs" />
     <Compile Include="Game\netty\commands\Command.cs" />
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
+    <Compile Include="Game\objects\world\characters\CooldownsAssembly.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\AegisHealBeamCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\AegisHealPodCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\AegisShieldRechargeCooldown.cs" />

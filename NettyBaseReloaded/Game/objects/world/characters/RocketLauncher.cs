@@ -51,7 +51,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         private void GetCPU()
         {
             // AUTO RL
-            //ReloadingActive = true;
+            if (LastShoot.AddSeconds(3) < DateTime.Now)
+                ReloadingActive = true;
         }
 
         private DateTime LastReloadTime = new DateTime();
@@ -81,6 +82,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             LastReloadTime = DateTime.Now;
         }
 
+        private DateTime LastShoot= new DateTime();
         public void Shoot()
         {
             var player = Character as Player;
@@ -91,6 +93,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     player.Information.Ammunitions[LoadLootId].Shoot();
                 }
                 ReloadingActive = false;
+                LastShoot = DateTime.Now;
             }
         }
 
