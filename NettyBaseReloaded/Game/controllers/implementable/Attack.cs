@@ -510,7 +510,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void RefreshAttackers()
         {
-            foreach (var attacker in Attackers)
+            Parallel.ForEach(Attackers, attacker =>
             {
                 if (attacker.Value?.Player != null && attacker.Value.LastRefresh.AddSeconds(10) > DateTime.Now)
                 {
@@ -521,17 +521,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         attacker.Value.FadedToGray = false;
                         // fade back to red.
                     }
+
                     if (!attacker.Value.FadedToGray && MainAttacker != attacker.Value.Player)
                     {
                         // fade to gray
-                        Packet.Builder.LegacyModule(attacker.Value.Player.GetGameSession(), $"0|n|LSH|{Character.Id}|{Character.Id}");
+                        Packet.Builder.LegacyModule(attacker.Value.Player.GetGameSession(),
+                            $"0|n|LSH|{Character.Id}|{Character.Id}");
                         attacker.Value.FadedToGray = true;
                     }
-                    continue;
                 }
-                Attacker removedAttacker;
-                Attackers.TryRemove(attacker.Key, out removedAttacker);
-            }
+                else
+                {
+                    Attacker removedAttacker;
+                    Attackers.TryRemove(attacker.Key, out removedAttacker);
+                }
+            });
             if (MainAttacker != null)
             {
                 if (!Attackers.ContainsKey(MainAttacker.Id))

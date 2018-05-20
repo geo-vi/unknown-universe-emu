@@ -37,14 +37,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         private DateTime LastTick = new DateTime();
         public override void Tick()
         {
-            if (LastTick.AddMilliseconds(500) > DateTime.Now && (Character is Npc || Character is Pet)) return;
-            var pos = MovementController.ActualPosition(Character);
-            if (pos != Character.Position)
-                MovementController.Move(Character, pos);
-            SpacemapChecker();
-            RangeChecker();
-            ZoneChecker();
-            ObjectChecker();
+            if (Character is Npc || Character is Pet) return;
+            //var pos = MovementController.ActualPosition(Character);
+            //if (pos != Character.Position)
+            //    MovementController.Move(Character, pos);
+            Parallel.Invoke(() =>
+            {
+                SpacemapChecker();
+                RangeChecker();
+                ZoneChecker();
+                ObjectChecker();
+            });
             //Console.WriteLine("VISIBILITY:" + InVisibleZone);
 
             LastTick = DateTime.Now;

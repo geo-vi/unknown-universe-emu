@@ -584,6 +584,7 @@
     <Compile Include="Game\objects\world\players\LogMessage.cs" />
     <Compile Include="Game\objects\world\players\PlayerGates.cs" />
     <Compile Include="Game\objects\world\players\Quest.cs" />
+    <Compile Include="Game\objects\world\players\quests\player_quests\FlyNoDieQuest.cs" />
     <Compile Include="Game\objects\world\players\quests\player_quests\KillstreakQuest.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestAcceptability.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestCondition.cs" />
