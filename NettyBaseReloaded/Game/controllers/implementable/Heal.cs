@@ -42,8 +42,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 var healedSession = World.StorageManager.GetGameSession(HealingId);
                 if (healedSession == null || Amount == 0) return;
                 healedSession.Player.Controller.Heal.Execute(Amount, Character.Id, HealType);
-                GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write($"0|n|HEAL_RAY|{Character.Id}|{HealingId}"));
-                GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write($"0|n|HEAL_RAY|{Character.Id}|{HealingId}"));
+                GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write($"0|n|HEAL_RAY|{Character.Id}|{HealingId}"));
+                GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write($"0|n|HEAL_RAY|{Character.Id}|{HealingId}"));
             }
         }
 

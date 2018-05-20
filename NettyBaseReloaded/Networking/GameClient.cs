@@ -110,7 +110,47 @@ namespace NettyBaseReloaded.Networking
                 Debug.WriteLine(e.Message, "Debug Error");
             }
         }
-        
+
+        public static void SendToPlayerView(Character character, Command command, bool sendCharacter = false) =>
+            SendRangePacket(character, command, sendCharacter);
+        //TODO: Work on it
+        //public static void SendToPlayerView(Character character, Command command, bool sendCharacter = false)
+        //{
+        //    if (character == null) return;
+        //    try
+        //    {
+        //        foreach (var entry in character.Spacemap.Entities)
+        //        {
+        //            var entity = entry.Value as Player;
+        //            if (entity == null) continue;
+
+        //            if (character.Position.DistanceTo(entity.Position) < 1000 && entity != character)
+        //            {
+        //                if (entity.UsingNewClient && command.IsNewClient)
+        //                {
+        //                    entity.GetGameSession()?.Client.Send(command.Bytes);
+        //                }
+        //                if (!entity.UsingNewClient && !command.IsNewClient)
+        //                {
+        //                    entity.GetGameSession()?.Client.Send(command.Bytes);
+        //                }
+        //            }
+        //        }
+
+        //        if (sendCharacter && character is Player)
+        //        {
+        //            var player = (Player)character;
+        //            if (command.IsNewClient == player.UsingNewClient)
+        //                player.GetGameSession()?.Client.Send(command.Bytes);
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Out.WriteLine("Something went wrong sending a range packet.", "ERROR", ConsoleColor.Red);
+        //        Debug.WriteLine(e.Message, "Debug Error");
+        //    }
+        //}
+
         public static void SendPacketSelected(Character character, Command command)
         {
             try

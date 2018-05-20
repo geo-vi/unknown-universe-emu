@@ -320,6 +320,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public List<Quest> AcceptedQuests = new List<Quest>();
 
+        public List<Quest> CompletedQuests = new List<Quest>();
+
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
             string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
@@ -340,6 +342,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 return;
 
             base.AssembleTick(sender, eventArgs);
+            Cooldowns.Tick();
             Parallel.Invoke(() =>
             {
                 LevelChecker();
@@ -397,6 +400,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Boosters = new List<Booster>();
             Abilities = Hangar.Ship.Abilities(this);
             Settings = new Settings(this);
+            CompletedQuests = World.DatabaseManager.LoadQuests(this);
         }
 
         public void ClickableCheck(Object obj)

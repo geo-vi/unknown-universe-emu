@@ -35,14 +35,14 @@ namespace NettyBaseReloaded.Game.controllers.npc
         private DateTime LastActiveTime = new DateTime();
         public void Active()
         {
-            GameClient.SendRangePacket(Controller.Npc, netty.commands.old_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
-            GameClient.SendRangePacket(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
+            GameClient.SendToPlayerView(Controller.Npc, netty.commands.old_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
+            GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
             Opened = true;
 
             for (int i = 0; i <= DaughterSpawnCount; i++)
             {
                 var minionId = Controller.Npc.Spacemap.CreateNpc(DaughterType, AILevels.DAUGHTER, Controller.Npc);
-                GameClient.SendRangePacket(Controller.Npc, netty.commands.old_client.NpcUndockCommand.write(Controller.Npc.Id, minionId));
+                GameClient.SendToPlayerView(Controller.Npc, netty.commands.old_client.NpcUndockCommand.write(Controller.Npc.Id, minionId));
             }
             LastActiveTime = DateTime.Now;
         }
@@ -63,9 +63,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
         {
             if (LastActiveTime.AddSeconds(5) <= DateTime.Now)
             {
-                GameClient.SendRangePacket(Controller.Npc,
+                GameClient.SendToPlayerView(Controller.Npc,
                     netty.commands.old_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
-                GameClient.SendRangePacket(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
+                GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
 
             }
         }

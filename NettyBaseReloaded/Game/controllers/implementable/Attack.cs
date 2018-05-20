@@ -238,10 +238,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             damage = RandomizeDamage(damage);
             absDamage = RandomizeDamage(absDamage);
-            GameClient.SendRangePacket(Character,
+            GameClient.SendToPlayerView(Character,
                 netty.commands.old_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
                     Character is Player), true);
-            GameClient.SendRangePacket(Character,
+            GameClient.SendToPlayerView(Character,
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
                     Character is Player), true);
 
@@ -328,8 +328,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             if (player != null && enemy is Character) UpdateAttacker(enemy as Character, player);
 
-            GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
-            GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
             Controller.Damage?.Rocket(enemy, damage, false);
         }
 
@@ -380,8 +380,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             Character.RocketLauncher.Shoot();
 
-            GameClient.SendRangePacket(Character, netty.commands.old_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
-            GameClient.SendRangePacket(Character, netty.commands.new_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
+            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
 
             Controller.Damage?.Rocket(enemy, absDamage, true, dmgTypes);
             Controller.Damage?.Rocket(enemy, damage, false, dmgTypes);

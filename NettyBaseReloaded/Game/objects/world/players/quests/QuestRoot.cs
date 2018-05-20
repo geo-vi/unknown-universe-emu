@@ -27,6 +27,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
 
         public void LoadPlayerData(Player player)
         {
+            if (player == null) return;
             //Element[0]
             //[0, {true, 10, false}]
             //Elements[0].Condition.State.Completed = true;

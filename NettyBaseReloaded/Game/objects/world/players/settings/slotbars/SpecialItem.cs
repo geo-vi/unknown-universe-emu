@@ -25,8 +25,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                 case "equipment_extra_cpu_ish-01":
                     if (player.Cooldowns.Any(x => x is ISHCooldown)) return;
 
-                    GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|n|ISH|" + player.Id), true);
-                    GameClient.SendRangePacket(player, netty.commands.new_client.LegacyModule.write("0|n|ISH|" + player.Id), true);
+                    GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write("0|n|ISH|" + player.Id), true);
+                    GameClient.SendToPlayerView(player, netty.commands.new_client.LegacyModule.write("0|n|ISH|" + player.Id), true);
                     player.Controller.Effects.SetInvincible(3000);
 
                     cooldown = new ISHCooldown();
@@ -38,8 +38,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                     if (player.Cooldowns.Any(x => x is SMBCooldown)) return;
                     if (player.State.InDemiZone) return;
 
-                    GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
-                    GameClient.SendRangePacket(player, netty.commands.new_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
+                    GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
+                    GameClient.SendToPlayerView(player, netty.commands.new_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
                     player.Controller.Damage?.Area(20, 1000, true, DamageType.PERCENTAGE);
 
                     cooldown = new SMBCooldown();
@@ -51,11 +51,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                     if (player.Cooldowns.Any(x => x is EMPCooldown)) return;
                     if (player.State.InDemiZone) return;
 
-                    GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|n|EMP|" + player.Id), true);
-                    GameClient.SendRangePacket(player, netty.commands.new_client.LegacyModule.write("0|n|EMP|" + player.Id), true);
+                    GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write("0|n|EMP|" + player.Id), true);
+                    GameClient.SendToPlayerView(player, netty.commands.new_client.LegacyModule.write("0|n|EMP|" + player.Id), true);
 
-                    GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write("0|UI|MM|NOISE|1|1"));
-                    GameClient.SendRangePacket(player, netty.commands.new_client.LegacyModule.write("0|UI|MM|NOISE|1|1"));
+                    GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write("0|UI|MM|NOISE|1|1"));
+                    GameClient.SendToPlayerView(player, netty.commands.new_client.LegacyModule.write("0|UI|MM|NOISE|1|1"));
 
                     //I can't use GameHandler.SendSelectedPacket because i need to set Selected to null
                     foreach (var entry in player.Spacemap.Entities)

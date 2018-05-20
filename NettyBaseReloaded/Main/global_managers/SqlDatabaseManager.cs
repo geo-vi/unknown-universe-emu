@@ -15,9 +15,9 @@ namespace NettyBaseReloaded.Main.global_managers
     {
         public static DebugLog Log = new DebugLog("mysql");
 
-        public static string SERVER = "server1.univ3rse.com";
-        public static string UID = "remote";
-        public static string PWD = "789456123gta";
+        public static string SERVER = "localhost";
+        public static string UID = "root";
+        public static string PWD = "";
         public static string DB = "do_server_ge1";
         public static string DB_EXT = "do_system";
 

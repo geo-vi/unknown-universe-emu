@@ -217,7 +217,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             Parallel.Invoke(() =>
             {
-                Cooldowns.Tick();
+                //Cooldowns.Tick();
                 RocketLauncher?.Tick();
             });
         }

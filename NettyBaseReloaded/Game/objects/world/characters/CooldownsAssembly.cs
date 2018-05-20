@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 
@@ -47,13 +48,34 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public void Tick()
         {
             Sync();
-            Parallel.For(0, Cooldowns.Count, index =>
+                    Parallel.For(0, Cooldowns.Count, index =>
+                    {
+                        var cooldown = Cooldowns[index];
+                        if (cooldown.EndTime < DateTime.Now)
+                        {
+                            cooldown.OnFinish(Character);
+                            Remove(cooldown);
+                        }
+                    });
+        }
+
+        public void Update()
+        {
+            Task.Factory.StartNew(() =>
             {
-                var cooldown = Cooldowns[index];
-                if (cooldown.EndTime < DateTime.Now)
+                while (Character.EntityState == EntityStates.ALIVE)
                 {
-                    cooldown.OnFinish(Character);
-                    Remove(cooldown);
+                    Sync();
+                    Parallel.For(0, Cooldowns.Count, index =>
+                    {
+                        var cooldown = Cooldowns[index];
+                        if (cooldown.EndTime < DateTime.Now)
+                        {
+                            cooldown.OnFinish(Character);
+                            Remove(cooldown);
+                        }
+                    });
+                    Thread.Sleep(150);
                 }
             });
         }

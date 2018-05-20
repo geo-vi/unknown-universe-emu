@@ -94,6 +94,8 @@ namespace NettyBaseReloaded.Game.controllers.login
                 Packet.Builder.TitleCommand(GameSession, GameSession.Player);
             GameSession.Player.Information.Premium.Login(GameSession);
 
+            Packet.Builder.QuestInitializationCommand(GameSession);
+
             CreateFormations(GameSession);
             CreateTechs(GameSession);
             CreateAbilities(GameSession);

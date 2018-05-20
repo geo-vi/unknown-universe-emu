@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Main.commands
 {
@@ -86,6 +88,14 @@ namespace NettyBaseReloaded.Main.commands
 
                     Properties.Game.PRINTING_CONNECTIONS = true;
                     Console.WriteLine("Debug::Player connections are now printing");
+                    break;
+                case "send":
+                    var playerId = args[2];
+                    if (playerId != null)
+                    {
+                        var id = int.Parse(playerId);
+                        Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(id), args[3]);
+                    }
                     break;
             }
         }

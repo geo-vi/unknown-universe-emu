@@ -21,6 +21,8 @@ using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.players.events;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
+using NettyBaseReloaded.Game.objects.world.players.quests.player_quests;
+using NettyBaseReloaded.Game.objects.world.players.quests.quest_stats;
 using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
 
 namespace NettyBaseReloaded.Game.managers
@@ -1280,6 +1282,53 @@ namespace NettyBaseReloaded.Game.managers
             {
                 Console.WriteLine(e.Message);
                 new ExceptionLog("database_refresh_player", "Error refreshing players", e);
+            }
+        }
+
+        public List<Quest> LoadQuests(Player player)
+        {
+            //returns completed quests
+            // adds active to list
+            List<Quest> completed = new List<Quest>();
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_queststats WHERE PLAYER_ID=" + player.Id);
+                    var quest0 = queryRow["QUEST_0"].ToString();
+                    if (quest0 != "" && quest0 != "null")
+                    {
+                        var quest0Stat = JsonConvert.DeserializeObject<KillstreakQuestStat>(quest0);
+                        if (quest0Stat.Complete)
+                            completed.Add(new KillstreakQuest(player, quest0Stat));
+                        else player.AcceptedQuests.Add(new KillstreakQuest(player, quest0Stat));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("database_quest_load", "Error loading quest", e);
+            }
+
+            return completed;
+        }
+
+        public void SaveQuestData(Player player, Quest quest)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    if (quest is KillstreakQuest killstreakQuest)
+                    {
+                        if (quest.Canceled) killstreakQuest.Stats = null;
+                        mySqlClient.ExecuteNonQuery($"UPDATE player_queststats SET QUEST_0='{JsonConvert.SerializeObject(killstreakQuest.Stats)}' WHERE PLAYER_ID='{player.Id}'");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                new ExceptionLog("database_quest_save", "Error saving quest", e);
             }
         }
     }

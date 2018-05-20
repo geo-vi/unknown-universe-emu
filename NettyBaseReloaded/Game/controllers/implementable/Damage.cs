@@ -136,7 +136,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 target.Value.CurrentHealth -= damage;
                 target.Value.LastCombatTime = DateTime.Now;
-                GameClient.SendRangePacket(player, netty.commands.old_client.LegacyModule.write(eciPacket), true);
+                GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write(eciPacket), true);
                 if (target.Value is Player) Packet.Builder.AttackHitCommand(player.GetGameSession(), player.Id, target.Value, damage, (short)Types.ECI);
                 Packet.Builder.AttackHitCommand(player.GetGameSession(), player.Id, target.Value, damage, (short)Types.ECI);
             }

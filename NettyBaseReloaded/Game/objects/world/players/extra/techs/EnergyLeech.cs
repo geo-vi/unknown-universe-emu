@@ -32,8 +32,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
             Active = true;
             Player.Storage.EnergyLeechActivated = true;
             Packet.Builder.TechStatusCommand(Player.GetGameSession());
-            GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write("0|TX|A|S|ELA|" + Player.Id), true);
-            GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write("0|TX|A|S|ELA|" + Player.Id), true);
+            GameClient.SendToPlayerView(Player, netty.commands.old_client.LegacyModule.write("0|TX|A|S|ELA|" + Player.Id), true);
+            GameClient.SendToPlayerView(Player, netty.commands.new_client.LegacyModule.write("0|TX|A|S|ELA|" + Player.Id), true);
             TimeFinish = DateTime.Now.AddSeconds(900);
             Player.Cooldowns.Add(cld);
         }
@@ -51,8 +51,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
             Active = false;
             Player.Storage.EnergyLeechActivated = false;
             Packet.Builder.TechStatusCommand(Player.GetGameSession());
-            GameClient.SendRangePacket(Player, netty.commands.old_client.LegacyModule.write("0|TX|D|S|ELA|" + Player.Id), true);
-            GameClient.SendRangePacket(Player, netty.commands.new_client.LegacyModule.write("0|TX|D|S|ELA|" + Player.Id), true);
+            GameClient.SendToPlayerView(Player, netty.commands.old_client.LegacyModule.write("0|TX|D|S|ELA|" + Player.Id), true);
+            GameClient.SendToPlayerView(Player, netty.commands.new_client.LegacyModule.write("0|TX|D|S|ELA|" + Player.Id), true);
             cld.Send(Player.GetGameSession());
         }
     }

@@ -61,7 +61,7 @@ namespace NettyBaseReloaded.Game.controllers
 
                 if (this is PlayerController)
                 {
-                    var player = (Player) Character;
+                    var player = (Player)Character;
                     player.Controller.Tick();
                 }
                 else if (this is PetController)
@@ -75,12 +75,15 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void TickClasses()
         {
-            Attack?.Tick();
-            Damage?.Tick();
-            Heal?.Tick();
-            Destruction?.Tick();
-            Effects?.Tick();
-            Character.Position = MovementController.ActualPosition(Character);
+            Parallel.Invoke(() =>
+            {
+                Attack?.Tick();
+                Damage?.Tick();
+                Heal?.Tick();
+                Destruction?.Tick();
+                Effects?.Tick();
+                Character.Position = MovementController.ActualPosition(Character);
+            });
         }
 
         public void StopAll()

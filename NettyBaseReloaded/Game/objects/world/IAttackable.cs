@@ -58,6 +58,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public abstract void Destroy(Character destroyer);
 
+
         public bool InRange(IAttackable attackable, int range = 2000)
         {
             if (attackable == null || attackable.Spacemap.Id != Spacemap.Id) return false;

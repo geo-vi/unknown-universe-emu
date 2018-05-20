@@ -52,6 +52,43 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int AI { get; set; }
 
+        public int RootId
+        {
+            get
+            {
+                switch (Id)
+                {
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 58:
+                    case 60:
+                        return 8;
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 56:
+                    case 57:
+                    case 59:
+                    case 61:
+                    case 62:
+                    case 63:
+                    case 64:
+                    case 65:
+                    case 66:
+                    case 67:
+                    case 68:
+                    case 86:
+                    case 87:
+                    case 88:
+                    case 109:
+                    case 110:
+                        return 10;
+                    default: return Id;
+                }
+            }
+        }
+
         public Ship(int id, string name, string lootId, int health, int nanohull, int speed, int shield, double shieldAbsorb, int minDamage, int maxDamage, bool neutral, int laserColor,
             int batteries, int rockets, int cargo, Reward reward, DropableRewards cargoDrop, int ai)
         {

@@ -25,6 +25,7 @@ using Global = NettyBaseReloaded.Main.Global;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Game.objects.world.players.informations;
+using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Game.netty.packet
@@ -40,10 +41,14 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 var qs = new commands.new_client.QualitySettingsModule(false, 3, 3, 3, false, 3, 3, 3, 3, 3, 3);
                 var asm = new commands.new_client.AudioSettingsModule(false, 50, 0, 50, false);
-                var ws = new commands.new_client.WindowSettingsModule(8, "23,1|24,1|25,1|27,1|26,1|100,1|34,1|36,1|33,1|35,1|39,1|38,1|37,1|32,1|", false);
-                var gm = new commands.new_client.GameplaySettingsModule(false, false, false, false, false, true, false, false, false, false);
+                var ws = new commands.new_client.WindowSettingsModule(8,
+                    "23,1|24,1|25,1|27,1|26,1|100,1|34,1|36,1|33,1|35,1|39,1|38,1|37,1|32,1|", false);
+                var gm = new commands.new_client.GameplaySettingsModule(false, false, false, false, false, true, false,
+                    false, false, false);
                 var z9 = new commands.new_client.QuestSettingsModule(false, true, true, false, false, false);
-                var ds = new commands.new_client.DisplaySettingsModule(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, 3, 4, 4, 3, 3, 4, 3, 3, true, true, true, true);
+                var ds = new commands.new_client.DisplaySettingsModule(true, true, true, true, true, true, true, true,
+                    true, true, true, true, true, true, true, true, true, true, true, 3, 4, 4, 3, 3, 4, 3, 3, true,
+                    true, true, true);
 
                 //TODO: Integrate it into the Settings 
                 gameSession.Client.Send(commands.new_client.UserSettingsCommand.write(qs, asm, ws, gm, z9, ds).Bytes);
@@ -53,9 +58,11 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(player.Settings.OldClientUserSettingsCommand.write().Bytes);
             }
         }
+
         #endregion
 
         #region Slotbars / Windows
+
         public void SendUserSettings(GameSession gameSession)
         {
             var player = gameSession.Player;
@@ -88,7 +95,8 @@ namespace NettyBaseReloaded.Game.netty.packet
                 new Window.New_Client("tdm", "title_tdm", false),
                 new Window.New_Client("ranked_hunt", "title_ranked_hunt", false),
                 new Window.New_Client("highscoregate", "title_highscoregate", false),
-                new Window.New_Client("scoreevent", "title_scoreevent", gameSession.Player.EventsPraticipating.Any(x => x.Value is ScoreMageddon)),
+                new Window.New_Client("scoreevent", "title_scoreevent",
+                    gameSession.Player.EventsPraticipating.Any(x => x.Value is ScoreMageddon)),
                 new Window.New_Client("infiltration", "title_ifg", false),
                 new Window.New_Client("word_puzzle", "title_wordpuzzle", false),
                 new Window.New_Client("sectorcontrol", "title_sectorcontrol_ingame_status", false),
@@ -114,8 +122,10 @@ namespace NettyBaseReloaded.Game.netty.packet
 
             var slotbars = new List<commands.new_client.commandKn>
             {
-                new commands.new_client.commandKn(commands.new_client.commandKn.GAME_FEATURE_BAR, topLeftButtons, "0,0", "0"),
-                new commands.new_client.commandKn(commands.new_client.commandKn.GENERIC_FEATURE_BAR, topRightButtons, "100,0", "0")
+                new commands.new_client.commandKn(commands.new_client.commandKn.GAME_FEATURE_BAR, topLeftButtons, "0,0",
+                    "0"),
+                new commands.new_client.commandKn(commands.new_client.commandKn.GENERIC_FEATURE_BAR, topRightButtons,
+                    "100,0", "0")
             };
 
             gameSession.Client.Send(commands.new_client.WindowsCommand.write(slotbars).Bytes);
@@ -129,60 +139,117 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 var slotbars = new List<commands.new_client.SlotbarQuickslotModule>
                 {
-                    new commands.new_client.SlotbarQuickslotModule("standardSlotBar", player.Settings.Slotbar.QuickslotItems, "50,85|0,40",
+                    new commands.new_client.SlotbarQuickslotModule("standardSlotBar",
+                        player.Settings.Slotbar.QuickslotItems, "50,85|0,40",
                         "0", true),
-                    new commands.new_client.SlotbarQuickslotModule("premiumSlotBar", player.Settings.Slotbar.PremiumQuickslotItems, "50,85|0,80", "0", true)
+                    new commands.new_client.SlotbarQuickslotModule("premiumSlotBar",
+                        player.Settings.Slotbar.PremiumQuickslotItems, "50,85|0,80", "0", true)
                 };
                 gameSession.Client.Send(
-                    commands.new_client.SlotbarsCommand.write(player.Settings.Slotbar.GetCategories(player), "50,85", slotbars)
+                    commands.new_client.SlotbarsCommand
+                        .write(player.Settings.Slotbar.GetCategories(player), "50,85", slotbars)
                         .Bytes);
 
             }
             else
             {
                 var ammo = new List<netty.commands.old_client.AmmunitionCountModule>();
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X1), player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X2), player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X3), player.Information.Ammunitions["ammunition_laser_mcb-50"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.X4), player.Information.Ammunitions["ammunition_laser_ucb-100"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAB), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.CBO), player.Information.Ammunitions["ammunition_laser_cbo-100"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.RSB), player.Information.Ammunitions["ammunition_laser_rsb-75"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.JOB100), player.Information.Ammunitions["ammunition_laser_job-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(
+                        netty.commands.old_client.AmmunitionTypeModule.X1),
+                    player.Information.Ammunitions["ammunition_laser_lcb-10"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(
+                        netty.commands.old_client.AmmunitionTypeModule.X2),
+                    player.Information.Ammunitions["ammunition_laser_mcb-25"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(
+                        netty.commands.old_client.AmmunitionTypeModule.X3),
+                    player.Information.Ammunitions["ammunition_laser_mcb-50"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(
+                        netty.commands.old_client.AmmunitionTypeModule.X4),
+                    player.Information.Ammunitions["ammunition_laser_ucb-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .SAB), player.Information.Ammunitions["ammunition_laser_sab-50"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .CBO), player.Information.Ammunitions["ammunition_laser_cbo-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .RSB), player.Information.Ammunitions["ammunition_laser_rsb-75"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .JOB100), player.Information.Ammunitions["ammunition_laser_job-100"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 ammo.Clear();
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.R310), player.Information.Ammunitions["ammunition_rocket_r-310"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2021), player.Information.Ammunitions["ammunition_rocket_plt-2021"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT2026), player.Information.Ammunitions["ammunition_rocket_plt-2026"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLT3030), player.Information.Ammunitions["ammunition_rocket_plt-3030"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.PLASMA), player.Information.Ammunitions["ammunition_specialammo_pld-8"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.WIZARD), player.Information.Ammunitions["ammunition_specialammo_wiz-x"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.DECELERATION), player.Information.Ammunitions["ammunition_specialammo_dcr-250"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .R310), player.Information.Ammunitions["ammunition_rocket_r-310"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .PLT2021), player.Information.Ammunitions["ammunition_rocket_plt-2021"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .PLT2026), player.Information.Ammunitions["ammunition_rocket_plt-2026"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .PLT3030), player.Information.Ammunitions["ammunition_rocket_plt-3030"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .PLASMA), player.Information.Ammunitions["ammunition_specialammo_pld-8"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .WIZARD), player.Information.Ammunitions["ammunition_specialammo_wiz-x"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .DECELERATION), player.Information.Ammunitions["ammunition_specialammo_dcr-250"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 ammo.Clear();
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.ECO_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.HELLSTORM), player.Information.Ammunitions["ammunition_rocketlauncher_hstrm-01"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.UBER_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_ubr-100"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR01), player.Information.Ammunitions["ammunition_rocketlauncher_sar-01"].Get()));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SAR02), player.Information.Ammunitions["ammunition_rocketlauncher_sar-02"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .ECO_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .HELLSTORM), player.Information.Ammunitions["ammunition_rocketlauncher_hstrm-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .UBER_ROCKET), player.Information.Ammunitions["ammunition_rocketlauncher_ubr-100"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .SAR01), player.Information.Ammunitions["ammunition_rocketlauncher_sar-01"].Get()));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .SAR02), player.Information.Ammunitions["ammunition_rocketlauncher_sar-02"].Get()));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 ammo.Clear();
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.MINE), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.SMARTBOMB), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.INSTANT_SHIELD), 100));
-                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule.EMP), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .MINE), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .SMARTBOMB), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .INSTANT_SHIELD), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .EMP), 100));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 player.Settings.Slotbar.GetCategories(player);
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
             }
         }
+
         #endregion
 
         #region ShipInitializationCommand
+
         public void ShipInitializationCommand(GameSession gameSession)
         {
             var player = gameSession.Player;
-            
+
             if (gameSession.Player.UsingNewClient)
                 gameSession.Client.Send(
                     commands.new_client.ShipInitializationCommand.write(
@@ -210,7 +277,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Information.Level.Id,
                         player.Information.Credits.Get(),
                         player.Information.Uridium.Get(),
-                        0,//Jackpot
+                        0, //Jackpot
                         (int) player.RankId,
                         player.Clan.Tag, //clanTag
                         0, // player GG rings
@@ -250,15 +317,17 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Information.Uridium.Get(),
                         0,
                         (int) player.RankId,
-                        player.Clan.Tag, 
+                        player.Clan.Tag,
                         0,
                         true,
                         player.Invisible,
                         new List<commands.old_client.VisualModifierCommand>()).Bytes);
         }
+
         #endregion
 
         #region commandX35
+
         public void commandX35(GameSession gameSession)
         {
             if (gameSession.Player.UsingNewClient)
@@ -266,6 +335,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.new_client.commandX35.write().Bytes);
             }
         }
+
         #endregion
 
         #region LegacyModule
@@ -273,10 +343,12 @@ namespace NettyBaseReloaded.Game.netty.packet
         #endregion
 
         #region ShipCreateCommand
+
         public void ShipCreateCommand(GameSession gameSession, Character character)
         {
             if (Properties.Game.DEBUG_ENTITIES)
-                Console.WriteLine("ID: {0} Type: {1} Position: {2}", character.Id, character.Hangar.Ship.Id, character.Position);
+                Console.WriteLine("ID: {0} Type: {1} Position: {2}", character.Id, character.Hangar.Ship.Id,
+                    character.Position);
 
             byte[] bytes = null;
             if (gameSession.Player.UsingNewClient)
@@ -285,7 +357,8 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.new_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.ShipDesign.ToStringLoot(), pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
+                        pChar.Hangar.ShipDesign.ToStringLoot(), pChar.Equipment.LaserCount(), pChar.Clan.Tag,
+                        pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
                         (int) pChar.FactionId, 0, (int) pChar.RankId, false,
                         new commands.new_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
@@ -299,10 +372,12 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else
                 {
                     bytes = commands.new_client.ShipCreateCommand.write(character.Id,
-                        character.Hangar.ShipDesign.ToStringLoot(), 0, character.Clan.Tag, character.Name, character.Position.X,
+                        character.Hangar.ShipDesign.ToStringLoot(), 0, character.Clan.Tag, character.Name,
+                        character.Position.X,
                         character.Position.Y,
-                        (int)character.FactionId, character.Clan.Id, 0, false,
-                        new commands.new_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
+                        (int) character.FactionId, character.Clan.Id, 0, false,
+                        new commands.new_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)),
+                        0,
                         false, true, character.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
@@ -313,11 +388,15 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.old_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.ShipDesign.Id, pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name, pChar.Position.X,
-                        pChar.Position.Y,
-                        (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
-                        new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, false, character.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
+                            pChar.Hangar.ShipDesign.Id, pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name,
+                            pChar.Position.X,
+                            pChar.Position.Y,
+                            (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
+                            new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)),
+                            0,
+                            false, false, character.Invisible, 0, 0,
+                            new List<commands.old_client.VisualModifierCommand>())
+                        .Bytes;
                 }
                 else if (character is Pet)
                 {
@@ -326,15 +405,21 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else
                 {
                     bytes = commands.old_client.ShipCreateCommand.write(character.Id,
-                        character.Hangar.ShipDesign.Id, 0, character.Clan.Tag, character.Name, character.Position.X,
-                        character.Position.Y,
-                        (int) character.FactionId, character.Clan.Id, 0, false,
-                        new commands.old_client.ClanRelationModule(character.Clan.GetRelation(gameSession.Player.Clan)), 0,
-                        false, true, character.Invisible, 0, 0, new List<commands.old_client.VisualModifierCommand>()).Bytes;
+                            character.Hangar.ShipDesign.Id, 0, character.Clan.Tag, character.Name, character.Position.X,
+                            character.Position.Y,
+                            (int) character.FactionId, character.Clan.Id, 0, false,
+                            new commands.old_client.ClanRelationModule(
+                                character.Clan.GetRelation(gameSession.Player.Clan)),
+                            0,
+                            false, true, character.Invisible, 0, 0,
+                            new List<commands.old_client.VisualModifierCommand>())
+                        .Bytes;
                 }
             }
+
             gameSession.Client.Send(bytes);
         }
+
         #endregion
 
         #region ShipRemoveCommand
@@ -342,7 +427,8 @@ namespace NettyBaseReloaded.Game.netty.packet
         public void ShipRemoveCommand(GameSession gameSession, Character character)
         {
             if (Properties.Game.DEBUG_ENTITIES)
-                Console.WriteLine("ID: {0} Type: {1} Position: {2}", character.Id, character.Hangar.Ship.Id, character.Position);
+                Console.WriteLine("ID: {0} Type: {1} Position: {2}", character.Id, character.Hangar.Ship.Id,
+                    character.Position);
 
             if (gameSession.Player.UsingNewClient)
             {
@@ -353,6 +439,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.ShipRemoveCommand.write(character.Id).Bytes);
             }
         }
+
         #endregion
 
         #region MoveCommand
@@ -362,16 +449,19 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(
-                    commands.new_client.MoveCommand.write(character.Id, character.Destination.X, character.Destination.Y,
+                    commands.new_client.MoveCommand.write(character.Id, character.Destination.X,
+                        character.Destination.Y,
                         time).Bytes);
             }
             else
             {
                 gameSession.Client.Send(
-                    commands.old_client.MoveCommand.write(character.Id, character.Destination.X, character.Destination.Y,
+                    commands.old_client.MoveCommand.write(character.Id, character.Destination.X,
+                        character.Destination.Y,
                         time).Bytes);
             }
         }
+
         #endregion
 
         #region DronesCommand
@@ -384,7 +474,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
             foreach (var d in character.Hangar.Drones)
             {
-                command += "|" + (int)d.DroneType + "|" + d.Level.Id + "|" + d.Design;
+                command += "|" + (int) d.DroneType + "|" + d.Level.Id + "|" + d.Design;
             }
 
             if (gameSession.Player.UsingNewClient)
@@ -396,6 +486,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.LegacyModule.write(command).Bytes);
             }
         }
+
         #endregion
 
         #region JumpgateCreateCommand
@@ -404,7 +495,8 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.JumpgateCreateCommand.write(portal.Id, (int)portal.Faction, portal.Gfx, portal.Position.X, portal.Position.Y,
+                gameSession.Client.Send(commands.new_client.JumpgateCreateCommand.write(portal.Id, (int) portal.Faction,
+                    portal.Gfx, portal.Position.X, portal.Position.Y,
                     portal.Visible, portal.Working, new List<int>()).Bytes);
             }
             else
@@ -412,9 +504,11 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.LegacyModule.write(portal.ToPacket()).Bytes);
             }
         }
+
         #endregion
 
         #region ActivatePortalCommand
+
         public void ActivatePortalCommand(GameSession gameSession, Jumpgate portal)
         {
             if (gameSession.Player.UsingNewClient)
@@ -424,14 +518,17 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                LegacyModule(gameSession, $"0|{ServerCommands.PLAY_PORTAL_ANIMATION}|{portal.DestinationMapId}|{portal.Id}", true);
+                LegacyModule(gameSession,
+                    $"0|{ServerCommands.PLAY_PORTAL_ANIMATION}|{portal.DestinationMapId}|{portal.Id}", true);
             }
         }
+
         #endregion
 
         #region MapAssetActionAvailableCommand
 
-        public void MapAssetActionAvailableCommand(GameSession gameSession, Object _object, bool toggled, bool activatable)
+        public void MapAssetActionAvailableCommand(GameSession gameSession, Object _object, bool toggled,
+            bool activatable)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -439,9 +536,12 @@ namespace NettyBaseReloaded.Game.netty.packet
                 if (toggled) state = commands.new_client.MapAssetActionAvailableCommand.ON;
 
                 gameSession.Client.Send(commands.new_client.MapAssetActionAvailableCommand.write(_object.Id, state,
-                    activatable, new commands.new_client.ClientUITooltip(new List<commands.new_client.ClientUITooltipTextFormat>()), new commands.new_client.commandu1C()).Bytes);
+                    activatable,
+                    new commands.new_client.ClientUITooltip(new List<commands.new_client.ClientUITooltipTextFormat>()),
+                    new commands.new_client.commandu1C()).Bytes);
             }
         }
+
         #endregion
 
         #region LegacyModule
@@ -466,15 +566,25 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                if (character == null) gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(0,0,0,0,0,0,0,0,false).Bytes);
-                else gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(character.Id, character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
-                    character.CurrentHealth, character.MaxHealth, character.CurrentNanoHull, character.MaxNanoHull, false).Bytes);
+                if (character == null)
+                    gameSession.Client.Send(commands.new_client.ShipSelectionCommand
+                        .write(0, 0, 0, 0, 0, 0, 0, 0, false).Bytes);
+                else
+                    gameSession.Client.Send(commands.new_client.ShipSelectionCommand.write(character.Id,
+                        character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
+                        character.CurrentHealth, character.MaxHealth, character.CurrentNanoHull, character.MaxNanoHull,
+                        false).Bytes);
             }
             else
             {
-                if (character == null) gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(0,0,0,0,0,0,0,0,false).Bytes);
-                else gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(character.Id, character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
-                    character.CurrentHealth, character.MaxHealth, character.CurrentNanoHull, character.MaxNanoHull, false).Bytes);
+                if (character == null)
+                    gameSession.Client.Send(commands.old_client.ShipSelectionCommand
+                        .write(0, 0, 0, 0, 0, 0, 0, 0, false).Bytes);
+                else
+                    gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(character.Id,
+                        character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
+                        character.CurrentHealth, character.MaxHealth, character.CurrentNanoHull, character.MaxNanoHull,
+                        false).Bytes);
             }
         }
 
@@ -486,17 +596,26 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.AssetCreateCommand.write(new commands.new_client.AssetTypeModule((short)asset.Type), asset.Name, (int)asset.Faction, asset.Clan.Tag, asset.Id, asset.DesignId,
-                asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.Clan.Id, asset.Invisible, asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar, true,
-                    new commands.new_client.ClanRelationModule(asset.Clan.GetRelation(gameSession.Player.Clan)), new List<commands.new_client.VisualModifierCommand>()).Bytes);
+                gameSession.Client.Send(commands.new_client.AssetCreateCommand.write(
+                    new commands.new_client.AssetTypeModule((short) asset.Type), asset.Name, (int) asset.Faction,
+                    asset.Clan.Tag, asset.Id, asset.DesignId,
+                    asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.Clan.Id, asset.Invisible,
+                    asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar, true,
+                    new commands.new_client.ClanRelationModule(asset.Clan.GetRelation(gameSession.Player.Clan)),
+                    new List<commands.new_client.VisualModifierCommand>()).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AssetCreateCommand.write(new commands.old_client.AssetTypeModule((short)asset.Type), asset.Name, (int)asset.Faction, asset.Clan.Tag, asset.Id, asset.DesignId,
-                    asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.Clan.Id, asset.Invisible, asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar,
-                    new commands.old_client.ClanRelationModule(asset.Clan.GetRelation(gameSession.Player.Clan)), new List<commands.old_client.VisualModifierCommand>()).Bytes);
+                gameSession.Client.Send(commands.old_client.AssetCreateCommand.write(
+                    new commands.old_client.AssetTypeModule((short) asset.Type), asset.Name, (int) asset.Faction,
+                    asset.Clan.Tag, asset.Id, asset.DesignId,
+                    asset.ExpansionStage, asset.Position.X, asset.Position.Y, asset.Clan.Id, asset.Invisible,
+                    asset.VisibleOnWarnRadar, asset.DetectedByWarnRadar,
+                    new commands.old_client.ClanRelationModule(asset.Clan.GetRelation(gameSession.Player.Clan)),
+                    new List<commands.old_client.VisualModifierCommand>()).Bytes);
             }
         }
+
         #endregion
 
         #region StationCreateCommand
@@ -507,21 +626,26 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 if (station is PirateStation)
                 {
-                    gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 6, 1500, station.Position.X, station.Position.Y));
+                    gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 6, 1500,
+                        station.Position.X, station.Position.Y));
                 }
                 else if (station is HealthStation)
                 {
-                    gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 4, 1500, station.Position.X, station.Position.Y));
+                    gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 4, 1500,
+                        station.Position.X, station.Position.Y));
                 }
                 else if (station is ReadyRelayStation)
                 {
-                    gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 5, 1500, station.Position.X, station.Position.Y));
+                    gameSession.Client.Send(commands.new_client.commandY2c.write(station.Id, 5, 1500,
+                        station.Position.X, station.Position.Y));
                 }
                 else
                 {
                     foreach (var module in station.Modules)
                     {
-                        AssetCreateCommand(gameSession, new Asset(module.Id, "", module.Type, station.Faction, Global.StorageManager.Clans[0], 0, 0, module.Position, station.Spacemap, false, false, false));
+                        AssetCreateCommand(gameSession,
+                            new Asset(module.Id, "", module.Type, station.Faction, Global.StorageManager.Clans[0], 0, 0,
+                                module.Position, station.Spacemap, false, false, false));
                     }
                 }
             }
@@ -530,6 +654,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 LegacyModule(gameSession, station.GetString());
             }
         }
+
         #endregion
 
         #region AttackLaserRunCommand
@@ -539,11 +664,13 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.AttackLaserRunCommand.write(attackerId, targetId, laserColor, isDiminishedBySkillShield, skilledLaser).Bytes);
+                gameSession.Client.Send(commands.new_client.AttackLaserRunCommand.write(attackerId, targetId,
+                    laserColor, isDiminishedBySkillShield, skilledLaser).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AttackLaserRunCommand.write(attackerId, targetId, laserColor, isDiminishedBySkillShield, skilledLaser).Bytes);
+                gameSession.Client.Send(commands.old_client.AttackLaserRunCommand.write(attackerId, targetId,
+                    laserColor, isDiminishedBySkillShield, skilledLaser).Bytes);
             }
         }
 
@@ -557,18 +684,24 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 if (damage == 0)
-                    gameSession.Client.Send(commands.new_client.AttackMissedCommand.write(new commands.new_client.AttackTypeModule(effect), target.Id, 0).Bytes);
-                else gameSession.Client.Send(commands.new_client.AttackHitCommand.write(
-                    new commands.new_client.AttackTypeModule(effect), attackerId,
-                    target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true).Bytes);
+                    gameSession.Client.Send(commands.new_client.AttackMissedCommand
+                        .write(new commands.new_client.AttackTypeModule(effect), target.Id, 0).Bytes);
+                else
+                    gameSession.Client.Send(commands.new_client.AttackHitCommand.write(
+                            new commands.new_client.AttackTypeModule(effect), attackerId,
+                            target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true)
+                        .Bytes);
             }
             else
             {
                 if (damage == 0)
-                    gameSession.Client.Send(commands.old_client.AttackMissedCommand.write(new commands.old_client.AttackTypeModule(effect), target.Id, 0).Bytes);
-                else gameSession.Client.Send(commands.old_client.AttackHitCommand.write(
-                    new commands.old_client.AttackTypeModule(effect), attackerId,
-                    target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true).Bytes);
+                    gameSession.Client.Send(commands.old_client.AttackMissedCommand
+                        .write(new commands.old_client.AttackTypeModule(effect), target.Id, 0).Bytes);
+                else
+                    gameSession.Client.Send(commands.old_client.AttackHitCommand.write(
+                            new commands.old_client.AttackTypeModule(effect), attackerId,
+                            target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true)
+                        .Bytes);
             }
         }
 
@@ -576,15 +709,18 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region HitpointInfoCommand
 
-        public void HitpointInfoCommand(GameSession gameSession, int hitpoints, int hitpointsMax, int nanoHull, int nanoHullMax)
+        public void HitpointInfoCommand(GameSession gameSession, int hitpoints, int hitpointsMax, int nanoHull,
+            int nanoHullMax)
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.HitpointInfoCommand.write(hitpoints, hitpointsMax, nanoHull, nanoHullMax).Bytes);
+                gameSession.Client.Send(commands.new_client.HitpointInfoCommand
+                    .write(hitpoints, hitpointsMax, nanoHull, nanoHullMax).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.HitpointInfoCommand.write(hitpoints, hitpointsMax, nanoHull, nanoHullMax).Bytes);
+                gameSession.Client.Send(commands.old_client.HitpointInfoCommand
+                    .write(hitpoints, hitpointsMax, nanoHull, nanoHullMax).Bytes);
             }
         }
 
@@ -596,11 +732,13 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.AttributeShieldUpdateCommand.write(shieldNow, shieldMax).Bytes);
+                gameSession.Client.Send(commands.new_client.AttributeShieldUpdateCommand.write(shieldNow, shieldMax)
+                    .Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AttributeShieldUpdateCommand.write(shieldNow, shieldMax).Bytes);
+                gameSession.Client.Send(commands.old_client.AttributeShieldUpdateCommand.write(shieldNow, shieldMax)
+                    .Bytes);
             }
         }
 
@@ -639,11 +777,13 @@ namespace NettyBaseReloaded.Game.netty.packet
 
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.PetInitializationCommand.write(hasPet, hasFuel, petIsAlive).Bytes);
+                gameSession.Client.Send(commands.new_client.PetInitializationCommand.write(hasPet, hasFuel, petIsAlive)
+                    .Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.PetInitializationCommand.write(hasPet, hasFuel, petIsAlive).Bytes);
+                gameSession.Client.Send(commands.old_client.PetInitializationCommand.write(hasPet, hasFuel, petIsAlive)
+                    .Bytes);
             }
         }
 
@@ -691,10 +831,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.PetHeroActivationCommand.write(pet.GetOwner().Id, pet.Id, 12, 1, pet.Name, (short)pet.FactionId, pet.Clan.Id, (short)pet.Level.Id, pet.Clan.Tag, pet.Position.X, pet.Position.Y, pet.Speed).Bytes);
+                gameSession.Client.Send(commands.old_client.PetHeroActivationCommand.write(pet.GetOwner().Id, pet.Id,
+                    12, 1, pet.Name, (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
+                    pet.Position.X, pet.Position.Y, pet.Speed).Bytes);
             }
         }
-#endregion
+
+        #endregion
 
         #region PetStatusCommand
 
@@ -702,12 +845,14 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.PetStatusCommand.write(pet.Id, pet.Level.Id, pet.Experience, 1000, pet.CurrentHealth,
-                pet.MaxHealth, pet.CurrentShield, pet.MaxShield, pet.Fuel, 50000, pet.Speed, pet.Name).Bytes);
+                gameSession.Client.Send(commands.new_client.PetStatusCommand.write(pet.Id, pet.Level.Id, pet.Experience,
+                    1000, pet.CurrentHealth,
+                    pet.MaxHealth, pet.CurrentShield, pet.MaxShield, pet.Fuel, 50000, pet.Speed, pet.Name).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.PetStatusCommand.write(pet.Id, pet.Level.Id, pet.Experience, 1000, pet.CurrentHealth,
+                gameSession.Client.Send(commands.old_client.PetStatusCommand.write(pet.Id, pet.Level.Id, pet.Experience,
+                    1000, pet.CurrentHealth,
                     pet.MaxHealth, pet.CurrentShield, pet.MaxShield, pet.Fuel, 50000, pet.Speed, pet.Name).Bytes);
             }
         }
@@ -721,11 +866,16 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (collectable.Disposed) return;
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.CreateBoxCommand.write(collectable.Type.ToString(), new commands.new_client.BoxModule(collectable.Hash, collectable.Position.X, collectable.Position.Y)).Bytes);
+                gameSession.Client.Send(commands.new_client.CreateBoxCommand.write(collectable.Type.ToString(),
+                        new commands.new_client.BoxModule(collectable.Hash, collectable.Position.X,
+                            collectable.Position.Y))
+                    .Bytes);
             }
             else
             {
-                LegacyModule(gameSession, "0|c|" + collectable.Hash + "|" + collectable.GetTypeId(gameSession.Player) + "|" + collectable.Position.ToPacket());
+                LegacyModule(gameSession,
+                    "0|c|" + collectable.Hash + "|" + collectable.GetTypeId(gameSession.Player) + "|" +
+                    collectable.Position.ToPacket());
             }
         }
 
@@ -738,14 +888,17 @@ namespace NettyBaseReloaded.Game.netty.packet
             var player = gameSession.Player;
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.BeaconCommand.write(0,0,0,0,
-                    player.State.InDemiZone, player.Controller.Repairing, player.Controller.Repairing, player.Equipment.GetRobot(), player.State.InRadiationArea).Bytes);
+                gameSession.Client.Send(commands.new_client.BeaconCommand.write(0, 0, 0, 0,
+                    player.State.InDemiZone, player.Controller.Repairing, player.Controller.Repairing,
+                    player.Equipment.GetRobot(), player.State.InRadiationArea).Bytes);
             }
             else
             {
-                LegacyModule(gameSession, "0|" + commands.ServerCommands.BEACON + "|"+ player.Position.X +"|"+player.Position.Y+"|" + Convert.ToInt32(player.State.InDemiZone) + "|0|"
+                LegacyModule(gameSession, "0|" + commands.ServerCommands.BEACON + "|" + player.Position.X + "|" +
+                                          player.Position.Y + "|" + Convert.ToInt32(player.State.InDemiZone) + "|0|"
                                           + Convert.ToInt32(player.State.InTradeArea) + "|"
-                                          + Convert.ToInt32(player.State.InRadiationArea) + "|" + Convert.ToInt32(player.State.InPortalArea) + "|0");
+                                          + Convert.ToInt32(player.State.InRadiationArea) + "|" +
+                                          Convert.ToInt32(player.State.InPortalArea) + "|0");
                 LegacyModule(gameSession, "0|A|RS|S|" + player.Controller.Repairing);
             }
         }
@@ -753,43 +906,44 @@ namespace NettyBaseReloaded.Game.netty.packet
         #endregion
 
         #region HotkeyCommand
+
         public void HotkeysCommand(GameSession gameSession)
         {
             var newClient = gameSession.Player.UsingNewClient;
             //TODO create this array somewhere reading from json
             var hotkeys = new List<Hotkey>
             {
-                new Hotkey(Hotkey.ACTIVATE_LASER, (int) Keys.ControlKey,newClient),
-                new Hotkey(Hotkey.CHANGE_CONFIG, (int) Keys.C,newClient),
-                new Hotkey(Hotkey.JUMP, (int) Keys.J,newClient),
-                new Hotkey(Hotkey.LAUNCH_ROCKET, (int) Keys.Space,newClient),
-                new Hotkey(Hotkey.PERFORMANCE_MONITORING, (int) Keys.F,newClient),
-                new Hotkey(Hotkey.PET_ACTIVATE, (int) Keys.E,newClient),
-                new Hotkey(Hotkey.PET_GUARD_MODE, (int) Keys.R,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D1, 0,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D2, 1,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D3, 2,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D4, 3,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D5, 4,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D6, 5,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D7, 6,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D8, 7,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D9, 8,newClient),
-                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D0, 9,newClient),
-                new Hotkey(Hotkey.TOGGLE_WINDOWS, (int) Keys.H,newClient),
-                new Hotkey(Hotkey.LOGOUT, (int) Keys.L,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F1, 0,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F2, 1,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F3, 2,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F4, 3,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F5, 4,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F6, 5,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F7, 6,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F8, 7,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F9, 8,newClient),
-                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F10, 9,newClient),
-                new Hotkey(Hotkey.ZOOM_IN, (int) Keys.Oemplus,newClient),
-                new Hotkey(Hotkey.ZOOM_OUT, (int) Keys.OemMinus,newClient),
+                new Hotkey(Hotkey.ACTIVATE_LASER, (int) Keys.ControlKey, newClient),
+                new Hotkey(Hotkey.CHANGE_CONFIG, (int) Keys.C, newClient),
+                new Hotkey(Hotkey.JUMP, (int) Keys.J, newClient),
+                new Hotkey(Hotkey.LAUNCH_ROCKET, (int) Keys.Space, newClient),
+                new Hotkey(Hotkey.PERFORMANCE_MONITORING, (int) Keys.F, newClient),
+                new Hotkey(Hotkey.PET_ACTIVATE, (int) Keys.E, newClient),
+                new Hotkey(Hotkey.PET_GUARD_MODE, (int) Keys.R, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D1, 0, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D2, 1, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D3, 2, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D4, 3, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D5, 4, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D6, 5, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D7, 6, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D8, 7, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D9, 8, newClient),
+                new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D0, 9, newClient),
+                new Hotkey(Hotkey.TOGGLE_WINDOWS, (int) Keys.H, newClient),
+                new Hotkey(Hotkey.LOGOUT, (int) Keys.L, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F1, 0, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F2, 1, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F3, 2, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F4, 3, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F5, 4, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F6, 5, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F7, 6, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F8, 7, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F9, 8, newClient),
+                new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F10, 9, newClient),
+                new Hotkey(Hotkey.ZOOM_IN, (int) Keys.Oemplus, newClient),
+                new Hotkey(Hotkey.ZOOM_OUT, (int) Keys.OemMinus, newClient),
             };
 
             var keys = hotkeys.Select(hotkey => hotkey.Object).ToList();
@@ -807,13 +961,17 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                 gameSession.Client.Send(commands.new_client.MapAddPOICommand.write(poi.Id, new commands.new_client.POITypeModule((short)poi.Type), poi.TypeSpecification,
-                     new commands.new_client.POIDesignModule((short)poi.Design), (short)poi.Shape, poi.ShapeCordsToInts(), poi.Inverted, poi.Active));
+                gameSession.Client.Send(commands.new_client.MapAddPOICommand.write(poi.Id,
+                    new commands.new_client.POITypeModule((short) poi.Type), poi.TypeSpecification,
+                    new commands.new_client.POIDesignModule((short) poi.Design), (short) poi.Shape,
+                    poi.ShapeCordsToInts(), poi.Inverted, poi.Active));
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.MapAddPOICommand.write(poi.Id, new commands.old_client.POITypeModule((short)poi.Type), poi.TypeSpecification,
-                    new commands.old_client.POIDesignModule((short)poi.Design), (short)poi.Shape, poi.ShapeCordsToInts(), poi.Inverted, poi.Active));
+                gameSession.Client.Send(commands.old_client.MapAddPOICommand.write(poi.Id,
+                    new commands.old_client.POITypeModule((short) poi.Type), poi.TypeSpecification,
+                    new commands.old_client.POIDesignModule((short) poi.Design), (short) poi.Shape,
+                    poi.ShapeCordsToInts(), poi.Inverted, poi.Active));
                 gameSession.Client.Send(commands.old_client.POIReadyCommand.write());
             }
         }
@@ -822,7 +980,8 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region VideoWindowCreateCommand
 
-        public void VideoWindowCreateCommand(GameSession gameSession, int windowID, string windowAlign, bool showButtons, List<string> languageKeys,
+        public void VideoWindowCreateCommand(GameSession gameSession, int windowID, string windowAlign,
+            bool showButtons, List<string> languageKeys,
             int videoID, short videoType)
         {
             if (gameSession.Player.UsingNewClient)
@@ -832,7 +991,8 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.VideoWindowCreateCommand.write(windowID, windowAlign, showButtons, languageKeys, videoID, videoType));
+                gameSession.Client.Send(commands.old_client.VideoWindowCreateCommand.write(windowID, windowAlign,
+                    showButtons, languageKeys, videoID, videoType));
             }
         }
 
@@ -848,10 +1008,15 @@ namespace NettyBaseReloaded.Game.netty.packet
 
                 foreach (var hangar in gameSession.Player.Equipment.Hangars)
                 {
-                    ships.Add(new commands.new_client.ShipWarpModule(hangar.Value.Ship.Id, hangar.Value.Ship.ToStringLoot(), hangar.Value.Ship.Name, 0, 0, hangar.Key, hangar.Value.Ship.Name));
+                    ships.Add(new commands.new_client.ShipWarpModule(hangar.Value.Ship.Id,
+                        hangar.Value.Ship.ToStringLoot(), hangar.Value.Ship.Name, 0, 0, hangar.Key,
+                        hangar.Value.Ship.Name));
                 }
 
-                gameSession.Client.Send(commands.new_client.ShipWarpWindowCommand.write(0, (int)gameSession.Player.Information.Uridium.Get(), gameSession.Player.State.InEquipmentArea, ships).Bytes);
+                gameSession.Client.Send(commands.new_client.ShipWarpWindowCommand.write(0,
+                        (int) gameSession.Player.Information.Uridium.Get(), gameSession.Player.State.InEquipmentArea,
+                        ships)
+                    .Bytes);
             }
             else
             {
@@ -859,14 +1024,19 @@ namespace NettyBaseReloaded.Game.netty.packet
 
                 foreach (var hangar in gameSession.Player.Equipment.Hangars)
                 {
-                    ships.Add(new commands.old_client.ShipWarpModule(hangar.Value.Ship.Id, hangar.Value.Ship.Id, hangar.Value.Ship.Name, 0, 0, hangar.Key, hangar.Value.Ship.Name));
+                    ships.Add(new commands.old_client.ShipWarpModule(hangar.Value.Ship.Id, hangar.Value.Ship.Id,
+                        hangar.Value.Ship.Name, 0, 0, hangar.Key, hangar.Value.Ship.Name));
                 }
 
-                gameSession.Client.Send(commands.old_client.ShipWarpWindowCommand.write(0, (int)gameSession.Player.Information.Uridium.Get(), gameSession.Player.State.InEquipmentArea, ships).Bytes);
+                gameSession.Client.Send(commands.old_client.ShipWarpWindowCommand.write(0,
+                        (int) gameSession.Player.Information.Uridium.Get(), gameSession.Player.State.InEquipmentArea,
+                        ships)
+                    .Bytes);
             }
         }
+
         #endregion
-        
+
         #region MapAssetActionAvailableCommand
 
         public void MapAssetActionAvailableCommand(GameSession gameSession, Object obj, bool clickable)
@@ -874,26 +1044,31 @@ namespace NettyBaseReloaded.Game.netty.packet
             var player = gameSession.Player;
             if (player.UsingNewClient)
             {
-                short toShort = (short)(clickable ? 0 : 1);
+                short toShort = (short) (clickable ? 0 : 1);
                 Console.WriteLine(toShort.ToString());
-                gameSession.Client.Send(commands.new_client.MapAssetActionAvailableCommand.write(obj.Id, toShort, true, 
-                    new commands.new_client.ClientUITooltip(new List<commands.new_client.ClientUITooltipTextFormat>()), new commands.new_client.commandu1C()).Bytes);
+                gameSession.Client.Send(commands.new_client.MapAssetActionAvailableCommand.write(obj.Id, toShort, true,
+                    new commands.new_client.ClientUITooltip(new List<commands.new_client.ClientUITooltipTextFormat>()),
+                    new commands.new_client.commandu1C()).Bytes);
             }
         }
+
         #endregion
 
         #region MineCreateCommand
 
         public void MineCreateCommand(GameSession gameSession, string hash, int mineType, Vector pos, bool pulse)
         {
-            Console.WriteLine($"0|L|{hash}|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
+            Console.WriteLine(
+                $"0|L|{hash}|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.MineCreateCommand.write(hash, pulse, false, mineType, pos.Y, pos.X).Bytes);
+                gameSession.Client.Send(commands.new_client.MineCreateCommand
+                    .write(hash, pulse, false, mineType, pos.Y, pos.X).Bytes);
             }
             else
             {
-                LegacyModule(gameSession, $"0|L|{hash}|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
+                LegacyModule(gameSession,
+                    $"0|L|{hash}|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
             }
         }
 
@@ -905,9 +1080,11 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (!gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.old_client.BattleStationNoClanUiInitializationCommand.write(asteroid.Id).Bytes);
+                gameSession.Client.Send(commands.old_client.BattleStationNoClanUiInitializationCommand
+                    .write(asteroid.Id).Bytes);
             }
         }
+
         #endregion
 
         #region DisposeBoxCommand
@@ -944,13 +1121,17 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(commands.new_client.AddOreCommand.write(new commands.new_client.BoxModule(ore.Hash, ore.Position.X, ore.Position.Y), new commands.new_client.OreTypeModule((short)ore.Type)).Bytes);
+                gameSession.Client.Send(commands.new_client.AddOreCommand
+                    .write(new commands.new_client.BoxModule(ore.Hash, ore.Position.X, ore.Position.Y),
+                        new commands.new_client.OreTypeModule((short) ore.Type)).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AddOreCommand.write(ore.Hash, new commands.old_client.OreTypeModule((short)ore.Type), ore.Position.X, ore.Position.Y).Bytes);
+                gameSession.Client.Send(commands.old_client.AddOreCommand.write(ore.Hash,
+                    new commands.old_client.OreTypeModule((short) ore.Type), ore.Position.X, ore.Position.Y).Bytes);
             }
         }
+
         #endregion
 
         #region PetGearAddCommand
@@ -965,9 +1146,12 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 Console.WriteLine("Gear->" + gear.Type.ToString());
-                gameSession.Client.Send(netty.commands.old_client.PetGearAddCommand.write(new commands.old_client.PetGearTypeModule((short)gear.Type), gear.Level, gear.Amount, gear.Enabled).Bytes);
+                gameSession.Client.Send(netty.commands.old_client.PetGearAddCommand
+                    .write(new commands.old_client.PetGearTypeModule((short) gear.Type), gear.Level, gear.Amount,
+                        gear.Enabled).Bytes);
             }
         }
+
         #endregion
 
         #region PetGearSelectCommand
@@ -982,7 +1166,8 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 Console.WriteLine("Select Gear->" + gear.Type.ToString());
-                gameSession.Client.Send(commands.old_client.PetGearSelectCommand.write(new commands.old_client.PetGearTypeModule((short)gear.Type), new List<int>()).Bytes);
+                gameSession.Client.Send(commands.old_client.PetGearSelectCommand
+                    .write(new commands.old_client.PetGearTypeModule((short) gear.Type), new List<int>()).Bytes);
             }
         }
 
@@ -997,6 +1182,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
                 LegacyModule(gameSession, "0|z");
         }
+
         #endregion
 
         #region PetDeactivationCommand
@@ -1005,7 +1191,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
                 Console.WriteLine("TODO: PetDeactivation for new client");
-                //throw new NotImplementedException();
+            //throw new NotImplementedException();
             else
                 gameSession.Client.Send(commands.old_client.PetDeactivationCommand.write(pet.Id).Bytes);
         }
@@ -1013,6 +1199,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         #endregion
 
         #region LevelUpCommand
+
         public void LevelUpCommand(GameSession gameSession)
         {
             if (gameSession.Player.UsingNewClient)
@@ -1022,9 +1209,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.LevelUpCommand.write(gameSession.Player.Id, gameSession.Player.Information.Level.Id).Bytes);
+                gameSession.Client.Send(commands.old_client.LevelUpCommand
+                    .write(gameSession.Player.Id, gameSession.Player.Information.Level.Id).Bytes);
             }
         }
+
         #endregion
 
         #region AmmunitionCountUpdateCommand
@@ -1038,12 +1227,18 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AmmunitionCountUpdateCommand.write(new List<commands.old_client.AmmunitionCountModule>(){new commands.old_client.AmmunitionCountModule(Converter.ToAmmoType(lootId), amount)}).Bytes);
+                gameSession.Client.Send(commands.old_client.AmmunitionCountUpdateCommand
+                    .write(new List<commands.old_client.AmmunitionCountModule>()
+                    {
+                        new commands.old_client.AmmunitionCountModule(Converter.ToAmmoType(lootId), amount)
+                    }).Bytes);
             }
         }
+
         #endregion
 
         #region HellstormStatusCommand
+
         public void HellstormStatusCommand(GameSession gameSession)
         {
             if (gameSession.Player.UsingNewClient)
@@ -1067,6 +1262,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
             }
         }
+
         #endregion
 
         #region AttributeBoosterUpdateCommand
@@ -1091,9 +1287,11 @@ namespace NettyBaseReloaded.Game.netty.packet
                     boostList.Find(x => x.attributeType.typeValue == (short) booster.Type).boosterTypes
                         .Add(new commands.old_client.BoosterTypeModule((short) booster.BoosterType));
                 }
+
                 gameSession.Client.Send(commands.old_client.AttributeBoosterUpdateCommand.write(boostList).Bytes);
             }
         }
+
         #endregion
 
         #region UIButtonShowFlashCommand
@@ -1106,7 +1304,8 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                Packet.Builder.LegacyModule(gameSession, $"0|UI|B|SF|{flashingTimes}|{Convert.ToInt32(arrow)}|{buttonId}");
+                Packet.Builder.LegacyModule(gameSession,
+                    $"0|UI|B|SF|{flashingTimes}|{Convert.ToInt32(arrow)}|{buttonId}");
             }
         }
 
@@ -1133,7 +1332,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void LogoutCommand(GameSession gameSession)
         {
-            if(gameSession.Player.UsingNewClient)
+            if (gameSession.Player.UsingNewClient)
             {
                 Console.WriteLine("TODO: Find logout command");
             }
@@ -1156,17 +1355,25 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 //LegacyModule(gameSession, "0|ps|inv|new|" + invited.Player.Id + "|" + Encode.Base64(invited.Player.Name) + "|" + invited.Player.Hangar.Ship.Id + "|" + gameSession.Player.Id + "|" + Encode.Base64(gameSession.Player.Name) + "|" + gameSession.Player.Hangar.Ship.Id);
-                LegacyModule(gameSession, "0|ps|inv|new|" + gameSession.Player.Id + "|" + Encode.Base64(gameSession.Player.Name) + "|" + gameSession.Player.Hangar.Ship.Id + "|" + invited.Player.Id + "|" + Encode.Base64(invited.Player.Name) + "|" + invited.Player.Hangar.Ship.Id);
+                LegacyModule(gameSession,
+                    "0|ps|inv|new|" + gameSession.Player.Id + "|" + Encode.Base64(gameSession.Player.Name) + "|" +
+                    gameSession.Player.Hangar.Ship.Id + "|" + invited.Player.Id + "|" +
+                    Encode.Base64(invited.Player.Name) + "|" + invited.Player.Hangar.Ship.Id);
             }
+
             if (invited.Player.UsingNewClient)
             {
                 Console.WriteLine("TODO: Find invite group cmd for new client (2)");
             }
             else
             {
-                LegacyModule(invited, "0|ps|inv|new|" + gameSession.Player.Id + "|" + Encode.Base64(gameSession.Player.Name) + "|" + gameSession.Player.Hangar.Ship.Id + "|" + invited.Player.Id + "|" + Encode.Base64(invited.Player.Name) + "|" + invited.Player.Hangar.Ship.Id);
+                LegacyModule(invited,
+                    "0|ps|inv|new|" + gameSession.Player.Id + "|" + Encode.Base64(gameSession.Player.Name) + "|" +
+                    gameSession.Player.Hangar.Ship.Id + "|" + invited.Player.Id + "|" +
+                    Encode.Base64(invited.Player.Name) + "|" + invited.Player.Hangar.Ship.Id);
             }
         }
+
         #endregion
 
         #region GroupDeleteInvitationCommand
@@ -1183,6 +1390,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 LegacyModule(gameSession, $"0|ps|inv|del|none|{gameSession.Player.Id}|{inviter.Id}");
             }
         }
+
         #endregion
 
         #region GroupInitializationCommand
@@ -1212,6 +1420,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                     builder.Append(
                         $"|{Encode.Base64(groupMember.Name)}|{groupMember.Id}|{groupMember.CurrentHealth}|{groupMember.MaxHealth}|{groupMember.CurrentNanoHull}|{groupMember.MaxNanoHull}|{groupMember.CurrentShield}|{groupMember.MaxShield}|{groupMember.Spacemap.Id}|{groupMember.Position.X}|{groupMember.Position.Y}|{groupMember.Information.Level.Id}|0|{Convert.ToInt32(groupMember.Invisible)}|{Convert.ToInt32(groupMember.Controller.Attack.Attacking)}|{Convert.ToInt32(groupMember.FactionId)}|{Convert.ToInt32((groupLeader.Selected as Player)?.Hangar.Ship.Id)}|{groupMember.Clan.Tag}|{groupMember.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupMember.Id) == null)}|");
                 }
+
                 LegacyModule(gameSession, builder.ToString());
             }
         }
@@ -1219,6 +1428,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         #endregion
 
         #region GroupUpdateCommand
+
         public void GroupUpdateCommand(GameSession gameSession, Player updatedPlayer, XElement xml)
         {
             var player = gameSession.Player;
@@ -1231,6 +1441,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 LegacyModule(gameSession, "0|ps|upd|" + updatedPlayer.Id + "|" + xml.ToString(SaveOptions.None));
             }
         }
+
         #endregion
 
         #region HeroMoveCommand
@@ -1246,6 +1457,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.HeroMoveCommand.write(destination.X, destination.Y).Bytes);
             }
         }
+
         #endregion
 
         #region DroneFormationAvailableFormationsCommand
@@ -1260,9 +1472,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 var formations = new List<int>();
                 for (var i = 0; i <= 13; i++) formations.Add(i);
-                gameSession.Client.Send(commands.old_client.DroneFormationAvailableFormationsCommand.write(formations).Bytes);
+                gameSession.Client.Send(commands.old_client.DroneFormationAvailableFormationsCommand.write(formations)
+                    .Bytes);
             }
         }
+
         #endregion
 
         #region KillScreenCommand
@@ -1275,7 +1489,10 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.KillScreenPostCommand.write(killscreen.KillerName, killscreen.KillerLink, killscreen.Alias, new netty.commands.old_client.DestructionTypeModule(killscreen.GetDestructionType()), killscreen.GetOldOptions()).Bytes);
+                gameSession.Client.Send(commands.old_client.KillScreenPostCommand.write(killscreen.KillerName,
+                    killscreen.KillerLink, killscreen.Alias,
+                    new netty.commands.old_client.DestructionTypeModule(killscreen.GetDestructionType()),
+                    killscreen.GetOldOptions()).Bytes);
             }
         }
 
@@ -1283,9 +1500,10 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region KillScreenUpdateCommand
 
-        public void KillScreenUpdateCommand(GameSession gameSession, List<commands.old_client.KillScreenOptionModule> options)
+        public void KillScreenUpdateCommand(GameSession gameSession,
+            List<commands.old_client.KillScreenOptionModule> options)
         {
-            if(gameSession.Player.UsingNewClient)
+            if (gameSession.Player.UsingNewClient)
             {
                 //throw new NotImplementedException();
             }
@@ -1325,12 +1543,15 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
-        
+
         #region TitleCommand
+
         public void TitleCommand(GameSession gameSession, Player targetPlayer)
         {
-            LegacyModule(gameSession, $"0|n|t|{targetPlayer.Id}|{targetPlayer.Information.Title.ColorId}|{targetPlayer.Information.Title.Key}");
+            LegacyModule(gameSession,
+                $"0|n|t|{targetPlayer.Id}|{targetPlayer.Information.Title.ColorId}|{targetPlayer.Information.Title.Key}");
         }
+
         #endregion
 
         #region QuickSlotPremiumCommand
@@ -1343,10 +1564,12 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.QuickSlotPremiumCommand.write(gameSession.Player.Information.Premium.Active).Bytes);
+                gameSession.Client.Send(commands.old_client.QuickSlotPremiumCommand
+                    .write(gameSession.Player.Information.Premium.Active).Bytes);
             }
         }
-#endregion
+
+        #endregion
 
         #region TechStatusCommand
 
@@ -1361,7 +1584,9 @@ namespace NettyBaseReloaded.Game.netty.packet
                 int repairRobotStatus = gameSession.Player.Storage.BattleRepairRobotActivated ? 2 : 1;
                 int energyLeechStatus = gameSession.Player.Storage.EnergyLeechActivated ? 2 : 1;
                 int precisionTargeterStatus = gameSession.Player.Storage.PrecisionTargeterActivated ? 2 : 1;
-                gameSession.Client.Send(commands.old_client.LegacyModule.write("0|TX|S|" + energyLeechStatus + "|99|0|1|99|0|" + precisionTargeterStatus + "|99|0|1|99|0|"+ repairRobotStatus +"|99|0").Bytes);
+                gameSession.Client.Send(commands.old_client.LegacyModule
+                    .write("0|TX|S|" + energyLeechStatus + "|99|0|1|99|0|" + precisionTargeterStatus + "|99|0|1|99|0|" +
+                           repairRobotStatus + "|99|0").Bytes);
             }
         }
 
@@ -1377,9 +1602,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AssetInfoCommand.write(asset.Id, new commands.old_client.AssetTypeModule((short)asset.Type), asset.DesignId, asset.ExpansionStage, asset.Core.CurrentHealth, asset.Core.MaxHealth, true, asset.Core.CurrentShield, asset.Core.MaxShield).Bytes);
+                gameSession.Client.Send(commands.old_client.AssetInfoCommand.write(asset.Id,
+                    new commands.old_client.AssetTypeModule((short) asset.Type), asset.DesignId, asset.ExpansionStage,
+                    asset.Core.CurrentHealth, asset.Core.MaxHealth, true, asset.Core.CurrentShield,
+                    asset.Core.MaxShield).Bytes);
             }
         }
+
         #endregion
 
         #region EventActivationStateCommand
@@ -1392,9 +1621,10 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.EventActivationStateCommand.write(type,active).Bytes);
+                gameSession.Client.Send(commands.old_client.EventActivationStateCommand.write(type, active).Bytes);
             }
         }
+
         #endregion
 
         #region MapAssetAddBillboardCommand
@@ -1407,9 +1637,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.MapAssetAddBillboardCommand.write("", new commands.old_client.AssetTypeModule(commands.old_client.AssetTypeModule.BILLBOARD_ASTEROID), new commands.old_client.PartnerTypeModule(billboard.Advertiser), billboard.Position.X, billboard.Position.Y, billboard.Id).Bytes);
+                gameSession.Client.Send(commands.old_client.MapAssetAddBillboardCommand.write("",
+                    new commands.old_client.AssetTypeModule(commands.old_client.AssetTypeModule.BILLBOARD_ASTEROID),
+                    new commands.old_client.PartnerTypeModule(billboard.Advertiser), billboard.Position.X,
+                    billboard.Position.Y, billboard.Id).Bytes);
             }
         }
+
         #endregion
 
         #region EquipReadyCommand
@@ -1425,6 +1659,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.EquipReadyCommand.write(ready).Bytes);
             }
         }
+
         #endregion
 
         #region BattleStationBuildingUiInitializationCommand
@@ -1441,18 +1676,37 @@ namespace NettyBaseReloaded.Game.netty.packet
                 foreach (var moduleEquipped in asteroid.EquippedModules.Values.Where(x =>
                     x.Clan == gameSession.Player.Clan))
                 {
-                    installedModules.Add(new commands.old_client.StationModuleModule(asteroid.Id, moduleEquipped.Id, moduleEquipped.SlotId, (short)moduleEquipped.ModuleType, moduleEquipped.Core.CurrentHealth, moduleEquipped.Core.MaxHealth, moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield, moduleEquipped.UpgradeLevel, moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(), moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(), moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
+                    installedModules.Add(new commands.old_client.StationModuleModule(asteroid.Id, moduleEquipped.Id,
+                        moduleEquipped.SlotId, (short) moduleEquipped.ModuleType, moduleEquipped.Core.CurrentHealth,
+                        moduleEquipped.Core.MaxHealth, moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield,
+                        moduleEquipped.UpgradeLevel, moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(),
+                        moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(),
+                        moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
                 }
+
                 List<commands.old_client.StationModuleModule> ownedModules = new List<StationModuleModule>();
                 foreach (var ownedModule in gameSession.Player.Equipment.Modules.Values)
                 {
-                    if (!ownedModule.Equipped) ownedModules.Add(new commands.old_client.StationModuleModule(ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1, (short)ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1, -1, -1, 1));
+                    if (!ownedModule.Equipped)
+                        ownedModules.Add(new commands.old_client.StationModuleModule(
+                            ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1,
+                            (short) ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1,
+                            -1, -1, 1));
                 }
+
                 var bestProgresing = asteroid.BestProgressingClan();
                 var bestClan = bestProgresing.Item1 ?? gameSession.Player.Clan;
-                gameSession.Client.Send(commands.old_client.BattleStationBuildingUiInitializationCommand.write(asteroid.Id, asteroid.AssignedBattleStationId, asteroid.Name, new commands.old_client.AsteroidProgressCommand(asteroid.AssignedBattleStationId, asteroid.GetClanProgress(gameSession.Player.Clan), asteroid.GetClanProgress(bestClan), gameSession.Player.Clan.Name, bestClan.Name, new commands.old_client.EquippedModulesModule(installedModules), asteroid.Buildable(gameSession.Player)), new commands.old_client.AvailableModulesCommand(ownedModules), 0, 120, 1).Bytes);
+                gameSession.Client.Send(commands.old_client.BattleStationBuildingUiInitializationCommand.write(
+                    asteroid.Id, asteroid.AssignedBattleStationId, asteroid.Name,
+                    new commands.old_client.AsteroidProgressCommand(asteroid.AssignedBattleStationId,
+                        asteroid.GetClanProgress(gameSession.Player.Clan), asteroid.GetClanProgress(bestClan),
+                        gameSession.Player.Clan.Name, bestClan.Name,
+                        new commands.old_client.EquippedModulesModule(installedModules),
+                        asteroid.Buildable(gameSession.Player)),
+                    new commands.old_client.AvailableModulesCommand(ownedModules), 0, 120, 1).Bytes);
             }
         }
+
         #endregion
 
         #region BattleStationBuildingStateCommand
@@ -1465,9 +1719,12 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.BattleStationBuildingStateCommand.write(asteroid.Id, asteroid.AssignedBattleStationId, asteroid.Name, asteroid.EndOfBuild, asteroid.BuildTime, asteroid.Clan.Name, new commands.old_client.FactionModule(2)).Bytes);
+                gameSession.Client.Send(commands.old_client.BattleStationBuildingStateCommand.write(asteroid.Id,
+                    asteroid.AssignedBattleStationId, asteroid.Name, asteroid.EndOfBuild, asteroid.BuildTime,
+                    asteroid.Clan.Name, new commands.old_client.FactionModule(2)).Bytes);
             }
         }
+
         #endregion
 
         #region BattleStationManagementUiInitializationCommand
@@ -1484,16 +1741,42 @@ namespace NettyBaseReloaded.Game.netty.packet
                 List<commands.old_client.StationModuleModule> equipment = new List<StationModuleModule>();
                 foreach (var moduleEquipped in battleStation.EquippedModules.Values)
                 {
-                    equipment.Add(new commands.old_client.StationModuleModule(battleStation.BattleStationId, moduleEquipped.Id, moduleEquipped.SlotId, (short)moduleEquipped.ModuleType, moduleEquipped.Core.CurrentHealth, moduleEquipped.Core.MaxHealth, moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield, moduleEquipped.UpgradeLevel, moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(), moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(), moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
+                    equipment.Add(new commands.old_client.StationModuleModule(battleStation.BattleStationId,
+                        moduleEquipped.Id, moduleEquipped.SlotId, (short) moduleEquipped.ModuleType,
+                        moduleEquipped.Core.CurrentHealth, moduleEquipped.Core.MaxHealth,
+                        moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield, moduleEquipped.UpgradeLevel,
+                        moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(),
+                        moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(),
+                        moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
                 }
+
                 List<commands.old_client.StationModuleModule> availableModules = new List<StationModuleModule>();
                 foreach (var ownedModule in gameSession.Player.Equipment.Modules.Values)
                 {
-                    if (!ownedModule.Equipped) availableModules.Add(new commands.old_client.StationModuleModule(ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1, (short)ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1, -1, -1, 1));
+                    if (!ownedModule.Equipped)
+                        availableModules.Add(new commands.old_client.StationModuleModule(
+                            ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1,
+                            (short) ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1,
+                            -1, -1, 1));
                 }
-                gameSession.Client.Send(commands.old_client.BattleStationManagementUiInitializationCommand.write(battleStation.Id, battleStation.BattleStationId, battleStation.Name, battleStation.Clan.Name, new commands.old_client.FactionModule((short)battleStation.Faction), new commands.old_client.BattleStationStatusCommand(battleStation.Id, battleStation.BattleStationId, battleStation.Name, battleStation.DeflectorShieldActive, battleStation.GetDeflectorShieldSeconds(), battleStation.DeflectorShieldSecondsMax(), battleStation.GetAttackRating(), battleStation.GetDefenceRating(), battleStation.GetRepairRating(), battleStation.GetHonorBoostRating(), battleStation.GetExperienceBoostRating(), battleStation.GetDamageBoostRating(), battleStation.DeflectorShieldRate, battleStation.RepairPrice, new commands.old_client.EquippedModulesModule(equipment)), new commands.old_client.AvailableModulesCommand(availableModules), battleStation.DeflectorShieldMin, battleStation.DeflectorShieldMax, battleStation.DeflectorShieldIncrement, battleStation.DeflectorDeactivationPossible()).Bytes);
+
+                gameSession.Client.Send(commands.old_client.BattleStationManagementUiInitializationCommand.write(
+                    battleStation.Id, battleStation.BattleStationId, battleStation.Name, battleStation.Clan.Name,
+                    new commands.old_client.FactionModule((short) battleStation.Faction),
+                    new commands.old_client.BattleStationStatusCommand(battleStation.Id, battleStation.BattleStationId,
+                        battleStation.Name, battleStation.DeflectorShieldActive,
+                        battleStation.GetDeflectorShieldSeconds(), battleStation.DeflectorShieldSecondsMax(),
+                        battleStation.GetAttackRating(), battleStation.GetDefenceRating(),
+                        battleStation.GetRepairRating(), battleStation.GetHonorBoostRating(),
+                        battleStation.GetExperienceBoostRating(), battleStation.GetDamageBoostRating(),
+                        battleStation.DeflectorShieldRate, battleStation.RepairPrice,
+                        new commands.old_client.EquippedModulesModule(equipment)),
+                    new commands.old_client.AvailableModulesCommand(availableModules), battleStation.DeflectorShieldMin,
+                    battleStation.DeflectorShieldMax, battleStation.DeflectorShieldIncrement,
+                    battleStation.DeflectorDeactivationPossible()).Bytes);
             }
         }
+
         #endregion
 
         #region AttackHitAssetCommand
@@ -1506,9 +1789,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AttackHitAssetCommand.write(assetId, hitpointsNow, hitpointsMax).Bytes);
+                gameSession.Client.Send(commands.old_client.AttackHitAssetCommand
+                    .write(assetId, hitpointsNow, hitpointsMax).Bytes);
             }
         }
+
         #endregion
 
         #region AbilityStatusFullCommand
@@ -1521,14 +1806,18 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                List<commands.old_client.AbilityStatusSingleCommand> abilitiesModule = new List<AbilityStatusSingleCommand>();
+                List<commands.old_client.AbilityStatusSingleCommand> abilitiesModule =
+                    new List<AbilityStatusSingleCommand>();
                 foreach (var ability in abilities)
                 {
-                    abilitiesModule.Add(new commands.old_client.AbilityStatusSingleCommand(ability.AbilityId, ability.Enabled));
+                    abilitiesModule.Add(
+                        new commands.old_client.AbilityStatusSingleCommand(ability.AbilityId, ability.Enabled));
                 }
+
                 gameSession.Client.Send(commands.old_client.AbilityStatusFullCommand.write(abilitiesModule).Bytes);
             }
         }
+
         #endregion
 
         #region AbilityStartCommand
@@ -1541,9 +1830,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AbilityStartCommand.write(ability.AbilityId, ability.Player.Id, ability.IsStoppable).Bytes);
+                gameSession.Client.Send(commands.old_client.AbilityStartCommand
+                    .write(ability.AbilityId, ability.Player.Id, ability.IsStoppable).Bytes);
             }
         }
+
         #endregion
 
         #region AbilityStopCommand
@@ -1556,11 +1847,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AbilityStopCommand.write(ability.AbilityId, ability.Player.Id, ability.TargetIds).Bytes);
+                gameSession.Client.Send(commands.old_client.AbilityStopCommand
+                    .write(ability.AbilityId, ability.Player.Id, ability.TargetIds).Bytes);
             }
         }
+
         #endregion
-        
+
         #region AbilityEffectActivationCommand
 
         public void AbilityEffectActivationCommand(GameSession gameSession, Ability ability)
@@ -1571,9 +1864,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AbilityEffectActivationCommand.write(ability.AbilityId, ability.ActivatorId, ability.TargetIds).Bytes);
+                gameSession.Client.Send(commands.old_client.AbilityEffectActivationCommand
+                    .write(ability.AbilityId, ability.ActivatorId, ability.TargetIds).Bytes);
             }
         }
+
         #endregion
 
         #region AbilityEffectDeActivationCommand
@@ -1586,9 +1881,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AbilityEffectDeActivationCommand.write(ability.AbilityId, ability.ActivatorId, ability.TargetIds).Bytes);
+                gameSession.Client.Send(commands.old_client.AbilityEffectDeActivationCommand
+                    .write(ability.AbilityId, ability.ActivatorId, ability.TargetIds).Bytes);
             }
         }
+
         #endregion
 
         #region AbilityStatusSingleCommand
@@ -1601,9 +1898,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AbilityStatusSingleCommand.write(ability.AbilityId, ability.Enabled).Bytes);
+                gameSession.Client.Send(commands.old_client.AbilityStatusSingleCommand
+                    .write(ability.AbilityId, ability.Enabled).Bytes);
             }
         }
+
         #endregion
 
         #region MapEventOreCommand
@@ -1616,9 +1915,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.MapEventOreCommand.write((short) eventType, new commands.old_client.OreTypeModule((short)ore.Type), ore.Hash).Bytes);
+                gameSession.Client.Send(commands.old_client.MapEventOreCommand.write((short) eventType,
+                    new commands.old_client.OreTypeModule((short) ore.Type), ore.Hash).Bytes);
             }
         }
+
         #endregion
 
         #region AssetRemoveCommand
@@ -1631,9 +1932,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AssetRemoveCommand.write(new commands.old_client.AssetTypeModule((short)asset.Type), asset.Id).Bytes);
+                gameSession.Client.Send(commands.old_client.AssetRemoveCommand
+                    .write(new commands.old_client.AssetTypeModule((short) asset.Type), asset.Id).Bytes);
             }
         }
+
         #endregion
 
         #region QuestGiversAvailableCommand
@@ -1646,7 +1949,122 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.QuestGiversAvailableCommand.write(new List<commands.old_client.QuestGiverModule>{new commands.old_client.QuestGiverModule(questGiver.QuestGiverId, questGiver.Id)}).Bytes);
+                gameSession.Client.Send(commands.old_client.QuestGiversAvailableCommand
+                    .write(new List<commands.old_client.QuestGiverModule>
+                    {
+                        new commands.old_client.QuestGiverModule(questGiver.QuestGiverId, questGiver.Id)
+                    }).Bytes);
+            }
+        }
+
+        #endregion
+
+        #region QuestListCommand
+
+        public void QuestListCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                var quests = Quest.Quests;
+
+                var list = new List<commands.old_client.QuestSlimInfoModule>();
+                foreach (var quest in quests)
+                {
+                    list.Add(new commands.old_client.QuestSlimInfoModule(
+                        quest.Id, quest.Root.Id, 0,
+                        new List<commands.old_client.QuestTypeModule>
+                        {
+                            new commands.old_client.QuestTypeModule((short) quest.QuestType)
+                        },
+                        new commands.old_client.QuestIconModule((short) quest.Icon),
+                        new commands.old_client.QuestAcceptabilityStatus(
+                            (short) quest.GetAcceptabilityStatus(gameSession.Player)),
+                        new List<QuestRequirementModule>()));
+                }
+
+                gameSession.Client.Send(commands.old_client.QuestListCommand.write(list, false, 5, 0).Bytes);
+            }
+        }
+
+        #endregion
+
+        #region QuestInfoCommand
+
+        public void QuestInfoCommand(GameSession gameSession, Quest quest)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                var elements = QuestElement.ParseElementsOld(quest.Root.Elements);
+                var definition = new QuestDefinitionModule(quest.Id,
+                    new List<QuestTypeModule> {new QuestTypeModule((short) quest.QuestType)},
+                    new QuestCaseModule(quest.Root.Id, quest.Root.Active, quest.Root.Mandatory, quest.Root.Ordered,
+                        quest.Root.MandatoryCount, elements),
+                    quest.GetOldLootModule(), new List<QuestIconModule> {new QuestIconModule((short) quest.Icon)});
+
+                gameSession.Client.Send(commands.old_client.QuestInfoCommand.write(definition,
+                    new List<QuestChallengeRatingModule>(),
+                    new QuestChallengeRatingModule("Shock", "http://google.bg", 21, 5, 5)).Bytes);
+            }
+        }
+
+        #endregion
+
+        #region QuestInitializationCommand
+
+        public void QuestInitializationCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                foreach (var quest in gameSession.Player.AcceptedQuests)
+                {
+                    var elements = QuestElement.ParseElementsOld(quest.Root.Elements);
+                    var definition = new QuestDefinitionModule(quest.Id, new List<QuestTypeModule> { new QuestTypeModule((short)quest.QuestType) },
+                        new QuestCaseModule(quest.Root.Id, quest.Root.Active, quest.Root.Mandatory, quest.Root.Ordered, quest.Root.MandatoryCount, elements),
+                        quest.GetOldLootModule(), new List<QuestIconModule> { new QuestIconModule((short)quest.Icon) });
+                    gameSession.Client.Send(commands.old_client.QuestInitializationCommand.write(definition).Bytes);
+                }
+            }
+        }
+        #endregion
+
+        #region QuestCompletedCommand
+
+        public void QuestCompletedCommand(GameSession gameSession, Quest quest)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.QuestCompletedCommand.write(quest.Id, 5).Bytes);
+            }
+        }
+        #endregion
+
+        #region QuestConditionUpdateCommand
+
+        public void QuestConditionUpdateCommand(GameSession gameSession, QuestCondition state)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.QuestConditionUpdateCommand.write(state.Id, new commands.old_client.QuestConditionStateModule(state.State.CurrentValue, state.State.Active, state.State.Completed)).Bytes);
             }
         }
 #endregion

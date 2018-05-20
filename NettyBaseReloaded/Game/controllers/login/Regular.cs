@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             SendSettings();
             Spawn();
             SendLegacy();
-            SendTestQuest();
+            //SendTestQuest();
             //AddCBS();
         }
 
@@ -39,7 +39,6 @@ namespace NettyBaseReloaded.Game.controllers.login
         {
             if (GameSession.Player.UsingNewClient) return;
 
-            GameSession.Player.AcceptedQuests.Add(new KillstreakQuest(GameSession.Player));
             foreach (var quest in GameSession.Player.AcceptedQuests)
             {
                 var elements = QuestElement.ParseElementsOld(quest.Root.Elements);

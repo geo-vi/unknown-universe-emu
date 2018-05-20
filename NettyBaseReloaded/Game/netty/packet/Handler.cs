@@ -61,6 +61,10 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.BuildStationRequest.ID, new BuildStationHandler());
             OldClientCommands.Add(commands.old_client.requests.AbilityLaunchRequest.ID, new AbilityLaunchHandler());
             OldClientCommands.Add(commands.old_client.requests.HarvestRequest.ID, new HarvestHandler());
+            OldClientCommands.Add(commands.old_client.requests.QuestListRequest.ID, new QuestListHandler());
+            OldClientCommands.Add(commands.old_client.requests.QuestInfoRequest.ID, new QuestInfoHandler());
+            OldClientCommands.Add(commands.old_client.requests.QuestCancelRequest.ID, new QuestCancelHandler());
+            OldClientCommands.Add(commands.old_client.requests.QuestAcceptRequest.ID, new QuestAcceptHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

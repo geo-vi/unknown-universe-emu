@@ -105,6 +105,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
                             foreach (var eventP in player.EventsPraticipating)
                                 eventP.Value.DestroyAttackable(target);
+                            foreach (var quest in player.AcceptedQuests)
+                                quest.AddKill(target);
                         }
                     }
                     if (target is Npc)
@@ -171,8 +173,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.CurrentNanoHull = 0;
             Character.CurrentShield = 0;
 
-            GameClient.SendRangePacket(Character, ShipDestroyedCommand.write(Character.Id, 1), true);
-            GameClient.SendRangePacket(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 1),
+            GameClient.SendToPlayerView(Character, ShipDestroyedCommand.write(Character.Id, 1), true);
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 1),
                 true);
 
             Remove();

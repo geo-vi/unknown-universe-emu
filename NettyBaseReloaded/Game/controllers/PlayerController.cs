@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.objects.world;
@@ -65,7 +67,7 @@ namespace NettyBaseReloaded.Game.controllers
                 new ExceptionLog("playercontroller", "AddClasses, CheckedClasses", e);
             }
         }
-
+        
         public void Setup()
         {
             if (CheckedClasses.Count == 0)
@@ -76,10 +78,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             try
             {
-                foreach (var _class in CheckedClasses.ToList())
-                {
-                    _class.Check();
-                }
+                Parallel.ForEach(CheckedClasses, _class => { _class.Check(); });
             }
             catch (Exception e)
             {

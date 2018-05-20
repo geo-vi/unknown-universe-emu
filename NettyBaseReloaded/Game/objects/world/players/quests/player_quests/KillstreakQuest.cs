@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.players.quests.quest_stats;
 
 namespace NettyBaseReloaded.Game.objects.world.players.quests.player_quests
 {
@@ -33,8 +35,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests.player_quests
                     {
                         Id = 10001,
                         Mandatory = false,
-                        Matches = new List<int> { 1,2,3,10,1 },
-                        State = new QuestState { Active = true, Completed = false},
+                        Matches = new List<int> { 2,8,10 },
+                        State = new QuestState { Active = true, Completed = Stats.Complete, CurrentValue = Stats.Kills},
                         SubConditions = new List<QuestCondition>(),
                         Type = QuestConditions.KILL_PLAYERS,
                         TargetValue = 10
@@ -55,9 +57,30 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests.player_quests
             {RewardType.HONOR, 8128 }
         });
         
-        public KillstreakQuest(Player player) : base(player, 0)
+        public KillstreakQuestStat Stats = new KillstreakQuestStat();
+
+        public KillstreakQuest(Player player, KillstreakQuestStat stat) : base(player, 0)
         {
-            Root.LoadPlayerData(player);
+            Stats = stat;
+        }
+
+        public override void AddKill(IAttackable attackable)
+        {
+            if (attackable is Character deadCharacter && deadCharacter.FactionId != Player.FactionId &&
+                (deadCharacter.Hangar.Ship.RootId == 8 || deadCharacter.Hangar.Ship.RootId == 10))
+            {
+                Stats.Kills += 1;
+                if (Stats.Kills == 10)
+                {
+                    Stats.Complete = true;
+                    Packet.Builder.QuestCompletedCommand(Player.GetGameSession(), this);
+                    Player.AcceptedQuests.Remove(this);
+                    Player.CompletedQuests.Add(this);
+                    Packet.Builder.QuestListCommand(Player.GetGameSession());
+                    Reward.ParseRewards(Player);
+                }
+                Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), Root.Elements[0].Condition);
+            }
         }
     }
 }
