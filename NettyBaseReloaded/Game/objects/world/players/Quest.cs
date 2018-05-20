@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.players.quests;
 
 namespace NettyBaseReloaded.Game.objects.world.players
@@ -12,41 +13,43 @@ namespace NettyBaseReloaded.Game.objects.world.players
     {
         public int Id { get; set; }
 
-        public QuestTypes QuestType { get; set; }
+        public virtual QuestTypes QuestType { get; }
 
-        public QuestRoot Root { get; set; }
+        public virtual QuestRoot Root { get; }
 
-        public QuestIcons Icon { get; set; }
+        public virtual QuestIcons Icon { get; }
 
-        public Reward Reward { get; set; }
+        public virtual Reward Reward { get; }
 
         public Quest(Player player, int id) : base(player)
         {
-            var questBase = LoadQuest(id);
-            QuestType = questBase.QuestType;
-            Icon = questBase.Icon;
-            Root = questBase.Root;
-            Reward = questBase.Reward;
+            Id = id;
             Root.LoadPlayerData(player);
         }
 
-        public Quest() : base(null) { }
+        public virtual void Tick() { }
 
-        public static Quest LoadQuest(int id)
+        public void AddKill(IAttackable attackable)
         {
-            if (World.StorageManager.Quests.ContainsKey(id))
-            {
-                var quest = World.StorageManager.Quests[id];
-                return new Quest
-                {
-                    Icon = quest.Icon,
-                    Id = quest.Id,
-                    QuestType = quest.QuestType,
-                    Reward = quest.Reward,
-                    Root = quest.Root
-                };
-            }
-            return null;
+
+        }
+
+        public void AddCollection(Collectable collectable)
+        {
+
+        }
+
+        public void AddResourceCollection(Ore ore)
+        {
+
+        }
+
+        /// <summary>
+        /// If Position monitor is needed just override Tick and add PositionMonitor - (saving resources).
+        /// </summary>
+        public void PositionMonitor()
+        {
+
         }
     }
 }

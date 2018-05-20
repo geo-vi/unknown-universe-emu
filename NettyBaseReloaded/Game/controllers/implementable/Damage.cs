@@ -227,6 +227,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 }
 
                 var shieldDamage = totalDamage * totalAbs;
+                if (target is Player targetedPlayer && targetedPlayer.Storage.SentinelFortressActive)
+                {
+                    shieldDamage *= 0.7;
+                }
 
                 var healthDamage = 0;
                 if (target.CurrentShield <= totalDamage)

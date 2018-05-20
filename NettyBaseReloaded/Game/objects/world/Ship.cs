@@ -193,12 +193,18 @@ namespace NettyBaseReloaded.Game.objects.world
         public List<Ability> Abilities(Player player)
         {
             List<Ability> abilities = new List<Ability>();
-            switch (Id)
+            switch (LootId)
             {
-                case 49:
+                case "ship_aegis":
                     abilities.Add(new AegisHealBeam(player));
                     abilities.Add(new AegisShieldRecharge(player));
                     abilities.Add(new AegisHealPod(player));
+                    break;
+                case "ship_goliath_design_solace":
+                    abilities.Add(new NanoClusterRepairer(player));
+                    break;
+                case "ship_goliath_design_sentinel":
+                    abilities.Add(new SentinelFortress(player));
                     break;
             }
 

@@ -1634,6 +1634,21 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.AssetRemoveCommand.write(new commands.old_client.AssetTypeModule((short)asset.Type), asset.Id).Bytes);
             }
         }
+        #endregion
+
+        #region QuestGiversAvailableCommand
+
+        public void QuestGiversAvailableCommand(GameSession gameSession, QuestGiver questGiver)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.QuestGiversAvailableCommand.write(new List<commands.old_client.QuestGiverModule>{new commands.old_client.QuestGiverModule(questGiver.QuestGiverId, questGiver.Id)}).Bytes);
+            }
+        }
 #endregion
     }
 }

@@ -27,6 +27,7 @@ namespace NettyBaseReloaded.Game.managers
         public Dictionary<int, Quest> Quests = new Dictionary<int, Quest>();
 
         public Dictionary<int, ClanBattleStation> ClanBattleStations = new Dictionary<int, ClanBattleStation>();
+        public Dictionary<int, QuestGiver> QuestGivers = new Dictionary<int, QuestGiver>();
 
         public GameSession GetGameSession(int userId)
         {

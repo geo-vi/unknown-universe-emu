@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects.world.characters;
 
 namespace NettyBaseReloaded.Game.objects.world.players.quests
@@ -17,7 +18,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
             var questElements = new List<netty.commands.old_client.QuestElementModule>();
             foreach (var questElement in elements)
             {
-                questElements.Add(new netty.commands.old_client.QuestElementModule(new netty.commands.old_client.QuestCaseModule(questElement.Case.Id, questElement.Case.Active, questElement.Case.Mandatory, questElement.Case.Ordered, questElement.Case.MandatoryCount, ParseElementsOld(questElement.Case.Elements)), null));
+                questElements.Add(new netty.commands.old_client.QuestElementModule(new netty.commands.old_client.QuestCaseModule(questElement.Case.Id, questElement.Case.Active, questElement.Case.Mandatory, questElement.Case.Ordered, questElement.Case.MandatoryCount, ParseElementsOld(questElement.Case.Elements)),
+                    new QuestConditionModule(questElement.Condition.Id, questElement.Condition.Matches, (short) questElement.Condition.Type, (short) questElement.Condition.Type, questElement.Condition.TargetValue, questElement.Condition.Mandatory, new QuestConditionStateModule(questElement.Condition.State.CurrentValue, questElement.Condition.State.Active, questElement.Condition.State.Completed), 
+                        new List<QuestConditionModule>())));
             }
             return questElements;
         }

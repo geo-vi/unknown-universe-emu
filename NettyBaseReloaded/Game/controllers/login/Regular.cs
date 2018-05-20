@@ -12,6 +12,7 @@ using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.quests;
+using NettyBaseReloaded.Game.objects.world.players.quests.player_quests;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
 using VisualModifierCommand = NettyBaseReloaded.Game.netty.commands.old_client.VisualModifierCommand;
@@ -30,14 +31,23 @@ namespace NettyBaseReloaded.Game.controllers.login
             SendSettings();
             Spawn();
             SendLegacy();
-            //SendTestQuest();
+            SendTestQuest();
             //AddCBS();
         }
 
         private void SendTestQuest()
         {
-            //if (GameSession.Player.UsingNewClient) return;
-            //var testQuest = Quest.LoadQuest(0);
+            if (GameSession.Player.UsingNewClient) return;
+
+            GameSession.Player.AcceptedQuests.Add(new KillstreakQuest(GameSession.Player));
+            foreach (var quest in GameSession.Player.AcceptedQuests)
+            {
+                var elements = QuestElement.ParseElementsOld(quest.Root.Elements);
+                var definition = new QuestDefinitionModule(quest.Id, new List<QuestTypeModule>{new QuestTypeModule((short) quest.QuestType)}, 
+                    new QuestCaseModule(quest.Root.Id, quest.Root.Active, quest.Root.Mandatory, quest.Root.Ordered, quest.Root.MandatoryCount, elements), 
+                    new List<LootModule>(), new List<QuestIconModule>{ new QuestIconModule((short)quest.Icon)});
+                GameSession.Client.Send(QuestInitializationCommand.write(definition).Bytes);
+            }
 
             //var elements = QuestElement.ParseElementsOld(testQuest.Root.Elements);
             //var reward = Quest.GetReward(testQuest.Reward);
@@ -45,7 +55,6 @@ namespace NettyBaseReloaded.Game.controllers.login
             //    new List<QuestTypeModule> { new QuestTypeModule((short)testQuest.QuestType) }, new QuestCaseModule(testQuest.Root.Id, testQuest.Root.Active,
             //        testQuest.Root.Mandatory, testQuest.Root.Ordered, testQuest.Root.MandatoryCount, elements), reward, new List<QuestIconModule> { new QuestIconModule((short)testQuest.Icon) });
 
-            //GameSession.Client.Send(QuestInitializationCommand.write(quest).Bytes);
         }
 
         private void CoolExampleQuest()

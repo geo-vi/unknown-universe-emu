@@ -318,6 +318,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public ConcurrentDictionary<int, GalaxyGate> OwnedGates = new ConcurrentDictionary<int, GalaxyGate>();
 
+        public List<Quest> AcceptedQuests = new List<Quest>();
+
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
             string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
@@ -349,6 +351,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 TickTechs();
                 TickGates();
                 TickAbilities();
+                TickQuests();
             });
         }
 
@@ -375,6 +378,11 @@ namespace NettyBaseReloaded.Game.objects.world
         private void TickAbilities()
         {
             Parallel.ForEach(Abilities, ability => { ability.Tick(); });
+        }
+
+        private void TickQuests()
+        {
+            Parallel.ForEach(AcceptedQuests, quest => { quest.Tick(); });
         }
 
         private void InitializeClasses()

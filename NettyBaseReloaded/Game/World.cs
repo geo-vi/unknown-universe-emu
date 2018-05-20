@@ -429,6 +429,7 @@ namespace NettyBaseReloaded.Game
                     map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));
                     map.Value.CreateHiddenPortal(42, 15800, 13500, 10400, 12800);
                     map.Value.CreateAsteroid("Shock", new Vector(28000, 7000));
+                    map.Value.CreateQuestGiver(Faction.NONE, new Vector(18500, 2500));
                 }
 
                 if (map.Key == 42) map.Value.CreatePortal(16, 10400, 12800, 0,0);

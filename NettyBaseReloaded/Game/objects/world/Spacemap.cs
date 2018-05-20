@@ -483,7 +483,10 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateQuestGiver(Faction faction, Vector pos)
         {
             var id = GetNextObjectId();
-            AddObject(new QuestGiver(id, faction, pos, this));
+            var questGiverId = World.StorageManager.QuestGivers.Count;
+            var questGiver = new QuestGiver(id, questGiverId, faction, pos, this);
+            World.StorageManager.QuestGivers.Add(questGiverId, questGiver);
+            AddObject(questGiver);
             World.Log.Write("Created Quest Giver on mapId " + Id);
         }
 

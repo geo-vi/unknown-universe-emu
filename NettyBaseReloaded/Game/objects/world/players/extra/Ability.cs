@@ -67,12 +67,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
             }
             Packet.Builder.AbilityStartCommand(Player.GetGameSession(), this);
         }
-
-        private void TickTimer(object state)
-        {
-            
-        }
-
+        
         protected void ShowEffect()
         {
             foreach (var target in TargetIds)

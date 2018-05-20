@@ -7,15 +7,11 @@ using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 {
-    class ChainImpulseCooldown : Cooldown
+    class NanoClusterCooldown : Cooldown
     {
-        public ChainImpulseCooldown() : base(DateTime.Now, DateTime.Now.AddSeconds(60))
+        public NanoClusterCooldown(Player player) : base(DateTime.Now, DateTime.Now.AddMinutes(15))
         {
-        }
-
-        public override void OnStart(Character character)
-        {
-            base.OnStart(character);
+            Send(player.GetGameSession());
         }
 
         public override void OnFinish(Character character)
@@ -24,8 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void Send(GameSession gameSession)
         {
-            Packet.Builder.LegacyModule(gameSession, "0|A|CLD|ECI|" + TotalTime);
-            //TODO: do for new client too
+            Packet.Builder.LegacyModule(gameSession, "0|A|CLD|IH|" + TotalTime);
         }
     }
 }

@@ -323,13 +323,19 @@
     <Compile Include="Game\netty\commands\old_client\POITypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PriceModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QualitySettingsModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestAcceptabilityStatus.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestCaseModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestConditionModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestConditionStateModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestDefinitionModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestElementModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestGiverModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestGiversAvailableCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestIconModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestListCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestRequirementModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\QuestSlimInfoModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\QuickSlotPremiumCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\AbilityLaunchRequest.cs" />
@@ -428,9 +434,11 @@
     <Compile Include="Game\objects\world\characters\cooldowns\AegisHealPodCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\AegisShieldRechargeCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\EnergyLeechCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\NanoClusterCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\PetComboRepairCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\PrecisionTargeterCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\ChainImpulseCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\SentinelFortressCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\ShieldBuffCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\BattleRepairRobotCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationCooldown.cs" />
@@ -529,7 +537,9 @@
     <Compile Include="Game\objects\world\players\extra\abilities\CitadelDrawFire.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\CitadelProtection.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\CitadelTravelMode.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\NanoClusterRepairer.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\NpcStickyBomb.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\SentinelFortress.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\SpearheadDoubleMinimap.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\SpearheadJAMX.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\SpearheadMarkTarget.cs" />
@@ -561,6 +571,7 @@
     <Compile Include="Game\objects\world\players\LogMessage.cs" />
     <Compile Include="Game\objects\world\players\PlayerGates.cs" />
     <Compile Include="Game\objects\world\players\Quest.cs" />
+    <Compile Include="Game\objects\world\players\quests\player_quests\KillstreakQuest.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestCondition.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestConditions.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestElement.cs" />
@@ -568,6 +579,7 @@
     <Compile Include="Game\objects\world\players\quests\QuestRoot.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestState.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestTypes.cs" />
+    <Compile Include="Game\objects\world\players\quests\quest_stats\KillstreakQuestStat.cs" />
     <Compile Include="Game\objects\world\players\Storage.cs" />
     <Compile Include="Game\objects\world\players\PlayerBaseClass.cs" />
     <Compile Include="Game\objects\world\players\Settings.cs" />

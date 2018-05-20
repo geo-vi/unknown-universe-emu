@@ -36,6 +36,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public bool BattleRepairRobotActivated = false;
         public bool PrecisionTargeterActivated = false;
 
+        public bool SentinelFortressActive = false;
+
         public Storage(Player player) : base(player)
         {
             player.Ticked += Ticked;
