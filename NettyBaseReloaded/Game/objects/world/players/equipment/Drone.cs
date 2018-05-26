@@ -31,9 +31,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             set { _damage = (value <= 100) ? value : 100; }
         }
 
-        public int Design { get; }
+        private int Design1 { get; }
 
-        public Drone(int id, int accountId, DroneType droneType, Level level, int experience, int damage, int design)
+        private int Design2 { get; }
+
+        public Drone(int id, int accountId, DroneType droneType, Level level, int experience, int damage, int design1, int design2)
         {
             Id = id;
             AccountId = accountId;
@@ -41,7 +43,18 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             Level = level;
             Experience = experience;
             Damage = damage;
-            Design = design;
+            Design1 = design1;
+            Design2 = design2;
+        }
+
+        public int GetDroneDesign(Character character)
+        {
+            if (character is Player player)
+            {
+                if (player.CurrentConfig == 1)
+                    return Design2;
+            }
+            return Design1;
         }
 
         public void LevelUp(Player player)

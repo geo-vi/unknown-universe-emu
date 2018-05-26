@@ -105,7 +105,7 @@
             "Output type"});
             this.typeOfVariable.Location = new System.Drawing.Point(15, 13);
             this.typeOfVariable.Name = "typeOfVariable";
-            this.typeOfVariable.Size = new System.Drawing.Size(121, 21);
+            this.typeOfVariable.Size = new System.Drawing.Size(150, 21);
             this.typeOfVariable.TabIndex = 7;
             // 
             // resetButton
@@ -134,7 +134,7 @@
             this.button1.Text = "Copy";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -149,7 +149,7 @@
             this.Controls.Add(this.varValue);
             this.Controls.Add(this.ByteOutputBox);
             this.Controls.Add(this.OutputBox);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();

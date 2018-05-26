@@ -12,6 +12,7 @@ namespace NettyBaseReloaded.Networking
         public const int CHAT_PORT = 9338;
         public const int SOCKET_PORT = 1337;
         public const int POLICY_PORT = 843;
+        public const int DISCORD_PORT = 7778;
 
         private XSocket serverSocket;
         private int Port;
@@ -39,6 +40,9 @@ namespace NettyBaseReloaded.Networking
                     break;
                 case POLICY_PORT:
                     new PolicyClient(xSocketArgs.XSocket);
+                    break;
+                case DISCORD_PORT:
+                    new DiscordClient(xSocketArgs.XSocket);
                     break;
             }
         }

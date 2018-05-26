@@ -117,7 +117,6 @@ namespace NettyBaseReloaded.Game.objects.world
             get
             {
                 var value = Hangar.Ship.Health;
-
                 switch (Formation)
                 {
                     case DroneFormation.CHEVRON:
@@ -142,7 +141,6 @@ namespace NettyBaseReloaded.Game.objects.world
             get
             {
                 var value = Hangar.Configurations[CurrentConfig - 1].MaxShield;
-
                 switch (Formation)
                 {
                     case DroneFormation.HEART:

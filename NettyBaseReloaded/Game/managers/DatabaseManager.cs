@@ -475,10 +475,11 @@ namespace NettyBaseReloaded.Game.managers
                             int type = intConv(reader["DRONE_TYPE"]);
                             int level = intConv(reader["LEVEL"]);
                             int exp = intConv(reader["EXPERIENCE"]);
-                            int design = intConv(reader["DESIGN"]);
+                            int design1 = intConv(reader["DESIGN_1"]);
+                            int design2 = intConv(reader["DESIGN_2"]);
 
                             drones.Add(new Drone(droneId, player.Id, (DroneType) (type + 1),
-                                World.StorageManager.Levels.DroneLevels[level], exp, 0, design));
+                                World.StorageManager.Levels.DroneLevels[level], exp, 0, design1, design2));
                         }
                     }
 

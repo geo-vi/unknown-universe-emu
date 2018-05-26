@@ -29,6 +29,7 @@ namespace NettyBaseReloaded.Main
             InitiatePolicy();
             InitiateChat();
             InitiateGame();
+            InitiateDiscord();
             InitiateWebSocks();
             InitiateRandomResetTimer();
             //TODO -> ACP InitiateSocketty();
@@ -77,6 +78,14 @@ namespace NettyBaseReloaded.Main
 
             Out.WriteLine("WebSocks - ready to listen!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("WebSocks started.");
+        }
+
+        static void InitiateDiscord()
+        {
+            new Server(Server.DISCORD_PORT);
+
+            Out.WriteLine("Discord-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
+            Log.Write("Discord-Server started.");
         }
 
         static void InitiateRandomResetTimer()

@@ -38,7 +38,7 @@
     <OutputPath>c:\temp\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>2</WarningLevel>
+    <WarningLevel>3</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
@@ -682,6 +682,7 @@
       <DependentUpon>MapEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\ChatClient.cs" />
+    <Compile Include="Networking\DiscordClient.cs" />
     <Compile Include="Networking\GameClient.cs" />
     <Compile Include="Networking\PolicyClient.cs" />
     <Compile Include="Networking\Server.cs" />

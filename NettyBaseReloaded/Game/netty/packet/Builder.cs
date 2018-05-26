@@ -474,7 +474,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
             foreach (var d in character.Hangar.Drones)
             {
-                command += "|" + (int) d.DroneType + "|" + d.Level.Id + "|" + d.Design;
+                command += "|" + (int) d.DroneType + "|" + d.Level.Id + "|" + d.GetDroneDesign(character);
             }
 
             if (gameSession.Player.UsingNewClient)

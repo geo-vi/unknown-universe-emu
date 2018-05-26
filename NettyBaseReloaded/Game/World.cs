@@ -427,12 +427,20 @@ namespace NettyBaseReloaded.Game
                     map.Value.CreateLoW(new Vector(17300, 1900));
                     map.Value.CreatePalladiumField();
                     map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));
-                    map.Value.CreateHiddenPortal(42, 15800, 13500, 10400, 12800);
+                    //map.Value.CreateHiddenPortal(42, 15800, 13500, 10400, 12800);
                     map.Value.CreateAsteroid("Shock", new Vector(28000, 7000));
                     map.Value.CreateQuestGiver(Faction.NONE, new Vector(18500, 2500));
                 }
 
-                if (map.Key == 42) map.Value.CreatePortal(16, 10400, 12800, 0,0);
+                if (map.Key == 42)
+                {
+                    map.Value.CreatePortal(16, 10400, 6400, 0, 0);
+                    //map.Value.CreateNpc(StorageManager.Ships[80], AILevels.MOTHERSHIP, true, 60, new Vector(1500, 2500));
+                    //for (int i = 0; i <= BonusBox.PVP_SPAWN_COUNT; i++)
+                    //{
+                    //    map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value, map.Value.Limits[0].X, map.Value.Limits[0].Y, map.Value.Limits[1].X, map.Value.Limits[1].Y), new[] { map.Value.Limits[0].X, map.Value.Limits[0].Y, map.Value.Limits[1].X, map.Value.Limits[1].Y });
+                    //}
+                }
                 if (map.Key == 200)
                 {
                     // Load LoW

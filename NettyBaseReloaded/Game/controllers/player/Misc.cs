@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.players.settings.slotbars;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.player
 {
@@ -138,6 +140,14 @@ namespace NettyBaseReloaded.Game.controllers.player
                 , "0|A|CC|" + baseController.Player.CurrentConfig);
 
             baseController.Player.UpdateExtras();
+
+            foreach (var playerEntity in baseController.Player.Spacemap.Entities.Values.Where(x => x is Player))
+            {
+                var player = playerEntity as Player;
+                var entitySession = player.GetGameSession();
+                if (gameSession != null)
+                    Packet.Builder.DronesCommand(entitySession, baseController.Player);
+            }
 
             if (baseController.Player.Moving)
                 MovementController.Move(baseController.Player, baseController.Player.Destination);
