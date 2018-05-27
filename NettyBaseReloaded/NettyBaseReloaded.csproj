@@ -525,6 +525,8 @@
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone4.cs" />
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone5.cs" />
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone6.cs" />
+    <Compile Include="Game\objects\world\npcs\Cubikon.cs" />
+    <Compile Include="Game\objects\world\npcs\Hitac.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
     <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
@@ -543,6 +545,7 @@
     <Compile Include="Game\objects\world\events\EventTypes.cs" />
     <Compile Include="Game\objects\world\players\equipment\Module.cs" />
     <Compile Include="Game\objects\world\players\events\ScoreMageddon.cs" />
+    <Compile Include="Game\objects\world\players\events\TeamDeathmatch.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\Abilities.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\AegisHealBeam.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\AegisHealPod.cs" />
@@ -776,7 +779,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Client\" />
-    <Folder Include="Game\objects\world\npcs\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

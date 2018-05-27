@@ -174,8 +174,6 @@ namespace NettyBaseReloaded.Game.controllers.player
 
                 TargetVirtualWorldId = targetVW;
                 TargetMap = World.StorageManager.Spacemaps[targetMapId];
-                if (targetVW != 0)
-                    TargetMap = TargetMap.VirtualWorlds[targetVW];
                 TargetPosition = targetPos;
 
                 var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
@@ -214,8 +212,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
                 if (DateTime.Now > JumpEndTime)
                 {
-                    baseController.Player.VirtualWorldId = TargetVirtualWorldId;
-                    baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition);
+                    baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition, TargetVirtualWorldId);
                     Reset();
                 }
             }
@@ -239,13 +236,14 @@ namespace NettyBaseReloaded.Game.controllers.player
             JClass.Initiate(targetVW, targetMapId, targetPos, portalId);
         }
 
-        public void ForceChangeMap(Spacemap targetMap, Vector targetPosition)
+        public void ForceChangeMap(Spacemap targetMap, Vector targetPosition, int vw = 0)
         {
             if (baseController.Player.Spacemap == targetMap) return;
             var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
             Packet.Builder.MapChangeCommand(gameSession);
             baseController.Destruction.Deselect(baseController.Player);
             gameSession.Relog(targetMap, targetPosition);
+            gameSession.Player.VirtualWorldId = vw;
             //baseController.Player.Position = targetPosition;
             //baseController.Player.Spacemap = targetMap;
             //baseController.Player.Save();

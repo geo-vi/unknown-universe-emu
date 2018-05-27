@@ -91,13 +91,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
                         continue;
                     }
 
-                    if (!instance.Player.Controller.Active && !instance.InProcessOfReconection &&
-                        !instance.InProcessOfDisconnection)
-                    {
-                        Leave(instance.Player);
-                        continue;
-                    }
-
                     if (instance.Player.Group == null)
                     {
                         instance.Player.Group = this;

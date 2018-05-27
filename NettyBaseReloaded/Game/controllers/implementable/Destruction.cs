@@ -247,6 +247,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             var closestStation = player.GetClosestStation();
             var newPos = closestStation.Item1;
+
+            player.VirtualWorldId = 0;
+
             player.Spacemap = closestStation.Item2;
 
             Character.SetPosition(newPos);

@@ -63,7 +63,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             foreach (var npc in Npcs)
             {
-                spacemap.CreateNpc(npc.Ship, AILevels.AGGRESSIVE, false, 0, Position);
+                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Position);
             }
         }
 
@@ -72,7 +72,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
             System.Random rnd = new System.Random();
             foreach (var npc in Npcs)
             {
-                spacemap.CreateNpc(npc.Ship, AILevels.AGGRESSIVE, false, 0, Vector.GetPosOnCircle(vector, rnd.Next(0,360), r));
+                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Vector.GetPosOnCircle(vector, rnd.Next(0,360), r));
             }
         }
     }
