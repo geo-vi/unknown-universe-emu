@@ -340,7 +340,6 @@ namespace NettyBaseReloaded.Game.objects.world
                 return;
 
             base.AssembleTick(sender, eventArgs);
-            Cooldowns.Tick();
             Parallel.Invoke(() =>
             {
                 LevelChecker();

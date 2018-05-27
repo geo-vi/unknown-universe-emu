@@ -70,7 +70,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             //Packet.Builder.VideoWindowCreateCommand(GameSession, 1, "c", true, new List<string> { "login_dialog_1", "login_dialog_2" }, 0, 1);
             //Packet.Builder.MineCreateCommand(GameSession, "asdf", 6, GameSession.Player.Position, false);
 
-            //Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
+            Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
             Packet.Builder.HellstormStatusCommand(GameSession);
 
             Packet.Builder.LegacyModule(GameSession, "0|n|w|0");

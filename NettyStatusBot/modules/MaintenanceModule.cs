@@ -11,7 +11,7 @@ using NettyStatusBot.storage;
 
 namespace NettyStatusBot.modules
 {
-    class Maintenance : ModuleBase<SocketCommandContext>
+    class MaintenanceModule : ModuleBase<SocketCommandContext>
     {
         [Command("maintenance")]
         public async Task ToggleMaintenanceMode()

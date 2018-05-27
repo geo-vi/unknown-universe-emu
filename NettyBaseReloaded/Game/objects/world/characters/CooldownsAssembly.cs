@@ -45,39 +45,21 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             }
         }
 
+        private DateTime LastTick = new DateTime();
         public void Tick()
         {
+            if (LastTick.AddMilliseconds(100) > DateTime.Now) return;
             Sync();
-                    Parallel.For(0, Cooldowns.Count, index =>
-                    {
-                        var cooldown = Cooldowns[index];
-                        if (cooldown.EndTime < DateTime.Now)
-                        {
-                            cooldown.OnFinish(Character);
-                            Remove(cooldown);
-                        }
-                    });
-        }
-
-        public void Update()
-        {
-            Task.Factory.StartNew(() =>
+            foreach (var cooldown in Cooldowns)
             {
-                while (Character.EntityState == EntityStates.ALIVE)
+                if (cooldown.EndTime < DateTime.Now)
                 {
-                    Sync();
-                    Parallel.For(0, Cooldowns.Count, index =>
-                    {
-                        var cooldown = Cooldowns[index];
-                        if (cooldown.EndTime < DateTime.Now)
-                        {
-                            cooldown.OnFinish(Character);
-                            Remove(cooldown);
-                        }
-                    });
-                    Thread.Sleep(150);
+                    cooldown.OnFinish(Character);
+                    Remove(cooldown);
                 }
-            });
+            }
+            Sync();
+            LastTick = DateTime.Now;
         }
 
         public bool Any(Predicate<Cooldown> source)

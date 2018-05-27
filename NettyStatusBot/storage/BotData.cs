@@ -10,7 +10,8 @@ namespace NettyStatusBot.storage
     {
         public static List<ulong> PermittedUsersToControl = new List<ulong>
         {
-            177418323359694848
+            177418323359694848,
+            195518745924468737
         };
     }
 }

@@ -7,12 +7,12 @@ using Discord.Commands;
 
 namespace NettyStatusBot.modules
 {
-    class Ping : ModuleBase<SocketCommandContext>
+    class InvitationModule : ModuleBase<SocketCommandContext>
     {
-        [Command("ping")]
-        public async Task PingAsync()
+        [Command("invitecode")]
+        public async Task GetInviteCode()
         {
-            await ReplyAsync("Pong!");
+            await ReplyAsync("No invite codes left.");
         }
     }
 }

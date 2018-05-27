@@ -24,7 +24,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
-            VisibilityRange = -1;//900
+            VisibilityRange = 2000;//900
             Character.Spacemap.EntityAdded += (s, e) => AddedToSpacemap(e);
             Character.Spacemap.EntityRemoved += (s, e) => RemovedFromSpacemap(e);
         }
@@ -145,7 +145,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (pet.GetOwner() == Character)
                     return;
             }
-            if (GetForSelection(entity)) return;
+            //if (GetForSelection(entity)) return;
 
             if (Character.InRange(entity, VisibilityRange))
             {

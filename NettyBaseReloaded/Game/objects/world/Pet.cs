@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.controllers.pet;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players;
 using Gear = NettyBaseReloaded.Game.controllers.pet.Gear;
@@ -44,11 +45,31 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int Fuel { get; set; }
 
+        public int MaxFuel => 50000;
+
         public int Experience { get; set; }
 
         public Level Level { get; set; }
 
         public List<Gear> Gears { get; set; }
+
+        public short DesignId
+        {
+            get
+            {
+                if (Level.Id <= 3)
+                    return 12;
+                if (Level.Id <= 6)
+                    return 13;
+                if (Level.Id <= 9)
+                    return 14;
+                if (Level.Id <= 12)
+                    return 15;
+                return 22;
+            }
+        }
+
+        public short ExpansionStage => 1;
 
         public Pet(int id,int ownerId, string name, Hangar hangar, int currentHealth, Faction factionId,
             Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
@@ -80,7 +101,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Tick()
         {
+            if (!Controller.Active || EntityState == EntityStates.DEAD) return;
             FuelReduction();
+            LevelChecker();
         }
 
         public DateTime LastTimeSynced = new DateTime(2017, 2, 5, 0, 0, 0);
@@ -90,6 +113,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
             if (Moving) Fuel -= 2;
             Fuel -= 1;
+            Packet.Builder.PetFuelUpdateCommand(GetOwner().GetGameSession(), this);
+            LastTimeSynced = DateTime.Now;
         }
 
         public void BasicSave()
@@ -100,6 +125,26 @@ namespace NettyBaseReloaded.Game.objects.world
         public bool HasFuel()
         {
             return Fuel > 0;
+        }
+
+        private DateTime LastLevelCheck = new DateTime();
+        private void LevelChecker()
+        {
+            if (LastLevelCheck.AddSeconds(2) < DateTime.Now && World.StorageManager.Levels.PetLevels.ContainsKey(Level.Id + 1))
+            {
+                var nextLevel = World.StorageManager.Levels.PetLevels[Level.Id + 1];
+                if (Experience > nextLevel.Experience)
+                {
+                    Level = nextLevel;
+
+                    if (World.StorageManager.Levels.PetLevels.ContainsKey(Level.Id + 1))
+                        nextLevel = World.StorageManager.Levels.PetLevels[Level.Id + 1];
+
+                    Packet.Builder.PetLevelUpdateCommand(GetOwner().GetGameSession(), this,
+                        nextLevel);
+                }
+                LastLevelCheck = DateTime.Now;
+            }
         }
     }
 }

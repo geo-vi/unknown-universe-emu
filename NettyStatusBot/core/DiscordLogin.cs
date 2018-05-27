@@ -35,9 +35,14 @@ namespace NettyStatusBot.core
             _client.MessageReceived += HandleCommandAsync;
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _commands.AddModuleAsync<Ping>();
-            await _commands.AddModuleAsync<Maintenance>();
-            await _commands.AddModuleAsync<Refresh>();
+            await _commands.AddModuleAsync<PingModule>();
+            await _commands.AddModuleAsync<MaintenanceModule>();
+            await _commands.AddModuleAsync<RefreshModule>();
+            await _commands.AddModuleAsync<DonateModule>();
+            await _commands.AddModuleAsync<PlayerModule>();
+            await _commands.AddModuleAsync<InvitationModule>();
+            await _commands.AddModuleAsync<HelpModule>();
+            await _commands.AddModuleAsync<LinkModule>();
         }
 
         private async Task HandleCommandAsync(SocketMessage arg)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 {
@@ -19,11 +20,17 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void OnFinish(Character character)
         {
+            var player = character as Player;
+            if (player != null)
+            {
+                Packet.Builder.PetBuffCommand(player.GetGameSession(), 1, 6, new List<int>());
+            }
         }
+
 
         public override void Send(GameSession gameSession)
         {
-            //TODO: Send it
+            Packet.Builder.PetBuffCommand(gameSession, 0, 6, new List<int>{ 30 });
         }
     }
 }

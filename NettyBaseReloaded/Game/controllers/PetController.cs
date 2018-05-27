@@ -52,6 +52,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Exit()
         {
+            Global.TickManager.Remove(Pet);
             StopAll();
             Checkers.Stop();
             Pet.Gears.Clear();
@@ -74,6 +75,8 @@ namespace NettyBaseReloaded.Game.controllers
 
             if (!Pet.GetOwner().Range.Entities.ContainsKey(Pet.Id))
                 Pet.GetOwner().Range.AddEntity(Pet);
+
+            Global.TickManager.Add(Pet);
 
             var session = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             Packet.Builder.PetHeroActivationCommand(session, Pet);

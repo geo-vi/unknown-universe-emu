@@ -311,12 +311,15 @@
     <Compile Include="Game\netty\commands\old_client\OreTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PartnerTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PetActivationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetBuffCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetDeactivationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetFuelUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearAddCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearSelectCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PetHeroActivationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetLevelUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetStatusCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\POIDesignModule.cs" />
     <Compile Include="Game\netty\commands\old_client\POIReadyCommand.cs" />

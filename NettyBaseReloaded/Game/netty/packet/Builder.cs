@@ -11,6 +11,7 @@ using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
@@ -802,7 +803,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 if (gameSession.Player.UsingNewClient)
                 {
                     gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id,
-                        12, 1, pet.Name,
+                        pet.DesignId, pet.ExpansionStage, pet.Name,
                         (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
                         new commands.new_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
                         pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible,
@@ -811,7 +812,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else
                 {
                     gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id,
-                        12, 1, pet.Name,
+                        pet.DesignId, pet.ExpansionStage, pet.Name,
                         (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
                         new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
                         pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible).Bytes);
@@ -832,7 +833,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 gameSession.Client.Send(commands.old_client.PetHeroActivationCommand.write(pet.GetOwner().Id, pet.Id,
-                    12, 1, pet.Name, (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
+                    pet.DesignId, pet.ExpansionStage, pet.Name, (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
                     pet.Position.X, pet.Position.Y, pet.Speed).Bytes);
             }
         }
@@ -2067,6 +2068,43 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.QuestConditionUpdateCommand.write(state.Id, new commands.old_client.QuestConditionStateModule(state.State.CurrentValue, state.State.Active, state.State.Completed)).Bytes);
             }
         }
-#endregion
+        #endregion
+        #region PetBuffCommand
+
+        public void PetBuffCommand(GameSession gameSession, short effectAction, short effectId, List<int> addingParameters)
+        {
+            if (gameSession.Player.UsingNewClient) { }
+            else
+            {
+                gameSession.Client.Send(netty.commands.old_client.PetBuffCommand.write(effectAction, effectId, addingParameters).Bytes);
+            }
+        }
+        #endregion
+
+        #region PetFuelUpdateCommand
+
+        public void PetFuelUpdateCommand(GameSession gameSession, Pet pet)
+        {
+            if (gameSession.Player.UsingNewClient) { }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetFuelUpdateCommand.write(pet.Fuel, pet.MaxFuel).Bytes);
+            }
+        }
+
+        #endregion
+        #region PetLevelUpdateCommand
+
+        public void PetLevelUpdateCommand(GameSession gameSession, Pet pet, Level nextLevel)
+        {
+            if (gameSession.Player.UsingNewClient) { }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetLevelUpdateCommand.write((short)pet.Level.Id, nextLevel.Experience, pet.DesignId, pet.ExpansionStage).Bytes);
+            }
+        }
+
+        #endregion
+
     }
 }

@@ -11,6 +11,23 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
 {
     class ComboRepairGear : Gear
     {
+        public int HealAmount
+        {
+            get
+            {
+                switch (Level)
+                {
+                    case 1:
+                        return 10000;
+                    case 2:
+                        return 15000;
+                    case 3:
+                        return 25000;
+                    default: return 0;
+                }
+            }
+        }
+
         public ComboRepairGear(PetController controller) : base(controller, true, 3)
         {
             Type = GearType.COMBO_SHIP_REPAIR;
@@ -22,11 +39,11 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             var owner = baseController.Pet.GetOwner();
             if (owner != null)
             {
-                if (owner.Cooldowns.Any(x => x is PetComboRepairCooldown)) return;
+                if (Active || owner.Cooldowns.Any(x => x is PetComboRepairCooldown) || baseController.Pet.GetOwner().LastCombatTime.AddSeconds(1) >= DateTime.Now) return;
                 Active = true;
 
                 baseController.Heal.HealingId = owner.Id;
-                baseController.Heal.Amount = 25000;
+                baseController.Heal.Amount = HealAmount;
                 baseController.Heal.HealType = HealType.HEALTH;
                 baseController.Heal.Healing = true;
                 PulseActivationTime = DateTime.Now;
@@ -48,9 +65,13 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
         private DateTime PulseActivationTime = new DateTime();
         public void CheckPulse()
         {
-            if (PulseActivationTime.AddSeconds(5) > DateTime.Now) return;
+            if (!Active || PulseActivationTime.AddSeconds(5) > DateTime.Now || baseController.Pet.GetOwner().LastCombatTime.AddSeconds(1) >= DateTime.Now) return;
             baseController.Heal.Healing = false;
             Active = false;
+            var cld = new PetComboRepairCooldown();
+            var owner = baseController.Pet.GetOwner();
+            cld.Send(owner.GetGameSession());
+            owner.Cooldowns.Add(cld);
         }
     }
 }
