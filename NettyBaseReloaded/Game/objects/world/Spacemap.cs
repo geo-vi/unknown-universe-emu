@@ -323,7 +323,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 ship.Damage));
         }
 
-        public void CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null)
+        public void CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null, int vwId = 0)
         {
             var id = GetNextAvailableId();
             ship.AI = (int)ai;
@@ -334,7 +334,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 new Hangar(ship, new List<Drone>(), pos, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
                 0, pos, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
-                ship.Damage, respawnTime, respawning));
+                ship.Damage, respawnTime, respawning){VirtualWorldId = vwId});
         }
 
         public int CreateNpc(Ship ship, AILevels ai, Npc motherShip)

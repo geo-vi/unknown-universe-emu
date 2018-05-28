@@ -128,7 +128,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
                 {
                     return;
                 }
-                Waves[Wave].Create(VirtualMap);
+                Waves[Wave].Create(Spacemap, VWID);
                 Wave++;
                 WavesLeftTillEnd--;
                 foreach (var joined in JoinedPlayers.Values)

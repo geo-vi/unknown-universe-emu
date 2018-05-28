@@ -100,10 +100,10 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void SwitchGear(short gearType, int optParam)
         {
+            Gear.End();
             var gearIndex = Pet.Gears.FindIndex(x => (short) x.Type == gearType);
             Gear = Pet.Gears[gearIndex];
             Gear.Activate();
-
         }
     }
 }

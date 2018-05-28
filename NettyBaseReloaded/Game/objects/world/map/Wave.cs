@@ -59,20 +59,20 @@ namespace NettyBaseReloaded.Game.objects.world.map
             return waveNpcs;
         }
 
-        public void Create(Spacemap spacemap)
+        public void Create(Spacemap spacemap, int vwId)
         {
             foreach (var npc in Npcs)
             {
-                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Position);
+                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Position, vwId);
             }
         }
 
-        internal void Create(Spacemap spacemap, Vector vector, int r)
+        internal void Create(Spacemap spacemap, int vwId, Vector vector, int r)
         {
             System.Random rnd = new System.Random();
             foreach (var npc in Npcs)
             {
-                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Vector.GetPosOnCircle(vector, rnd.Next(0,360), r));
+                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Vector.GetPosOnCircle(vector, rnd.Next(0,360), r), vwId);
             }
         }
     }
