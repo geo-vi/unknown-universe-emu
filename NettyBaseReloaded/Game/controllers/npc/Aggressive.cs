@@ -29,7 +29,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Active()
         {
             var npc = Controller.Npc;
-            if (npc.Selected == null || npc.Selected.EntityState == EntityStates.DEAD)
+            if (npc.Selected == null || Controller.Attack.MainAttacker != null && Controller.Attack.MainAttacker != npc.Selected || npc.Selected.EntityState == EntityStates.DEAD)
             {
                 if (Controller.Attack.GetActiveAttackers().Count == 0)
                 {
@@ -40,11 +40,11 @@ namespace NettyBaseReloaded.Game.controllers.npc
             }
             else
             {
-                if (SelectedDestination != null && Vector.IsPositionInCircle(SelectedDestination, npc.Selected.Position, 350))
+                if (SelectedDestination != null && Vector.IsPositionInCircle(SelectedDestination, MovementController.ActualPosition(npc.SelectedCharacter), 350))
                     MovementController.Move(npc, SelectedDestination);
                 else
                 {
-                    if (SelectedDestination == null || !npc.Moving && !Vector.IsPositionInCircle(SelectedDestination, npc.Selected.Position, 350))
+                    if (SelectedDestination == null || !Vector.IsPositionInCircle(SelectedDestination, npc.Selected.Position, 350))
                         SelectedDestination = Vector.GetPosOnCircle(npc.Selected.Position, 350);
                 }
             }

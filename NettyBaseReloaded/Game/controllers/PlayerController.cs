@@ -78,7 +78,10 @@ namespace NettyBaseReloaded.Game.controllers
         {
             try
             {
-                Parallel.ForEach(CheckedClasses, _class => { _class.Check(); });
+                foreach (var _class in CheckedClasses)
+                {
+                    _class.Check();
+                }
             }
             catch (Exception e)
             {

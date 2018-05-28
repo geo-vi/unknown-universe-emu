@@ -43,7 +43,6 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Active = true;
             StopController = false;
-            Task.Factory.StartNew(Checkers.Start);
             Task.Factory.StartNew(Tick);
         }
 
@@ -57,17 +56,17 @@ namespace NettyBaseReloaded.Game.controllers
                     return;
                 }
 
-                TickClasses();
+                await Task.Factory.StartNew(TickClasses);
 
                 if (this is PlayerController)
                 {
                     var player = (Player)Character;
-                    player.Controller.Tick();
+                    await Task.Factory.StartNew(player.Controller.Tick);
                 }
                 else if (this is PetController)
                 {
                     var pet = (Pet) Character;
-                    pet.Controller.Tick();
+                    await Task.Factory.StartNew(pet.Controller.Tick);
                 }
                 await Task.Delay(50);
             }
@@ -75,6 +74,8 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void TickClasses()
         {
+            Character.Position = MovementController.ActualPosition(Character);
+            Checkers?.Tick();
             Parallel.Invoke(() =>
             {
                 Attack?.Tick();
@@ -82,7 +83,6 @@ namespace NettyBaseReloaded.Game.controllers
                 Heal?.Tick();
                 Destruction?.Tick();
                 Effects?.Tick();
-                Character.Position = MovementController.ActualPosition(Character);
             });
         }
 

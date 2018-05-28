@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Start()
         {
-            Global.TickManager.Add(this);
+            //Global.TickManager.Add(this);
         }
 
         private DateTime LastTick = new DateTime();
@@ -55,8 +55,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Stop()
         {
-            Controller.StopController = true;
-            Global.TickManager.Remove(this);
+            //Controller.StopController = true;
+            //Global.TickManager.Remove(this);
         }
 
         #region Character related

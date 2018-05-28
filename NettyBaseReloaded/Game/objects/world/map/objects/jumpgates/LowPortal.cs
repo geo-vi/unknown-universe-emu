@@ -33,17 +33,16 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
                 var low = groupMemberWithGateInitiated.Value.OwnedGates.FirstOrDefault(x => x.Value is LowGate);
                 if (low.Value.VWID != 0 && low.Value.VirtualMap != null)
                 {
-                    player.Controller.Miscs.Jump(low.Value.VirtualMap.Id, Destination, Id, low.Value.VWID);
+                    player.Controller.Miscs.Jump(low.Value.Spacemap.Id, Destination, Id, low.Value.VWID);
                     low.Value.PendingPlayers.TryAdd(player.Id, player);
                 }
-                else Console.WriteLine("Escape");
             }
             else
             {
                 var low = new LowGate(0, World.StorageManager.Spacemaps[200]);
                 player.CreateGalaxyGate(low);
                 low.InitiateVirtualWorld();
-                player.Controller.Miscs.Jump(low.VirtualMap.Id, Destination, Id, low.VWID);
+                player.Controller.Miscs.Jump(low.Spacemap.Id, Destination, Id, low.VWID);
                 low.PendingPlayers.TryAdd(player.Id, player);
             }
         }

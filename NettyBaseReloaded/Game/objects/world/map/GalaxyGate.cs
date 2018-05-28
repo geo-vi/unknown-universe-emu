@@ -300,6 +300,10 @@ namespace NettyBaseReloaded.Game.objects.world.map
             if (player == null) return;
             if (player.OwnedGates.ContainsKey(Id))
             {
+                foreach (var entity in VirtualMap.Entities)
+                {
+                    entity.Value.Destroy();
+                }
                 GalaxyGate removedGate = null;
                 player.OwnedGates.TryRemove(Id, out removedGate);
             }

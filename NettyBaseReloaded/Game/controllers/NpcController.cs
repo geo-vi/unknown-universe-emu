@@ -57,8 +57,8 @@ namespace NettyBaseReloaded.Game.controllers
                     Active = false;
                 else
                 {
-                    TickClasses();
-                    CurrentNpc.Tick();
+                    await Task.Factory.StartNew(TickClasses);
+                    await Task.Factory.StartNew(CurrentNpc.Tick);
                 }
                 await Task.Delay(500);
             }
