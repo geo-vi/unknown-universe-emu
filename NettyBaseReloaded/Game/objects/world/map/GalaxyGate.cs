@@ -54,6 +54,15 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Wave = wave;
         }
 
+        private async Task RunThread()
+        {
+            while (!(Finished && Rewarded))
+            {
+                Tick();
+                await Task.Delay(100);
+            }
+        }
+
         public virtual void Tick()
         {
             try
@@ -162,7 +171,10 @@ namespace NettyBaseReloaded.Game.objects.world.map
         /// </summary>
 
         #region Abstracts
-        public abstract void Initiate();
+        public virtual void Initiate()
+        {
+            Task.Factory.StartNew(RunThread);
+        }
 
         public abstract void Start();
 
@@ -249,7 +261,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
                         if (player == Owner)
                         {
-                            if (player.Spacemap.Id != VirtualMap.Id)
+                            if (player.Spacemap != VirtualMap)
                             {
                                 if (JoinedPlayers.Count > 1)
                                 {

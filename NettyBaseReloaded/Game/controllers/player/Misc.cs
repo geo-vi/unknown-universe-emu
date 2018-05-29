@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
+using NettyBaseReloaded.Game.controllers.player.structs;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects;
@@ -90,14 +91,33 @@ namespace NettyBaseReloaded.Game.controllers.player
             BeaconSync();
         }
 
-        private DateTime LastBeaconSent = new DateTime();
+        private PlayerBeacon _beacon;
+
         public void BeaconSync()
         {
-            if (LastBeaconSent.AddSeconds(1) > DateTime.Now || !baseController.Active) return;
-            var gameSession = baseController.Player?.GetGameSession();
-            if (gameSession != null)
+            var gameSession = baseController.Player.GetGameSession();
+            if (!baseController.Active || gameSession == null) return;
+            if (_beacon.InEquipmentArea != baseController.Player.State.InEquipmentArea)
+            {
+                Packet.Builder.EquipReadyCommand(gameSession, baseController.Player.State.InEquipmentArea);
+                _beacon.InEquipmentArea = baseController.Player.State.InEquipmentArea;
+            }
+            if (_beacon.InDemiZone != baseController.Player.State.InDemiZone|| _beacon.InPortalArea != baseController.Player.State.InPortalArea || _beacon.InRadiationArea != baseController.Player.State.InRadiationArea || _beacon.InTradeArea != baseController.Player.State.InTradeArea)
+            {
                 Packet.Builder.BeaconCommand(gameSession);
-            LastBeaconSent = DateTime.Now;
+                _beacon.InDemiZone = baseController.Player.State.InDemiZone;
+                _beacon.InPortalArea = baseController.Player.State.InPortalArea;
+                _beacon.InRadiationArea = baseController.Player.State.InRadiationArea;
+                _beacon.InTradeArea = baseController.Player.State.InTradeArea;
+            }
+
+            if (_beacon.Repairing != baseController.Repairing)
+            {
+                Packet.Builder.LegacyModule(gameSession, "0|A" +
+                                            "|RS|" +
+                                            "S|" + Convert.ToInt32(baseController.Repairing), true);
+                _beacon.Repairing = baseController.Repairing;
+            }
         }
 
         /// <summary>

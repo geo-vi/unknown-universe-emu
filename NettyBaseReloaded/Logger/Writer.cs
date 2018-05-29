@@ -23,7 +23,12 @@ namespace NettyBaseReloaded.Logger
             try
             {
                 if (File.Exists(FilePath))
-                    FileEssentials.Write(FilePath, message);
+                {
+                    using (var writer = new StreamWriter(FilePath))
+                    {
+                        writer.Write(message);
+                    }
+                }
             }
             catch (Exception e)
             {

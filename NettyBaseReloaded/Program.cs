@@ -261,5 +261,10 @@ namespace NettyBaseReloaded
             Console.Read();
             //INSERT INTO server_titles (KEY,TITLE_NAME,TITLE_COLOR_HEX) VALUES ("", "","#FFF");
         }
+
+        public static void Exit()
+        {
+            Environment.Exit(0);
+        }
     }
 }

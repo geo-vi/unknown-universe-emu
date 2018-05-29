@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
@@ -62,6 +63,7 @@ namespace NettyBaseReloaded.Networking
                         gameSession.LastActiveTime = DateTime.Now;
 
                     XSocket.Write(bytes);
+                    //Console.WriteLine(Out.GetCaller() + $" ({DateTime.Now})");
                 }
             }
             catch (Exception e)

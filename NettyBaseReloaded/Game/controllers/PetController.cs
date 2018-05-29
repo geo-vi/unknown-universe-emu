@@ -40,6 +40,7 @@ namespace NettyBaseReloaded.Game.controllers
             Pet.Gears.Add(new GuardGear(this));
             Pet.Gears.Add(new AutoLootGear(this));
             Pet.Gears.Add(new ComboRepairGear(this));
+            Pet.Gears.Add(new AutoResourceCollectionGear(this));
             Gear = Pet.Gears[0];
             var owner = Pet.GetOwner();
             var gameSession = World.StorageManager.GetGameSession(owner.Id);

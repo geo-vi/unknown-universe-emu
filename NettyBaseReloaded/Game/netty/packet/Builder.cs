@@ -900,7 +900,10 @@ namespace NettyBaseReloaded.Game.netty.packet
                                           + Convert.ToInt32(player.State.InTradeArea) + "|"
                                           + Convert.ToInt32(player.State.InRadiationArea) + "|" +
                                           Convert.ToInt32(player.State.InPortalArea) + "|0");
-                LegacyModule(gameSession, "0|A|RS|S|" + player.Controller.Repairing);
+                //LegacyModule(gameSession, "0|A" +
+                //                          "|RS|" +
+                //                          "S|" + player.Controller.Repairing);
+                //EquipReadyCommand(gameSession, player.State.InEquipmentArea);
             }
         }
 
@@ -1146,7 +1149,6 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                Console.WriteLine("Gear->" + gear.Type.ToString());
                 gameSession.Client.Send(netty.commands.old_client.PetGearAddCommand
                     .write(new commands.old_client.PetGearTypeModule((short) gear.Type), gear.Level, gear.Amount,
                         gear.Enabled).Bytes);
@@ -1166,9 +1168,8 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                Console.WriteLine("Select Gear->" + gear.Type.ToString());
                 gameSession.Client.Send(commands.old_client.PetGearSelectCommand
-                    .write(new commands.old_client.PetGearTypeModule((short) gear.Type), new List<int>()).Bytes);
+                    .write(new commands.old_client.PetGearTypeModule((short) gear.Type), gear.OptionalParams).Bytes);
             }
         }
 

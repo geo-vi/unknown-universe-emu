@@ -111,6 +111,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
                 var relay = relayObject.Value as RelayStation;
                 relay.Core.Destroyed += DestroyedRelay;
             }
+            base.Initiate();
         }
 
         public override void Start()
@@ -128,7 +129,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
                 {
                     return;
                 }
-                Waves[Wave].Create(Spacemap, VWID);
+                Waves[Wave].Create(VirtualMap, VWID);
                 Wave++;
                 WavesLeftTillEnd--;
                 foreach (var joined in JoinedPlayers.Values)

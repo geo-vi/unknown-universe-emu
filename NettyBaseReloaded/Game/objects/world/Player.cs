@@ -349,7 +349,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 TickEvents();
                 TickVisuals();
                 TickTechs();
-                TickGates();
+                //TickGates();
                 TickAbilities();
                 TickQuests();
             });
@@ -368,11 +368,6 @@ namespace NettyBaseReloaded.Game.objects.world
         private void TickEvents()
         {
             Parallel.ForEach(EventsPraticipating, gameEvent => { gameEvent.Value.Tick(); });
-        }
-
-        private void TickGates()
-        {
-            Parallel.ForEach(OwnedGates, ownedGate => { ownedGate.Value.Tick(); });
         }
 
         private void TickAbilities()
@@ -739,18 +734,18 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int CreateGalaxyGate(GalaxyGate gate)
         {
-            int id = 0;
-            if (gate.Id == 0)
+            var id = 0;
+            if (OwnedGates.Count > 0)
             {
-                var lastId = 0;
-                foreach (var obj in OwnedGates.Keys)
+                foreach (var key in OwnedGates.Keys)
                 {
-                    if (obj == lastId + 1)
-                        lastId++;
-                    else return lastId + 1;
+                    if (OwnedGates[key] == null)
+                        id = key;
+                    else id++;
                 }
-                id = lastId + 1;
-                gate.Id = id;
+
+                if (OwnedGates.ContainsKey(id))
+                    id++;
             }
             OwnedGates.TryAdd(id, gate);
             return id;

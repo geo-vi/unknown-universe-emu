@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable.attack;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.players.statistics;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {

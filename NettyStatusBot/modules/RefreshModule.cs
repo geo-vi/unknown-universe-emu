@@ -47,6 +47,7 @@ namespace NettyStatusBot.modules
         public async Task Server()
         {
             await ReplyAsync("Preparing server for restart...");
+           
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Networking
 {
@@ -25,6 +26,22 @@ namespace NettyBaseReloaded.Networking
             if (packetArgs.Packet == "ping")
             {
                 XSocket.Write($"pong|{World.StorageManager.GameSessions.Count}|{(DateTime.Now - Properties.Server.RUNTIME).TotalHours}");
+            }
+            else if (packetArgs.Packet == "kick")
+            {
+                var id = int.Parse(packetArgs.Packet.Split('|')[1]);
+                var gameSession = World.StorageManager.GetGameSession(id);
+                gameSession?.Kick();
+            }
+            else if (packetArgs.Packet == "restart")
+            {
+                foreach (var session in World.StorageManager.GameSessions)
+                {
+                    Packet.Builder.LegacyModule(session.Value, "0|A|STD|Restarting server...");
+                    session.Value.Kick();
+                }
+
+                Program.Exit();
             }
             //Socketty.PacketHandler.Handle(packetArgs.Packet);
         }

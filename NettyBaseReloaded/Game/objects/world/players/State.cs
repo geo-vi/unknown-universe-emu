@@ -44,6 +44,11 @@ namespace NettyBaseReloaded.Game.objects.world.players
         /// </summary>
         public bool InInstaRepairZone { get; set; }
 
+        /// <summary>
+        /// If group is initialized it should be true
+        /// </summary>
+        public bool GroupInitialized { get; set; }
+
         public State(Player player) : base(player)
         {
             AddHomeMaps();

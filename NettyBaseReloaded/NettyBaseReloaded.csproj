@@ -140,6 +140,7 @@
     <Compile Include="Game\controllers\npc\Mothership.cs" />
     <Compile Include="Game\controllers\PetController.cs" />
     <Compile Include="Game\controllers\pet\gears\AutoLootGear.cs" />
+    <Compile Include="Game\controllers\pet\gears\AutoResourceCollectionGear.cs" />
     <Compile Include="Game\controllers\pet\gears\ComboRepairGear.cs" />
     <Compile Include="Game\controllers\pet\gears\GuardGear.cs" />
     <Compile Include="Game\controllers\pet\gears\PassiveGear.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Game\controllers\implementable\IChecker.cs" />
     <Compile Include="Game\controllers\player\Misc.cs" />
     <Compile Include="Game\controllers\player\Range.cs" />
+    <Compile Include="Game\controllers\player\structs\PlayerBeacon.cs" />
     <Compile Include="Game\netty\commands\new_client\ActivatePortalCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AddOreCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AmmunitionTypeModule.cs" />

@@ -12,6 +12,7 @@ using NettyBaseReloaded.Game.netty.handlers;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Game.objects.world.players.statistics;
 using NettyBaseReloaded.Main.objects;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using Range = NettyBaseReloaded.Game.objects.world.characters.Range;

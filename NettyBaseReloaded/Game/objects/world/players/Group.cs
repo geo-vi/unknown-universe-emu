@@ -73,9 +73,18 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             foreach (var player in Members)
             {
-                if (player.Value.GetGameSession() == null) continue;
-                Packet.Builder.GroupInitializationCommand(player.Value.GetGameSession());
+                InitializeGroup(player.Value);
             }
+        }
+
+        private void InitializeGroup(Player player)
+        {
+            try
+            {
+                Packet.Builder.GroupInitializationCommand(player.GetGameSession());
+                player.State.GroupInitialized = true;
+            }
+            catch (Exception) { }
         }
 
         public async void Update()
@@ -95,6 +104,11 @@ namespace NettyBaseReloaded.Game.objects.world.players
                     {
                         instance.Player.Group = this;
                         SendInitToAll(); // TEMP FIX
+                    }
+
+                    if (!instance.Player.State.GroupInitialized)
+                    {
+                        InitializeGroup(instance.Player);
                     }
 
                     foreach (var _member in Members.Values)

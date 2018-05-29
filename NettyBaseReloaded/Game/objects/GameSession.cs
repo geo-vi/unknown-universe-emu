@@ -76,6 +76,13 @@ namespace NettyBaseReloaded.Game.objects
             Global.TickManager.Remove(Player);
         }
 
+        public void Kick()
+        {
+            Packet.Builder.LegacyModule(this, "KIK");
+            PrepareForDisconnect();
+            Disconnect(DisconnectionType.ADMIN);
+        }
+
         /// <summary>
         /// No preparations, just close the socket
         /// </summary>

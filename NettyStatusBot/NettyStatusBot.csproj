@@ -137,6 +137,8 @@
   <ItemGroup>
     <Compile Include="core\BotActions.cs" />
     <Compile Include="core\DiscordLogin.cs" />
+    <Compile Include="core\network\ServerConnection.cs" />
+    <Compile Include="core\ServerStatus.cs" />
     <Compile Include="core\Updater.cs" />
     <Compile Include="modules\DonateModule.cs" />
     <Compile Include="modules\HelpModule.cs" />

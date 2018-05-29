@@ -68,8 +68,9 @@ namespace NettyBaseReloaded.Game.controllers.player
                     var session = baseController.Player.GetGameSession();
                     if (session != null)
                     {
-                        Packet.Builder.EquipReadyCommand(session, true);
-                        World.DatabaseManager.Refresh(baseController.Player);
+                        baseController.Player.State.InEquipmentArea = true;
+                        //Packet.Builder.EquipReadyCommand(session, true);
+                        //World.DatabaseManager.Refresh(baseController.Player);
                         //baseController.Player.Equipment.Hangars =
                         //    World.DatabaseManager.LoadHangars(baseController.Player);
                         //baseController.Player.Hangar.Drones = World.DatabaseManager.LoadDrones(baseController.Player);
@@ -79,9 +80,10 @@ namespace NettyBaseReloaded.Game.controllers.player
                 }
                 else
                 {
-                    var session = baseController.Player.GetGameSession();
-                    if (session != null)
-                        Packet.Builder.EquipReadyCommand(session, false);
+                    //var session = baseController.Player.GetGameSession();
+                    //if (session != null)
+                    //    Packet.Builder.EquipReadyCommand(session, false);
+                    baseController.Player.State.InEquipmentArea = false;
                 }
             }
             catch (Exception e)
