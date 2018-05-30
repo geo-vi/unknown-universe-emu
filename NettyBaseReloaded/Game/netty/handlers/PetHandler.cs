@@ -19,7 +19,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                     gameSession.Player.Pet.Controller.Deactivate();
                     break;
                 case PetRequest.REPAIR_DESTROYED_PET:
-                    //gameSession.Player.Pet.Controller.Repair();
+                    gameSession.Player.Pet.Controller.Repair();
                     break;
             }
         }

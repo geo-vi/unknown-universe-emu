@@ -32,9 +32,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 if (Character.CurrentShield < 0) Character.CurrentShield = 0;
 
 
-                if (Character is Player)
+                if (Character is Player player)
                 {
-                    var player = (Player)Character;
                     var gameSession = World.StorageManager.GetGameSession(Character.Id);
                     if (gameSession == null) return;
 
@@ -43,6 +42,16 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     Packet.Builder.AttributeShieldUpdateCommand(gameSession, player.CurrentShield, player.MaxShield);
                     //Update speed
                     Packet.Builder.AttributeShipSpeedUpdateCommand(gameSession, player.Speed);
+                }
+
+                if (Character is Pet pet)
+                {
+                    var gameSession = pet.GetOwner().GetGameSession();
+                    if (gameSession == null) return;
+
+                    Packet.Builder.PetHitpointsUpdateCommand(gameSession, pet.CurrentHealth, pet.MaxHealth, false);
+
+                    Packet.Builder.PetShieldUpdateCommand(gameSession, pet.CurrentShield, pet.MaxShield);
                 }
 
                 GameClient.SendPacketSelected(Character, netty.commands.old_client.ShipSelectionCommand.write(Character.Id, Character.Hangar.ShipDesign.Id, Character.CurrentShield, Character.MaxShield,

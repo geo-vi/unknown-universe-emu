@@ -2107,5 +2107,80 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #endregion
 
+        #region PetIsDestroyedCommand
+
+        public void PetIsDestroyedCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetIsDestroyedCommand.write().Bytes);
+            }
+        }
+
+        #endregion
+
+        #region PetRepairCompleteCommand
+
+        public void PetRepairCompleteCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetRepairCompleteCommand.write().Bytes);
+            }
+        }
+        #endregion
+
+        #region PetUIRepairButtonCommand
+
+        public void PetUIRepairButtonCommand(GameSession gameSession, bool enabled, int repairCost)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetUIRepairButtonCommand.write(enabled, repairCost).Bytes);
+            }
+        }
+        #endregion
+
+        #region PetShieldUpdateCommand
+
+        public void PetShieldUpdateCommand(GameSession gameSession, int petShieldNow, int petShieldMax)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetShieldUpdateCommand.write(petShieldNow, petShieldMax).Bytes);
+            }
+        }
+        #endregion
+
+        #region PetHitpointsUpdateCommand
+
+        public void PetHitpointsUpdateCommand(GameSession gameSession, int hitpointsNow, int hitpointsMax, bool useRepairGear)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetHitpointsUpdateCommand.write(hitpointsNow, hitpointsMax, useRepairGear).Bytes);
+            }
+        }
+        #endregion
     }
 }

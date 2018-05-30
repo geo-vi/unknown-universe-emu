@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Packet = NettyBaseReloaded.Game.netty.Packet;
 using PetGearTypeModule = NettyBaseReloaded.Game.netty.commands.old_client.PetGearTypeModule;
 
 namespace NettyBaseReloaded.Game.controllers
@@ -32,15 +33,17 @@ namespace NettyBaseReloaded.Game.controllers
         {
             LoadGears();
             Initiate();
+            Global.TickManager.Add(Pet);
+            MovementController.Move(Pet, Vector.GetPosOnCircle(Pet.GetOwner().Position, 250));
         }
 
         private void LoadGears()
         {
             Pet.Gears.Add(new PassiveGear(this));
             Pet.Gears.Add(new GuardGear(this));
-            Pet.Gears.Add(new AutoLootGear(this));
+            //Pet.Gears.Add(new AutoLootGear(this));
             Pet.Gears.Add(new ComboRepairGear(this));
-            Pet.Gears.Add(new AutoResourceCollectionGear(this));
+            //Pet.Gears.Add(new AutoResourceCollectionGear(this));
             Gear = Pet.Gears[0];
             var owner = Pet.GetOwner();
             var gameSession = World.StorageManager.GetGameSession(owner.Id);
@@ -77,26 +80,42 @@ namespace NettyBaseReloaded.Game.controllers
             if (!Pet.GetOwner().Range.Entities.ContainsKey(Pet.Id))
                 Pet.GetOwner().Range.AddEntity(Pet);
 
-            Global.TickManager.Add(Pet);
-
             var session = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             Packet.Builder.PetHeroActivationCommand(session, Pet);
             Packet.Builder.PetStatusCommand(session, Pet);
-            MovementController.Move(Pet, Vector.GetPosOnCircle(Pet.GetOwner().Position, 250));
             Start();
         }
 
         public void Deactivate()
         {
-            var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
-            Packet.Builder.PetDeactivationCommand(ownerSession, Pet);
             Exit();
             Destruction.Remove();
+
+            var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
+            if (ownerSession != null)
+                Packet.Builder.PetDeactivationCommand(ownerSession, Pet);
+        }
+
+        public void Destroy()
+        {
+            Exit();
+            Destruction.Remove();
+
+            var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
+            if (ownerSession != null)
+            {
+                Packet.Builder.PetIsDestroyedCommand(ownerSession);
+                Packet.Builder.PetUIRepairButtonCommand(ownerSession, true, 0);
+            }
         }
 
         public void Repair()
         {
-            
+            Pet.CurrentHealth = 1000;
+            Pet.EntityState = EntityStates.ALIVE;
+            var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
+            if (ownerSession != null)
+                Packet.Builder.PetRepairCompleteCommand(ownerSession);
         }
 
         public void SwitchGear(short gearType, int optParam)

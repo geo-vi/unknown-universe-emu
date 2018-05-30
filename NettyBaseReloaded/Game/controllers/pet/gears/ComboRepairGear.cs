@@ -56,22 +56,25 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             Follow(baseController.Pet.GetOwner());
         }
 
-        public override void End()
+        public override void End(bool shutdown = false)
         {
-            Active = false;
             baseController.Heal.Healing = false;
+            Active = false;
+            if (!shutdown)
+            {
+                var cld = new PetComboRepairCooldown();
+                var owner = baseController.Pet.GetOwner();
+                cld.Send(owner.GetGameSession());
+                owner.Cooldowns.Add(cld);
+            }
         }
 
         private DateTime PulseActivationTime = new DateTime();
         public void CheckPulse()
         {
             if (!Active || PulseActivationTime.AddSeconds(5) > DateTime.Now || baseController.Pet.GetOwner().LastCombatTime.AddSeconds(1) >= DateTime.Now) return;
-            baseController.Heal.Healing = false;
-            Active = false;
-            var cld = new PetComboRepairCooldown();
-            var owner = baseController.Pet.GetOwner();
-            cld.Send(owner.GetGameSession());
-            owner.Cooldowns.Add(cld);
+            
+            End();
         }
     }
 }

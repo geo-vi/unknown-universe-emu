@@ -29,14 +29,14 @@ namespace NettyBaseReloaded.Game.controllers.pet
             Enabled = enabled;
             Level = level;
             Amount = amount;
-            controller.Shutdown += (sender, args) => End();
+            controller.Shutdown += (sender, args) => End(true);
         }
 
         public abstract void Activate();
 
         public abstract void Check();
 
-        public abstract void End();
+        public abstract void End(bool shutdown = false);
 
         public void Follow(Character character)
         {

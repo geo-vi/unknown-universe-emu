@@ -24,7 +24,7 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             Follow(baseController.Pet.GetOwner());
         }
 
-        public override void End()
+        public override void End(bool shutdown = false)
         {
         }
     }

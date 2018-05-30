@@ -320,9 +320,14 @@
     <Compile Include="Game\netty\commands\old_client\PetGearSelectCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PetHeroActivationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetHitpointsUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetInitializationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetIsDestroyedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetLevelUpdateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetRepairCompleteCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetShieldUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetStatusCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetUIRepairButtonCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\POIDesignModule.cs" />
     <Compile Include="Game\netty\commands\old_client\POIReadyCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\POITypeModule.cs" />

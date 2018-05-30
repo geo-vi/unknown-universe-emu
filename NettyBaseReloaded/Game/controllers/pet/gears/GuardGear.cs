@@ -17,7 +17,7 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
 
         public override void Activate()
         {
-
+            baseController.Attack.Attacking = true;
         }
 
         public override void Check()
@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             Follow(baseController.Pet.GetOwner());
         }
 
-        public override void End()
+        public override void End(bool shutdown = false)
         {
             baseController.Attack.Attacking = false;
             baseController.Pet.Selected = null;
@@ -35,17 +35,21 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
         private void CheckAttackables()
         {
             var owner = baseController.Pet.GetOwner();
-            if (owner != null)
+            if (owner == null || !baseController.Active) return;
+
+            Character selectedCharacter = null;
+            if (owner.Controller.Attack.Attacking)
+                selectedCharacter = owner.SelectedCharacter;
+            else
             {
-                if (baseController.Pet.Selected != null && baseController.Attack.Attacking) return;
-                var ownerAttackers = owner.Controller.Attack.GetActiveAttackers();
-                if (ownerAttackers.Count > 0)
+                var attackers = owner.Controller.Attack.GetActiveAttackers();
+                if (attackers.Count > 0)
                 {
-                    var selected = ownerAttackers.FirstOrDefault();
-                    if (selected != null)
-                        baseController.Pet.Selected = selected;
+                    selectedCharacter = attackers.FirstOrDefault();
                 }
             }
+
+            baseController.Pet.Selected = selectedCharacter;
         }
     }
 }

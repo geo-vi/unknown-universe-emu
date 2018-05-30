@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
 {
     class AutoResourceCollectionGear : Gear
     {
-        public override List<int> OptionalParams => new List<int>{1,2};
+        public override List<int> OptionalParams => new List<int>{0};
 
         public AutoResourceCollectionGear(PetController controller) : base(controller, true, 3)
         {
@@ -41,7 +41,7 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
 
         }
 
-        public override void End()
+        public override void End(bool shutdown = false)
         {
         }
     }

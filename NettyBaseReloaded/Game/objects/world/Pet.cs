@@ -99,9 +99,10 @@ namespace NettyBaseReloaded.Game.objects.world
             return World.StorageManager.GameSessions[OwnerId].Player;
         }
 
-        public override void Tick()
+        public override void AssembleTick(object sender, EventArgs eventArgs)
         {
             if (!Controller.Active || EntityState == EntityStates.DEAD) return;
+            base.AssembleTick(sender, eventArgs);
             FuelReduction();
             LevelChecker();
         }
@@ -109,10 +110,10 @@ namespace NettyBaseReloaded.Game.objects.world
         public DateTime LastTimeSynced = new DateTime(2017, 2, 5, 0, 0, 0);
         public void FuelReduction()
         {
-            if (LastTimeSynced.AddSeconds(1) > DateTime.Now) return;
+            if (LastTimeSynced.AddSeconds(5) > DateTime.Now) return;
 
-            if (Moving) Fuel -= 2;
-            Fuel -= 1;
+            if (Moving) Fuel -= 10;
+            Fuel -= 5;
             Packet.Builder.PetFuelUpdateCommand(GetOwner().GetGameSession(), this);
             LastTimeSynced = DateTime.Now;
         }
@@ -145,6 +146,18 @@ namespace NettyBaseReloaded.Game.objects.world
                 }
                 LastLevelCheck = DateTime.Now;
             }
+        }
+
+        public override void Destroy()
+        {
+            base.Destroy();
+            Controller.Destroy();
+        }
+
+        public override void Destroy(Character destroyer)
+        {
+            base.Destroy(destroyer);
+            Controller.Destroy();
         }
     }
 }
