@@ -33,14 +33,16 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.stations
         {
             foreach (var player in PlayersInRangeOfStation)
             {
+                var session = player.GetGameSession();
+                if (session == null) continue;
                 if (player.CurrentHealth != player.MaxHealth && player.LastCombatTime.AddSeconds(10) <= DateTime.Now)
                 {
                     var heal = player.MaxHealth / 10;
                     if (player.CurrentHealth + heal > player.MaxHealth) heal = player.MaxHealth - player.CurrentHealth;
                     player.Controller.Heal.Execute(heal, Id);
-                    Packet.Builder.LegacyModule(player.GetGameSession(), "0|CSS|1");
+                    Packet.Builder.LegacyModule(session, "0|CSS|1");
                 }
-                else Packet.Builder.LegacyModule(player.GetGameSession(), "0|CSS|0");
+                else Packet.Builder.LegacyModule(session, "0|CSS|0");
             }
         }
     }
