@@ -5,6 +5,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using NettyStatusBot.core.network;
 using NettyStatusBot.modules;
 using NettyStatusBot.Properties;
 
@@ -22,8 +23,10 @@ namespace NettyStatusBot.core
             _commands = new CommandService();
 
             _services = new ServiceCollection().AddSingleton(_client).AddSingleton(_commands).BuildServiceProvider();
-            new Updater(_client);
 
+            new ServerConnection();
+            new DiscordStatusUpdater(_client);
+            
             await RegisterCommands();
             await _client.LoginAsync(TokenType.Bot, BotConfiguration.TOKEN);
             await _client.StartAsync();
@@ -43,6 +46,7 @@ namespace NettyStatusBot.core
             await _commands.AddModuleAsync<InvitationModule>();
             await _commands.AddModuleAsync<HelpModule>();
             await _commands.AddModuleAsync<LinkModule>();
+            await _commands.AddModuleAsync<AdministratorModule>();
         }
 
         private async Task HandleCommandAsync(SocketMessage arg)

@@ -9,8 +9,9 @@ namespace NettyStatusBot.core
 {
     struct ServerStatus
     {
-        public static TimeSpan Runtime;
-        public static int PlayersOnline;
-        public static bool Maintenance => BotConfiguration.DISPLAY_MAINTENANCE_STATUS;
+        public TimeSpan Runtime;
+        public int PlayersOnline;
+        public bool Online;
+        public bool Maintenance;
     }
 }

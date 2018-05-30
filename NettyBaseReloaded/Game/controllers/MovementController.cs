@@ -27,7 +27,7 @@ namespace NettyBaseReloaded.Game.controllers
             //GameClient.SendToSpacemap(character.Spacemap, netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
             GameClient.SendRangePacket(character,
                 netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y,
-                    character.MovementTime), true);
+                    character.MovementTime));
             //GameClient.SendToSpacemap(character.Spacemap, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
 
         }

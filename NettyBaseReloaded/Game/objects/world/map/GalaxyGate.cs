@@ -326,22 +326,23 @@ namespace NettyBaseReloaded.Game.objects.world.map
             if (player?.GetGameSession() == null) return;
             Vector targetPos = null;
             Spacemap targetMap = null;
-            switch (player.FactionId)
-            {
-                case Faction.MMO:
-                    targetMap = World.StorageManager.Spacemaps[1];
-                    targetPos = new Vector(1000, 1000);
-                    break;
-                case Faction.EIC:
-                    targetMap = World.StorageManager.Spacemaps[5];
-                    targetPos = new Vector(19800, 1000);
-                    break;
-                case Faction.VRU:
-                    targetMap = World.StorageManager.Spacemaps[9];
-                    targetPos = new Vector(19800, 11800);
-                    break;
-            }
-            player.MoveToMap(targetMap, targetPos, 0);
+            //switch (player.FactionId)
+            //{
+            //    case Faction.MMO:
+            //        targetMap = World.StorageManager.Spacemaps[1];
+            //        targetPos = new Vector(1000, 1000);
+            //        break;
+            //    case Faction.EIC:
+            //        targetMap = World.StorageManager.Spacemaps[5];
+            //        targetPos = new Vector(19800, 1000);
+            //        break;
+            //    case Faction.VRU:
+            //        targetMap = World.StorageManager.Spacemaps[9];
+            //        targetPos = new Vector(19800, 11800);
+            //        break;
+            //}
+            var tuple = player.GetClosestStation();
+            player.MoveToMap(tuple.Item2, tuple.Item1, 0);
         }
 
         #endregion

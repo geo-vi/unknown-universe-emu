@@ -80,7 +80,7 @@ namespace NettyBaseReloaded.Game.objects
         {
             Packet.Builder.LegacyModule(this, "KIK");
             PrepareForDisconnect();
-            Disconnect(DisconnectionType.ADMIN);
+            Disconnect();
         }
 
         /// <summary>

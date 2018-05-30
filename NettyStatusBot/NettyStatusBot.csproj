@@ -137,9 +137,13 @@
   <ItemGroup>
     <Compile Include="core\BotActions.cs" />
     <Compile Include="core\DiscordLogin.cs" />
+    <Compile Include="core\DiscordStatusUpdater.cs" />
+    <Compile Include="core\network\packets\ModuleLookup.cs" />
+    <Compile Include="core\network\packets\PacketBase.cs" />
+    <Compile Include="core\network\packets\PongPacket.cs" />
     <Compile Include="core\network\ServerConnection.cs" />
     <Compile Include="core\ServerStatus.cs" />
-    <Compile Include="core\Updater.cs" />
+    <Compile Include="modules\AdministratorModule.cs" />
     <Compile Include="modules\DonateModule.cs" />
     <Compile Include="modules\HelpModule.cs" />
     <Compile Include="modules\InvitationModule.cs" />
@@ -153,6 +157,7 @@
     <Compile Include="Properties\BotConfiguration.cs" />
     <Compile Include="storage\BotData.cs" />
     <Compile Include="storage\Donations.cs" />
+    <Compile Include="utils\MessageBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -162,7 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="mysql\" />
-    <Folder Include="utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

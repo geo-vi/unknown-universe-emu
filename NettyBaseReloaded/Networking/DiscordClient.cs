@@ -25,9 +25,9 @@ namespace NettyBaseReloaded.Networking
             var packetArgs = (StringArgs)e;
             if (packetArgs.Packet == "ping")
             {
-                XSocket.Write($"pong|{World.StorageManager.GameSessions.Count}|{(DateTime.Now - Properties.Server.RUNTIME).TotalHours}");
+                XSocket.Write($"pong|{DateTime.Now - Properties.Server.RUNTIME:g}|{World.StorageManager.GameSessions.Count}");
             }
-            else if (packetArgs.Packet == "kick")
+            else if (packetArgs.Packet.StartsWith("kick"))
             {
                 var id = int.Parse(packetArgs.Packet.Split('|')[1]);
                 var gameSession = World.StorageManager.GetGameSession(id);
@@ -55,7 +55,7 @@ namespace NettyBaseReloaded.Networking
                 var playerCount = World.StorageManager.GameSessions.Count;
                 if (playerCount != lastPlayerCount || lastSentTime.AddMinutes(5) <= DateTime.Now)
                 {
-                    XSocket.Write($"pong|{playerCount}|{(DateTime.Now - Properties.Server.RUNTIME).TotalHours}");
+                    XSocket.Write($"pong|{DateTime.Now - Properties.Server.RUNTIME:g}|{World.StorageManager.GameSessions.Count}");
                     lastSentTime = DateTime.Now;
                     lastPlayerCount = playerCount;
                 }

@@ -472,7 +472,7 @@ namespace NettyBaseReloaded.Game.objects.world
             }
             else
             {
-                if (Spacemap?.Id > 16)
+                if (Spacemap?.Id > 16 && Spacemap.Id <= 29)
                 {
                     switch (FactionId)
                     {

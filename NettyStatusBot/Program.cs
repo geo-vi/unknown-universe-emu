@@ -13,6 +13,8 @@ namespace NettyStatusBot
 {
     class Program
     {
+        public static ServerStatus ServerStatus;
+
         static void Main(string[] args)
         {
             new DiscordLogin().Run().GetAwaiter().GetResult();

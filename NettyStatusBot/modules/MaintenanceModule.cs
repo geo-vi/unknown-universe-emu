@@ -19,17 +19,16 @@ namespace NettyStatusBot.modules
             if (BotData.PermittedUsersToControl.Contains(Context.User.Id))
             {
                 await ReplyAsync("Understood, proceeding.");
-                if (BotConfiguration.DISPLAY_MAINTENANCE_STATUS)
+                if (Program.ServerStatus.Maintenance)
                 {
                     await ReplyAsync("Maintenance is active.");
-                    BotConfiguration.DISPLAY_MAINTENANCE_STATUS = false;
+                    Program.ServerStatus.Maintenance = false;
                 }
                 else
                 {
                     await ReplyAsync("Maintenance is inactive.");
-                    BotConfiguration.DISPLAY_MAINTENANCE_STATUS = true;
+                    Program.ServerStatus.Maintenance = true;
                 }
-                Updater.SendRelay();
             }
             else await ReplyAsync("who tf are you to tell me what to do. lmao");
         }

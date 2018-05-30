@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
 using NettyStatusBot.core;
+using NettyStatusBot.core.network;
 using NettyStatusBot.Properties;
 using NettyStatusBot.storage;
 
@@ -24,7 +25,7 @@ namespace NettyStatusBot.modules
         {
             if (BotData.PermittedUsersToControl.Contains(Context.User.Id))
             {
-                new Updater(Context.Client).StatusChannel();
+                await ServerConnection._instance.Write("ping");
             }
             else await ReplyAsync("who tf are you to tell me what to do. lmao");
         }
@@ -46,8 +47,11 @@ namespace NettyStatusBot.modules
         [Command("server")]
         public async Task Server()
         {
-            await ReplyAsync("Preparing server for restart...");
-           
+            if (BotData.PermittedUsersToControl.Contains(Context.User.Id))
+            {
+                await ReplyAsync("Preparing server for restart...");
+                await ServerConnection._instance.Write("restart");
+            }
         }
     }
 }
