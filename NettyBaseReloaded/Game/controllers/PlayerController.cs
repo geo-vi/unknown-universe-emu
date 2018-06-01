@@ -91,9 +91,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Exit()
         {
-            Active = false;
-            StopController = true;
-            Checkers.Stop();
+            StopAll();
             CheckedClasses.Clear();
         }
     }

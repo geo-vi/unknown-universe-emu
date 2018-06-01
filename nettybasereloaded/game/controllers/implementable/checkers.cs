@@ -37,7 +37,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         private DateTime LastTick = new DateTime();
         public override void Tick()
         {
-            if (Character is Npc || Character is Pet) return;
+            //if (Character is Npc || Character is Pet) return;
             //var pos = MovementController.ActualPosition(Character);
             //if (pos != Character.Position)
             //    MovementController.Move(Character, pos);
@@ -76,7 +76,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (!main.Controller.Active) return;
             if (main.Range.AddEntity(entity))
             {
-                if (!(main is Player)) return;
+                if (!(main is Player) || entity is Pet) return;
                 var gameSession = World.StorageManager.GameSessions[main.Id];
 
                 //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
@@ -133,7 +133,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (entity == Character)
                 return;
 
-            if (entity.Spacemap != Character.Spacemap && entity.Range.Entities.ContainsKey(Character.Id))
+            if ((entity.Spacemap != Character.Spacemap || entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
             {
                 RemoveCharacter(entity, Character);
                 return;
@@ -145,7 +145,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (pet.GetOwner() == Character)
                     return;
             }
-            //if (GetForSelection(entity)) return;
+            if (GetForSelection(entity)) return;
 
             if (Character.InRange(entity, VisibilityRange))
             {
@@ -171,6 +171,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         entity.Range.AddEntity(Character);
                     return true;
                 }
+            }
+            else
+            {
+
             }
             return false;
         }

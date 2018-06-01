@@ -259,6 +259,7 @@ namespace NettyBaseReloaded.Game.controllers.player
         public void ForceChangeMap(Spacemap targetMap, Vector targetPosition, int vw = 0)
         {
             if (baseController.Player.Spacemap == targetMap) return;
+            //baseController.Player.Pet?.Controller.Deactivate();
             var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
             Packet.Builder.MapChangeCommand(gameSession);
             baseController.Destruction.Deselect(baseController.Player);

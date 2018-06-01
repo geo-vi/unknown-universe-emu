@@ -28,7 +28,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
         {
             Task.Factory.StartNew(() =>
             {
-                while (Active)
+                while (Active && Player.Controller.Active)
                 {
                     System.Threading.Thread.Sleep(1000);
                     ThreadUpdate();

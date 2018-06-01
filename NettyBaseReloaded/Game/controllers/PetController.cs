@@ -9,6 +9,7 @@ using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.global_managers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -58,10 +59,10 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Global.TickManager.Remove(Pet);
             StopAll();
+            Shutdown?.Invoke(this, EventArgs.Empty);
             Checkers.Stop();
             Pet.Gears.Clear();
             Gear = null;
-            Shutdown?.Invoke(this, EventArgs.Empty);
         }
 
         public new void Tick()
@@ -76,9 +77,6 @@ namespace NettyBaseReloaded.Game.controllers
 
             if (!Pet.Spacemap.Entities.ContainsKey(Pet.Id))
                 Pet.Spacemap.AddEntity(Pet);
-
-            if (!Pet.GetOwner().Range.Entities.ContainsKey(Pet.Id))
-                Pet.GetOwner().Range.AddEntity(Pet);
 
             var session = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             Packet.Builder.PetHeroActivationCommand(session, Pet);
@@ -120,7 +118,8 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void SwitchGear(short gearType, int optParam)
         {
-            Gear.End();
+            if (Gear.Active)
+                Gear.End();
             var gearIndex = Pet.Gears.FindIndex(x => (short) x.Type == gearType);
             Gear = Pet.Gears[gearIndex];
             Gear.Activate();

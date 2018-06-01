@@ -46,17 +46,17 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public virtual void AddKill(IAttackable attackable)
         {
-
+            World.DatabaseManager.SaveQuestData(Player, this);
         }
 
         public virtual void AddCollection(Collectable collectable)
         {
-
+            World.DatabaseManager.SaveQuestData(Player, this);
         }
 
         public virtual void AddResourceCollection(Ore ore)
         {
-
+            World.DatabaseManager.SaveQuestData(Player, this);
         }
 
         /// <summary>

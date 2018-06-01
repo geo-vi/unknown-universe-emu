@@ -286,7 +286,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 }
                 else
                 {
-                    CheckAndRemove(Owner);
+                    if (!PendingPlayers.ContainsKey(Owner.Id))
+                        CheckAndRemove(Owner);
                 }
             }
             catch (Exception e)
@@ -318,6 +319,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 }
                 GalaxyGate removedGate = null;
                 player.OwnedGates.TryRemove(Id, out removedGate);
+                MoveOut(player);
             }
         }
 

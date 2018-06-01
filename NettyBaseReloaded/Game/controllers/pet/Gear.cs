@@ -21,6 +21,8 @@ namespace NettyBaseReloaded.Game.controllers.pet
 
         public bool Enabled { get; set; }
 
+        public bool Active { get; set; }
+
         public virtual List<int> OptionalParams => new List<int>();
 
         protected Gear(PetController controller, bool enabled, int level, int amount = 1)
@@ -29,7 +31,10 @@ namespace NettyBaseReloaded.Game.controllers.pet
             Enabled = enabled;
             Level = level;
             Amount = amount;
-            controller.Shutdown += (sender, args) => End(true);
+            controller.Shutdown += (sender, args) =>
+            {
+                End(true);
+            };
         }
 
         public abstract void Activate();

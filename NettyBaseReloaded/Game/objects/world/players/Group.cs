@@ -113,15 +113,22 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
                     foreach (var _member in Members.Values)
                     {
-                        if (_member == null) continue;
-
-                        Packet.Builder.GroupUpdateCommand(instance, _member, GetStats(_member));
+                        UpdatePlayer(instance, _member);
                     }
                 }
 
-                await Task.Delay(1000);
+                if (Members.Count > 1)
+                    await Task.Delay(1000);
             }
             Destroy();
+        }
+
+        private void UpdatePlayer(GameSession instance, Player player)
+        {
+            if (instance != null && player != null && Members.Count > 1 && Members.ContainsKey(player.Id))
+            {
+                Packet.Builder.GroupUpdateCommand(instance, player, GetStats(player));
+            }
         }
 
         private XElement GetStats(Player player)
@@ -224,7 +231,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             foreach (var member in Members)
             {
                 if (member.Value.GetGameSession() == null) continue;
-                Packet.Builder.LegacyModule(member.Value.GetGameSession(), "0|ps|lp|lv|" + player.Id);
+                Packet.Builder.LegacyModule(member.Value.GetGameSession(), "0|ps|lp||" + player.Id);
             }
 
             player.Group = null;

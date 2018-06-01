@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -26,6 +27,7 @@ namespace NettyStatusBot.modules
             if (BotData.PermittedUsersToControl.Contains(Context.User.Id))
             {
                 await ServerConnection._instance.Write("ping");
+                await ReplyAsync("cool chief.");
             }
             else await ReplyAsync("who tf are you to tell me what to do. lmao");
         }
@@ -51,6 +53,7 @@ namespace NettyStatusBot.modules
             {
                 await ReplyAsync("Preparing server for restart...");
                 await ServerConnection._instance.Write("restart");
+                Process.Start(@"c:\temp\NettyBaseReloaded.exe");
             }
         }
     }

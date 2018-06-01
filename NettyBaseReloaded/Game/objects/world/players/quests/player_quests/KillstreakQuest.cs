@@ -81,6 +81,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests.player_quests
                 }
                 Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), Root.Elements[0].Condition);
             }
+            base.AddKill(attackable);
         }
     }
 }

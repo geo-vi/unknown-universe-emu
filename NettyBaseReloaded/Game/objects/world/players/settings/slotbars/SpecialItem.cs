@@ -62,20 +62,21 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                     {
                         var entity = entry.Value;
 
-                        if (entity.Selected != null && entity.Selected.Id == player.Id && entity is Player)
+                        if (entity.Selected != null && entity.SelectedCharacter == player && entity is Player playerEntity)
                         {
-                            var entitySession = World.StorageManager.GetGameSession(entity.Id);
+                            var entitySession = playerEntity.GetGameSession();
                             if (entitySession != null)
                             {
                                 Packet.Builder.LegacyModule(entitySession, "0|A|STM|msg_own_targeting_harmed");
                                 Packet.Builder.ShipSelectionCommand(entitySession, null);
                             }
+                            entity.Controller.Attack.Attacking = false;
                             entity.Selected = null;
                         }
                     }
 
-                    player.AttachedNpcs.Clear();
                     player.Controller.Effects.NotTargetable(3000);
+                    player.AttachedNpcs.Clear();
 
                     cooldown = new EMPCooldown();
                     player.Cooldowns.Add(cooldown);

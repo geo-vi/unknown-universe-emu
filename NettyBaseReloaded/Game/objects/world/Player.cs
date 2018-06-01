@@ -452,6 +452,13 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void SetPosition(Vector targetPosition)
         {
+            ChangePosition(targetPosition);
+            Refresh();
+            MovementController.Move(this, MovementController.ActualPosition(this));
+        }
+
+        public void ChangePosition(Vector targetPosition)
+        {
             Position = targetPosition;
             OldPosition = targetPosition;
             Destination = targetPosition;
@@ -459,8 +466,6 @@ namespace NettyBaseReloaded.Game.objects.world
             MovementStartTime = DateTime.Now;
             MovementTime = 0;
             Moving = false;
-            Refresh();
-            MovementController.Move(this, MovementController.ActualPosition(this));
         }
 
         public Tuple<Vector, Spacemap> GetClosestStation()
@@ -730,6 +735,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Spacemap = map;
             Position = pos;
             Refresh();
+            Spacemap.Entities.TryAdd(Id, this);
         }
 
         public int CreateGalaxyGate(GalaxyGate gate)

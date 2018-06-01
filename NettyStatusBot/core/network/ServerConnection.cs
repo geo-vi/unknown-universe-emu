@@ -82,9 +82,16 @@ namespace NettyStatusBot.core.network
         public async Task Write(string message)
         {
             var utfBytes = Encoding.UTF8.GetBytes(message);
-            var stream = _client.GetStream();
+            try
+            {
+                var stream = _client.GetStream();
 
-            await stream.WriteAsync(utfBytes, 0, utfBytes.Length);
+                await stream.WriteAsync(utfBytes, 0, utfBytes.Length);
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }

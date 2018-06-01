@@ -33,7 +33,6 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             Type = GearType.COMBO_SHIP_REPAIR;
         }
 
-        private bool Active = false;
         public override void Activate()
         {
             var owner = baseController.Pet.GetOwner();

@@ -53,22 +53,20 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Relog(Spacemap spacemap = null, Vector pos = null)
         {
-            Player.Controller.Attack.Attacking = false;
-            spacemap = spacemap ?? Player.Spacemap;
-            pos = pos ?? Player.Position;
             InProcessOfReconection = true;
             PrepareForDisconnect(); // preparation
+            spacemap = spacemap ?? Player.Spacemap;
+            pos = pos ?? Player.Position;
             Player.Spacemap = spacemap;
-            Player.SetPosition(pos);
+            Player.ChangePosition(pos);
             Disconnect(); // closing the socket
-            Player.Save();
+            //Player.Save();
         }
 
         private void PrepareForDisconnect()
         {
-            Player.Controller.Attack.Attacking = false;
             Player.Save();
-            Player.Pet?.Controller.Deactivate();
+            Player.Controller.Attack.Attacking = false;
             Player.Controller.Exit();
             Player.Controller.Destruction.Remove();
             
