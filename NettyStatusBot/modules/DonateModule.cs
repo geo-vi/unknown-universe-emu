@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BraintreeHttp;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using NettyStatusBot.storage;
@@ -25,7 +26,7 @@ namespace NettyStatusBot.modules
                              " Be a lifesaver, donate today!" +
                              "```");
             await ReplyAsync("" +
-                             "`Possible choices: \ndonate premium\ndonate boosters\ndonate petfuel\ndonate design\n`\n" +
+                             "`Possible choices: \ninstructions\ndonate premium\ndonate boosters\ndonate petfuel\ndonate design\n`\n" +
                              "***`If you've already donated: donate claim`***" +
                              "");
         }
@@ -40,6 +41,74 @@ namespace NettyStatusBot.modules
                              "\n'PET'" +
                              "\nPriority Support" +
                              "\nDiscord exclusive Premium tag." +
+                             "```");
+            await ReplyAsync("", false,
+                new EmbedBuilder
+                {
+                    Fields = new List<EmbedFieldBuilder> { new EmbedFieldBuilder { IsInline = true, Name = "Buy Premium!", Value = "Costs only 6.99 EUR / month!\nhttp://beta.univ3rse.com/buyABeer.php" } },
+                    ImageUrl = "http://beta.univ3rse.com/do_img/global/events/benefitPremium.gif",
+                    Url = "http://beta.univ3rse.com/buyABeer.php",
+                    Color = Color.Orange,
+                    Footer = new EmbedFooterBuilder { IconUrl = "http://beta.univ3rse.com/do_img/global/events/icons/benefitPremium.gif", Text = "**Make sure after you've purchased to follow the `donate instructions`!**" }
+                });
+        }
+
+        [Command("boosters")]
+        public async Task Boosters()
+        {
+            await ReplyAsync("Coming soon..");
+        }
+
+        [Command("petfuel")]
+        public async Task PetFuel()
+        {
+            await ReplyAsync("**Please don't choose this package if you don't own a PET**\nIn order to get a PET purchase `donate premium` package!", false,
+                new EmbedBuilder{ImageUrl = "http://beta.univ3rse.com/do_img/global/events/petSystem.gif",
+                    Title = "Fuel your P.E.T back and ready for battle!",
+                    Description = "For only 99 CENTS!\nhttp://beta.univ3rse.com/buyABeer.php",
+                    Footer = new EmbedFooterBuilder { IconUrl = "http://beta.univ3rse.com/do_img/global/events/icons/petSystem.gif", Text = "**Make sure after you've purchased to follow the `donate instructions`!**" }
+                });
+        }
+
+        [Command("design")]
+        public async Task Design()
+        {
+            await ReplyAsync("Choose the design package you would like to purchase!\n" +
+                             "```\n1: Skill Design Package" +
+                             "\n2: --" +
+                             "\n3: --" +
+                             "``` `donate design [id]`");
+        }
+
+        [Command("design")]
+        public async Task Design(int id)
+        {
+            switch (id)
+            {
+                case 1:
+                    //await ReplyAsync("```asciidoc" +
+                    //                 "\Elite Design Package" +
+                    //                 "\n[Sentinel] [Spectrum] [Solace] [Venom] [Diminisher]" +
+                    //                 "\n**[3.99 EUR]**" +
+                    //                 "```");
+                    //break;
+                case 2:
+                case 3:
+                    await ReplyAsync("Expect soon");
+                    break;
+            }
+
+            await ReplyAsync("http://beta.univ3rse.com/buyABeer.php");
+        }
+
+        [Command("instructions")]
+        public async Task Instructions()
+        {
+            await ReplyAsync("```" +
+                             "\n 1> After you've paid for the item you bought, go to your PayPal Transaction log (https://www.paypal.com/myaccount/transactions/) and look up for **Transaction ID**" +
+                             "\n 2> Write to Tony Montana / Don Univ3rse (BOT) `donate claim`" +
+                             "\n Follow the command instructions" +
+                             "\n 3> Wait for your claim to be approved.\nPlease be patient, it's not an automated service!!" +
                              "```");
         }
 
@@ -94,6 +163,7 @@ namespace NettyStatusBot.modules
             {
                 Donations.ClaimRequests.Remove(claim.Key);
                 await ReplyAsync("Successfully removed claim: " + claim.Key.Mention);
+                await claim.Key.SendMessageAsync("Your claim have been processed.");
             }
             else await ReplyAsync("Couldn't find claim key " + user);
         }
