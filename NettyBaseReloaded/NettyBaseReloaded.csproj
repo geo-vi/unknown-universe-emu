@@ -608,6 +608,7 @@
     <Compile Include="Game\objects\world\players\quests\QuestRoot.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestState.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestTypes.cs" />
+    <Compile Include="Game\objects\world\players\quests\quest_stats\FlyNoDieQuestStats.cs" />
     <Compile Include="Game\objects\world\players\quests\quest_stats\KillstreakQuestStat.cs" />
     <Compile Include="Game\objects\world\players\Storage.cs" />
     <Compile Include="Game\objects\world\players\PlayerBaseClass.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world.players.quests.quest_stats;
 
 namespace NettyBaseReloaded.Game.objects.world.players.quests.player_quests
 {
@@ -29,9 +30,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests.player_quests
             Ordered = true
         };
 
+        public FlyNoDieQuestStats Stats = new FlyNoDieQuestStats();
 
-        public FlyNoDieQuest(Player player) : base(player, 1)
+        public FlyNoDieQuest(Player player, FlyNoDieQuestStats stats) : base(player, 1)
         {
+            Stats = stats;
         }
     }
 }

@@ -57,6 +57,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             {
                 Packet.Builder.LogoutCommand(gameSession);
                 gameSession.Disconnect(GameSession.DisconnectionType.NORMAL);
+                LoggingOut = false;
             }
 
         }
