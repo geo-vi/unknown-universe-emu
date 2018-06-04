@@ -143,6 +143,7 @@
     <Compile Include="Game\controllers\pet\gears\AutoResourceCollectionGear.cs" />
     <Compile Include="Game\controllers\pet\gears\ComboRepairGear.cs" />
     <Compile Include="Game\controllers\pet\gears\GuardGear.cs" />
+    <Compile Include="Game\controllers\pet\gears\KamikazeGear.cs" />
     <Compile Include="Game\controllers\pet\gears\PassiveGear.cs" />
     <Compile Include="Game\controllers\pet\Gear.cs" />
     <Compile Include="Game\controllers\PlayerController.cs" />

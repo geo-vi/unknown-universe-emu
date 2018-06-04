@@ -153,6 +153,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
 
         public override void Reward()
         {
+            AlmostNoNpcsLeft -= LowGate_AlmostNoNpcsLeft;
             Finished = true;
 
             var hit = Random.Next(0, 100);

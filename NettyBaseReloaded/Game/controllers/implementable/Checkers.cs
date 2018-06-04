@@ -25,8 +25,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
             VisibilityRange = 2000;//900
-            Character.Spacemap.EntityAdded += (s, e) => AddedToSpacemap(e);
-            Character.Spacemap.EntityRemoved += (s, e) => RemovedFromSpacemap(e);
+            Character.Spacemap.EntityAdded += AddedToSpacemap;
+            Character.Spacemap.EntityRemoved += RemovedFromSpacemap;
         }
 
         public void Start()
@@ -57,16 +57,18 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             //Controller.StopController = true;
             //Global.TickManager.Remove(this);
+            Character.Spacemap.EntityAdded -= AddedToSpacemap;
+            Character.Spacemap.EntityRemoved -= RemovedFromSpacemap;
         }
 
         #region Character related
-        private void AddedToSpacemap(CharacterArgs args)
+        private void AddedToSpacemap(object sender, CharacterArgs args)
         {
             //if (!InVisibleZone && args.Character.InRange(Character, VisibilityRange) || InVisibleZone && args.Character.Controller.Checkers.InVisibleZone)
             AddCharacter(Character, args.Character);
         }
 
-        private void RemovedFromSpacemap(CharacterArgs args)
+        private void RemovedFromSpacemap(object sender, CharacterArgs args)
         {
             RemoveCharacter(args.Character, Character);
         }

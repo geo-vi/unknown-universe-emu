@@ -352,6 +352,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 //TickGates();
                 TickAbilities();
                 TickQuests();
+                TickAnnouncements();
             });
         }
 
@@ -378,6 +379,20 @@ namespace NettyBaseReloaded.Game.objects.world
         private void TickQuests()
         {
             Parallel.ForEach(AcceptedQuests, quest => { quest.Tick(); });
+        }
+
+        private DateTime LastAnnouncementTime = new DateTime();
+        private void TickAnnouncements()
+        {
+            if (LastAnnouncementTime.AddMinutes(5) < DateTime.Now)
+            {
+                var gameSession = GetGameSession();
+                if (gameSession != null)
+                {
+                    Packet.Builder.LegacyModule(gameSession, "0|A|STD|Support the server, a little donation to keep the server alive. If you wish to show your support to the server\nWrite to the Discord BOT (Tony Montana / Don Univ3rse): donate");
+                    LastAnnouncementTime = DateTime.Now;
+                }
+            }
         }
 
         private void InitializeClasses()
