@@ -76,7 +76,6 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Kick()
         {
-            Packet.Builder.LegacyModule(this, "KIK");
             PrepareForDisconnect();
             Disconnect();
         }
@@ -99,6 +98,7 @@ namespace NettyBaseReloaded.Game.objects
             }
             PrepareForDisconnect();
             Player.Log.Write($"User disconnected (Disconnection Type: {dcType})");
+            Packet.Builder.LegacyModule(this, "ERR|2");
             Client.Disconnect();
             World.StorageManager.GameSessions.Remove(Player.Id);
             InProcessOfDisconnection = false;

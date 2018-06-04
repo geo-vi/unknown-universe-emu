@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using BraintreeHttp;
@@ -26,7 +27,7 @@ namespace NettyStatusBot.modules
                              " Be a lifesaver, donate today!" +
                              "```");
             await ReplyAsync("" +
-                             "`Possible choices: \ninstructions\ndonate premium\ndonate boosters\ndonate petfuel\ndonate design\n`\n" +
+                             "`Possible choices: \ninstructions\ndonate premium\ndonate boosters\ndonate petfuel\ndonate design\ndonate banner`\n" +
                              "***`If you've already donated: donate claim`***" +
                              "");
         }
@@ -123,6 +124,7 @@ namespace NettyStatusBot.modules
             await ReplyAsync("In case you've submitted wrong details about your request please make sure you delete it using `donate deleteclaim`. You can have only one claim once at a time.");
             if (Donations.ClaimRequests.ContainsKey(Context.User))
             {
+                await ReplyAsync("Previously submitted claim request have been disposed.");
                 Donations.ClaimRequests[Context.User] = claimRequest;
             } else Donations.ClaimRequests.Add(Context.User, claimRequest);
         }
@@ -166,6 +168,59 @@ namespace NettyStatusBot.modules
                 await claim.Key.SendMessageAsync("Your claim have been processed.");
             }
             else await ReplyAsync("Couldn't find claim key " + user);
+        }
+
+        [Group("banner")]
+        public class Banner : ModuleBase<SocketCommandContext>
+        {
+            [Command]
+            public async Task Base()
+            {
+                await ReplyAsync("```" +
+                                 "Available banners for rent:" +
+                                 "\n1: Wormhole Banner 4-4 (158/135)" +
+                                 "```" +
+                                 "\nTo select banner `donate banner [id]`");
+                await ReplyAsync("Banner 100x50 in which you can add a banklink that you wish for it to lead to.\n" +
+                                 "e.g: Google, URL: http://google.com");
+                ;
+            }
+
+            [Command]
+            public async Task BannerChosen(int id)
+            {
+                switch (id)
+                {
+                    case 1:
+                        await ReplyAsync("Blue banner @ 4-4 wormhole.\n" +
+                                         "```" +
+                                         "\nRent for 7 days => 2 EUR" +
+                                         "\nRent for 15 days => 3 EUR" +
+                                         "\nRent for 30 days => 5 EUR```");
+                        await ReplyAsync(
+                            "If you wish to get a banner submit a request by writing `donate banner request [id]`");
+                        break;
+                }
+            }
+
+            [Command("request")]
+            public async Task DonateBannerRequest(int id)
+            {
+                if (!Donations.ClaimRequests.ContainsKey(Context.User))
+                {
+                    Donations.ClaimRequests.Add(Context.User, $"{Context.User.Mention}```" +
+                                                              $" is requesting to purchase Banner ID {id}." +
+                                                              $"```");
+                }
+                else
+                {
+                    Donations.ClaimRequests[Context.User] = $"```" +
+                                                            $"{Context.User.Mention} is requesting to purchase Banner ID {id}." +
+                                                            $"```";
+                    await ReplyAsync("Previously submitted claim request have been disposed.");
+                }
+                await ReplyAsync("Your request have been processed.");
+            }
         }
     }
 }
