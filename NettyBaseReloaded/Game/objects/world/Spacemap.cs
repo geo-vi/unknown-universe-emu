@@ -399,11 +399,16 @@ namespace NettyBaseReloaded.Game.objects.world
             World.Log.Write("Loaded objects on mapId " + Id);
         }
 
-        public void DisablePortals()
+        public void DisablePortals(List<int> destinations = null)
         {
             foreach (var portal in Objects.Where(x => x.Value is Jumpgate))
             {
-                DisablePortal(portal.Key, "Maps disabled for reconstruction");
+                var p = portal.Value as Jumpgate;
+                if (destinations != null && destinations.Contains(p.DestinationMapId))
+                {
+                    DisablePortal(portal.Key, "Maps disabled for reconstruction");
+                }
+                else if (destinations == null) DisablePortal(portal.Key, "Maps disabled for reconstruction");
             }
         }
 

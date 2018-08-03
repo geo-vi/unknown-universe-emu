@@ -35,19 +35,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         }
 
         private DateTime LastTick = new DateTime();
+
         public override void Tick()
         {
             //if (Character is Npc || Character is Pet) return;
             //var pos = MovementController.ActualPosition(Character);
             //if (pos != Character.Position)
             //    MovementController.Move(Character, pos);
-            Parallel.Invoke(() =>
-            {
-                SpacemapChecker();
-                RangeChecker();
-                ZoneChecker();
-                ObjectChecker();
-            });
+            SpacemapChecker();
+            RangeChecker();
+            ZoneChecker();
+            ObjectChecker();
             //Console.WriteLine("VISIBILITY:" + InVisibleZone);
 
             LastTick = DateTime.Now;
@@ -75,41 +73,52 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void AddCharacter(Character main, Character entity)
         {
-            if (!main.Controller.Active) return;
-            if (main.Range.AddEntity(entity))
+            //if (!main.Controller.Active) return;
+            try
             {
-                if (!(main is Player) || entity is Pet) return;
-                var gameSession = World.StorageManager.GameSessions[main.Id];
+                if (main.Range.AddEntity(entity))
+                {
+                    if (!(main is Player) || entity is Pet) return;
+                    var gameSession = World.StorageManager.GameSessions[main.Id];
 
-                //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
-                //Draws the entity ship for character
-                Packet.Builder.ShipCreateCommand(gameSession, entity);
-                Packet.Builder.DronesCommand(gameSession, entity);
-                                
-                //Send movement
-                var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
-                Packet.Builder.MoveCommand(gameSession, entity, (int)(entity.MovementTime - timeElapsed));
+                    //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
+                    //Draws the entity ship for character
+                    Packet.Builder.ShipCreateCommand(gameSession, entity);
+                    Packet.Builder.DronesCommand(gameSession, entity);
 
-                TitleCheck(gameSession.Player, entity);
+                    //Send movement
+                    var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
+                    Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
+
+                    TitleCheck(gameSession.Player, entity);
+                }
+            }
+            catch (Exception)
+            {
+
             }
         }
 
         private void RemoveCharacter(Character main, Character entity)
         {
-            if (!entity.Controller.Active) return;
-            if (entity.Range.RemoveEntity(main))
+            //if (!entity.Controller.Active) return;
+            try
             {
-                if (!(entity is Player)) return;
-                var gameSession = World.StorageManager.GameSessions[entity.Id];
-
-                //Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
-                Packet.Builder.ShipRemoveCommand(gameSession, main);
-                if (main.Selected != null && main.Selected.Id == entity.Id)
+                if (entity.Range.RemoveEntity(main))
                 {
-                    Packet.Builder.ShipSelectionCommand(gameSession, null);
-                    main.Selected = null;
+                    if (!(entity is Player)) return;
+                    var gameSession = World.StorageManager.GameSessions[entity.Id];
+
+                    //Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
+                    Packet.Builder.ShipRemoveCommand(gameSession, main);
+                    if (main.Selected != null && main.Selected.Id == entity.Id)
+                    {
+                        Packet.Builder.ShipSelectionCommand(gameSession, null);
+                        main.Selected = null;
+                    }
                 }
             }
+            catch(Exception) { }
         }
 
         public void SpacemapChecker()
@@ -132,10 +141,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void EntityCheck(Character entity)
         {
-            if (entity == Character)
+            if (entity == Character || entity.Controller == null)
                 return;
 
-            if ((entity.Spacemap != Character.Spacemap || entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
+            if ((entity.Spacemap != Character.Spacemap || !Character.Spacemap.Entities.ContainsKey(entity.Id) || entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
             {
                 RemoveCharacter(entity, Character);
                 return;

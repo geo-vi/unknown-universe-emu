@@ -153,11 +153,11 @@ namespace NettyBaseReloaded.Game.managers
 
                             var npcs = JsonConvert.DeserializeObject<List<BaseNpc>>(row["NPCS"].ToString());
 
-                            //var portals = JsonConvert.DeserializeObject<List<PortalBase>>(row["PORTALS"].ToString());
+                            var portals = JsonConvert.DeserializeObject<List<PortalBase>>(row["PORTALS"].ToString());
 
                             World.StorageManager.Spacemaps.Add(map_id,
                                 new Spacemap(map_id, map_name, map_faction, map_pvp, map_starter, map_level, npcs,
-                                    new List<PortalBase>()));
+                                    portals));
                         }
                     }
 

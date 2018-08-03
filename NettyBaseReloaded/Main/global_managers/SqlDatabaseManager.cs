@@ -58,10 +58,8 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.UserID = UID;
                 ConnectionStringBuilder.Password = PWD;
                 ConnectionStringBuilder.Database = DB_EXT;
-                ConnectionStringBuilder.MinimumPoolSize = 5; //I've been using 10-100, but you can play with them
-                ConnectionStringBuilder.MaximumPoolSize = 500;
-                ConnectionStringBuilder.Pooling = true;
                 ConnectionStringBuilder.ConvertZeroDateTime = true;
+                ConnectionStringBuilder.SslMode = MySqlSslMode.None;
                 GlobalConnectionString = ConnectionStringBuilder.ToString();
             }
             return GlobalConnectionString;
@@ -79,10 +77,8 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.UserID = UID;
                 ConnectionStringBuilder.Password = PWD;
                 ConnectionStringBuilder.Database = DB;
-                ConnectionStringBuilder.MinimumPoolSize = 10; //I've been using 10-100, but you can play with them
-                ConnectionStringBuilder.MaximumPoolSize = 10000;
-                ConnectionStringBuilder.Pooling = true;
                 ConnectionStringBuilder.ConvertZeroDateTime = true;
+                ConnectionStringBuilder.SslMode = MySqlSslMode.None;
                 ConnectionString = ConnectionStringBuilder.ToString();
             }
             return ConnectionString;

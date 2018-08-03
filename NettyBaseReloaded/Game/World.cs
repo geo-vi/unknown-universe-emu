@@ -47,6 +47,7 @@ namespace NettyBaseReloaded.Game
                     default:
                         if (map.Key > 12)
                             map.Value.DisablePortals();
+                        else map.Value.DisablePortals(new List<int>{13,14,15});
                         break;
                 }
                 map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));
@@ -77,9 +78,9 @@ namespace NettyBaseReloaded.Game
                 }
                 else if (map.Key != 200 && map.Key != 54 && map.Key != 53 && map.Key != 52 && map.Key != 51 && map.Key != 16)
                 {
-                    for (int i = 0; i <= BonusBox.GetSpawnCount(map.Value); i++)
+                    for (int i = 0; i <= BonusBox.SPAWN_COUNT; i++)
                     {
-                        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value, map.Value.Limits[0].X, map.Value.Limits[0].Y, map.Value.Limits[1].X, map.Value.Limits[1].Y), new int[] { map.Value.Limits[0].X, map.Value.Limits[0].Y, map.Value.Limits[1].X, map.Value.Limits[1].Y});
+                        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value), new int[] { map.Value.Limits[0].X, map.Value.Limits[0].Y, map.Value.Limits[1].X, map.Value.Limits[1].Y});
                     }
                 }
             }
