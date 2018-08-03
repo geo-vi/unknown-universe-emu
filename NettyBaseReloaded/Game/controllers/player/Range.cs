@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.zones;
 
@@ -33,7 +34,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             try
             {
-                if (baseController.Player.Range.Zones.Values.Count(x => x is DemiZone) > 0)
+                if (baseController.Player.Range.Zones.Values.Count(x => x is DemiZone && (x.ZoneFaction == baseController.Player.FactionId || x.ZoneFaction == Faction.NONE)) > 0)
                 {
                     if (!baseController.Player.State.InDemiZone && !baseController.Attack.Attacking)
                     {

@@ -377,7 +377,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextZoneId();
             if (!Pvp)
-                Zones.Add(id, new DemiZone(id, topLeft, botRight));
+                Zones.Add(id, new DemiZone(id, topLeft, botRight, Faction.NONE));
             Console.WriteLine("Zone added [ID: {0}, topLeft: {1} botRight: {2}]", id, topLeft.ToString(), botRight.ToString());
         }
 
@@ -399,6 +399,14 @@ namespace NettyBaseReloaded.Game.objects.world
             World.Log.Write("Loaded objects on mapId " + Id);
         }
 
+        public void DisablePortals()
+        {
+            foreach (var portal in Objects.Where(x => x.Value is Jumpgate))
+            {
+                DisablePortal(portal.Key, "Maps disabled for reconstruction");
+            }
+        }
+
         public void CreatePortal(int map, int x, int y, int newX, int newY, int vwId = 0)
         {
             var id = GetNextObjectId();
@@ -406,8 +414,14 @@ namespace NettyBaseReloaded.Game.objects.world
 
             var zoneId = GetNextZoneId();
             if (!Pvp)
-                Zones.Add(zoneId, new DemiZone(zoneId, new Vector(x - 500, y + 500), new Vector(x + 500, y - 500)));
+                Zones.Add(zoneId, new DemiZone(zoneId, new Vector(x - 500, y + 500), new Vector(x + 500, y - 500), Faction.NONE));
             World.Log.Write("Created Portal on mapId " + Id);
+        }
+
+        public void DisablePortal(int id, string disableMsg = "")
+        {
+            var portal = Objects.FirstOrDefault(x => x.Key == id).Value as Jumpgate;
+            portal?.Disable(disableMsg);
         }
 
         public void CreateLoW(Vector pos)
@@ -416,7 +430,7 @@ namespace NettyBaseReloaded.Game.objects.world
             AddObject(new LowPortal(id, pos, this, 0));
 
             var zoneId = GetNextZoneId();
-                Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500)));
+                Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500),Faction.NONE));
         }
 
         public void CreateHiddenPortal(int map, int x, int y, int newX, int newY, int vwId = 0)
@@ -448,7 +462,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Objects[assignedStationIds[3]] = repairModule;
 
             var zoneId = GetNextZoneId();
-            Zones.Add(zoneId, new DemiZone(zoneId, new Vector(position.X - 1000, position.Y + 1000), new Vector(position.X + 1000, position.Y - 1000)));
+            Zones.Add(zoneId, new DemiZone(zoneId, new Vector(position.X - 1000, position.Y + 1000), new Vector(position.X + 1000, position.Y - 1000), faction));
             World.Log.Write("Created Station on mapId " + Id);
         }
 

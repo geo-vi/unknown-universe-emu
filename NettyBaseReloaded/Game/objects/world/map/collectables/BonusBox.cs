@@ -9,8 +9,13 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
     class BonusBox : Collectable
     {
         public static List<Tuple<string, int>> REWARDS = new List<Tuple<string, int>>();
-        public static int SPAWN_COUNT = 0;
-        public static int PVP_SPAWN_COUNT = 0;
+        private static int SPAWN_COUNT = 0;
+        private static int PVP_SPAWN_COUNT = 0;
+
+        public static int GetSpawnCount(Spacemap map)
+        {
+            return map.Pvp ? PVP_SPAWN_COUNT : SPAWN_COUNT;
+        }
 
         private bool Respawning { get; }
         public BonusBox(int id, string hash, Vector pos, Spacemap map, int[] limits, bool respawning = false) : base(id, hash, Types.BONUS_BOX, pos, map, limits)

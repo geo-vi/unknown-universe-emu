@@ -13,11 +13,14 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public Vector TopLeft { get; set; }
         public Vector BottomRight { get; set; }
 
-        public Zone(int id, Vector topLeft, Vector botRight)
+        public Faction ZoneFaction;
+
+        public Zone(int id, Vector topLeft, Vector botRight, Faction zoneFaction)
         {
             Id = id;
             TopLeft = topLeft;
             BottomRight = botRight;
+            ZoneFaction = zoneFaction;
         }
     }
 }

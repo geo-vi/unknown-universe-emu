@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
@@ -93,6 +94,26 @@ namespace NettyBaseReloaded.Game.controllers
         {
             StopAll();
             CheckedClasses.Clear();
+        }
+
+        public bool IsAutoRocketCpuActive()
+        {
+            if (Active && CheckedClasses.Count > 0 && CPUs != null)
+            {
+                return CPUs.Active.Exists(x => x == CPU.Types.AUTO_ROK);
+            }
+
+            return false;
+        }
+
+        public bool IsAutoLauncherCpuActive()
+        {
+            if (Active && CheckedClasses.Count > 0 && CPUs != null)
+            {
+                return CPUs.Active.Exists(x => x == CPU.Types.AUTO_ROCKLAUNCHER);
+            }
+
+            return false;
         }
     }
 }

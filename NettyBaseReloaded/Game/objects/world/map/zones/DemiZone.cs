@@ -8,6 +8,6 @@ namespace NettyBaseReloaded.Game.objects.world.map.zones
 {
     class DemiZone : Zone
     {
-        public DemiZone(int id, Vector botLeft, Vector topRight) : base(id, botLeft, topRight) { }
+        public DemiZone(int id, Vector botLeft, Vector topRight, Faction faction) : base(id, botLeft, topRight, faction) { }
     }
 }

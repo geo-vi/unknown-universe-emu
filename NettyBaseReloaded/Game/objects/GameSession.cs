@@ -102,6 +102,7 @@ namespace NettyBaseReloaded.Game.objects
             Client.Disconnect();
             World.StorageManager.GameSessions.Remove(Player.Id);
             InProcessOfDisconnection = false;
+            GC.Collect();
         }
     }
 }

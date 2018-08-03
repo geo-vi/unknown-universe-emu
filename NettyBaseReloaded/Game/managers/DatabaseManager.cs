@@ -420,10 +420,18 @@ namespace NettyBaseReloaded.Game.managers
 
                     if (rlTypes1 == "") rlTypes1 = "[]";
                     if (extras1 == "") extras1 = "[]";
+
+                    var extras1List = JsonConvert.DeserializeObject<List<Item>>(extras1);
+                    Dictionary<string, Item> extra1Dictionary = new Dictionary<string, Item>();
+                    if (extras1List != null && extras1List.Count > 0)
+                    {
+                        extra1Dictionary = extras1List.ToDictionary(x => x.LootId);
+                    }
+
                     if (velocity1 == 0) velocity1 = player.Hangar.Ship.Speed;
                     var config1 = new Configuration(player, 1, dmg1, velocity1, shield1, shieldLeft1, absorb1, lcount1,
-                        ltypes1, JsonConvert.DeserializeObject<int[]>(rlTypes1),
-                        JsonConvert.DeserializeObject<List<Item>>(extras1).ToDictionary(x => x.LootId));
+                        ltypes1, JsonConvert.DeserializeObject<int[]>(rlTypes1), extra1Dictionary
+                        );
 
                     int dmg2 = intConv(queryRow["CONFIG_2_DMG"]);
                     int velocity2 = intConv(queryRow["CONFIG_2_SPEED"]);
@@ -434,12 +442,22 @@ namespace NettyBaseReloaded.Game.managers
                     int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
                     int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
                     string rlTypes2 = queryRow["CONFIG_2_HEAVY"].ToString();
+
                     if (velocity2 == 0) velocity2 = player.Hangar.Ship.Speed;
                     if (rlTypes2 == "") rlTypes2 = "[]";
                     if (extras2 == "") extras2 = "[]";
+
+                    var extras2List = JsonConvert.DeserializeObject<List<Item>>(extras2);
+                    Dictionary<string, Item> extra2Dictionary = new Dictionary<string, Item>();
+                    if (extras2List != null && extras2List.Count > 0)
+                    {
+                        extra2Dictionary = extras2List.ToDictionary(x => x.LootId);
+                    }
+
+
                     var config2 = new Configuration(player, 2, dmg2, velocity2, shield2, shieldLeft2, absorb2, lcount2,
                         ltypes2, JsonConvert.DeserializeObject<int[]>(rlTypes2),
-                        JsonConvert.DeserializeObject<List<Item>>(extras2).ToDictionary(x => x.LootId));
+                        extra2Dictionary);
 
                     builder = new Configuration[2]
                     {

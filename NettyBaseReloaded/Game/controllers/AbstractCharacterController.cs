@@ -76,14 +76,11 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Character.Position = MovementController.ActualPosition(Character);
             Checkers?.Tick();
-            Parallel.Invoke(() =>
-            {
-                Attack?.Tick();
-                Damage?.Tick();
-                Heal?.Tick();
-                Destruction?.Tick();
-                Effects?.Tick();
-            });
+            Attack?.Tick();
+            Damage?.Tick();
+            Heal?.Tick();
+            Destruction?.Tick();
+            Effects?.Tick();
         }
 
         public void StopAll()

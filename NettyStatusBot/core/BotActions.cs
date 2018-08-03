@@ -19,7 +19,7 @@ namespace NettyStatusBot.core
 
         public async Task SetGameState()
         {
-            await Client.SetGameAsync("Unknown Universe", "http://beta.univ3rse.com");
+            await Client.SetGameAsync("Unknown Universe", "http://pvp.univ3rse.com");
         }
 
         public async Task ChangeStatus()

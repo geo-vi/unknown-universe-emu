@@ -247,5 +247,15 @@ namespace NettyBaseReloaded.Game.objects.world
 
             return abilities;
         }
+
+        public int GetAttackRange()
+        {
+            switch (Id)
+            {
+                case 67:
+                    return 700;
+                default: return 500;
+            }
+        }
     }
 }

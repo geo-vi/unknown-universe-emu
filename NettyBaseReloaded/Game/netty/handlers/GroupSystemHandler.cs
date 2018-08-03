@@ -163,8 +163,15 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
         public void DeleteInvitation(Player inviter, Player player)
         {
-            Packet.Builder.GroupDeleteInvitationCommand(inviter.GetGameSession(), player);
-            Packet.Builder.GroupDeleteInvitationCommand(player.GetGameSession(), inviter);
+            try
+            {
+                Packet.Builder.GroupDeleteInvitationCommand(inviter.GetGameSession(), player);
+                Packet.Builder.GroupDeleteInvitationCommand(player.GetGameSession(), inviter);
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         public void Error(GameSession gameSession, string error)

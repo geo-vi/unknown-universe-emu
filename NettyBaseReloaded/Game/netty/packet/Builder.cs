@@ -549,13 +549,20 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void LegacyModule(GameSession gameSession, string message, bool toOldClientOnly = false)
         {
-            if (gameSession.Player.UsingNewClient && !toOldClientOnly)
+            try
             {
-                gameSession.Client.Send(commands.new_client.LegacyModule.write(message).Bytes);
+                if (gameSession.Player.UsingNewClient && !toOldClientOnly)
+                {
+                    gameSession.Client.Send(commands.new_client.LegacyModule.write(message).Bytes);
+                }
+                else
+                {
+                    gameSession.Client.Send(commands.old_client.LegacyModule.write(message).Bytes);
+                }
             }
-            else
+            catch (Exception)
             {
-                gameSession.Client.Send(commands.old_client.LegacyModule.write(message).Bytes);
+
             }
         }
 
@@ -1224,7 +1231,8 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             if (gameSession.Player.UsingNewClient)
             {
-                Console.WriteLine("TODO: Find ammo count update command for new client");
+                gameSession.Player.Settings.Slotbar._items[lootId].CounterValue = amount;
+                //Console.WriteLine("TODO: Find ammo count update command for new client");
                 //throw new NotImplementedException();
             }
             else

@@ -82,6 +82,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
             //GameHandler.SendRangePacket(player, PacketBuilder.FormationChange(player.Id, (int)formation), true);
             Selected = true;
             player.Updaters.Update();
+            if (gameSession.Player.UsingNewClient)
+                gameSession.Client.Send(ChangeStatus());
             //gameSession.GameHandler.sendPacket(ChangeStatus());
         }
     }

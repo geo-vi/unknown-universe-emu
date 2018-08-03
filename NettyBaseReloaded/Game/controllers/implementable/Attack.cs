@@ -149,27 +149,27 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 }
 
                 //TODO: RECODE!!!
-                //if (gameSession.Player.Controller.CPUs.Active.Any(x => x == player.CPU.Types.AUTO_ROK))
-                //{
-                //    LaunchMissle(gameSession.Player.Settings.CurrentRocket.LootId);
-                //}
+                if (gameSession.Player.Controller.IsAutoRocketCpuActive())
+                {
+                    LaunchMissle(gameSession.Player.Settings.CurrentRocket.LootId);
+                }
 
-                //if (gameSession.Player.Controller.CPUs.Active.Any(x => x == player.CPU.Types.AUTO_ROCKLAUNCHER))
-                //{
-                //    var rocketLauncher = Character.RocketLauncher;
-                //    if (rocketLauncher?.Launchers != null)
-                //    {
-                //        if (rocketLauncher.CurrentLoad != rocketLauncher.GetMaxLoad())
-                //        {
-                //            rocketLauncher.Reload();
-                //        }
-                //        else
-                //        {
-                //            LaunchRocketLauncher();
-                //            rocketLauncher.Reload();
-                //        }
-                //    }
-                //}
+                if (gameSession.Player.Controller.IsAutoLauncherCpuActive())
+                {
+                    var rocketLauncher = Character.RocketLauncher;
+                    if (rocketLauncher != null && rocketLauncher.Launchers.Length > 0)
+                    {
+                        if (rocketLauncher.CurrentLoad != rocketLauncher.GetMaxLoad())
+                        {
+                            rocketLauncher.Reload();
+                        }
+                        else
+                        {
+                            LaunchRocketLauncher();
+                            rocketLauncher.Reload();
+                        }
+                    }
+                }
 
                 if (enemy is Character)
                     UpdateAttacker(enemy as Character, gameSession.Player);

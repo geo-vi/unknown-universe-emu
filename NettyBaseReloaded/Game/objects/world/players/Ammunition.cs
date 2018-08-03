@@ -37,6 +37,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 fireCount = Player.Equipment.LaserCount();
             else fireCount = 1;
             var newAmount = Amount - fireCount;
+            
             if (newAmount < 0)
             {
                 return 0;

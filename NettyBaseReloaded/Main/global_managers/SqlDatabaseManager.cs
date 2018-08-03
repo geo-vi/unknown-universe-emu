@@ -31,12 +31,12 @@ namespace NettyBaseReloaded.Main.global_managers
             Global.TickManager.Add(new SqlConnectionManager());
         }
 
-        public static ConcurrentDictionary<int, MySqlConnection> Connections = new ConcurrentDictionary<int, MySqlConnection>();
+        //public static ConcurrentDictionary<int, MySqlConnection> Connections = new ConcurrentDictionary<int, MySqlConnection>();
         public static SqlDatabaseClient GetClient()
         {
             MySqlConnection Connection = new MySqlConnection(GenerateConnectionString());
             Connection.Open();
-            Connections.TryAdd(Connections.Count, Connection);
+            //Connections.TryAdd(Connections.Count, Connection);
             return new SqlDatabaseClient(Connection);
         }
 
@@ -44,7 +44,7 @@ namespace NettyBaseReloaded.Main.global_managers
         {
             MySqlConnection Connection = new MySqlConnection(GenerateGlobalConnectionString());
             Connection.Open();
-            Connections.TryAdd(Connections.Count, Connection);
+            //Connections.TryAdd(Connections.Count, Connection);
             return new SqlDatabaseClient(Connection);
         }
 
@@ -59,7 +59,7 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.Password = PWD;
                 ConnectionStringBuilder.Database = DB_EXT;
                 ConnectionStringBuilder.MinimumPoolSize = 5; //I've been using 10-100, but you can play with them
-                ConnectionStringBuilder.MaximumPoolSize = 50;
+                ConnectionStringBuilder.MaximumPoolSize = 500;
                 ConnectionStringBuilder.Pooling = true;
                 ConnectionStringBuilder.ConvertZeroDateTime = true;
                 GlobalConnectionString = ConnectionStringBuilder.ToString();
@@ -80,7 +80,7 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.Password = PWD;
                 ConnectionStringBuilder.Database = DB;
                 ConnectionStringBuilder.MinimumPoolSize = 10; //I've been using 10-100, but you can play with them
-                ConnectionStringBuilder.MaximumPoolSize = 100;
+                ConnectionStringBuilder.MaximumPoolSize = 10000;
                 ConnectionStringBuilder.Pooling = true;
                 ConnectionStringBuilder.ConvertZeroDateTime = true;
                 ConnectionString = ConnectionStringBuilder.ToString();
@@ -96,10 +96,11 @@ namespace NettyBaseReloaded.Main.global_managers
     {
         public void Tick()
         {
-            foreach (var connection in SqlDatabaseManager.Connections)
-            {
-                connection.Value.ClearAllPoolsAsync(CancellationToken.None);
-            }
+            //foreach (var connection in SqlDatabaseManager.Connections)
+            //{
+            //    connection.Value.ClearAllPoolsAsync(CancellationToken.None);
+            //}
+            //SqlDatabaseManager.Connections.Clear();
         }
     }
 }

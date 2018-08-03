@@ -48,6 +48,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public Player Owner { get; set; }
 
+        public string DisabledMessage { get; set; }
+
         public Jumpgate(int id, Faction faction, Vector pos, Spacemap map, Vector destinationPos, int destinationMapId, bool visible, int factionScrap, int requiredLevel, int gfx) : base(id, pos, map)
         {
             Faction = faction;
@@ -67,8 +69,15 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public virtual void click(Character character)
         {
+            //todo: level required
             var player = character as Player;
-            player?.Controller.Miscs.Jump(DestinationMapId, Destination, Id, DestinationVirtualWorldId);
+            if (player == null) return;
+            if (!Working && DisabledMessage != "")
+            {
+                Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|" + DisabledMessage);
+                return;
+            }
+            player.Controller.Miscs.Jump(DestinationMapId, Destination, Id, DestinationVirtualWorldId);
         }
 
         public override string ToString()
@@ -79,6 +88,12 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
         public string ToPacket()
         {
             return "0|p|" + Id + "|" + (int)Faction + "|" + Gfx + "|" + Position.X + "|" + Position.Y + "|" + Convert.ToInt32(Visible) + "|" + FactionScrap;
+        }
+
+        public void Disable(string disabledMsg = "")
+        {
+            Working = false;
+            DisabledMessage = disabledMsg;
         }
     }
 }

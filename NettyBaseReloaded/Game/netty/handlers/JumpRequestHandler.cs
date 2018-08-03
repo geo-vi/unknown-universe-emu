@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects;
+using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
@@ -14,10 +15,11 @@ namespace NettyBaseReloaded.Game.netty.handlers
         {
             var player = gameSession.Player;
             var portals = gameSession.Player.Range.Objects.ToList().Where(x => x.Value is Jumpgate);
-            if (portals.Count() > 1)
+            var portalArray = portals as KeyValuePair<int, Object>[] ?? portals.ToArray();
+            if (portalArray.Count() > 1)
             {
                 Jumpgate closestJumpgate = null;
-                foreach (var portal in portals)
+                foreach (var portal in portalArray)
                 {
                     var _portal = portal.Value as Jumpgate;
                     if (closestJumpgate == null)
@@ -26,18 +28,18 @@ namespace NettyBaseReloaded.Game.netty.handlers
                     }
                     else
                     {
-                        if (closestJumpgate.Position.DistanceTo(player.Position) >
+                        if (_portal != null && closestJumpgate.Position.DistanceTo(player.Position) >
                             _portal.Position.DistanceTo(player.Position))
                             closestJumpgate = _portal;
                     }
                 }
-                closestJumpgate.click(player);
+                closestJumpgate?.click(player);
             }
             else
             {
-                foreach (var portal in portals)
+                foreach (var portal in portalArray)
                 {
-                    (portal.Value as Jumpgate).click(player);
+                    (portal.Value as Jumpgate)?.click(player);
                 }
             }
         }

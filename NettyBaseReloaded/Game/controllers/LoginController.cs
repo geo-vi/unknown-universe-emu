@@ -22,11 +22,30 @@ namespace NettyBaseReloaded.Game.controllers
         private LoginController(GameSession gameSession)
         {
             _gameSession = gameSession;
+            ReloadPlayer();
             LoadConfigs();
             CheckPos();
             LoadControllers();
             GetLoginType();
             LoadTicks();
+        }
+
+        private void ReloadPlayer()
+        {
+            if (_gameSession.InProcessOfDisconnection || _gameSession.InProcessOfReconection)
+            {
+                _gameSession.InProcessOfDisconnection = false;
+                _gameSession.InProcessOfReconection = false;
+                _gameSession.EstDisconnectionTime = DateTime.MaxValue;
+                _gameSession.LastActiveTime = DateTime.Now;            }
+
+            if (_gameSession.Player.Controller != null)
+            {
+                if (_gameSession.Player.Controller.Miscs.LoggingOut)
+                    _gameSession.Player.Controller.Miscs.AbortLogout();
+                _gameSession.Player.Controller.Attack.Attacking = false;
+                _gameSession.Player.Selected = null;
+            }
         }
 
         private void LoadConfigs()
@@ -37,7 +56,7 @@ namespace NettyBaseReloaded.Game.controllers
             player.Hangar.Configurations = config;
             player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
             //if (/*player.RankId == Rank.ADMINISTRATOR ||*/ player.Id == 9001)
-            //    player.Pet = new Pet(player.Id, player.Id, $"{player.Name}'s little toy", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), 1000, player.FactionId, new Level(1, 1000), 500, 1000, new List<Gear>());
+                player.Pet = new Pet(player.Id, player.Id, $"{player.Name}'s little toy", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), 1000, player.FactionId, new Level(1, 1000), 500, 1000, new List<Gear>());
         }
 
         private void CheckPos()

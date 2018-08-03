@@ -28,11 +28,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (tempSession != null && (tempSession.InProcessOfReconection || tempSession.InProcessOfDisconnection))
             {
                 Player = tempSession.Player;
-                if (tempSession.InProcessOfDisconnection)
-                {
-                    Global.TickManager.Remove(tempSession);
-                    tempSession.Disconnect();
-                }
                 World.StorageManager.GameSessions.Remove(userId);
             }
 

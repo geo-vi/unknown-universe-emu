@@ -38,7 +38,7 @@ namespace NettyStatusBot.modules
             if (BotData.PermittedUsersToControl.Contains(Context.User.Id))
             {
                 using (var client = new WebClient())
-                using (client.OpenRead("http://beta.univ3rse.com/core/tasks/task.ranking.php"))
+                using (client.OpenRead("http://pvp.univ3rse.com/core/tasks/task.ranking.php"))
                 {
                 }
                 await ReplyAsync("Successfully refreshed rank.");
