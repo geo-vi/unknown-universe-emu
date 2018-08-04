@@ -38,6 +38,7 @@
             this.debugCommands = new System.Windows.Forms.CheckBox();
             this.debugLegacyCommands = new System.Windows.Forms.CheckBox();
             this.debugCheckbox = new System.Windows.Forms.CheckBox();
+            this.startScoreMageddon = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.performanceRate)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -68,6 +69,7 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.performanceRate);
             this.panel1.Location = new System.Drawing.Point(12, 12);
@@ -77,9 +79,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(186, 157);
+            this.button1.Location = new System.Drawing.Point(42, 65);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(130, 21);
+            this.button1.Size = new System.Drawing.Size(152, 23);
             this.button1.TabIndex = 2;
             this.button1.Text = "Switch to Console mode";
             this.button1.UseVisualStyleBackColor = true;
@@ -120,7 +122,7 @@
             // debugCommands
             // 
             this.debugCommands.AutoSize = true;
-            this.debugCommands.Location = new System.Drawing.Point(295, 119);
+            this.debugCommands.Location = new System.Drawing.Point(12, 117);
             this.debugCommands.Name = "debugCommands";
             this.debugCommands.Size = new System.Drawing.Size(107, 17);
             this.debugCommands.TabIndex = 5;
@@ -131,7 +133,7 @@
             // debugLegacyCommands
             // 
             this.debugLegacyCommands.AutoSize = true;
-            this.debugLegacyCommands.Location = new System.Drawing.Point(148, 120);
+            this.debugLegacyCommands.Location = new System.Drawing.Point(131, 117);
             this.debugLegacyCommands.Name = "debugLegacyCommands";
             this.debugLegacyCommands.Size = new System.Drawing.Size(141, 17);
             this.debugLegacyCommands.TabIndex = 6;
@@ -142,7 +144,7 @@
             // debugCheckbox
             // 
             this.debugCheckbox.AutoSize = true;
-            this.debugCheckbox.Location = new System.Drawing.Point(408, 120);
+            this.debugCheckbox.Location = new System.Drawing.Point(424, 117);
             this.debugCheckbox.Name = "debugCheckbox";
             this.debugCheckbox.Size = new System.Drawing.Size(70, 17);
             this.debugCheckbox.TabIndex = 7;
@@ -150,12 +152,22 @@
             this.debugCheckbox.UseVisualStyleBackColor = true;
             this.debugCheckbox.CheckedChanged += new System.EventHandler(this.debugCheckbox_CheckedChanged);
             // 
+            // startScoreMageddon
+            // 
+            this.startScoreMageddon.Location = new System.Drawing.Point(12, 158);
+            this.startScoreMageddon.Name = "startScoreMageddon";
+            this.startScoreMageddon.Size = new System.Drawing.Size(96, 34);
+            this.startScoreMageddon.TabIndex = 8;
+            this.startScoreMageddon.Text = "Start Scoremageddon";
+            this.startScoreMageddon.UseVisualStyleBackColor = true;
+            this.startScoreMageddon.Click += new System.EventHandler(this.startScoreMageddon_Click);
+            // 
             // ServerEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(505, 203);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.startScoreMageddon);
             this.Controls.Add(this.debugCheckbox);
             this.Controls.Add(this.debugLegacyCommands);
             this.Controls.Add(this.debugCommands);
@@ -186,5 +198,6 @@
         private System.Windows.Forms.CheckBox debugLegacyCommands;
         private System.Windows.Forms.CheckBox debugCheckbox;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button startScoreMageddon;
     }
 }

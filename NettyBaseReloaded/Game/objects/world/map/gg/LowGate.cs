@@ -156,8 +156,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
             AlmostNoNpcsLeft -= LowGate_AlmostNoNpcsLeft;
             Finished = true;
 
-            var randomInstance = RandomInstance.getInstance(Owner);
-            var hit = randomInstance.Next(0, 100);
+            var hit = Random.Next(0, 100);
             foreach (var joined in JoinedPlayers.Values)
             {
                 var currencyReward = new Reward(new Dictionary<RewardType, int> { { RewardType.CREDITS, 2500000 }, { RewardType.URIDIUM, 25000 } });

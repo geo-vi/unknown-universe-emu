@@ -204,22 +204,28 @@ namespace NettyBaseReloaded.Game.objects.world
             Updaters = new Updaters(this);
             Cooldowns = new CooldownsAssembly(this);
 
+            LastCombatTime = DateTime.Now;
             if (clan == null)
             {
                 Clan = Global.StorageManager.Clans[0];
             }
+            
+            Ticked += AssembleTick;
         }
 
-        public virtual void AssembleTick()
+        public virtual void AssembleTick(object sender, EventArgs eventArgs)
         {
-            Updaters.Tick();
-            Cooldowns.Tick();
-            RocketLauncher?.Tick();
+            Parallel.Invoke(() =>
+            {
+                Cooldowns.Tick();
+                RocketLauncher?.Tick();
+            });
         }
 
+        public EventHandler Ticked;
         public override void Tick()
         {
-            AssembleTick();
+            Ticked?.Invoke(this, EventArgs.Empty);
         }
 
         public void UpdateShip()

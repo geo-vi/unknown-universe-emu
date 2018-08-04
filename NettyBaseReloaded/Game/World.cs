@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
@@ -20,11 +18,9 @@ namespace NettyBaseReloaded.Game
 
         public static void InitiateManagers()
         {
-            DateTime timeStarted = DateTime.Now;
             Packet.Handler.AddCommands();
             DatabaseManager.Initiate();
-            Task.Factory.StartNew(InitiateWorld);
-            Out.WriteLine(DateTime.Now - timeStarted + " : World loaded.");
+            InitiateWorld();
         }
 
         private static void InitiateWorld()
@@ -32,6 +28,7 @@ namespace NettyBaseReloaded.Game
             foreach (var map in StorageManager.Spacemaps)
             {
                 map.Value.LoadObjects();
+                CreateHashes(map.Value);
 
                 switch (map.Key)
                 {
@@ -83,11 +80,35 @@ namespace NettyBaseReloaded.Game
                 {
                     for (int i = 0; i <= BonusBox.SPAWN_COUNT; i++)
                     {
-                        //map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value), new[] {map.Value.Limits[0], map.Value.Limits[1]});
+                        map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value), new int[] { map.Value.Limits[0].X, map.Value.Limits[0].Y, map.Value.Limits[1].X, map.Value.Limits[1].Y});
                     }
                 }
             }
             Log.Write("Loaded World");
+        }
+
+        private static void CreateHashes(Spacemap map)
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringChars = new char[4];
+            const int HASHES = 1000;
+
+            for (int entry = 0; entry < HASHES; entry++)
+            {
+                NEWHASH:
+                for (int i = 0; i < stringChars.Length; i++)
+                {
+                    stringChars[i] = chars[Random.Next(chars.Length)];
+                }
+
+                var hash = new String(stringChars);
+                if (map.HashedObjects.ContainsKey(hash))
+                    goto NEWHASH;
+                map.HashedObjects.TryAdd(hash, null);
+            }
+            map.Objects.TryAdd(0, null);
+            if (Properties.Server.DEBUG)
+                Console.WriteLine($"Created {HASHES-1} hashes.");
         }
     }
 }

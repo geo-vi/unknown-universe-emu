@@ -38,14 +38,14 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
             var owner = baseController.Pet.GetOwner();
             if (owner != null)
             {
-                //if (Active || owner.Cooldowns.Any(x => x is PetComboRepairCooldown) || baseController.Pet.GetOwner().LastCombatTime.AddSeconds(1) >= DateTime.Now) return;
-                //Active = true;
+                if (Active || owner.Cooldowns.Any(x => x is PetComboRepairCooldown) || baseController.Pet.GetOwner().LastCombatTime.AddSeconds(1) >= DateTime.Now) return;
+                Active = true;
 
-                //baseController.Heal.HealingId = owner.Id;
-                //baseController.Heal.Amount = HealAmount;
-                //baseController.Heal.HealType = HealType.HEALTH;
-                //baseController.Heal.Healing = true;
-                //PulseActivationTime = DateTime.Now;
+                baseController.Heal.HealingId = owner.Id;
+                baseController.Heal.Amount = HealAmount;
+                baseController.Heal.HealType = HealType.HEALTH;
+                baseController.Heal.Healing = true;
+                PulseActivationTime = DateTime.Now;
             }
         }
 
@@ -71,9 +71,9 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
         private DateTime PulseActivationTime = new DateTime();
         public void CheckPulse()
         {
-            //if (!Active || PulseActivationTime.AddSeconds(5) > DateTime.Now || baseController.Pet.GetOwner().LastCombatTime.AddSeconds(1) >= DateTime.Now) return;
+            if (!Active || PulseActivationTime.AddSeconds(5) > DateTime.Now || baseController.Pet.GetOwner().LastCombatTime.AddSeconds(1) >= DateTime.Now) return;
             
-            //End();
+            End();
         }
     }
 }

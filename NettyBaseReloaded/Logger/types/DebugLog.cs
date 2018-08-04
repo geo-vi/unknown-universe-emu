@@ -9,6 +9,8 @@ namespace NettyBaseReloaded
     {
         public const string SUB_DIR = "/debug/";
 
+        public static List<string> LogsProcessed = new List<string>();
+
         public DebugLog(string fileName)
         {
             Initialize(fileName);
@@ -23,6 +25,7 @@ namespace NettyBaseReloaded
         {
             try
             {
+                LogsProcessed.Add(message);
                 Writer.Write(DateTime.Now + " - " + "(" + Out.GetCaller() + ") " + message);
                 LastLogTime = DateTime.Now;
             }

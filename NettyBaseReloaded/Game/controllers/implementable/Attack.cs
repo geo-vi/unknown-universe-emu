@@ -422,17 +422,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private int RandomizeDamage(int baseDmg, double missProbability = 1.00)
         {
-            var randInstance = RandomInstance.getInstance(this);
-            var randNums = randInstance.Next(0, 6);
+            var randNums = Random.Next(0, 6);
 
             if (missProbability == 0)
-                randNums = randInstance.Next(0, 3) | randInstance.Next(4, 7);
+                randNums = Random.Next(0, 3) | Random.Next(4, 7);
             if (missProbability < 1.00 && missProbability != 0)
-                randNums = randInstance.Next(0, 7);
+                randNums = Random.Next(0, 7);
             if (missProbability > 1.00 && missProbability < 2.00)
-                randNums = randInstance.Next(0, 4);
+                randNums = Random.Next(0, 4);
             if (missProbability >= 2.00)
-                randNums = randInstance.Next(2, 4);
+                randNums = Random.Next(2, 4);
 
             switch (randNums)
             {
@@ -511,7 +510,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void RefreshAttackers()
         {
-            foreach (var attacker in Attackers)
+            Parallel.ForEach(Attackers, attacker =>
             {
                 if (attacker.Value?.Player != null && attacker.Value.LastRefresh.AddSeconds(10) > DateTime.Now)
                 {
@@ -536,7 +535,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     Attacker removedAttacker;
                     Attackers.TryRemove(attacker.Key, out removedAttacker);
                 }
-            }
+            });
             if (MainAttacker != null)
             {
                 if (!Attackers.ContainsKey(MainAttacker.Id))

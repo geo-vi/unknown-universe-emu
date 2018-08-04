@@ -1,12 +1,10 @@
 ﻿using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.objects.world;
 using System.Threading.Tasks;
-using NettyBaseReloaded.Main;
-using NettyBaseReloaded.Main.interfaces;
 
 namespace NettyBaseReloaded.Game.controllers
 {
-    class AbstractCharacterController : ITick
+    class AbstractCharacterController
     {
         public Character Character { get; }
 
@@ -45,33 +43,32 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Active = true;
             StopController = false;
-            Global.TickManager.Add(this);
+            Task.Factory.StartNew(Tick);
         }
 
-        public virtual void Tick()
+        public async void Tick()
         {
-            if (StopController || Character.EntityState == EntityStates.DEAD)
+            while (Active)
             {
-                StopAll();
-                return;
-            }
+                if (StopController || Character.EntityState == EntityStates.DEAD)
+                {
+                    StopAll();
+                    return;
+                }
 
-            TickClasses();
+                await Task.Factory.StartNew(TickClasses);
 
-            if (this is PlayerController)
-            {
-                var player = (Player) Character;
-                player.Controller.Tick();
-            }
-            else if (this is PetController)
-            {
-                var pet = (Pet) Character;
-                pet.Controller.Tick();
-            }
-            else if (this is NpcController)
-            {
-                var npc = (Npc) Character;
-                npc.Controller.Tick();
+                if (this is PlayerController)
+                {
+                    var player = (Player)Character;
+                    await Task.Factory.StartNew(player.Controller.Tick);
+                }
+                else if (this is PetController)
+                {
+                    var pet = (Pet) Character;
+                    await Task.Factory.StartNew(pet.Controller.Tick);
+                }
+                await Task.Delay(50);
             }
         }
 
@@ -92,7 +89,6 @@ namespace NettyBaseReloaded.Game.controllers
             Active = false;
             Checkers.Stop();
             Attack.Stop();
-            Global.TickManager.Remove(this);
         }
 
     }

@@ -43,7 +43,6 @@
             this.errorCounter = new System.Windows.Forms.Label();
             this.consoleBox = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.consoleBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -51,7 +50,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(148, 143);
+            this.label1.Location = new System.Drawing.Point(87, 143);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 0;
@@ -59,9 +58,9 @@
             // 
             // administratePlayers
             // 
-            this.administratePlayers.Location = new System.Drawing.Point(52, 139);
+            this.administratePlayers.Location = new System.Drawing.Point(12, 256);
             this.administratePlayers.Name = "administratePlayers";
-            this.administratePlayers.Size = new System.Drawing.Size(81, 24);
+            this.administratePlayers.Size = new System.Drawing.Size(112, 33);
             this.administratePlayers.TabIndex = 1;
             this.administratePlayers.Text = "Administrate Players";
             this.administratePlayers.UseVisualStyleBackColor = true;
@@ -69,9 +68,9 @@
             // 
             // serverEditor
             // 
-            this.serverEditor.Location = new System.Drawing.Point(52, 169);
+            this.serverEditor.Location = new System.Drawing.Point(130, 256);
             this.serverEditor.Name = "serverEditor";
-            this.serverEditor.Size = new System.Drawing.Size(81, 24);
+            this.serverEditor.Size = new System.Drawing.Size(112, 33);
             this.serverEditor.TabIndex = 2;
             this.serverEditor.Text = "Server Editor";
             this.serverEditor.UseVisualStyleBackColor = true;
@@ -79,9 +78,9 @@
             // 
             // mapEditor
             // 
-            this.mapEditor.Location = new System.Drawing.Point(52, 199);
+            this.mapEditor.Location = new System.Drawing.Point(248, 256);
             this.mapEditor.Name = "mapEditor";
-            this.mapEditor.Size = new System.Drawing.Size(81, 22);
+            this.mapEditor.Size = new System.Drawing.Size(112, 33);
             this.mapEditor.TabIndex = 3;
             this.mapEditor.Text = "Map Editor";
             this.mapEditor.UseVisualStyleBackColor = true;
@@ -89,9 +88,9 @@
             // 
             // errors
             // 
-            this.errors.Location = new System.Drawing.Point(52, 227);
+            this.errors.Location = new System.Drawing.Point(366, 256);
             this.errors.Name = "errors";
-            this.errors.Size = new System.Drawing.Size(81, 22);
+            this.errors.Size = new System.Drawing.Size(112, 33);
             this.errors.TabIndex = 4;
             this.errors.Text = "Errors";
             this.errors.UseVisualStyleBackColor = true;
@@ -100,7 +99,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(143, 156);
+            this.label2.Location = new System.Drawing.Point(87, 168);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(74, 13);
             this.label2.TabIndex = 6;
@@ -109,7 +108,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(183, 169);
+            this.label3.Location = new System.Drawing.Point(87, 192);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(34, 13);
             this.label3.TabIndex = 7;
@@ -118,11 +117,11 @@
             // timeRunning
             // 
             this.timeRunning.AutoSize = true;
-            this.timeRunning.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timeRunning.Font = new System.Drawing.Font("Bebas Neue Bold", 48F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.timeRunning.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.timeRunning.Location = new System.Drawing.Point(229, 194);
+            this.timeRunning.Location = new System.Drawing.Point(174, 136);
             this.timeRunning.Name = "timeRunning";
-            this.timeRunning.Size = new System.Drawing.Size(66, 16);
+            this.timeRunning.Size = new System.Drawing.Size(244, 77);
             this.timeRunning.TabIndex = 8;
             this.timeRunning.Text = "0.00:00:00";
             // 
@@ -134,7 +133,7 @@
             // 
             this.onlinePlayers.AutoSize = true;
             this.onlinePlayers.BackColor = System.Drawing.Color.Transparent;
-            this.onlinePlayers.Location = new System.Drawing.Point(230, 158);
+            this.onlinePlayers.Location = new System.Drawing.Point(52, 168);
             this.onlinePlayers.Name = "onlinePlayers";
             this.onlinePlayers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.onlinePlayers.Size = new System.Drawing.Size(13, 13);
@@ -144,7 +143,7 @@
             // errorCounter
             // 
             this.errorCounter.AutoSize = true;
-            this.errorCounter.Location = new System.Drawing.Point(230, 171);
+            this.errorCounter.Location = new System.Drawing.Point(52, 192);
             this.errorCounter.Name = "errorCounter";
             this.errorCounter.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.errorCounter.Size = new System.Drawing.Size(13, 13);
@@ -167,23 +166,11 @@
             // pictureBox1
             // 
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(232, 146);
+            this.pictureBox1.Location = new System.Drawing.Point(53, 145);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(10, 10);
             this.pictureBox1.TabIndex = 5;
             this.pictureBox1.TabStop = false;
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.BackColor = System.Drawing.SystemColors.InfoText;
-            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.richTextBox1.Location = new System.Drawing.Point(52, 12);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(366, 110);
-            this.richTextBox1.TabIndex = 12;
-            this.richTextBox1.Text = "";
             // 
             // Controller
             // 
@@ -191,7 +178,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gainsboro;
             this.ClientSize = new System.Drawing.Size(488, 301);
-            this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.errorCounter);
             this.Controls.Add(this.onlinePlayers);
             this.Controls.Add(this.consoleBox);
@@ -234,6 +220,5 @@
         private System.Windows.Forms.Timer ticker;
         private System.Windows.Forms.Label onlinePlayers;
         private System.Windows.Forms.Label errorCounter;
-        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

@@ -45,12 +45,44 @@ namespace NettyBaseReloaded.Game.controllers
             }
             Active = true;
             //Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) Setted AI to {ai}");
-            Global.TickManager.AddToNpcPool(this);
+            Checkers.Start();
+            Task.Factory.StartNew(ActiveTick);
         }
 
-        public void Tick()
+        private async void ActiveTick()
         {
-            CurrentNpc.Tick();
+            while (Active)
+            {
+                if (Character.EntityState == EntityStates.DEAD || StopController)
+                    Active = false;
+                else
+                {
+                    await Task.Factory.StartNew(TickClasses);
+                    await Task.Factory.StartNew(CurrentNpc.Tick);
+                }
+                await Task.Delay(500);
+            }
+            //Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) NPC went inactive");
+            Sleep();
+        }
+
+        private async void Sleep()
+        {
+            while (!Active)
+            {
+                if (StopController) return;
+                await Task.Delay(5000);
+            }
+            ActiveTick();
+        }
+
+        public void DelayedRestart()
+        {
+            // TODO
+            //RespawnTimer = DateTime.Now.AddSeconds(Npc.RespawnTime);
+            //if (!StopController) return;
+            //StopController = false;
+            //Sleep();
         }
 
         public void Restart()

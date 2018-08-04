@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Properties;
 using NettyBaseReloaded.Utils;
-using Console = System.Console;
 
 namespace NettyBaseReloaded.Main
 {

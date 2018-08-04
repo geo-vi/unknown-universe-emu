@@ -711,7 +711,6 @@ namespace NettyBaseReloaded.Game.netty.packet
                             target.Id, target.CurrentHealth, target.CurrentShield, target.CurrentNanoHull, damage, true)
                         .Bytes);
             }
-
         }
 
         #endregion

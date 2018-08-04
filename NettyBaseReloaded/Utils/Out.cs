@@ -68,7 +68,7 @@ namespace NettyBaseReloaded
         {
             //TODO: Log this shit
             Writer.WriteLine(text);
-            //ProcessForLog(text);
+            ProcessForLog(text);
         }
 
         public void ProcessForLog(string text)

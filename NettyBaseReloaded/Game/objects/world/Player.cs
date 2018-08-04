@@ -334,55 +334,51 @@ namespace NettyBaseReloaded.Game.objects.world
             CurrentNanoHull = currentNano;
         }
 
-        public override void AssembleTick()
+        public override void AssembleTick(object sender, EventArgs eventArgs)
         {
             if (!Controller.Active || EntityState == EntityStates.DEAD)
                 return;
 
-            base.AssembleTick();
-            LevelChecker();
-            TickBoosters();
-            AssembleEnemyWarn();
-            Hangar.DronesLevelChecker(this);
-            TickEvents();
-            TickVisuals();
-            TickTechs();
-            //TickGates();
-            TickAbilities();
-            TickQuests();
-            TickAnnouncements();
-            Storage.Tick();
-            Information.Tick();
-            State.Tick();
-
+            base.AssembleTick(sender, eventArgs);
+            Parallel.Invoke(() =>
+            {
+                LevelChecker();
+                TickBoosters();
+                AssembleEnemyWarn();
+                Hangar.DronesLevelChecker(this);
+                TickEvents();
+                TickVisuals();
+                TickTechs();
+                //TickGates();
+                TickAbilities();
+                TickQuests();
+                TickAnnouncements();
+            });
         }
 
         private void TickVisuals()
         {
-            foreach (var visualTick in Visuals)
-            {
-                visualTick.Tick();
-            }
+            Parallel.ForEach(Visuals, visual => { visual.Tick(); });
         }
 
         private void TickTechs()
         {
-            foreach (var tech in Techs) tech.Tick();
+            Parallel.ForEach(Techs, tech => { tech.Tick(); });
         }
 
         private void TickEvents()
         {
-            foreach (var gameEvent in EventsPraticipating) gameEvent.Value.Tick();
+            Parallel.ForEach(EventsPraticipating, gameEvent => { gameEvent.Value.Tick(); });
         }
 
         private void TickAbilities()
         {
-            foreach (var ability in Abilities) ability.Tick();
+            Parallel.ForEach(Abilities, ability => { ability.Tick(); });
         }
 
         private void TickQuests()
         {
-            foreach (var acceptedQuest in AcceptedQuests) acceptedQuest.Tick();
+            Parallel.ForEach(AcceptedQuests, quest => { quest.Tick(); });
         }
 
         private DateTime LastAnnouncementTime = new DateTime();
@@ -681,7 +677,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         private void TickBoosters()
         {
-            foreach (var booster in Boosters) booster.Tick();
+            Parallel.ForEach(Boosters, booster => { booster.Tick(); });
             CheckForBoosters();
         }
 

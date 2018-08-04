@@ -52,9 +52,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public State(Player player) : base(player)
         {
             AddHomeMaps();
+            player.Ticked += Ticked;
         }
 
-        public void Tick()
+        private void Ticked(object sender, EventArgs eventArgs)
         {
             RadiationMonitor();
         }

@@ -39,9 +39,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Uridium = new Uridium(player);
             Premium = new Premium();
             UpdateAll();
+            player.Ticked += Ticked;
         }
 
-        public void Tick()
+        private void Ticked(object sender, EventArgs eventArgs)
         {
             if (LastUpd.AddSeconds(3) > DateTime.Now) return;
 

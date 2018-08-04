@@ -34,12 +34,6 @@ namespace NettyBaseReloaded
             };
         }
 
-        private void LogAppend(object sender, string e)
-        {
-            richTextBox1.AppendText("\n" + e);
-            richTextBox1.ScrollToCaret();
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             new AdministratePlayers().Show();
@@ -49,9 +43,7 @@ namespace NettyBaseReloaded
         private void ticker_Tick(object sender, EventArgs e)
         {
             if (Server.CONSOLE_MODE)
-            {
                 consoleBox.Invalidate();
-            }
 
             if (Server.RUNTIME == DateTime.MinValue)
                 timeRunning.Text = "NULL";
@@ -94,18 +86,18 @@ namespace NettyBaseReloaded
         {
             if (!Server.CONSOLE_MODE) return;
 
-            //var logsFromNewestToOldest = DebugLog.LogsProcessed.ToList();
-            //logsFromNewestToOldest.Reverse();
-            //if (logsFromNewestToOldest.Count > 15)
-            //    logsFromNewestToOldest.RemoveRange(14, logsFromNewestToOldest.Count - 14);
-            //logsFromNewestToOldest.Reverse();
-            //PointF pos = new PointF(0, 0);
-            //foreach (var line in logsFromNewestToOldest)
-            //{
-            //    e.Graphics.DrawString(line, new Font(FontFamily.GenericMonospace, 7f),
-            //        new SolidBrush(Color.GreenYellow), pos);
-            //    pos.Y += 8;
-            //}
+            var logsFromNewestToOldest = DebugLog.LogsProcessed.ToList();
+            logsFromNewestToOldest.Reverse();
+            if (logsFromNewestToOldest.Count > 15)
+                logsFromNewestToOldest.RemoveRange(14, logsFromNewestToOldest.Count - 14);
+            logsFromNewestToOldest.Reverse();
+            PointF pos = new PointF(0, 0);
+            foreach (var line in logsFromNewestToOldest)
+            {
+                e.Graphics.DrawString(line, new Font(FontFamily.GenericMonospace, 7f),
+                    new SolidBrush(Color.GreenYellow), pos);
+                pos.Y += 8;
+            }
 
             if (CMD_TXT != "")
             {
@@ -136,7 +128,7 @@ namespace NettyBaseReloaded
             if (e.KeyCode == Keys.Enter)
             {
                 //TODO: Execute command
-                if (CMD_TXT == "clean" || CMD_TXT == "clear") richTextBox1.Clear();
+                if (CMD_TXT == "clean" || CMD_TXT == "clear") DebugLog.LogsProcessed.Clear();
                 CMD_TXT = "";
             }
         }
