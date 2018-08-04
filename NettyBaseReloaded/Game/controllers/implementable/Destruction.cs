@@ -285,7 +285,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             npc.CurrentShield = npc.MaxShield;
 
             if (npc.RespawnTime == 0)
-                newPos = Vector.Random(npc.Spacemap, 1000, 28000, 1000, 12000);
+                newPos = Vector.Random(npc.Spacemap, new Vector(1000, 1000), new Vector(20000, 12000));
             else
             {
                 npc.Controller.DelayedRestart();

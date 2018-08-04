@@ -422,16 +422,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private int RandomizeDamage(int baseDmg, double missProbability = 1.00)
         {
-            var randNums = Random.Next(0, 6);
+            var randInstance = RandomInstance.getInstance(this);
+            var randNums = randInstance.Next(0, 6);
 
             if (missProbability == 0)
-                randNums = Random.Next(0, 3) | Random.Next(4, 7);
+                randNums = randInstance.Next(0, 3) | randInstance.Next(4, 7);
             if (missProbability < 1.00 && missProbability != 0)
-                randNums = Random.Next(0, 7);
+                randNums = randInstance.Next(0, 7);
             if (missProbability > 1.00 && missProbability < 2.00)
-                randNums = Random.Next(0, 4);
+                randNums = randInstance.Next(0, 4);
             if (missProbability >= 2.00)
-                randNums = Random.Next(2, 4);
+                randNums = randInstance.Next(2, 4);
 
             switch (randNums)
             {

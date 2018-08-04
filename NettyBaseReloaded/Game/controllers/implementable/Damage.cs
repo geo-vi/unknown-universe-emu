@@ -73,14 +73,26 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Laser(IAttackable attacked, int damage, bool absorb)
         {
-            if (attacked == null || attacked.EntityState == EntityStates.DEAD) return;
+            if (attacked == null || attacked.EntityState == EntityStates.DEAD || !NullDamageCheck(attacked, damage, Types.LASER)) return;
             AddEntry(new DamageEntry {Absorb = absorb, Damage = damage, Target = attacked, Type = Types.LASER});
         }
 
         public void Rocket(IAttackable attacked, int damage, bool absorb, Types type = Types.ROCKET)
         {
-            if (attacked == null || attacked.EntityState == EntityStates.DEAD) return;
+            if (attacked == null || attacked.EntityState == EntityStates.DEAD || !NullDamageCheck(attacked, damage, Types.ROCKET)) return;
             AddEntry(new DamageEntry { Absorb = absorb, Damage = damage, Target = attacked, Type = type });
+        }
+
+        public bool NullDamageCheck(IAttackable attacked, int damage, Types type = Types.ROCKET)
+        {
+            if (damage <= 0 && Entries.Count == 0)
+            {
+                foreach (var session in AssembleSelectedSessions(attacked))
+                    Packet.Builder.AttackHitCommand(session, Character.Id, attacked, damage, (short) type);
+                return false;
+            }
+
+            return true;
         }
 
         public void Radiation(int damage)
@@ -363,7 +375,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (min < 0)
                 min = 0;
 
-            int calculatedDamage = Random.Next(max - min) + min;
+            var randomInstance = RandomInstance.getInstance(this);
+            int calculatedDamage = randomInstance.Next(max - min) + min;
             return calculatedDamage;
         }
     }

@@ -71,7 +71,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     Player candidatePlayer = null;
                     foreach (var player in players)
                     {
-                        if (player.Value == null || player.Value.EntityState == EntityStates.DEAD || player.Value.Invisible) continue;
+                        if (player.Value == null || player.Value.EntityState == EntityStates.DEAD || player.Value.Invisible || !player.Value.Targetable) continue;
                         if (candidatePlayer == null)
                         {
                             var _player = (Player) player.Value;
@@ -124,7 +124,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
                 if (target?.Position != null && target.Spacemap != null)
                 {
-                    if ((target.State.InDemiZone) || npc.Range.Zones.FirstOrDefault(x => x.Value is DemiZone).Value != null && Controller.Attack.GetActiveAttackers().Count == 0|| target.EntityState == EntityStates.DEAD)
+                    if ((target.State.InDemiZone) || npc.Range.Zones.FirstOrDefault(x => x.Value is DemiZone).Value != null && Controller.Attack.GetActiveAttackers().Count == 0|| target.EntityState == EntityStates.DEAD || !target.Targetable)
                     {
                         Exit();
                         return;
@@ -132,7 +132,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
                     if (npc.CurrentHealth < npc.MaxHealth * 0.1)
                     {
-                        MovementController.Move(npc, Vector.Random(npc.Spacemap, 0, 20800, 0, 12800));
+                        MovementController.Move(npc, Vector.Random(npc.Spacemap, new Vector(0,0), new Vector(20800, 12800)));
                     }
                     else if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
                         MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
