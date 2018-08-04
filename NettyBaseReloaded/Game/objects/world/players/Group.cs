@@ -147,7 +147,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 new XAttribute("act", Convert.ToInt32(true)), // active
                 new XAttribute("clk", Convert.ToInt32(player.Invisible)),
                 new XAttribute("shp", Convert.ToInt32(player.Hangar.Ship.Id)),
-                new XAttribute("fgt", Convert.ToInt32(player.Controller.Attack.Attacking || player.LastCombatTime.AddSeconds(3) > DateTime.Now)),
+                new XAttribute("fgt", Convert.ToInt32(player.Controller.Attack.Attacking || player.LastCombatTime.AddSeconds(3000) < DateTime.Now)),
                 new XAttribute("lgo", Convert.ToInt32(!player.Controller.Active || player.Controller.StopController)),
                 new XAttribute("tgt", (player.Selected?.Id).ToString()));
         }

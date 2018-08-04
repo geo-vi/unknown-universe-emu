@@ -71,9 +71,8 @@ namespace NettyBaseReloaded.Game.objects.world
             Respawning = respawning;
         }
 
-        public new void Tick()
+        public void Tick()
         {
-            Controller.Tick();
         }
     }
 }

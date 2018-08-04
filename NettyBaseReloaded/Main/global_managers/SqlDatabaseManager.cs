@@ -28,7 +28,6 @@ namespace NettyBaseReloaded.Main.global_managers
         {
             GenerateConnectionString();
             GetClient().ExecuteNonQuery("SELECT 1");
-            Global.TickManager.Add(new SqlConnectionManager());
         }
 
         //public static ConcurrentDictionary<int, MySqlConnection> Connections = new ConcurrentDictionary<int, MySqlConnection>();
@@ -86,17 +85,5 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public static string ConnectionString = "";
 
-    }
-
-    class SqlConnectionManager : ITick
-    {
-        public void Tick()
-        {
-            //foreach (var connection in SqlDatabaseManager.Connections)
-            //{
-            //    connection.Value.ClearAllPoolsAsync(CancellationToken.None);
-            //}
-            //SqlDatabaseManager.Connections.Clear();
-        }
     }
 }

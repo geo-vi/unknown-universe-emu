@@ -124,7 +124,7 @@ namespace NettyBaseReloaded.Game.controllers.player
         void Robot()
         {
             if (baseController.Character.Moving || !baseController.Repairing ||
-                baseController.Character.LastCombatTime.AddSeconds(3) > DateTime.Now)
+                baseController.Character.LastCombatTime.AddSeconds(3000) > DateTime.Now)
             {
                 baseController.Repairing = false;
                 return;

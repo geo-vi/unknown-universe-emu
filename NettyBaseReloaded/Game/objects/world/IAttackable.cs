@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +51,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Id = id;
             EntityState = EntityStates.ALIVE;
             Targetable = true;
+            LastCombatTime = DateTime.Now;
         }
 
         public abstract void Tick();

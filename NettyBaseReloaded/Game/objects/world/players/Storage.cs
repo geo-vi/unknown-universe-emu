@@ -41,10 +41,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Storage(Player player) : base(player)
         {
-            player.Ticked += Ticked;
         }
 
-        private void Ticked(object sender, EventArgs eventArgs)
+        public void Tick()
         {
             if (DistancePassed > 1000)
                 World.DatabaseManager.SavePlayerHangar(Player);

@@ -35,7 +35,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.stations
             {
                 var session = player.GetGameSession();
                 if (session == null) continue;
-                if (player.CurrentHealth != player.MaxHealth && player.LastCombatTime.AddSeconds(10) <= DateTime.Now)
+                if (player.CurrentHealth != player.MaxHealth && player.LastCombatTime.AddSeconds(5000) < DateTime.Now)
                 {
                     var heal = player.MaxHealth / 10;
                     if (player.CurrentHealth + heal > player.MaxHealth) heal = player.MaxHealth - player.CurrentHealth;

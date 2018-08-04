@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Networking;
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace NettyBaseReloaded.Game.objects.world.characters
 {
@@ -14,10 +16,9 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public Updaters(Character character)
         {
             Character = character;
-            character.Ticked += Ticked;
         }
 
-        private void Ticked(object sender, EventArgs eventArgs)
+        public void Tick()
         {
             Regenerate();
         }
@@ -64,13 +65,14 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             }
         }
 
-        private DateTime LastRegeneratedTime = new DateTime();
+        private DateTime LastRegen;
         public void Regenerate()
         {
             try
             {
-                if (Character.Controller == null || LastRegeneratedTime.AddSeconds(1) >= DateTime.Now) return;
-                LastRegeneratedTime = DateTime.Now;
+                var now = DateTime.Now;
+                if (Character.Controller == null || LastRegen.AddSeconds(1) < now) return;
+                LastRegen = now;
 
                 // Takes 25 secs to recover the shield
                 var amount = Character.MaxShield / 25;
@@ -84,7 +86,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 }
                 else
                 {
-                    if (Character.LastCombatTime.AddSeconds(5) >= DateTime.Now && Character.Formation != DroneFormation.DIAMOND ||
+                    if (Character.LastCombatTime.AddSeconds(3) < now && Character.Formation != DroneFormation.DIAMOND ||
                         Character.CurrentShield >= Character.MaxShield)
                         return;
 

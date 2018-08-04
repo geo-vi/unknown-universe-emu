@@ -35,8 +35,8 @@ namespace NettyBaseReloaded.Main
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
             CronjobManager.Initiate();
-            var task = new Task(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
-            task.Start();
+            TickManager.InitiatePools();
+            Out.WriteLine("Ready for work.", "GLOBAL");
         }
 
         static void InitiateGlobalQueries()
@@ -50,7 +50,6 @@ namespace NettyBaseReloaded.Main
             Chat.Chat.Init();
             new Server(Server.CHAT_PORT);
 
-            Out.WriteLine("Chat-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("Chat-Server started.");
         }
 
@@ -58,7 +57,6 @@ namespace NettyBaseReloaded.Main
         {
             new Server(Server.POLICY_PORT);
 
-            Out.WriteLine("Policy-Server started successfully!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("Policy-Server started.");
         }
         
@@ -67,7 +65,6 @@ namespace NettyBaseReloaded.Main
             World.InitiateManagers();
             new Server(Server.GAME_PORT);
 
-            Out.WriteLine("Game-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("Game-Server started.");
         }
 
@@ -76,7 +73,6 @@ namespace NettyBaseReloaded.Main
             WebSocks.packets.Handler.AddHandlers();
             WebSocketListener.InitiateListener();
 
-            Out.WriteLine("WebSocks - ready to listen!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("WebSocks started.");
         }
 
@@ -84,13 +80,12 @@ namespace NettyBaseReloaded.Main
         {
             new Server(Server.DISCORD_PORT);
 
-            Out.WriteLine("Discord-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
             Log.Write("Discord-Server started.");
         }
 
         static void InitiateRandomResetTimer()
         {
-            TickManager.Add(new Random());
+            TickManager.Add(RandomInstance.getInstance(new object()));
         }
 
         public static void SaveAll()

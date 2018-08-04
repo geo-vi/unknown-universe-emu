@@ -91,22 +91,22 @@ namespace NettyBaseReloaded
         private Player selectedPlayer { get; set; }
         public void SelectedPlayerTicker()
         {
-            if (selectedPlayer == null) return;
-            DefaultPlayerTab.Text = selectedPlayer.Name;
-            expLabel.Text = $"Exp: {selectedPlayer.Information.Experience.Get()}";
-            honLabel.Text = $"Hon: {selectedPlayer.Information.Honor.Get()}";
-            creLabel.Text = $"Credits: {selectedPlayer.Information.Credits.Get()}";
-            uriLabel.Text = $"Uri: {selectedPlayer.Information.Uridium.Get()}";
-            lastCombat.Text = $"Last Combat time: {selectedPlayer.LastCombatTime.ToLongTimeString()}";
-            attackers.Text = "Attackers: " + JsonConvert.SerializeObject(selectedPlayer.Controller.Attack.Attackers);
-            groupLabel.Text = "Group: " + JsonConvert.SerializeObject(selectedPlayer.Group);
-            clan.Text = "Clan: " + JsonConvert.SerializeObject(selectedPlayer.Clan);
-            playerState.Text = selectedPlayer.EntityState.ToString();
-            mapName.Text = selectedPlayer.Spacemap.Name;
-            pos.Text = selectedPlayer.Position.ToString();
-            hpProgress.Value = GetProgressbarValue(selectedPlayer.CurrentHealth, selectedPlayer.MaxHealth);
-            nanoProgress.Value = GetProgressbarValue(selectedPlayer.CurrentNanoHull, selectedPlayer.MaxNanoHull);
-            shdProgress.Value = GetProgressbarValue(selectedPlayer.CurrentShield, selectedPlayer.MaxShield);
+            //if (selectedPlayer == null) return;
+            //DefaultPlayerTab.Text = selectedPlayer.Name;
+            //expLabel.Text = $"Exp: {selectedPlayer.Information.Experience.Get()}";
+            //honLabel.Text = $"Hon: {selectedPlayer.Information.Honor.Get()}";
+            //creLabel.Text = $"Credits: {selectedPlayer.Information.Credits.Get()}";
+            //uriLabel.Text = $"Uri: {selectedPlayer.Information.Uridium.Get()}";
+            //lastCombat.Text = $"Last Combat time: {selectedPlayer.LastCombatTime.ToLongTimeString()}";
+            //attackers.Text = "Attackers: " + JsonConvert.SerializeObject(selectedPlayer.Controller.Attack.Attackers);
+            //groupLabel.Text = "Group: " + JsonConvert.SerializeObject(selectedPlayer.Group);
+            //clan.Text = "Clan: " + JsonConvert.SerializeObject(selectedPlayer.Clan);
+            //playerState.Text = selectedPlayer.EntityState.ToString();
+            //mapName.Text = selectedPlayer.Spacemap.Name;
+            //pos.Text = selectedPlayer.Position.ToString();
+            //hpProgress.Value = GetProgressbarValue(selectedPlayer.CurrentHealth, selectedPlayer.MaxHealth);
+            //nanoProgress.Value = GetProgressbarValue(selectedPlayer.CurrentNanoHull, selectedPlayer.MaxNanoHull);
+            //shdProgress.Value = GetProgressbarValue(selectedPlayer.CurrentShield, selectedPlayer.MaxShield);
         }
 
         private int GetProgressbarValue(int current, int max)

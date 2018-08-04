@@ -99,10 +99,10 @@ namespace NettyBaseReloaded.Game.objects.world
             return World.StorageManager.GameSessions[OwnerId].Player;
         }
 
-        public override void AssembleTick(object sender, EventArgs eventArgs)
+        public override void AssembleTick()
         {
             if (!Controller.Active || EntityState == EntityStates.DEAD) return;
-            base.AssembleTick(sender, eventArgs);
+            base.AssembleTick();
             FuelReduction();
             LevelChecker();
         }

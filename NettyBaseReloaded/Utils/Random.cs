@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,30 +8,80 @@ using NettyBaseReloaded.Main.interfaces;
 
 namespace NettyBaseReloaded
 {
-    class Random : ITick
+    public class RandomInstance : ITick
     {
+        public static ConcurrentDictionary<object, RandomInstance> Instances = new ConcurrentDictionary<object, RandomInstance>();
+
+        public static RandomInstance getInstance(object owner)
+        {
+            RandomInstance instance;
+            if (Instances.TryGetValue(owner, out instance))
+            {
+                return instance;
+            }
+            instance = new RandomInstance();
+            Instances.TryAdd(owner, instance);
+            return instance;
+        }
+        /// <summary>
+        /// Used to save the seed for the current instance.
+        /// If instance is inactive it will get auto removed from the pool.
+        /// </summary>
+        public Random Random { get; }
+
+        public DateTime LastActiveAt = new DateTime();
+
+        private RandomInstance()
+        {
+            Random = new Random();
+            FixActivity();
+        }
+
         public void Tick()
         {
-            if (LastTimeResetted.AddMinutes(1) < DateTime.Now)
-                Reset();
+            foreach (var instance in Instances)
+            {
+                RandomInstance removedInstance;
+                if (instance.Value.LastActiveAt.AddSeconds(5) < DateTime.Now)
+                {
+                    Instances.TryRemove(instance.Key, out removedInstance);
+                }        
+            }
+
+            FixActivity();
         }
 
-        private static System.Random _rnd = new System.Random();
-        private static DateTime LastTimeResetted = DateTime.Now;
+        #region Methods
 
-        private static void Reset()
+        public void FixActivity()
         {
-            _rnd = new System.Random();
+            LastActiveAt = DateTime.Now;
+        }
+        
+        /* int methods */
+        public int Next(int max)
+        {
+            FixActivity();
+            return Random.Next(max);
         }
 
-        public static int Next(int n1, int n2)
+        public int Next(int v1, int v2)
         {
-            return _rnd.Next(n1, n2);
+            FixActivity();
+            return Random.Next(v1, v2);
         }
+        /* int methods end */
 
-        public static int Next(int n)
+        public void EndPool()
         {
-            return _rnd.Next(n);
+            var instance = Instances.FirstOrDefault(x => x.Value == this);
+            if (instance.Value != null)
+            {
+                RandomInstance removedInstance;
+                Instances.TryRemove(instance.Key, out removedInstance);
+            }
         }
+        #endregion
+
     }
 }
