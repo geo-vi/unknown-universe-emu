@@ -92,9 +92,8 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     Controller.Npc.Selected != null)
                     Active();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                //new ExceptionLog("npc_inactive_crash", "NPC Crashed", e);
             }
         }
 
@@ -132,7 +131,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
                     if (npc.CurrentHealth < npc.MaxHealth * 0.1)
                     {
-                        MovementController.Move(npc, Vector.Random(npc.Spacemap, 0, 20800, 0, 12800));
+                        MovementController.Move(npc, Vector.Random(npc.Spacemap));
                     }
                     else if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
                         MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
@@ -143,9 +142,8 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     target != null)
                     Active();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                //new ExceptionLog("npc_paused_crash", "", e);
             }
         }
 

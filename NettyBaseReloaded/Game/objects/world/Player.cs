@@ -483,7 +483,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Moving = false;
         }
 
-        public Tuple<Vector, Spacemap> GetClosestStation()
+        public Tuple<Vector, Spacemap> GetClosestStation(bool isLower = false)
         {
             Spacemap map = null;
             if (Properties.Game.PVP_MODE)
@@ -492,7 +492,7 @@ namespace NettyBaseReloaded.Game.objects.world
             }
             else
             {
-                if (Spacemap?.Id > 16 && Spacemap.Id <= 29)
+                if (Spacemap?.Id > 16 && Spacemap.Id <= 29 && !isLower)
                 {
                     switch (FactionId)
                     {
@@ -586,8 +586,6 @@ namespace NettyBaseReloaded.Game.objects.world
             bool ammoBuy = false;
             bool cloak = false;
             bool tradeDrone = false;
-            bool smb = false;
-            bool ish = false;
             bool aim = false;
             bool autoRocket = false;
             bool autoRocketLauncer = false;
@@ -621,12 +619,6 @@ namespace NettyBaseReloaded.Game.objects.world
                         case "equipment_extra_repbot_rep-3":
                         case "equipment_extra_repbot_rep-4":
                             rep = true;
-                            break;
-                        case "equipment_extra_cpu_smb-01":
-                            smb = true;
-                            break;
-                        case "equipment_extra_cpu_ish-01":
-                            ish = true;
                             break;
                         case "equipment_extra_cpu_aim-01":
                         case "equipment_extra_cpu_aim-02":

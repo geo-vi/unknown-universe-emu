@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.informations;
 using NettyBaseReloaded.Networking;
@@ -18,6 +19,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public BaseInfo Credits { get; set; }
 
         public BaseInfo Uridium { get; set; }
+
+        private DateTime LastInfoUpdate { get; set; }
 
         public Level Level { get; set; }
 
@@ -38,6 +41,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Credits = new Credits(player);
             Uridium = new Uridium(player);
             Premium = new Premium();
+            Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
             UpdateAll();
             player.Ticked += Ticked;
         }
@@ -54,18 +58,26 @@ namespace NettyBaseReloaded.Game.objects.world.players
         
         public void UpdateAll()
         {
-            Experience.Refresh();
-            Honor.Refresh();
-            Credits.Refresh();
-            Uridium.Refresh();
-            Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
-            Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
-            var premiumActive = Premium.Active;
-            Premium = World.DatabaseManager.LoadPremium(Player);
-            if (Premium.Active != premiumActive) Premium.Update(Player);
-            var oldTitle = Title;
-            Title = World.DatabaseManager.LoadTitle(Player);
-            if (Title != oldTitle) UpdateTitle();
+
+            //Experience.Refresh();
+            //Honor.Refresh();
+            //Credits.Refresh();
+            //Uridium.Refresh();
+            //Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
+            //var premiumActive = Premium.Active;
+            //Premium = World.DatabaseManager.LoadPremium(Player);
+            //if (Premium.Active != premiumActive) Premium.Update(Player);
+            World.DatabaseManager.PerformFullRefresh(this);
+            //var oldTitle = Title;
+            //Title = World.DatabaseManager.LoadTitle(Player);
+            //if (Title != oldTitle) UpdateTitle();
+            //LastUpd = DateTime.Now;
+        }
+
+        /* THIS IS NOT A INFO SETTER !!!!!!! */
+        public void UpdateInfoBulk(double creChange, double uriChange, double expChange, double honChange)
+        {
+            World.DatabaseManager.UpdateInfoBulk(Player, creChange, uriChange, expChange, honChange);
         }
 
         public void LevelUp(Level targetLevel)

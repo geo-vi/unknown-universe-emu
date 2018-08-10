@@ -34,6 +34,15 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
             // override it if needed
         }
 
+        public virtual double Sync(double amount)
+        {
+            double addedVal = 0;
+            SyncedValue = amount;
+            Value = SyncedValue;
+            Update();
+            return addedVal;
+        }
+
         public double Get()
         {
             return Value;

@@ -37,7 +37,7 @@ namespace NettyBaseReloaded.Networking
         {
             var gameSess = World.StorageManager.GetGameSession(UserId); // TODO: Fix regular connection drop - player still stays in range even after disconnection
             if (!gameSess.InProcessOfReconection)
-                gameSess.Disconnect(GameSession.DisconnectionType.SOCKET_CLOSED);
+                gameSess.Disconnect(GameSession.DisconnectionType.ERROR);
         }
 
         private void XSocketOnOnReceive(object sender, EventArgs eventArgs)
@@ -66,7 +66,7 @@ namespace NettyBaseReloaded.Networking
                     //Console.WriteLine(Out.GetCaller() + $" ({DateTime.Now})");
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Debug.WriteLine("->" + Out.GetCaller());
                 //new ExceptionLog("socket", "Unable to send packet / Connected?", e);

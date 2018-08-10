@@ -21,7 +21,8 @@ namespace NettyBaseReloaded.Networking
         private void XSocketOnOnReceive(object sender, EventArgs e)
         {
             var packetArgs = (StringArgs) e;
-            throw new NotImplementedException();
+            Console.WriteLine("RECEIVED SOCKET PACKET");
+            //throw new NotImplementedException();
             //Socketty.PacketHandler.Handle(packetArgs.Packet);
         }
     }

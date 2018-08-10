@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using NettyBaseReloaded.Game.controllers.login;
 using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.objects;
@@ -7,6 +8,7 @@ using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Main;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.controllers
 {
@@ -37,7 +39,8 @@ namespace NettyBaseReloaded.Game.controllers
                 _gameSession.InProcessOfDisconnection = false;
                 _gameSession.InProcessOfReconection = false;
                 _gameSession.EstDisconnectionTime = DateTime.MaxValue;
-                _gameSession.LastActiveTime = DateTime.Now;            }
+                _gameSession.LastActiveTime = DateTime.Now;
+            }
 
             if (_gameSession.Player.Controller != null)
             {
@@ -56,14 +59,14 @@ namespace NettyBaseReloaded.Game.controllers
             player.Hangar.Configurations = config;
             player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
             //if (/*player.RankId == Rank.ADMINISTRATOR ||*/ player.Id == 9001)
-                player.Pet = new Pet(player.Id, player.Id, $"{player.Name}'s little toy", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), 1000, player.FactionId, new Level(1, 1000), 500, 1000, new List<Gear>());
+                //player.Pet = new Pet(player.Id, player.Id, $"{player.Name}'s little toy", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), 1000, player.FactionId, new Level(1, 1000), 500, 1000, new List<Gear>());
         }
 
         private void CheckPos()
         {
             //41600 * 25600
             var player = _gameSession.Player;
-            if (Properties.Game.PVP_MODE && player.Spacemap.Id == 255)
+            if (player.Spacemap.Id == 255) //todo: tutorial on 255
             {
                 var closestStation = player.GetClosestStation();
                 player.Spacemap = closestStation.Item2;

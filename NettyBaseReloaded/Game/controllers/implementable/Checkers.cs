@@ -45,7 +45,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             SpacemapChecker();
             RangeChecker();
             ZoneChecker();
-            ObjectChecker();
+            //ObjectChecker();
             //Console.WriteLine("VISIBILITY:" + InVisibleZone);
 
             LastTick = DateTime.Now;
@@ -269,7 +269,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 if (Character?.Position == null || Character?.Spacemap == null) return;
                 //new ExceptionLog("checkers", "Object Checker", e);

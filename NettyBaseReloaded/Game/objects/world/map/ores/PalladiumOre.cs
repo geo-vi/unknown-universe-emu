@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.ores
 {
     class PalladiumOre : Ore
     {
-        public PalladiumOre(int id, string hash, OreTypes type, Vector pos, Spacemap map, int[] limits) : base(id, hash, type, pos, map, limits)
+        public PalladiumOre(int id, string hash, OreTypes type, Vector pos, Spacemap map, Vector[] limits) : base(id, hash, type, pos, map, limits)
         {
         }
 

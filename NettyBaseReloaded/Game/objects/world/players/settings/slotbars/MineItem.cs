@@ -15,8 +15,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
         public override void Execute(Player player)
         {
-            int id;
-            string hash;
             switch (ItemId)
             {
                 case "ammunition_mine_acm-01":

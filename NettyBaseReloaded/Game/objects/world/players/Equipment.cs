@@ -134,13 +134,16 @@ namespace NettyBaseReloaded.Game.objects.world.players
                         case "equipment_extra_cpu_dr-02":
                             droneRep = true;
                             break;
+                        case "equipment_extra_cpu_rok-t01":
+                            rokTurbo = true;
+                            break;
                     }
                 }
             }
 
-            return Convert.ToInt32(droneRep) + "|0|" + Convert.ToInt32(jumpToBase) + "|" +
+            return Convert.ToInt32(droneRep) + "|1|" + Convert.ToInt32(jumpToBase) + "|" +
                    Convert.ToInt32(ammoBuy) + "|" + Convert.ToInt32(rep) + "|" + Convert.ToInt32(tradeDrone) +
-                   "|0|" + Convert.ToInt32(smb) + "|" + Convert.ToInt32(ish) + "|0|" + Convert.ToInt32(aim) + "|" +
+                   "|1|" + Convert.ToInt32(smb) + "|" + Convert.ToInt32(ish) + "|1|" + Convert.ToInt32(aim) + "|" +
                    Convert.ToInt32(autoRocket) + "|" + Convert.ToInt32(cloak) + "|" +
                    Convert.ToInt32(autoRocketLauncer) + "|" + Convert.ToInt32(rocketBuy) + "|" +
                    Convert.ToInt32(jump) + "|" + Convert.ToInt32(petRefuel);

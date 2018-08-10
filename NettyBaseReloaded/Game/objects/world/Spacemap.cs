@@ -223,16 +223,15 @@ namespace NettyBaseReloaded.Game.objects.world
         #endregion
 
         #region IDs
-        public int GetNextAvailableId()
+        public int GetNextAvailableId(int startId = 1000000)
         {
-            var lastId = 1000000;
-            foreach (var entity in Entities.Keys.Where(x => x > 1000000))
+            var i = startId;
+            while (true)
             {
-                if (entity == lastId + 1)
-                    lastId++;
-                else return lastId + 1;
+                if (Entities.ContainsKey(i))
+                    i++;
+                else return i;
             }
-            return lastId + 1;
         }
 
         public int GetNextObjectId()
@@ -290,8 +289,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 npcSpawned += entry.Count;
             }
 
-            if (Properties.Server.DEBUG)
-                Out.WriteLine("Successfully spawned " + npcSpawned + " npcs on spacemap " + Name);
+            Debug.WriteLine("Successfully spawned " + npcSpawned + " npcs on spacemap " + Name);
         }
 
         public void CreateNpcs(BaseNpc baseNpc, Zone zone = null)
@@ -302,8 +300,8 @@ namespace NettyBaseReloaded.Game.objects.world
                 var ship = World.StorageManager.Ships[baseNpc.NpcId];
                 var position = new Vector(0,0);
                 if (zone != null)
-                    position = Vector.Random(this, zone.TopLeft.X, zone.BottomRight.X, zone.TopLeft.Y, zone.BottomRight.Y);
-                else position = Vector.Random(this, 1000, 20000, 1000, 12000);
+                    position = Vector.Random(this, zone.TopLeft, zone.BottomRight);
+                else position = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
                 CreateNpc(new Npc(id, ship.Name,
                     new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                         new Dictionary<string, Item>()),
@@ -315,7 +313,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateNpc(Ship ship)
         {
             var id = GetNextAvailableId();
-            var position = Vector.Random(this, 1000, 20000, 1000, 12000);
+            var position = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
@@ -328,7 +326,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var id = GetNextAvailableId();
             ship.AI = (int)ai;
             if (pos == null)
-                pos = Vector.Random(this, 1000, 20000, 1000, 12000);
+                pos = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
             else pos = Vector.GetPosOnCircle(pos, 100);
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), pos, this, ship.Health, ship.Nanohull,
@@ -528,7 +526,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         #region Collectables
 
-        public void CreateOre(OreTypes type, Vector pos, int[] limits)
+        public void CreateOre(OreTypes type, Vector pos, Vector[] limits)
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
@@ -538,7 +536,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 World.Log.Write("Created Ore["+type+"] on mapId " + Id);
         }
 
-        public void CreateBox(Types type, Vector pos, int[] limits)
+        public void CreateBox(Types type, Vector pos, Vector[] limits)
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
@@ -617,7 +615,7 @@ namespace NettyBaseReloaded.Game.objects.world
             foreach (var _zone in Zones.Where(x => x.Value is PalladiumZone))
             {
                 for (var i = 0; i < 60; i++)
-                    CreateOre(OreTypes.PALLADIUM, Vector.Random(this, _zone.Value.TopLeft.X, _zone.Value.BottomRight.X, _zone.Value.TopLeft.Y, _zone.Value.BottomRight.Y), new [] { _zone.Value.TopLeft.X, _zone.Value.BottomRight.X, _zone.Value.TopLeft.Y, _zone.Value.BottomRight.Y });
+                    CreateOre(OreTypes.PALLADIUM, Vector.Random(this, _zone.Value.TopLeft, _zone.Value.BottomRight), new Vector[] { _zone.Value.TopLeft, _zone.Value.BottomRight });
             }
         }
 

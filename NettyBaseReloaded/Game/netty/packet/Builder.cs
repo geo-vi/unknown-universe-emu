@@ -469,7 +469,6 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void DronesCommand(GameSession gameSession, Character character)
         {
-            int droneDesignId = 0; // 18 => frost
             if (character.Hangar.Drones.Count <= 0) return;
             var command = "0|n|d|" + character.Id + "|" + (int) character.Formation;
 

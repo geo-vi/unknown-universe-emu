@@ -41,6 +41,7 @@ namespace NettyBaseReloaded.Game.objects
         {
             Player = player;
             Global.TickManager.Add(this);
+            LastActiveTime = DateTime.Now;
         }
 
         public void Tick()
@@ -48,7 +49,9 @@ namespace NettyBaseReloaded.Game.objects
             if (LastActiveTime >= DateTime.Now.AddMinutes(5))
                 Disconnect(DisconnectionType.INACTIVITY);
             if (EstDisconnectionTime < DateTime.Now && InProcessOfDisconnection)
-                Disconnect(DisconnectionType.NORMAL);
+            {
+                //Disconnect(DisconnectionType.NORMAL);
+            }
         }
 
         public void Relog(Spacemap spacemap = null, Vector pos = null)

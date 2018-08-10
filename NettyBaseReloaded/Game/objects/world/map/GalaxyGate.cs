@@ -325,25 +325,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public void MoveOut(Player player)
         {
-            if (player?.GetGameSession() == null) return;
-            Vector targetPos = null;
-            Spacemap targetMap = null;
-            //switch (player.FactionId)
-            //{
-            //    case Faction.MMO:
-            //        targetMap = World.StorageManager.Spacemaps[1];
-            //        targetPos = new Vector(1000, 1000);
-            //        break;
-            //    case Faction.EIC:
-            //        targetMap = World.StorageManager.Spacemaps[5];
-            //        targetPos = new Vector(19800, 1000);
-            //        break;
-            //    case Faction.VRU:
-            //        targetMap = World.StorageManager.Spacemaps[9];
-            //        targetPos = new Vector(19800, 11800);
-            //        break;
-            //}
-            var tuple = player.GetClosestStation();
+            if (player?.GetGameSession() == null) return;            
+            var tuple = player.GetClosestStation(true);
             player.MoveToMap(tuple.Item2, tuple.Item1, 0);
         }
 

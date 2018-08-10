@@ -90,7 +90,7 @@ namespace NettyBaseReloaded.Main
 
         static void InitiateRandomResetTimer()
         {
-            TickManager.Add(new Random());
+            TickManager.Add(RandomInstance.getInstance(new object()));
         }
 
         public static void SaveAll()

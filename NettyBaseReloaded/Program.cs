@@ -44,8 +44,6 @@ namespace NettyBaseReloaded
 
         public static void Main(string[] args)
         {
-            
-            Console.SetOut(new Out());
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
 
             Application.ThreadException += ApplicationOnThreadException;
@@ -60,7 +58,7 @@ namespace NettyBaseReloaded
         {
             DisableSizing();
 
-            Console.SetOut(new Out());
+            //Console.SetOut(new Out());
             Console.CursorVisible = false;
 
             Draw.Logo();

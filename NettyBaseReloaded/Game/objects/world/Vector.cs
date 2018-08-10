@@ -59,21 +59,21 @@ namespace NettyBaseReloaded.Game.objects.world
             return character1;
         }
 
-        public static Vector Random(Spacemap map, int minX = 0, int maxX = 0, int minY = 0, int maxY = 0)
+        public static Vector Random(Spacemap map, Vector min = null, Vector max = null)
         {
-            if (minX == 0) minX = map.Limits[0].X;
-            if (minY == 0) minY = map.Limits[0].Y;
-            if (maxX == 0) maxX = map.Limits[1].X;
-            if (maxY == 0) maxY = map.Limits[1].Y;
+            if (min == null) min = map.Limits[0];
+            if (max == null) max = map.Limits[1];
+            var random = RandomInstance.getInstance(map);
 
-            var posX = NettyBaseReloaded.Random.Next(minX, maxX);
-            var posY = NettyBaseReloaded.Random.Next(minY, maxY);
+            var posX = random.Next(min.X, max.X);
+            var posY = random.Next(min.Y, max.Y);
             return new Vector(posX, posY);
         }
 
         public static Vector GetPosOnCircle(Vector circleCenter, int radius)
         {
-            var a = NettyBaseReloaded.Random.Next(0, 360);
+            var randomInstance = new Random();
+            var a = randomInstance.Next(0, 360);
             var calculateX = circleCenter.X + Convert.ToInt32(radius * Math.Cos(a));
             var calculateY = circleCenter.Y + Convert.ToInt32(radius * Math.Sin(a));
 

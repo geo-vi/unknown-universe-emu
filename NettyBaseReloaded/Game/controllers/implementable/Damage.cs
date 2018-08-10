@@ -158,7 +158,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             int totalAbsDamage = 0;
             IAttackable target = null;
             Types damageType = Types.LASER;
-            bool absorb = false;
 
             foreach (var entry in Entries)
             {
@@ -363,7 +362,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (min < 0)
                 min = 0;
 
-            int calculatedDamage = Random.Next(max - min) + min;
+            var random = RandomInstance.getInstance(this);
+            int calculatedDamage = random.Next(max - min) + min;
             return calculatedDamage;
         }
     }

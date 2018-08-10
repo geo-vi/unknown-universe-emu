@@ -25,25 +25,16 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public int Get()
         {
-            SyncCheck();
             return Amount;
         }
 
         public int Shoot()
         {
-            SyncCheck();
             int fireCount;
             if (LootId.Contains("ammunition_laser"))
                 fireCount = Player.Equipment.LaserCount();
             else fireCount = 1;
-            var newAmount = Amount - fireCount;
-            
-            if (newAmount < 0)
-            {
-                return 0;
-            }
-            Amount = newAmount;
-            Packet.Builder.AmmunitionCountUpdateCommand(World.StorageManager.GetGameSession(Player.Id), LootId, Amount);
+            Add(-fireCount);
             return fireCount;
         }
 

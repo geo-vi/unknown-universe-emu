@@ -103,7 +103,7 @@ namespace NettyBaseReloaded.Chat.managers
                     
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
             return mod;

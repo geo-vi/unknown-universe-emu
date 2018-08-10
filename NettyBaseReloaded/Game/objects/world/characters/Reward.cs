@@ -41,6 +41,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             }
         }
 
+        public double TotalAddedCre = 0;
+        public double TotalAddedUri = 0;
+        public double TotalAddedExp = 0;
+        public double TotalAddedHon = 0;
+
         public void ParseRewards(Player player)
         {
             int paramNum = 0;
@@ -66,36 +71,30 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 }
                 paramNum++;
             }
+            PerformBulkUpdate(player);
         }
 
         public void RewardPlayer(Player player, RewardType type, int amount)
         {
             if (amount == 0) return;
+            
             switch (type)
             {
                 case RewardType.CREDITS:
                     amount = RewardMultiplyer(type, amount, player);
-                    player.Information.Credits.Add(amount);
-                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
-                        "0|LM|ST|CRE|" + amount + "|" + player.Information.Credits.Get());
+                    TotalAddedCre = amount;
                     break;
                 case RewardType.URIDIUM:
                     amount = RewardMultiplyer(type, amount, player);
-                    player.Information.Uridium.Add(amount);
-                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
-                        "0|LM|ST|URI|" + amount + "|" + player.Information.Uridium.Get());
+                    TotalAddedUri = amount;
                     break;
                 case RewardType.EXPERIENCE:
                     amount = RewardMultiplyer(type, amount, player);
-                    player.Information.Experience.Add(amount);
-                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
-                        "0|LM|ST|EP|" + amount + "|" + player.Information.Experience.Get() + "|" + player.Information.Level.Id);
+                    TotalAddedExp = amount;
                     break;
                 case RewardType.HONOR:
                     amount = RewardMultiplyer(type, amount, player);
-                    player.Information.Honor.Add(amount);
-                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
-                        "0|LM|ST|HON|" + amount + "|" + player.Information.Honor.Get());
+                    TotalAddedHon = amount;
                     break;
                 case RewardType.ORE:
                     break;
@@ -105,6 +104,38 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 case RewardType.BOOSTER:
                     // amount => hours
                     break;
+            }
+        }
+
+        public void PerformBulkUpdate(Player player)
+        {
+            if (TotalAddedCre > 0 || TotalAddedUri > 0 || TotalAddedExp > 0 || TotalAddedHon > 0)
+            {
+                player.Information.UpdateInfoBulk(TotalAddedCre, TotalAddedUri, TotalAddedExp, TotalAddedHon);
+                if (TotalAddedCre > 0)
+                {
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                        "0|LM|ST|CRE|" + TotalAddedCre + "|" + player.Information.Credits.Get());
+                }
+
+                if (TotalAddedUri > 0)
+                {
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                        "0|LM|ST|URI|" + TotalAddedUri + "|" + player.Information.Uridium.Get());
+                }
+
+                if (TotalAddedExp > 0)
+                {
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                        "0|LM|ST|EP|" + TotalAddedExp + "|" + player.Information.Experience.Get() + "|" +
+                        player.Information.Level.Id);
+                }
+
+                if (TotalAddedHon > 0)
+                {
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                        "0|LM|ST|HON|" + TotalAddedHon + "|" + player.Information.Honor.Get());
+                }
             }
         }
 

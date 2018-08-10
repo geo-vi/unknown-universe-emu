@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.events;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.pois;
@@ -783,6 +784,37 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
+        public void UpdateInfoBulk(Player player, double creChange, double uriChange, double expChange, double honChange)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow($"UPDATE player_data SET CREDITS=CREDITS+{creChange}, URIDIUM=URIDIUM+{uriChange}, EXP=EXP+{expChange}, HONOR=HONOR+{honChange} WHERE" +
+                                                               $" PLAYER_ID={player.Id}");
+                    player.Information.Credits.SyncedValue = doubleConv(queryRow["CREDITS"]);
+                    player.Information.Credits.Value = player.Information.Credits.SyncedValue;
+                    player.Information.Credits.LastTimeSynced = DateTime.Now;
+
+                    player.Information.Uridium.SyncedValue = doubleConv(queryRow["URIDIUM"]);
+                    player.Information.Uridium.Value = player.Information.Credits.SyncedValue;
+                    player.Information.Uridium.LastTimeSynced = DateTime.Now;
+
+                    player.Information.Experience.SyncedValue = doubleConv(queryRow["EXP"]);
+                    player.Information.Experience.Value = player.Information.Credits.SyncedValue;
+                    player.Information.Experience.LastTimeSynced = DateTime.Now;
+
+                    player.Information.Honor.SyncedValue = doubleConv(queryRow["HONOR"]);
+                    player.Information.Honor.Value = player.Information.Credits.SyncedValue;
+                    player.Information.Honor.LastTimeSynced = DateTime.Now;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
         public void SetInfo(Player player, BaseInfo baseInfo, double new_amount)
         {
             try
@@ -819,10 +851,49 @@ namespace NettyBaseReloaded.Game.managers
                     return intConv(queryRow[row]);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
             return -1;
+        }
+
+        public void PerformFullRefresh(Information info)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryReader("SELECT CREDITS,URIDIUM,EXP,HONOR,LVL,PREMIUM_UNTIL FROM player_data WHERE PLAYER_ID=" + info.Player.Id);
+
+                    while (queryRow.Read())
+                    {
+                        var cre = doubleConv(queryRow["CREDITS"]);
+                        var uri = doubleConv(queryRow["URIDIUM"]);
+                        var exp = doubleConv(queryRow["EXP"]);
+                        var hon = doubleConv(queryRow["HONOR"]);
+                        var lvl = intConv(queryRow["LVL"]);
+                        var premEnd = Convert.ToDateTime(queryRow["PREMIUM_UNTIL"]);
+                        info.Credits.Sync(cre);
+                        info.Uridium.Sync(uri);
+                        info.Experience.Sync(exp);
+                        info.Honor.Sync(hon);
+
+                        var newLvl = World.StorageManager.Levels.PlayerLevels[lvl];
+                        if (newLvl.Experience < exp)
+                            newLvl = World.StorageManager.Levels.PlayerLevels[1];
+
+                        if (info.Level == null)
+                            info.Level = newLvl;
+                        info.Premium.Sync(premEnd);
+                    }
+                    queryRow.Close();
+                }
+            }
+            catch (Exception e )
+            {
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
+            }
         }
 
         public void BasicRefresh(Player player)
@@ -968,7 +1039,7 @@ namespace NettyBaseReloaded.Game.managers
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Failed saving pos");
             }
@@ -1348,6 +1419,22 @@ namespace NettyBaseReloaded.Game.managers
             catch (Exception e)
             {
                 new ExceptionLog("database_quest_save", "Error saving quest", e);
+            }
+        }
+
+        public void Reset(GameSession session, string query)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow(query);
+                    Packet.Builder.LegacyModule(session, "0|A|STD|" + JsonConvert.SerializeObject(queryRow.ItemArray));
+                }
+            }
+            catch (Exception e)
+            {
+                Packet.Builder.LegacyModule(session, "0|A|STD|" + e.Message);
             }
         }
     }

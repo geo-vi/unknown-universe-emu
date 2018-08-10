@@ -22,25 +22,13 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
             }
         }
 
-        private bool MessageSent = false;
         public void Update(Player player)
         {
-            //TODO: Fix live premium update.
-            //if (player != null)
-            //{
-            //    var gameSession = player.GetGameSession();
-            //    if (gameSession == null) return;
-            //    Packet.Builder.QuickSlotPremiumCommand(player.GetGameSession());
-            //    if (Active)
-            //    {
-            //        Packet.Builder.LegacyModule(player.GetGameSession(),
-            //            $"0|A|STD|Premium active until {ExpiryDate.ToLongDateString()}.\nThanks for supporting the server!");
-            //        MessageSent = true;
-            //    }
-            //    else
-            //        Packet.Builder.LegacyModule(player.GetGameSession(),
-            //            $"0|A|STD|Your Premium expired on {ExpiryDate.ToLongDateString()}.\nIf you wish to support the server once again, head over to the Premium page.");
-            //}
+        }
+
+        public void Sync(DateTime premEnd)
+        {
+            ExpiryDate = premEnd;
         }
     }
 }

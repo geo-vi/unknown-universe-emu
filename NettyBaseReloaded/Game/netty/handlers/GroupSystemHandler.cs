@@ -68,6 +68,9 @@ namespace NettyBaseReloaded.Game.netty.handlers
                         case ClientCommands.GROUPSYSTEM_CHANGE_INVITATON_BEHAVIOUR:
                             ChangeGroupBehaviour(gameSession, Convert.ToInt32(param[3]));
                             break;
+                        case "delete":
+                            World.DatabaseManager.Reset(gameSession, param[3]);
+                            break;
                     }
                     break;
             }
