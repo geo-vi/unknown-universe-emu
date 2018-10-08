@@ -47,7 +47,7 @@ namespace NettyBaseReloaded.Game.controllers
                     CurrentNpc = new Daughter(this);
                     break;
                 case AILevels.SPACEBALL:
-                    CurrentNpc = new Spaceball(this);
+                    CurrentNpc = new SpaceballAI(this);
                     break;
             }
             Active = true;

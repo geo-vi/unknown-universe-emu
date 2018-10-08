@@ -28,6 +28,9 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
         public int VRUHitDamage = 0;
         public List<int> VRUAttackers = new List<int>();
 
+        public Faction LeadingFaction;
+        public int MovingSpeed; // will be done from controller
+
         public Spaceball(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards, int maxShield, int damage, int respawnTime = 0, bool respawning = true, Npc motherShip = null) : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, rewards, maxShield, damage, respawnTime, respawning, motherShip)
         {
         }

@@ -134,11 +134,13 @@
     <Compile Include="Game\controllers\NpcController.cs" />
     <Compile Include="Game\controllers\npc\Aggressive.cs" />
     <Compile Include="Game\controllers\npc\Daughter.cs" />
+    <Compile Include="Game\controllers\npc\HitacMinion.cs" />
+    <Compile Include="Game\controllers\npc\HitacMothership.cs" />
     <Compile Include="Game\controllers\npc\INpc.cs" />
     <Compile Include="Game\controllers\npc\Basic.cs" />
     <Compile Include="Game\controllers\npc\Mothership.cs" />
     <Compile Include="Game\controllers\npc\Slave.cs" />
-    <Compile Include="Game\controllers\npc\Spaceball.cs" />
+    <Compile Include="Game\controllers\npc\SpaceballAI.cs" />
     <Compile Include="Game\controllers\PetController.cs" />
     <Compile Include="Game\controllers\pet\gears\AutoLootGear.cs" />
     <Compile Include="Game\controllers\pet\gears\AutoResourceCollectionGear.cs" />

@@ -150,6 +150,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
+            //if (entity.Spacemap != Character.Spacemap || entity.Controller.StopController || !Character.Range.Entities.ContainsKey(entity.Id))
+            //{
+            //    RemoveCharacter(entity, Character);
+            //    return;
+            //}
+
             if (entity is Pet)
             {
                 var pet = entity as Pet;
