@@ -13,11 +13,9 @@ namespace NettyBaseReloaded.Main.global_managers
 {
     static class SqlDatabaseManager
     {
-        public static DebugLog Log = new DebugLog("mysql");
-
-        public static string SERVER = "server1.univ3rse.com";
-        public static string UID = "null";
-        public static string PWD = "789456123gta";
+        public static string SERVER = "127.0.0.1";
+        public static string UID = "root";
+        public static string PWD = "";
         public static string DB = "do_server_ge1";
         public static string DB_EXT = "do_system";
 
@@ -36,7 +34,7 @@ namespace NettyBaseReloaded.Main.global_managers
             MySqlConnection Connection = new MySqlConnection(GenerateConnectionString());
             Connection.Open();
             //Connections.TryAdd(Connections.Count, Connection);
-            Console.WriteLine("Client requested from " + Out.GetCaller());
+            Out.WriteDbLog("Client requested from " + Out.GetCaller());
             return new SqlDatabaseClient(Connection);
         }
 

@@ -11,9 +11,12 @@ namespace NettyBaseReloaded.Game.controllers.npc
     {
         private NpcController Controller { get; set; }
 
+        private Vector Center;
+
         public Daughter(NpcController controller)
         {
             Controller = controller;
+            Center = controller.Npc.MotherShip.Position;
             LastActiveTime = DateTime.Now;
         }
 
@@ -39,9 +42,15 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Inactive()
         {
-            if (LastActiveTime.AddSeconds(30) <= DateTime.Now)
+            if (LastActiveTime.AddSeconds(10) < DateTime.Now)
             {
                 Exit();
+                return;
+            }
+
+            if (Controller.Npc.MotherShip == null)
+            {
+                return;
             }
 
             var attacker = Controller.Npc.MotherShip.Controller.Attack.GetActiveAttackers().OrderBy(x => x.Damage).FirstOrDefault();
@@ -57,17 +66,17 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void PositionChecker()
         {
             if (Controller.Npc.MovementStartTime.AddSeconds(1) <= DateTime.Now)
-                MovementController.Move(Controller.Npc, Vector.GetPosOnCircle(Controller.Npc.MotherShip.Position, 400));
+                MovementController.Move(Controller.Npc, Vector.GetPosOnCircle(Center, 400));
         }
 
         public void Paused()
-        {
+         {
             throw new NotImplementedException();
         }
 
         public void Exit()
         {
-            // TODO Remove from map
+            if (Controller.Npc.Spacemap.RemoveEntity(Controller.Npc)) Controller.StopAll();
         }
 
     }

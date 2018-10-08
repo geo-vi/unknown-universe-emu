@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.events;
@@ -123,11 +124,10 @@ namespace NettyBaseReloaded.Game.managers
 
                 }
 
-                Log.Write("Loaded successfully " + World.StorageManager.Ships.Count + " ships from DB.");
+                Out.WriteDbLog("Loaded successfully " + World.StorageManager.Ships.Count + " ships from DB.");
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed to load ships...", e);
             }
         }
 
@@ -244,11 +244,10 @@ namespace NettyBaseReloaded.Game.managers
                 World.StorageManager.Spacemaps.Add(255,
                     new Spacemap(255, "0-1", Faction.NONE, false, true, 0, null, null));
 
-                Log.Write($"Loaded successfully {World.StorageManager.Spacemaps.Count} ships from DB.");
+                Out.WriteDbLog($"Loaded successfully {World.StorageManager.Spacemaps.Count} ships from DB.");
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Error loading maps", e);
             }
         }
 
@@ -284,17 +283,16 @@ namespace NettyBaseReloaded.Game.managers
                     }
 
 
-                    Log.Write(
+                    Out.WriteDbLog(
                         "Loaded successfully " + World.StorageManager.Levels.PlayerLevels.Count +
                         " player levels from DB.");
-                    Log.Write(
+                    Out.WriteDbLog(
                         "Loaded successfully " + World.StorageManager.Levels.DroneLevels.Count +
                         " drone levels from DB.");
                 }
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Error loading levels", e);
             }
 
         }
@@ -331,7 +329,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Error loading collectables", e);
             }
         }
 
@@ -358,11 +355,10 @@ namespace NettyBaseReloaded.Game.managers
 
                 }
 
-                Log.Write("Loaded successfully " + World.StorageManager.Titles.Count + " titles from DB.");
+                Out.WriteDbLog("Loaded successfully " + World.StorageManager.Titles.Count + " titles from DB.");
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed to load titles...", e);
             }
 
         }
@@ -392,7 +388,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Error loading player hangar [ID: " + player.Id + "]", e);
             }
 
             return hangar;
@@ -470,7 +465,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed loading player configuration [ID: " + player.Id + "]", e);
             }
             return builder;
         }
@@ -506,7 +500,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed loading player drones [ID: " + player.Id + "]", e);
             }
             return drones;
         }
@@ -534,7 +527,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed loading events", e);
             }
         }
 
@@ -586,7 +578,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed getting player account [ID: " + playerId + "]", e);
             }
             return player;
         }
@@ -655,7 +646,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed getting player ammuntion [ID: " + player.Id + "]", e);
                 World.StorageManager.GetGameSession(player.Id)?.Disconnect(GameSession.DisconnectionType.ERROR);
             }
             return ammoDictionary;
@@ -696,7 +686,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Error loading hangars for player [ID: " + player.Id + "]", e);
             }
             return hangars;
         }
@@ -1219,7 +1208,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("database_manager", "Events", e);
             }
         }
 
@@ -1235,7 +1223,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager_server_event", "event", e);
             }
         }
 
@@ -1306,7 +1293,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("database_manager_title", "Title error", e);
             }
             return title;
         }
@@ -1371,7 +1357,6 @@ namespace NettyBaseReloaded.Game.managers
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                new ExceptionLog("database_refresh_player", "Error refreshing players", e);
             }
         }
 
@@ -1397,7 +1382,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("database_quest_load", "Error loading quest", e);
             }
 
             return completed;
@@ -1418,7 +1402,6 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("database_quest_save", "Error saving quest", e);
             }
         }
 
@@ -1436,6 +1419,107 @@ namespace NettyBaseReloaded.Game.managers
             {
                 Packet.Builder.LegacyModule(session, "0|A|STD|" + e.Message);
             }
+        }
+
+        public void SaveCargo(Player player, Cargo cargo)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery(
+                        $"UPDATE player_extra_data SET CARGO='{JsonConvert.SerializeObject(cargo)}' WHERE PLAYER_ID=" +
+                        player.Id);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+
+        public Cargo LoadCargo(Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow =
+                        mySqlClient.ExecuteQueryRow("SELECT CARGO FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
+                    var cargoJson = queryRow["CARGO"].ToString();
+                    var cargo = JsonConvert.DeserializeObject<Cargo>(cargoJson);
+                    if (cargo != null)
+                    {
+                        cargo.Player = player;
+                    }
+                    else return new Cargo(player, 0, 0, 0, 0, 0, 0, 0, 0);
+
+                    return cargo;
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            return null;
+        }
+
+        public Skylab LoadSkylab(Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow =
+                        mySqlClient.ExecuteQueryRow("SELECT SKYLAB FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
+                    var skylabJson = queryRow["SKYLAB"].ToString();
+                    var skylab = JsonConvert.DeserializeObject<Skylab>(skylabJson);
+                    if (skylab != null)
+                    {
+                        skylab.Player = player;
+                    }
+                    else return new Skylab(player);
+
+                    return skylab;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+
+            return null;
+        }
+
+        public void SaveSkylab(Player player, Skylab skylab)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery(
+                        $"UPDATE player_extra_data SET SKYLAB='{JsonConvert.SerializeObject(skylab)}' WHERE PLAYER_ID=" +
+                        player.Id);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+
+        public Pet LoadPet(Player player)
+        {
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+            return null;
         }
     }
 }

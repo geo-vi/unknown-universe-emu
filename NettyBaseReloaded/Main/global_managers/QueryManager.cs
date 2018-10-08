@@ -30,14 +30,13 @@ namespace NettyBaseReloaded.Main.global_managers
             try
             {
                 SqlDatabaseManager.Initialize();
-                SqlDatabaseManager.Log.Write("Successfully connected to database");
+                Out.WriteDbLog("Successfully connected to database");
                 return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine("MYSQL Connection failed.");
-                SqlDatabaseManager.Log.Write("MySQL Connection failed");
-                new ExceptionLog("mysql", "MYSQL Connection failed", e);
+                Out.WriteDbLog("MySQL Connection failed");
                 if (tries < 6)
                 {
                     Console.WriteLine("Trying to reconnect in .. " + tries + " seconds.");
@@ -148,7 +147,6 @@ namespace NettyBaseReloaded.Main.global_managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("db_loadcrons", "Error loading crons", e);
             }
             return crons;
         }
@@ -164,7 +162,6 @@ namespace NettyBaseReloaded.Main.global_managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("db_updcrons", "Error updating crons", e);
             }
         }
     }

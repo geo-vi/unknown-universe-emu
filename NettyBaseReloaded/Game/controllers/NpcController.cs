@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.npc;
 using NettyBaseReloaded.Game.objects.world;
@@ -16,16 +17,19 @@ namespace NettyBaseReloaded.Game.controllers
 
         private INpc CurrentNpc { get; set; }
 
-        private DateTime RespawnTimer { get; set; }
-
         public NpcController(Character character) : base(character)
         {
             Npc = (Npc) character;
         }
 
+        public AILevels CustomSetAI = AILevels.NULL;
+
         public override void Initiate()
         {
-            var ai = (AILevels) Npc.Hangar.Ship.AI;
+            AILevels ai;
+            if (CustomSetAI == AILevels.NULL)
+                ai = (AILevels) Npc.Hangar.Ship.AI;
+            else ai = CustomSetAI;
             switch (ai)
             {
                 case AILevels.PASSIVE:
@@ -41,6 +45,9 @@ namespace NettyBaseReloaded.Game.controllers
                     break;
                 case AILevels.DAUGHTER:
                     CurrentNpc = new Daughter(this);
+                    break;
+                case AILevels.SPACEBALL:
+                    CurrentNpc = new Spaceball(this);
                     break;
             }
             Active = true;
@@ -78,6 +85,12 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void DelayedRestart()
         {
+            Task.Factory.StartNew(() =>
+            {
+                Thread.Sleep(Npc.RespawnTime * 1000);
+                if (StopController) return;
+                Restart();
+            });
             // TODO
             //RespawnTimer = DateTime.Now.AddSeconds(Npc.RespawnTime);
             //if (!StopController) return;
@@ -87,9 +100,20 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Restart()
         {
+            if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
+                Character.Spacemap.AddEntity(Character);
+
             if (!StopController) return;
             StopController = false;
             Initiate();
+        }
+
+        public Type GetAI() => CurrentNpc.GetType();
+
+        public void Enslave(Character ownedByCharacter, out Slave slave)
+        {
+            slave = new Slave(this, ownedByCharacter);
+            CurrentNpc = slave;
         }
     }
 }

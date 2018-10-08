@@ -66,5 +66,7 @@ namespace NettyBaseReloaded.Game.objects.world
             return attackable.Id != Id &&
                    Position.DistanceTo(attackable.Position) <= range;
         }
+
+        public virtual void Hit(int totalDamage, int attackerId) { }
     }
 }

@@ -262,8 +262,8 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.MaxShield,
                         player.CurrentHealth,
                         player.MaxHealth,
-                        player.Hangar.Ship.Cargo, //freeCargo
-                        player.Hangar.Ship.Cargo, //maxCargo
+                        player.Information.Cargo.TotalSpace - player.Information.Cargo.UsedSpace,
+                        player.Information.Cargo.TotalSpace,
                         player.CurrentNanoHull,
                         player.MaxNanoHull,
                         player.Position.X,
@@ -285,7 +285,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         true,
                         player.Invisible, //cloaked
                         true,
-                        new List<commands.new_client.VisualModifierCommand>()
+                        VisualEffect.ToNewModifierCommand(player)
                     ).Bytes);
             else
                 gameSession.Client.Send(
@@ -298,8 +298,8 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.MaxShield,
                         player.CurrentHealth,
                         player.MaxHealth,
-                        player.Hangar.Ship.Cargo,
-                        player.Hangar.Ship.Cargo,
+                        player.Information.Cargo.TotalSpace - player.Information.Cargo.UsedSpace,
+                        player.Information.Cargo.TotalSpace,
                         player.CurrentNanoHull,
                         player.MaxNanoHull,
                         player.Position.X,
@@ -322,7 +322,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         0,
                         true,
                         player.Invisible,
-                        new List<commands.old_client.VisualModifierCommand>()).Bytes);
+                        VisualEffect.ToOldModifierCommand(player)).Bytes);
         }
 
         #endregion
@@ -2186,6 +2186,66 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 gameSession.Client.Send(commands.old_client.PetHitpointsUpdateCommand.write(hitpointsNow, hitpointsMax, useRepairGear).Bytes);
+            }
+        }
+        #endregion
+
+        #region AttributeOreCountUpdateCommand
+
+        public void AttributeOreCountUpdateCommand(GameSession gameSession, Cargo cargo)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.AttributeOreCountUpdateCommand.write(Cargo.ParseOld(cargo.Seprom, cargo.Promerium, cargo.Xenomit, cargo.Duranium, cargo.Prometid, cargo.Terbium, cargo.Endurium, cargo.Prometium)).Bytes);
+            }
+        }
+        #endregion
+
+        #region LMCollectResourcesCommand
+
+        public void LMCollectResourcesCommand(GameSession gameSession, int seprom, int promerium, int xenomit, int duranium, int prometid, int terbium, int endurium, int prometium)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.LMCollectResourcesCommand.write(new LogMessengerPriorityModule(0), Cargo.ParseOld(seprom, promerium, xenomit, duranium, prometid, terbium, endurium, prometium)).Bytes);
+            }
+        }
+        #endregion
+
+        #region VisualModifierCommand
+
+        public void VisualModifierCommand(GameSession gameSession, VisualEffect visual)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.VisualModifierCommand.write(visual.Player.Id, (short)visual.Visual, visual.Attribute, visual.Active));
+            }
+        }
+        #endregion
+
+        #region LabUpdateItemCommand
+
+        public void LabUpdateItemCommand(GameSession gameSession, Skylab skylab)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.LabUpdateItemCommand.write(skylab.UpdateInfoOld()).Bytes);
             }
         }
         #endregion

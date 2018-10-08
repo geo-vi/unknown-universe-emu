@@ -30,6 +30,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Premium Premium { get; set; }
 
+        public Cargo Cargo { get; set; }
+
         public DateTime RegisteredTime { get; set; }
 
         public int Ranking { get; set; }
@@ -42,6 +44,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Uridium = new Uridium(player);
             Premium = new Premium();
             Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
+            Cargo = World.DatabaseManager.LoadCargo(player);
             UpdateAll();
             player.Ticked += Ticked;
         }

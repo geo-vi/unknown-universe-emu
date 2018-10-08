@@ -5,7 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main.global_managers;
 using NettyBaseReloaded.Main.objects;
 
@@ -29,12 +31,14 @@ namespace NettyBaseReloaded.Main.commands
                         worldSessions.Append($"{worldSession.Key}:{worldSession.Value.Player.Name} ");
                     StringBuilder chatSessions = new StringBuilder();
                     foreach (var chatSession in Chat.Chat.StorageManager.ChatSessions)
-                        worldSessions.Append($"{chatSession.Key}:{chatSession.Value.Character.Name} ");
+                        worldSessions.Append($"{chatSession.Key}:{chatSession.Value.Player.Name} ");
                     Console.WriteLine($"World sessions ({World.StorageManager.GameSessions.Count}): {worldSessions}\nChat sessions ({Chat.Chat.StorageManager.ChatSessions.Count}): {chatSessions}");
                     break;
                 case "mysql":
                     break;
             }
         }
+
+        public override void Execute(ChatSession session, string[] args = null) => Execute(args);
     }
 }

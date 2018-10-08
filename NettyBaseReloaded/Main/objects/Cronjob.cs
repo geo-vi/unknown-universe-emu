@@ -11,8 +11,6 @@ namespace NettyBaseReloaded.Main.objects
 {
     class Cronjob
     {
-        public static DebugLog Log = new DebugLog("cronlog");
-
         /// <summary>
         /// Cronjob ID - used for SQL identification
         /// </summary>
@@ -49,16 +47,16 @@ namespace NettyBaseReloaded.Main.objects
         {
             if (ExecuteStr.StartsWith("run"))
             {
-                var p = new Process();
-                p.StartInfo = FormatToProcessStartInfo();
-                p.OutputDataReceived += (sender, args) => Log.Write($"Data received from process: {args.Data} [{p.Id}]");
-                p.ErrorDataReceived += (sender, args) => Log.Write($"Error: {args.Data} [{p.Id}]");
-                p.Exited += (sender, args) => Log.Write($"Process exited [{p.Id}]");
-                p.Start();
-                Log.Write($"{p.StandardOutput.ReadToEndAsync().Result} [{p.Id}]");
-                Log.Write($"Process started with ID: {p.Id}");
-                p.BeginErrorReadLine();
-                p.BeginOutputReadLine();
+                //var p = new Process();
+                //p.StartInfo = FormatToProcessStartInfo();
+                //p.OutputDataReceived += (sender, args) => Log.Write($"Data received from process: {args.Data} [{p.Id}]");
+                //p.ErrorDataReceived += (sender, args) => Log.Write($"Error: {args.Data} [{p.Id}]");
+                //p.Exited += (sender, args) => Log.Write($"Process exited [{p.Id}]");
+                //p.Start();
+                //Log.Write($"{p.StandardOutput.ReadToEndAsync().Result} [{p.Id}]");
+                //Log.Write($"Process started with ID: {p.Id}");
+                //p.BeginErrorReadLine();
+                //p.BeginOutputReadLine();
             }
             ExecutionTime = DateTime.Now;
             PostExecution();

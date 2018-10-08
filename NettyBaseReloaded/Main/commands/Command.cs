@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using NettyBaseReloaded.Chat.objects;
 
 namespace NettyBaseReloaded.Main.commands
 {
-    public abstract class Command
+    abstract class Command
     {
         public class SubHelp
         {
@@ -50,5 +51,7 @@ namespace NettyBaseReloaded.Main.commands
         }
 
         public abstract void Execute(string[] args = null);
+
+        public abstract void Execute(ChatSession session, string[] args = null);
     }
 }

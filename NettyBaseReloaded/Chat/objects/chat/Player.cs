@@ -15,5 +15,14 @@ namespace NettyBaseReloaded.Chat.objects.chat
         {
 
         }
+
+        /// <summary>
+        /// returns session
+        /// </summary>
+        /// <returns></returns>
+        public ChatSession GetSession()
+        {
+            return Chat.StorageManager.GetChatSession(Id);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Main.commands
@@ -13,6 +14,10 @@ namespace NettyBaseReloaded.Main.commands
         public override void Execute(string[] args = null)
         {
             Draw.Logo();
+        }
+
+        public override void Execute(ChatSession session, string[] args = null)
+        {
         }
     }
 }

@@ -39,7 +39,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 return;
             }
 
-            Player.Log.Write($"Session received: {sessionId}->Database session: {Player.SessionId}");
             if (Player.SessionId != sessionId)
             {
                 ExecuteWrongSession();
@@ -59,7 +58,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
         private void ExecuteWrongSession()
         {
             Console.WriteLine($"{GameSession.Client.IPAddress} tried breaching into {GameSession.Client.UserId}'s account");
-            Player.Log.Write($"Breach attempt by {GameSession.Client.IPAddress}");
         }
 
         private GameSession CreateSession(GameClient client, Player player)

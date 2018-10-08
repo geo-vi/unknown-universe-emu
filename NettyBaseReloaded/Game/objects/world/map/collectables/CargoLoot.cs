@@ -18,10 +18,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
             Temporary = true;
             DelayedDispose(15000);
         }
-        
+
         protected override void Reward(Player player)
         {
-            Console.WriteLine("TODO: Cargobox reward");
+            Console.WriteLine("(CargoLoot) Rewarding player: " + player.Id);
+            player.Information.Cargo.Reward(Rewards);
         }
 
         public override int GetTypeId(Character character)

@@ -24,6 +24,20 @@ namespace NettyBaseReloaded.WebSocks.packets.handlers
 
             switch (packet[1])
             {
+                case "eq":
+                    if (player.State.InEquipmentArea)
+                    {
+                        player.Hangar.Configurations = World.DatabaseManager.LoadConfig(player);
+                        player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
+                        foreach (var playerEntity in player.Spacemap.Entities.Where(x => x.Value is Player))
+                        {
+                            var entitySession = World.StorageManager.GetGameSession(playerEntity.Value.Id);
+                            if (entitySession != null)
+                                Packet.Builder.DronesCommand(entitySession, player);
+                        }
+                        player.Refresh();
+                    }
+                    break;
                 case "drones":
                     player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
                     foreach (var playerEntity in player.Spacemap.Entities.Where(x => x.Value is Player))

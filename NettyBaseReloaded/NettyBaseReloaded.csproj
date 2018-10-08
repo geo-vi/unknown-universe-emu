@@ -81,7 +81,6 @@
       <DependentUpon>AdministratePlayers.cs</DependentUpon>
     </Compile>
     <Compile Include="Chat\Chat.cs" />
-    <Compile Include="Chat\commands\Command.cs" />
     <Compile Include="Chat\controllers\AbstractCharacterController.cs" />
     <Compile Include="Chat\controllers\BotController.cs" />
     <Compile Include="Chat\controllers\bots\Angery.cs" />
@@ -138,6 +137,8 @@
     <Compile Include="Game\controllers\npc\INpc.cs" />
     <Compile Include="Game\controllers\npc\Basic.cs" />
     <Compile Include="Game\controllers\npc\Mothership.cs" />
+    <Compile Include="Game\controllers\npc\Slave.cs" />
+    <Compile Include="Game\controllers\npc\Spaceball.cs" />
     <Compile Include="Game\controllers\PetController.cs" />
     <Compile Include="Game\controllers\pet\gears\AutoLootGear.cs" />
     <Compile Include="Game\controllers\pet\gears\AutoResourceCollectionGear.cs" />
@@ -269,6 +270,7 @@
     <Compile Include="Game\netty\commands\old_client\AttackMissedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttackTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\AttributeBoosterUpdateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\AttributeOreCountUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttributeShieldUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AttributeShipSpeedUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\AudioSettingsModule.cs" />
@@ -301,8 +303,11 @@
     <Compile Include="Game\netty\commands\old_client\KillScreenOptionTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenPostCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\KillScreenUpdateCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\LabUpdateItemCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LegacyModule.cs" />
     <Compile Include="Game\netty\commands\old_client\LevelUpCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\LMCollectResourcesCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\LogMessengerPriorityModule.cs" />
     <Compile Include="Game\netty\commands\old_client\LogoutCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\LootModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MapAddPOICommand.cs" />
@@ -311,6 +316,7 @@
     <Compile Include="Game\netty\commands\old_client\MessageWildcardReplacementModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MoveCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\NpcUndockCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\OreCountModule.cs" />
     <Compile Include="Game\netty\commands\old_client\OreTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PartnerTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PetActivationCommand.cs" />
@@ -371,6 +377,9 @@
     <Compile Include="Game\netty\commands\old_client\requests\HellstormLoadRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\HellstormSelectRocketRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\KillScreenRepairRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\LabItemModule.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\LabRefinementRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\LabUpdateItemRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\LogoutRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\MoveRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\PetGearActivationRequest.cs" />
@@ -398,6 +407,7 @@
     <Compile Include="Game\netty\commands\old_client\ShipWarpWindowCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\StationModuleModule.cs" />
     <Compile Include="Game\netty\commands\old_client\UILayerAdvertisementCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\UpdateItemModule.cs" />
     <Compile Include="Game\netty\commands\old_client\UserKeyBindingsModule.cs" />
     <Compile Include="Game\netty\commands\old_client\UserKeyBindingsUpdate.cs" />
     <Compile Include="Game\netty\commands\old_client\UserSettingsCommand.cs" />
@@ -429,6 +439,8 @@
     <Compile Include="Game\netty\handlers\ItemSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\JumpRequestHandler.cs" />
     <Compile Include="Game\netty\handlers\KillScreenRepairRequestHandler.cs" />
+    <Compile Include="Game\netty\handlers\LabRefinementHandler.cs" />
+    <Compile Include="Game\netty\handlers\LabUpdateItemHandler.cs" />
     <Compile Include="Game\netty\handlers\LegacySelectHandler.cs" />
     <Compile Include="Game\netty\handlers\LogoutHandler.cs" />
     <Compile Include="Game\netty\handlers\PetGearActivationHandler.cs" />
@@ -538,6 +550,7 @@
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone6.cs" />
     <Compile Include="Game\objects\world\npcs\Cubikon.cs" />
     <Compile Include="Game\objects\world\npcs\Hitac.cs" />
+    <Compile Include="Game\objects\world\npcs\Spaceball.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
     <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
@@ -600,6 +613,8 @@
     <Compile Include="Game\objects\world\players\Quest.cs" />
     <Compile Include="Game\objects\world\players\quests\player_quests\FlyNoDieQuest.cs" />
     <Compile Include="Game\objects\world\players\quests\player_quests\KillstreakQuest.cs" />
+    <Compile Include="Game\objects\world\players\quests\player_quests\MakeDemFlyQuest.cs" />
+    <Compile Include="Game\objects\world\players\quests\player_quests\StarterBaseQuest.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestAcceptability.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestCondition.cs" />
     <Compile Include="Game\objects\world\players\quests\QuestConditions.cs" />
@@ -610,6 +625,9 @@
     <Compile Include="Game\objects\world\players\quests\QuestTypes.cs" />
     <Compile Include="Game\objects\world\players\quests\quest_stats\FlyNoDieQuestStats.cs" />
     <Compile Include="Game\objects\world\players\quests\quest_stats\KillstreakQuestStat.cs" />
+    <Compile Include="Game\objects\world\players\quests\quest_stats\MakeDemFlyQuestStats.cs" />
+    <Compile Include="Game\objects\world\players\quests\quest_stats\StarterBaseQuestStats.cs" />
+    <Compile Include="Game\objects\world\players\Skylab.cs" />
     <Compile Include="Game\objects\world\players\Storage.cs" />
     <Compile Include="Game\objects\world\players\PlayerBaseClass.cs" />
     <Compile Include="Game\objects\world\players\Settings.cs" />
@@ -631,14 +649,7 @@
     <Compile Include="Game\objects\world\players\Statistics.cs" />
     <Compile Include="Game\objects\world\players\statistics\DeathStat.cs" />
     <Compile Include="Game\objects\world\players\VisualEffect.cs" />
-    <Compile Include="Logger\Creator.cs" />
-    <Compile Include="Logger\Log.cs" />
-    <Compile Include="Logger\types\DebugLog.cs" />
-    <Compile Include="Logger\types\ExceptionLog.cs" />
-    <Compile Include="Logger\types\ExecutableLog.cs" />
-    <Compile Include="Logger\types\PlayerLog.cs" />
-    <Compile Include="Logger\types\TaskLog.cs" />
-    <Compile Include="Logger\Writer.cs" />
+    <Compile Include="Main\ChatCommands.cs" />
     <Compile Include="Main\commands\CleanCommand.cs" />
     <Compile Include="Main\commands\Command.cs" />
     <Compile Include="Main\commands\CreateCommand.cs" />
@@ -647,11 +658,13 @@
     <Compile Include="Main\commands\DebugCommand.cs" />
     <Compile Include="Main\commands\DestroyCommand.cs" />
     <Compile Include="Main\commands\InfoCommand.cs" />
+    <Compile Include="Main\commands\RconCommand.cs" />
     <Compile Include="Main\commands\SetCommand.cs" />
     <Compile Include="Main\commands\PlayerCommand.cs" />
     <Compile Include="Main\commands\HelpCommand.cs" />
     <Compile Include="Main\commands\SpawnCommand.cs" />
     <Compile Include="Main\commands\StartCommand.cs" />
+    <Compile Include="Main\commands\WhisperCommand.cs" />
     <Compile Include="Main\ConsoleCommands.cs" />
     <Compile Include="Main\ConsoleMonitor.cs" />
     <Compile Include="Main\global_managers\CronjobManager.cs" />
@@ -732,6 +745,7 @@
       <DependentUpon>TextboxPopup.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\Random.cs" />
+    <Compile Include="Utils\SessionDirCreator.cs" />
     <Compile Include="WebSocks\objects\Payload.cs" />
     <Compile Include="WebSocks\objects\Server.cs" />
     <Compile Include="WebSocks\objects\User.cs" />

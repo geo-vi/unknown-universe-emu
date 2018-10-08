@@ -65,6 +65,8 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.QuestInfoRequest.ID, new QuestInfoHandler());
             OldClientCommands.Add(commands.old_client.requests.QuestCancelRequest.ID, new QuestCancelHandler());
             OldClientCommands.Add(commands.old_client.requests.QuestAcceptRequest.ID, new QuestAcceptHandler());
+            OldClientCommands.Add(commands.old_client.requests.LabRefinementRequest.ID, new LabRefinementHandler());
+            OldClientCommands.Add(commands.old_client.requests.LabUpdateItemRequest.ID, new LabUpdateItemHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

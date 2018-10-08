@@ -1,6 +1,0 @@
-﻿namespace NettyBaseReloaded
-{
-    class TaskLog
-    {
-    }
-}

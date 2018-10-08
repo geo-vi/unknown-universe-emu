@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using NettyBaseReloaded.Chat.controllers;
+using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Main.commands
@@ -17,7 +19,7 @@ namespace NettyBaseReloaded.Main.commands
 
             if (Args == null)
             {
-                Print();
+                Console.WriteLine(Print());
             }
             else
             {
@@ -25,13 +27,13 @@ namespace NettyBaseReloaded.Main.commands
                 {
                     try
                     {
-                        PrintPage(int.Parse(arg));
+                        Console.WriteLine(PrintPage(int.Parse(arg)));
                     }
                     catch (Exception)
                     {
                         if (arg != "help")
                         {
-                            PrintCmd(arg);
+                            Console.WriteLine(PrintCmd(arg));
                             return;
                         }
                     }
@@ -41,10 +43,43 @@ namespace NettyBaseReloaded.Main.commands
             Args = null;
         }
 
-        public void Print()
+        public override void Execute(ChatSession session, string[] args = null)
         {
-            Console.WriteLine(" -- - HELP - -- ");
-            Console.WriteLine();
+            if (args != null)
+                Args = args;
+
+            if (Args == null)
+            {
+                MessageController.System(session.Player, Print().ToString());
+            }
+            else
+            {
+                foreach (var arg in Args)
+                {
+                    try
+                    {
+                        MessageController.System(session.Player, PrintPage(int.Parse(arg)).ToString());
+                    }
+                    catch (Exception)
+                    {
+                        if (arg != "help")
+                        {
+                            MessageController.System(session.Player, PrintCmd(arg).ToString());
+                            return;
+                        }
+                    }
+                }
+            }
+
+            Args = null;
+        }
+
+
+        public StringBuilder Print()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(" -- - HELP - -- ");
+            builder.AppendLine();
 
             StringBuilder finalPrint = new StringBuilder();
 
@@ -56,36 +91,40 @@ namespace NettyBaseReloaded.Main.commands
 
                 if (i > 5)
                 {
-                    Console.WriteLine(finalPrint);
+                    builder.AppendLine(finalPrint.ToString());
                     finalPrint.Clear();
                 }
 
                 i++;
             }
 
-            Console.WriteLine(finalPrint);
-            Console.WriteLine(Environment.NewLine + "For looking up a command /help {command}");
+            builder.AppendLine(finalPrint.ToString());
+            builder.AppendLine(Environment.NewLine + "For looking up a command /help {command}");
+            return builder;
         }
 
-        public void PrintCmd(string cmd)
+        public StringBuilder PrintCmd(string cmd)
         {
+            StringBuilder builder = new StringBuilder();
             var command = ConsoleCommands.Commands[cmd];
-            if (command == null) return;
+            if (command == null) return builder;
 
-            Console.WriteLine("{0} - {1}", command.Name, command.Description);
+            builder.AppendLine($"{command.Name} - {command.Description}");
             if (command.HelpingParams != null)
             {
                 foreach (var helpingParam in command.HelpingParams)
                 {
                     if (helpingParam.Display)
-                        Console.WriteLine("> {0} - {1}", helpingParam.Name, helpingParam.Desc);
+                        builder.AppendLine($"> {helpingParam.Name} - {helpingParam.Desc}");
                 }
             }
+
+            return builder;
         }
 
-        public void PrintPage(int page)
+        public StringBuilder PrintPage(int page)
         {
-
+            return null;
         }
     }
 }

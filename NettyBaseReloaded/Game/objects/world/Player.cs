@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.controllers.login;
 using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
-using NettyBaseReloaded.Game.netty.commands;
-using NettyBaseReloaded.Game.netty.commands.old_client;
-using NettyBaseReloaded.Game.netty.packet;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
@@ -21,14 +14,9 @@ using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.extra;
-using NettyBaseReloaded.Game.objects.world.players.extra.boosters;
-using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
-using ClanRelationModule = NettyBaseReloaded.Game.netty.commands.new_client.ClanRelationModule;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
-using Range = NettyBaseReloaded.Game.objects.world.characters.Range;
 using State = NettyBaseReloaded.Game.objects.world.players.State;
-using NettyBaseReloaded.Game.objects.world.players.extra.techs;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -90,8 +78,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Storage Storage { get; private set; }
 
-        public PlayerLog Log { get; private set; }
-
         public List<Booster> Boosters { get; set; }
 
         public List<Ability> Abilities { get; set; }
@@ -105,6 +91,8 @@ namespace NettyBaseReloaded.Game.objects.world
         public List<Tech> Techs = new List<Tech>();
 
         public PlayerGates Gates { get; set; }
+
+        public Skylab Skylab { get; set; }
 
         /*********
          * STATS *
@@ -152,6 +140,8 @@ namespace NettyBaseReloaded.Game.objects.world
                         break;
                 }
                 value = (int)(value * Hangar.Ship.GetShieldBonus(this));
+
+                value += (int)(value * Skylab.GetShieldBonus());
 
                 return value;
             }
@@ -217,6 +207,9 @@ namespace NettyBaseReloaded.Game.objects.world
                         value = (int)(value * 0.85);
                         break;
                 }
+
+                value += (int)(value * Skylab.GetSpeedBonus());
+
                 if (BoostedAcceleration > 0)
                     value = (int)(value * (1 + BoostedAcceleration));
                 return value;
@@ -253,6 +246,8 @@ namespace NettyBaseReloaded.Game.objects.world
                         break;
                 }
 
+                value += (int)(value * Skylab.GetLaserDamageBonus());
+
                 if (BoostedDamage > 0)
                     value = (int)(value * Hangar.Ship.GetDamageBonus(this) * (1 + BoostedDamage));
                 else value = (int)(value * Hangar.Ship.GetDamageBonus(this));
@@ -280,6 +275,8 @@ namespace NettyBaseReloaded.Game.objects.world
                         value = (int)(value * 1.5); //+50%
                         break;
                 }
+
+                value += (int)(value * Skylab.GetRocketDamageBonus());
 
                 return value;
             }
@@ -353,6 +350,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 TickAbilities();
                 TickQuests();
                 TickAnnouncements();
+                Skylab.Tick();
             });
         }
 
@@ -403,11 +401,12 @@ namespace NettyBaseReloaded.Game.objects.world
             State = new State(this);
             Skills = World.DatabaseManager.LoadSkilltree(this);
             Storage = new Storage(this);
-            Log = new PlayerLog(SessionId);
             Boosters = new List<Booster>();
             Abilities = Hangar.Ship.Abilities(this);
             Settings = new Settings(this);
             CompletedQuests = World.DatabaseManager.LoadQuests(this);
+            Skylab = World.DatabaseManager.LoadSkylab(this);
+            Pet = World.DatabaseManager.LoadPet(this);
         }
 
         public void ClickableCheck(Object obj)
@@ -462,14 +461,15 @@ namespace NettyBaseReloaded.Game.objects.world
             var gameSession = World.StorageManager.GetGameSession(Id);
             if (gameSession == null) return;
             Packet.Builder.ShipInitializationCommand(gameSession);
+            Packet.Builder.MoveCommand(gameSession, this, 0);
             ILogin.SendLegacy(gameSession);
         }
 
         public override void SetPosition(Vector targetPosition)
         {
             ChangePosition(targetPosition);
+            MovementController.Move(this, targetPosition);
             Refresh();
-            MovementController.Move(this, MovementController.ActualPosition(this));
         }
 
         public void ChangePosition(Vector targetPosition)
@@ -741,6 +741,7 @@ namespace NettyBaseReloaded.Game.objects.world
             VirtualWorldId = vwid;
             Spacemap = map;
             Position = pos;
+            SetPosition(pos);
             Refresh();
             Spacemap.Entities.TryAdd(Id, this);
         }

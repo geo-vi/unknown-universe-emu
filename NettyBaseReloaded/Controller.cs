@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NettyBaseReloaded.Game;
-using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
 using NettyBaseReloaded.Properties;
@@ -52,7 +51,6 @@ namespace NettyBaseReloaded
             if (Global.State == State.LOADED) pictureBox1.BackColor = Color.GreenYellow;
             if (Global.State == State.READY) EnableControls();
             onlinePlayers.Text = World.StorageManager.GameSessions.Count.ToString();
-            errorCounter.Text = ExceptionLog.ERRORS_RECORDED.ToString();
         }
 
         private bool ControlsEnabled = false;
@@ -86,18 +84,18 @@ namespace NettyBaseReloaded
         {
             if (!Server.CONSOLE_MODE) return;
 
-            var logsFromNewestToOldest = DebugLog.LogsProcessed.ToList();
-            logsFromNewestToOldest.Reverse();
-            if (logsFromNewestToOldest.Count > 15)
-                logsFromNewestToOldest.RemoveRange(14, logsFromNewestToOldest.Count - 14);
-            logsFromNewestToOldest.Reverse();
-            PointF pos = new PointF(0, 0);
-            foreach (var line in logsFromNewestToOldest)
-            {
-                e.Graphics.DrawString(line, new Font(FontFamily.GenericMonospace, 7f),
-                    new SolidBrush(Color.GreenYellow), pos);
-                pos.Y += 8;
-            }
+            //var logsFromNewestToOldest = DebugLog.LogsProcessed.ToList();
+            //logsFromNewestToOldest.Reverse();
+            //if (logsFromNewestToOldest.Count > 15)
+            //    logsFromNewestToOldest.RemoveRange(14, logsFromNewestToOldest.Count - 14);
+            //logsFromNewestToOldest.Reverse();
+            //PointF pos = new PointF(0, 0);
+            //foreach (var line in logsFromNewestToOldest)
+            //{
+            //    e.Graphics.DrawString(line, new Font(FontFamily.GenericMonospace, 7f),
+            //        new SolidBrush(Color.GreenYellow), pos);
+            //    pos.Y += 8;
+            //}
 
             if (CMD_TXT != "")
             {
@@ -128,8 +126,8 @@ namespace NettyBaseReloaded
             if (e.KeyCode == Keys.Enter)
             {
                 //TODO: Execute command
-                if (CMD_TXT == "clean" || CMD_TXT == "clear") DebugLog.LogsProcessed.Clear();
-                CMD_TXT = "";
+                //if (CMD_TXT == "clean" || CMD_TXT == "clear") DebugLog.LogsProcessed.Clear();
+                //CMD_TXT = "";
             }
         }
     }

@@ -9,8 +9,6 @@ namespace NettyBaseReloaded.Main.interfaces
 {
     abstract class DBManagerUtils
     {
-        internal DebugLog Log => SqlDatabaseManager.Log;
-
         internal int intConv(object i) => Convert.ToInt32(i);
 
         internal double doubleConv(object i) => Convert.ToDouble(i);

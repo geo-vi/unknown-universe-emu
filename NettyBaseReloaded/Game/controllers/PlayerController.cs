@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.objects.world;
-using NettyBaseReloaded.Logger;
 using Range = NettyBaseReloaded.Game.controllers.player.Range;
 
 namespace NettyBaseReloaded.Game.controllers
@@ -65,7 +64,6 @@ namespace NettyBaseReloaded.Game.controllers
             }
             catch (Exception e)
             {
-                new ExceptionLog("playercontroller", "AddClasses, CheckedClasses", e);
             }
         }
         
@@ -86,7 +84,6 @@ namespace NettyBaseReloaded.Game.controllers
             }
             catch (Exception e)
             {
-                new ExceptionLog("playercontroller", "Tick, CheckedClasses", e);
             }
         }
 

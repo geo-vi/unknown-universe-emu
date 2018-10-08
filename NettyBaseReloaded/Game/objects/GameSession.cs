@@ -100,7 +100,6 @@ namespace NettyBaseReloaded.Game.objects
                 return;
             }
             PrepareForDisconnect();
-            Player.Log.Write($"User disconnected (Disconnection Type: {dcType})");
             Packet.Builder.LegacyModule(this, "ERR|2");
             Client.Disconnect();
             World.StorageManager.GameSessions.Remove(Player.Id);

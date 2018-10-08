@@ -33,11 +33,31 @@ namespace NettyBaseReloaded.Chat.packet
         public void SendRooms(ChatSession chatSession)
         {
             string packet = Constants.CMD_SET_USER_ROOMLIST + "%";
-            foreach (var roomConnected in chatSession.Character.ConnectedRooms.Values)
+            foreach (var roomConnected in chatSession.Player.ConnectedRooms.Values)
             {
                 packet += roomConnected.ToString();
             }
             Legacy(chatSession, packet);
+        }
+        #endregion
+
+        #region Whisper
+        public void Whisper(ChatSession session, string from, string msg)
+        {
+            Legacy(session, $"cv%{from}@{msg}");
+        }
+
+        public void WhisperTo(ChatSession session, string to, string msg)
+        {
+            Legacy(session, $"cw%{to}@{msg}");
+        }
+        #endregion
+
+        #region User Not Exist
+
+        public void UserNotExist(ChatSession session)
+        {
+            Legacy(session, "ct");
         }
         #endregion
     }

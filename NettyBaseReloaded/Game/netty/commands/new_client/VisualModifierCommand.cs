@@ -76,7 +76,7 @@ namespace NettyBaseReloaded.Game.netty.commands.new_client
         public bool activated = false;
         public short modifier = 0;
 
-        public VisualModifierCommand(bool activated, short modifier, string varl11, int attribute, int userId, int count)
+        public VisualModifierCommand(int userId, short modifier, int attribute, bool activated, string varl11, int count)
         {
             this.activated = activated;
             this.modifier = modifier;

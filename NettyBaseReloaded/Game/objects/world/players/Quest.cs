@@ -18,7 +18,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public static List<Quest> Quests = new List<Quest>
         {
-            new KillstreakQuest(null, new KillstreakQuestStat())
+            //new KillstreakQuest(null, new KillstreakQuestStat()),
+            //new FlyNoDieQuest(null, new FlyNoDieQuestStats()),
+            new StarterBaseQuest(null, new StarterBaseQuestStats()) ,
+            new MakeDemFlyQuest(null, new MakeDemFlyQuestStats())
         };
 
 

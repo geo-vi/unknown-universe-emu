@@ -22,6 +22,7 @@ using NettyBaseReloaded.Game.objects.world.map.objects.stations;
 using NettyBaseReloaded.Game.objects.world.map.ores;
 using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.map.zones.pallazones;
+using NettyBaseReloaded.Game.objects.world.npcs;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using Types = NettyBaseReloaded.Game.objects.world.map.collectables.Types;
 
@@ -364,8 +365,34 @@ namespace NettyBaseReloaded.Game.objects.world
                 Global.TickManager.Add(npc);
             npc.Controller = new NpcController(npc);
             npc.Controller.Initiate();
-            World.Log.Write("Created NPC[" + npc.Id + ", " + npc.Hangar.Ship.ToStringLoot() + "] on mapId " + Id);
+            Out.WriteLog("Created NPC [" + npc.Id + ", " + npc.Hangar.Ship.ToStringLoot() + "] on mapId " + Id);
         }
+
+        public void CreateCubikon(Vector position)
+        {
+            var id = GetNextAvailableId();
+            var ship = World.StorageManager.Ships[80];
+            var npc = new Cubikon(id, ship.Name,
+                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
+                    new Dictionary<string, Item>()),
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                ship.Damage, 10);
+
+            if (Entities.ContainsKey(npc.Id))
+            {
+                if (Properties.Server.DEBUG)
+                    Console.WriteLine(id + "#Failed adding NPC");
+                return;
+            }
+
+            AddEntity(npc);
+
+            if (!Global.TickManager.Exists(npc))
+                Global.TickManager.Add(npc);
+            npc.Controller = new NpcController(npc) { CustomSetAI = AILevels.MOTHERSHIP };
+            npc.Controller.Initiate();
+        }
+
 
         #endregion
 
@@ -394,7 +421,7 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 CreatePortal(portal.Map, portal.x, portal.y, portal.newX, portal.newY);
             }
-            World.Log.Write("Loaded objects on mapId " + Id);
+            Out.WriteLog("Loaded objects on mapId " + Id);
         }
 
         public void DisablePortals(List<int> destinations = null)
@@ -418,7 +445,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var zoneId = GetNextZoneId();
             if (!Pvp)
                 Zones.Add(zoneId, new DemiZone(zoneId, new Vector(x - 500, y + 500), new Vector(x + 500, y - 500), Faction.NONE));
-            World.Log.Write("Created Portal on mapId " + Id);
+            Out.WriteLog("Created Portal on mapId " + Id);
         }
 
         public void DisablePortal(int id, string disableMsg = "")
@@ -440,7 +467,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             AddObject(new Jumpgate(id, 0, new Vector(x, y), this, new Vector(newX, newY), map, false, 0, 0, 0));
-            World.Log.Write("Created Portal on mapId " + Id);
+            Out.WriteLog("Created Portal on mapId " + Id);
         }
 
 
@@ -466,35 +493,35 @@ namespace NettyBaseReloaded.Game.objects.world
 
             var zoneId = GetNextZoneId();
             Zones.Add(zoneId, new DemiZone(zoneId, new Vector(position.X - 1000, position.Y + 1000), new Vector(position.X + 1000, position.Y - 1000), faction));
-            World.Log.Write("Created Station on mapId " + Id);
+            Out.WriteLog("Created Station on mapId " + Id);
         }
 
         public void CreatePirateStation(Vector vector)
         {
             var id = GetNextObjectId();
             AddObject(new PirateStation(id, vector, this));
-            World.Log.Write("Created Pirate Station on mapId " + Id);
+            Out.WriteLog("Created Pirate Station on mapId " + Id);
         }
 
         public void CreateHealthStation(Vector vector)
         {
             var id = GetNextObjectId();
             AddObject(new HealthStation(id, vector, this));
-            World.Log.Write("Created Health Station on mapId " + Id);
+            Out.WriteLog("Created Health Station on mapId " + Id);
         }
 
         public void CreateRelayStation(Vector vector)
         {
             var id = GetNextObjectId();
             AddObject(new RelayStation(id, vector, this));
-            World.Log.Write("Created Relay Station on mapId " + Id);
+            Out.WriteLog("Created Relay Station on mapId " + Id);
         }
 
         public void CreateReadyRelayStation(Vector vector)
         {
             var id = GetNextObjectId();
             AddObject(new ReadyRelayStation(id, vector, this));
-            World.Log.Write("Created Relay Station on mapId " + Id);
+            Out.WriteLog("Created Relay Station on mapId " + Id);
         }
 
         public void CreateQuestGiver(Faction faction, Vector pos)
@@ -504,7 +531,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var questGiver = new QuestGiver(id, questGiverId, faction, pos, this);
             World.StorageManager.QuestGivers.Add(questGiverId, questGiver);
             AddObject(questGiver);
-            World.Log.Write("Created Quest Giver on mapId " + Id);
+            Out.WriteLog("Created Quest Giver on mapId " + Id);
         }
 
         public void CreateAsteroid(string name, Vector pos)
@@ -513,7 +540,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var bStation = World.StorageManager.ClanBattleStations.Count;
             World.StorageManager.ClanBattleStations.Add(bStation, null);
             AddObject(new Asteroid(id, bStation, name, pos, this));
-            World.Log.Write("Created Asteroid on mapId " + Id);
+            Out.WriteLog("Created Asteroid on mapId " + Id);
         }
 
         public void CreateAdvertisementBanner(short advertiser, Vector pos)
@@ -533,7 +560,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var box = new PalladiumOre(id, hash, type, pos, this, limits);
             HashedObjects[hash] = box;
             if(AddObject(box))
-                World.Log.Write("Created Ore["+type+"] on mapId " + Id);
+                Out.WriteLog("Created Ore["+type+"] on mapId " + Id);
         }
 
         public void CreateBox(Types type, Vector pos, Vector[] limits)
@@ -543,7 +570,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var box = new BonusBox(id, hash, pos, this, limits,true);
             HashedObjects[hash] = box;
             if (AddObject(box))
-                World.Log.Write("Created Box[" + type + "] on mapId " + Id);
+                Out.WriteLog("Created Box[" + type + "] on mapId " + Id);
         }
 
         public void CreateShipLoot(Vector position, DropableRewards content, Character killer)
@@ -556,7 +583,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 var box = new CargoLoot(id, hash, position, content, killer);
                 HashedObjects[hash] = box;
                 if (AddObject(box))
-                    World.Log.Write($"Created cargo loot ({position.X},{position.Y}) on mapId " + Id);
+                    Out.WriteLog($"Created cargo loot ({position.X},{position.Y}) on mapId " + Id);
             }
         }
 

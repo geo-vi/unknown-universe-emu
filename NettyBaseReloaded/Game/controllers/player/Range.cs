@@ -51,7 +51,6 @@ namespace NettyBaseReloaded.Game.controllers.player
             }
             catch (Exception e)
             {
-                new ExceptionLog("player_range", "Range Zones", e);
             }
             LastTimeCheckedZones = DateTime.Now;
         }
@@ -89,7 +88,6 @@ namespace NettyBaseReloaded.Game.controllers.player
             }
             catch (Exception e)
             {
-                new ExceptionLog("player_range_object", "Range Objects", e);
             }
             LastTimeCheckedObjects = DateTime.Now;
         }

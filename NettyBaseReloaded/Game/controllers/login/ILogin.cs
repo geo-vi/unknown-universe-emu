@@ -13,6 +13,7 @@ using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.map.objects.stations;
 using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.players.extra.techs;
+using NettyBaseReloaded.Game.objects.world.players.informations;
 using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
 
 namespace NettyBaseReloaded.Game.controllers.login
@@ -99,6 +100,8 @@ namespace NettyBaseReloaded.Game.controllers.login
             CreateFormations(GameSession);
             CreateTechs(GameSession);
             CreateAbilities(GameSession);
+
+            Packet.Builder.AttributeOreCountUpdateCommand(GameSession, GameSession.Player.Information.Cargo);
             //Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
         }
 

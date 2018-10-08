@@ -45,7 +45,7 @@ namespace NettyBaseReloaded.Chat.managers
             }
             catch (Exception e)
             {
-                new ExceptionLog("dbmanager", "Failed to load chat moderators...", e);
+                //new ExceptionLog("dbmanager", "Failed to load chat moderators...", e);
             }
         }
 
@@ -109,9 +109,9 @@ namespace NettyBaseReloaded.Chat.managers
             return mod;
         }
 
-        public Character LoadCharacter(int id)
+        public Player LoadPlayer(int id)
         {
-            Character character = null;
+            Player player = null;
             try
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
@@ -121,16 +121,16 @@ namespace NettyBaseReloaded.Chat.managers
                     string sessionId = queryRow["SESSION_ID"].ToString();
                     int clanId = intConv(queryRow["CLAN_ID"]);
                     var clan = Main.Global.StorageManager.GetClan(clanId);
-                    
-                    character = new Player(id, name, sessionId, clan);
+
+                    player = new Player(id, name, sessionId, clan);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                new ExceptionLog("dbmanager", "Failed to load character...", e);
+                //new ExceptionLog("dbmanager", "Failed to load character...", e);
             }
-            return character;
+            return player;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.WebSocks
         public static void InitiateListener()
         {
             var wssv = new WebSocketServer(666);
-            wssv.AddWebSocketService<WebSocketReceiver>("/shoplistener");
+            wssv.AddWebSocketService<WebSocketReceiver>("/cmslistener");
             wssv.AddWebSocketService<WebSocketReceiver>("/external");
             wssv.Start();
         }

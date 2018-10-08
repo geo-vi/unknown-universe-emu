@@ -29,11 +29,17 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client
       
         public const short PALLADIUM = 8;
 
-        public short typeValue { get; }
+        public short typeValue { get; set; }
 
         public OreTypeModule(short typeValue)
         {
             this.typeValue = typeValue;
+        }
+
+        public void read(ByteParser parser)
+        {
+            parser.readShort();
+            typeValue = parser.readShort();
         }
 
         public byte[] write()

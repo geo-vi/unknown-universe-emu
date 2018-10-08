@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.objects;
+using NettyBaseReloaded.Game.objects.world;
 
 namespace NettyBaseReloaded.Main.commands
 {
@@ -17,8 +20,14 @@ namespace NettyBaseReloaded.Main.commands
         {
             if (args != null && args.Length == 4)
             {
-                var playerId = int.Parse(args[2]);
-                var gs = World.StorageManager.GetGameSession(playerId);
+                int playerId = 0;
+                GameSession gs = null;
+                if (int.TryParse(args[2], out playerId))
+                {
+                    playerId = int.Parse(args[2]);
+                    gs = World.StorageManager.GetGameSession(playerId);
+                }
+                else gs = World.StorageManager.GetGameSession(args[2]);
                 if (gs == null) return;
                 var value = args[3];
                 switch (args[1])
@@ -32,6 +41,19 @@ namespace NettyBaseReloaded.Main.commands
 
                 }
             }
+        }
+
+        public override void Execute(ChatSession session, string[] args = null)
+        {
+            var id = session.Player.Id;
+            var sessionId = session.Player.SessionId;
+            var worldSession = World.StorageManager.GetGameSession(id);
+            if (worldSession != null && worldSession.Player.Id == id && worldSession.Player.SessionId == sessionId &&
+                worldSession.Player.RankId == Rank.ADMINISTRATOR)
+            {
+                Execute(args);
+            }
+
         }
     }
 }

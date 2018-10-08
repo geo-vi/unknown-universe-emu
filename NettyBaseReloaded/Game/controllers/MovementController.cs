@@ -28,6 +28,10 @@ namespace NettyBaseReloaded.Game.controllers
             GameClient.SendRangePacket(character,
                 netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y,
                     character.MovementTime));
+            GameClient.SendRangePacket(character,
+                netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y,
+                    character.MovementTime));
+
             //GameClient.SendToSpacemap(character.Spacemap, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
 
         }
@@ -56,7 +60,6 @@ namespace NettyBaseReloaded.Game.controllers
             }
             catch (Exception e)
             {
-                new ExceptionLog("moveController", "GetTime", e);
             }
             return -1;
         }
@@ -99,6 +102,19 @@ namespace NettyBaseReloaded.Game.controllers
             character.Position = actualPosition;
 
             return actualPosition;
+        }
+
+        public static void Follow(Character character, Character target, bool predictNextMove = false)
+        {
+            if (predictNextMove)
+            {
+                if (character.Destination == character.Position) return;
+
+            }
+            else
+            {
+
+            }
         }
     }
 }

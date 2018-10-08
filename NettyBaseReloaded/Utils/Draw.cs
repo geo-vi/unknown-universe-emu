@@ -27,9 +27,6 @@ namespace NettyBaseReloaded.Utils
                 / /_/ / / / / /| |/ /  __/ /  (__  )  __/
                 \____/_/ /_/_/ |___/\___/_/  /____/\___/
 
-
-                         ---- We are awesome! ---
-
                                                         ";
             Console.WriteLine(logo);
             Console.ForegroundColor = oldColor;

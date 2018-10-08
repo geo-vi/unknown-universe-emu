@@ -4,7 +4,7 @@ using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Chat.objects.chat
 {
-    class Moderator : Character
+    class Moderator : Player
     {
         public enum Level
         {

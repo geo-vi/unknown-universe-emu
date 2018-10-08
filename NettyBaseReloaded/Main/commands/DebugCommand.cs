@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects.world;
 
 namespace NettyBaseReloaded.Main.commands
 {
@@ -98,6 +100,19 @@ namespace NettyBaseReloaded.Main.commands
                     }
                     break;
             }
+        }
+
+        public override void Execute(ChatSession session, string[] args = null)
+        {
+            var id = session.Player.Id;
+            var sessionId = session.Player.SessionId;
+            var worldSession = World.StorageManager.GetGameSession(id);
+            if (worldSession != null && worldSession.Player.Id == id && worldSession.Player.SessionId == sessionId &&
+                worldSession.Player.RankId == Rank.ADMINISTRATOR)
+            {
+                Execute(args);
+            }
+
         }
     }
 }

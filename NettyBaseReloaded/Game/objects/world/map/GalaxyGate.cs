@@ -128,7 +128,6 @@ namespace NettyBaseReloaded.Game.objects.world.map
             {
                 Console.WriteLine("TICK");
                 Console.WriteLine(e);
-                new ExceptionLog("low-tick", "", e);
             }
         }
 

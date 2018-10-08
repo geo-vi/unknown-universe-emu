@@ -14,7 +14,7 @@ namespace NettyBaseReloaded.Chat.controllers
         {
             ChatSession = chatSession;
 
-            if (AllowedToEnter() || chatSession.Character is Moderator)
+            if (AllowedToEnter() || chatSession.Player is Moderator)
             {
                 if (Properties.Server.LOCKED) Locked();
                 else RegularLogin();
@@ -23,7 +23,7 @@ namespace NettyBaseReloaded.Chat.controllers
 
         public bool AllowedToEnter()
         {
-            var id = ChatSession.Character.Id;
+            var id = ChatSession.Player.Id;
             return true;
         }
 
@@ -34,13 +34,13 @@ namespace NettyBaseReloaded.Chat.controllers
 
         public void RegularLogin()
         {
-            var character = ChatSession.Character;
+            var player = ChatSession.Player;
 
-            character.ConnectToRoom(0);
+            player.ConnectToRoom(0);
 
-            Packet.Builder.Legacy(ChatSession, "bv%" + character.Id);
+            Packet.Builder.Legacy(ChatSession, "bv%" + player.Id);
 
-            if (character is Moderator)
+            if (player is Moderator)
                 Packet.Builder.SystemMessage(ChatSession, Properties.Chat.MOD_LOGIN_MSG);
             else Packet.Builder.SystemMessage(ChatSession, Properties.Chat.USER_LOGIN_MSG);
 

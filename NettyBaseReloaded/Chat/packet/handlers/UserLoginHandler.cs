@@ -22,16 +22,16 @@ namespace NettyBaseReloaded.Chat.packet.handlers
             string version = packet[8];
 
             client.UserId = id;
-            Character character = Chat.DatabaseManager.LoadCharacter(id);
-            if (character == null) return;
-            if (!ValidateSession(character, sessionId))
+            var player = Chat.DatabaseManager.LoadPlayer(id);
+            if (player == null) return;
+            if (!ValidateSession(player, sessionId))
             {
                 //send msg
                 Console.WriteLine("Invalid login.");
                 return;
             }
 
-            var chatSession = new ChatSession(character) {Client = client};
+            var chatSession = new ChatSession(player) {Client = client};
 
             if (Chat.StorageManager.ChatSessions.ContainsKey(id))
                 Chat.StorageManager.ChatSessions[id] = chatSession;

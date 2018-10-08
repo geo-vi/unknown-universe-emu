@@ -33,5 +33,11 @@ namespace NettyBaseReloaded.Game.managers
         {
             return GameSessions.ContainsKey(userId) ? GameSessions[userId] : null;
         }
+
+        public GameSession GetGameSession(string name)
+        {
+            var val = GameSessions.FirstOrDefault(x => x.Value.Player.Name == name);
+            return val.Value;
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.npcs;
 using NettyBaseReloaded.Game.objects.world.players;
 
 namespace NettyBaseReloaded.Game.objects.world
@@ -22,7 +23,6 @@ namespace NettyBaseReloaded.Game.objects.world
     }
     class Npc : Character
     {
-        public static DebugLog Log = new DebugLog("npc");
         /**********
          * BASICS *
          **********/
@@ -74,6 +74,16 @@ namespace NettyBaseReloaded.Game.objects.world
         public new void Tick()
         {
             Controller.Tick();
+        }
+
+        public override void Destroy(Character destroyer)
+        {
+            base.Destroy(destroyer);
+            if (MotherShip != null && MotherShip is Cubikon cubi)
+            {
+                Npc removedNpc;
+                cubi.Children.TryRemove(Id, out removedNpc);
+            }
         }
     }
 }

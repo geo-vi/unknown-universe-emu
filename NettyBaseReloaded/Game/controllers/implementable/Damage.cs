@@ -203,6 +203,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public static void Entity(IAttackable target, int totalDamage, Types damageType, int attackerId = 0, double shieldPenetration = 1, int totalAbsDamage = 0, bool direct = false)
         {
             if (target == null) return;
+            if (totalAbsDamage == 0 && totalDamage == 0)
+            {
+                foreach (var session in AssembleSelectedSessions(target))
+                    Packet.Builder.AttackHitCommand(session, attackerId, target, 0, (short)damageType);
+                return;
+            }
             Character attacker = null;
             if (attackerId != 0 && target.Spacemap.Entities.ContainsKey(attackerId))
                 attacker = target.Spacemap.Entities[attackerId];
@@ -280,6 +286,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
 
             #endregion
+
+            target.Hit(totalDamage, attackerId);
 
             foreach (var session in AssembleSelectedSessions(target))
                 Packet.Builder.AttackHitCommand(session, attackerId, target, totalDamage + totalAbsDamage, (short)damageType);

@@ -141,7 +141,6 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                new ExceptionLog("low", "", e);
             }
         }
 

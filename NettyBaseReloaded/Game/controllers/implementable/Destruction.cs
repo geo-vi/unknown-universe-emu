@@ -155,7 +155,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             catch (Exception e)
             {
-                new ExceptionLog("destruction", "Destroy", e);
             }
         }
 

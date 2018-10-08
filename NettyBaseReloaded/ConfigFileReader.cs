@@ -50,7 +50,7 @@ namespace NettyBaseReloaded
                     }
                 }
             }
-            Program.Log.Write("Finished reading server.cfg");
+            Out.WriteLog("Finished reading server.cfg");
         }
 
         public static void ReadGameConfig()
@@ -74,7 +74,7 @@ namespace NettyBaseReloaded
                     }
                 }
             }
-            Program.Log.Write("Finished reading game.cfg");
+            Out.WriteLog("Finished reading game.cfg");
         }
 
         public static void ReadMySQLConfig()
@@ -107,7 +107,7 @@ namespace NettyBaseReloaded
                     }
                 }
             }
-            Program.Log.Write("Finished reading mysql.cfg");
+            Out.WriteLog("Finished reading mysql.cfg");
         }
     }
 }

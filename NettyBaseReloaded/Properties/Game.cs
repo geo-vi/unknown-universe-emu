@@ -25,7 +25,7 @@
         /// <summary>
         /// Printing once player connects
         /// </summary>
-        public static bool PRINTING_CONNECTIONS = false;
+        public static bool PRINTING_CONNECTIONS = true;
 
         public static int REWARD_MULTIPLYER = 2;
     }

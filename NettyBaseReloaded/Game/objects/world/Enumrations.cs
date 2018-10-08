@@ -110,7 +110,10 @@ namespace NettyBaseReloaded.Game.objects.world
         MOTHERSHIP,
         DAUGHTER,
         GALAXY_GATES,
-        INVASION
+        INVASION,
+        SLAVE,
+        SPACEBALL,
+        NULL
     }
 
     public enum ShipVisuals
@@ -159,6 +162,19 @@ namespace NettyBaseReloaded.Game.objects.world
         FINISHED,
         FAILED_CARGO_FULL,
         FAILED_ALREADY_COLLECTED
+    }
+
+    enum Ores
+    {
+        PROMETIUM,
+        ENDURIUM,
+        TERBIUM,
+        XENOMIT,
+        PROMETID,
+        DURANIUM,
+        PROMERIUM,
+        SEPROM,
+        PALLADIUM
     }
     #pragma warning restore 1591
 

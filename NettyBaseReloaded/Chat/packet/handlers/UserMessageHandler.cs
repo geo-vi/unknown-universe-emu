@@ -11,8 +11,8 @@ namespace NettyBaseReloaded.Chat.packet.handlers
             var roomId = int.Parse(param[1]);
             var message = param[2];
 
-            if (chatSession.Character.ConnectedToRoom(roomId))
-                MessageController.Send(chatSession.Character, roomId, message);
+            if (chatSession.Player.ConnectedToRoom(roomId))
+                MessageController.Send(chatSession.Player, roomId, message);
         }
     }
 }

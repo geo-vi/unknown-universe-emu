@@ -109,7 +109,7 @@ namespace NettyBaseReloaded.Networking
             }
             catch (Exception e)
             {
-                Out.WriteLine("Something went wrong sending a range packet.", "ERROR", ConsoleColor.Red);
+                Out.WriteLog("Something went wrong sending a range packet.", "ERROR");
                 Debug.WriteLine(e.Message, "Debug Error");
             }
         }
@@ -175,7 +175,7 @@ namespace NettyBaseReloaded.Networking
             }
             catch (Exception e)
             {
-                Out.WriteLine("Something went wrong sending a range packet.", "ERROR", ConsoleColor.Red);
+                Out.WriteLog("Something went wrong sending a range packet.", "ERROR");
                 Debug.WriteLine(e.Message, "Debug Error");
             }
         }
@@ -202,7 +202,7 @@ namespace NettyBaseReloaded.Networking
             }
             catch (Exception e)
             {
-                Out.WriteLine("Something went wrong sending a spacemap packet.", "ERROR", ConsoleColor.Red);
+                Out.WriteLog("Something went wrong sending a spacemap packet.", "ERROR");
                 Debug.WriteLine(e.Message, "Debug Error");
 
             }
@@ -217,7 +217,7 @@ namespace NettyBaseReloaded.Networking
             }
             catch (Exception)
             {
-                Out.WriteLine("Error disconnecting user from Game", "GAME", ConsoleColor.DarkRed);
+                Out.WriteLog("Error disconnecting user from Game", "GAME");
             }
         }
 

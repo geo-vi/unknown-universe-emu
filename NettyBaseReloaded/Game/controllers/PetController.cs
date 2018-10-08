@@ -61,8 +61,8 @@ namespace NettyBaseReloaded.Game.controllers
             StopAll();
             Shutdown?.Invoke(this, EventArgs.Empty);
             Checkers.Stop();
-            Pet.Gears.Clear();
             Gear = null;
+            Pet.Gears.Clear();
         }
 
         public new void Tick()

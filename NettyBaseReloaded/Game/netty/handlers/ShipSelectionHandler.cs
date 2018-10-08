@@ -46,6 +46,16 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
                     gameSession.Player.Selected = entity;
                     Packet.Builder.ShipSelectionCommand(gameSession, entity);
+                    if (gameSession.Player.RankId == Rank.ADMINISTRATOR)
+                    {
+                        var msg =
+                            $"0|A|STD|{entity.Id}#{entity.Name}\nd.{Math.Round(entity.Position.DistanceTo(gameSession.Player.Position))} [{entity.Position.ToString()}]";
+                        if (entity is Npc n)
+                        {
+                            msg += "\n" + n.Controller.GetAI().Name;
+                        }
+                        Packet.Builder.LegacyModule(gameSession, msg);
+                    }
                 }
             }
             else if (spacemap.Objects.ContainsKey(targetId))

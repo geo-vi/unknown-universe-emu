@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using NettyBaseReloaded.Logger;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Properties;
@@ -40,7 +39,9 @@ namespace NettyBaseReloaded
 
         public static string SERVER_SESSION = "";
 
-        public static DebugLog Log;
+        //public static DebugLog Log;
+
+        private static bool INTERACTIVE_CONSOLE = false;
 
         public static void Main(string[] args)
         {
@@ -56,12 +57,14 @@ namespace NettyBaseReloaded
 
         private static void InitiateConsole()
         {
-            DisableSizing();
-
-            //Console.SetOut(new Out());
-            Console.CursorVisible = false;
-
             Draw.Logo();
+
+            if (INTERACTIVE_CONSOLE)
+            {
+                DisableSizing();
+                Console.CursorVisible = false;
+            }
+
 
             //TODO: Add QuestBuilder();
             //RewardBuilder();
@@ -133,7 +136,7 @@ namespace NettyBaseReloaded
         /// <param name="e"></param>
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
-            new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
+            //new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
             Environment.Exit(0);
             // TODO: Save everything and then fuck up
         }
@@ -141,7 +144,7 @@ namespace NettyBaseReloaded
 
         private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs threadExceptionEventArgs)
         {
-            new ExceptionLog("thread_exception", $"Unhandled thread exception trapped and logged", threadExceptionEventArgs.Exception);
+            //new ExceptionLog("thread_exception", $"Unhandled thread exception trapped and logged", threadExceptionEventArgs.Exception);
             Environment.Exit(0);
         }
 
@@ -167,8 +170,8 @@ namespace NettyBaseReloaded
 
             while (true)
             {
-                ConsoleMonitor.Check();
-                ConsoleMonitor.Update();
+                //ConsoleMonitor.Check();
+                ConsoleMonitor.Update(INTERACTIVE_CONSOLE);
                 await Task.Delay(1000);
             }
         }
@@ -204,7 +207,7 @@ namespace NettyBaseReloaded
         /// </summary>
         static void LookForConfigFiles()
         {
-            Log.Write("Looking for config files");
+            Out.WriteLog("Looking for config files");
             if (File.Exists(Directory.GetCurrentDirectory() + "/server.cfg")) ConfigFileReader.ReadServerConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/game.cfg")) ConfigFileReader.ReadGameConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/mysql.cfg")) ConfigFileReader.ReadMySQLConfig();
@@ -223,7 +226,6 @@ namespace NettyBaseReloaded
         static void InitiateServer()
         {
             if (ServerUp) return;
-            Console.WriteLine("Initiating..");
             LoadLogger();
             LookForConfigFiles();
             Global.Start();
@@ -241,10 +243,9 @@ namespace NettyBaseReloaded
         {
             if (!Server.LOGGING) return;
 
-            Creator.InitializeSession();
-            Log = new DebugLog("core");
-            Log.Write("Logger succesfully loaded.");
-            Log.Write("Testing... 1 2 3");
+            Utils.SessionDirCreator.InitializeSession();
+            Out.WriteLog("Logger succesfully loaded.");
+            Out.WriteLog("Testing... 1 2 3");
         }
 
         static void ParseXML()

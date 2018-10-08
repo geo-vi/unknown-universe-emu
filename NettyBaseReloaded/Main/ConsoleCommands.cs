@@ -4,7 +4,7 @@ using NettyBaseReloaded.Main.commands;
 
 namespace NettyBaseReloaded.Main
 {
-    public class ConsoleCommands
+    class ConsoleCommands
     {
         public static Dictionary<string, Command> Commands = new Dictionary<string, Command>();
 
@@ -19,6 +19,9 @@ namespace NettyBaseReloaded.Main
             Commands.Add("start", new StartCommand());
             Commands.Add("info", new InfoCommand());
             Commands.Add("create", new CreateCommand());
+            Commands.Add("rcon", new RconCommand());
+            Commands.Add("w", new WhisperCommand());
+            ChatCommands.Add();
         }
 
         public static void Handle(string txt)

@@ -269,5 +269,29 @@ namespace NettyBaseReloaded.Game.objects.world
             }
             destroyer.Controller.Destruction.Destroy(this);
         }
+
+        /// <summary>
+        /// Will resend remove & add to everyone nearby
+        /// </summary>
+        public void RefreshPlayersView()
+        {
+            foreach (var rangeCharacter in Range.Entities.Values.Where(x => x is Player))
+            {
+                var rangePlayer = rangeCharacter as Player;
+                var session = rangePlayer.GetGameSession();
+                if (session == null) return;
+                Packet.Builder.ShipRemoveCommand(session, this);
+                Packet.Builder.ShipCreateCommand(session, this);
+            }
+
+            if (this is Player p)
+            {
+                var session = p.GetGameSession();
+                if (session == null) return;
+
+                Packet.Builder.ShipRemoveCommand(session, this);
+                p.Refresh();
+            }
+        }
     }
 }

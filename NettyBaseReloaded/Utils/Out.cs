@@ -1,46 +1,21 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded
 {
-    class Out : TextWriter
+    class Out
     {
         private static object WriteLock = new object();
 
-        /// <summary>
-        /// That should replace the Console.WriteLine with a little more ordered version.
-        /// </summary>
-        /// <param name="message">That's where the input text goes</param>
-        /// <param name="header">This parameter is optional and it stands for the [header] before the text</param>
-        /// <param name="color">This parameter is optional and it is chosing the color you would like the text to be</param>
-        public static void WriteLine(string message, string header = "", ConsoleColor color = ConsoleColor.Gray)
-        {
-            lock (WriteLock)
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.Write("[" + DateTime.Now + "]");
-
-                if (header != "")
-                {
-                    Console.Write("[");
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.Write(header);
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.Write("]");
-                }
-
-                Console.Write(" - ");
-                Console.ForegroundColor = color;
-                Console.WriteLine(message);
-                Console.ForegroundColor = ConsoleColor.Gray;
-            }
-        }
-
+        
         public static string GetCaller(int level = 2)
         {
             var m = new StackTrace().GetFrame(level).GetMethod();
@@ -55,32 +30,45 @@ namespace NettyBaseReloaded
             return className + "->" + methodName;
         }
 
-        private TextWriter Writer { get; }
+        #region Writer methods
+        private static ConcurrentDictionary<short, string> Buffer = new ConcurrentDictionary<short, string>();
 
-        public override Encoding Encoding => Encoding.ASCII;
+        private static StreamWriter LogWriter = new StreamWriter(SessionDirCreator.PATH_LOG);
+        private static StreamWriter DbLogWriter = new StreamWriter(SessionDirCreator.PATH_DBLOG);
+        private static StreamWriter PlayerActionWriter = new StreamWriter(SessionDirCreator.PATH_PACT);
 
-        internal Out()
+        /// <summary>
+        /// That should replace the Console.WriteLine with a little more ordered version.
+        /// </summary>
+        /// <param name="message">That's where the input text goes</param>
+        /// <param name="header">This parameter is optional and it stands for the [header] before the text</param>
+        /// <param name="color">This parameter is optional and it is chosing the color you would like the text to be</param>
+        public static void WriteLog(string message, string header = "")
         {
-            Writer = Console.Out;
+            StringBuilder builder = new StringBuilder("[" + DateTime.Now + "]");
+            if (header != "")
+            {
+                builder.Append("[");
+                builder.Append(header);
+                builder.Append("]");
+            }
+
+            builder.Append(" - ");
+            builder.Append(message);
+            Debug.WriteLine("LOG: " + builder.ToString());
         }
 
-        public override void WriteLine(string text)
+        public static void WriteDbLog(string request)
         {
-            //TODO: Log this shit
-            Writer.WriteLine(text);
-            ProcessForLog(text);
+            Debug.WriteLine("DBLOG: " + request);
+
         }
 
-        public void ProcessForLog(string text)
+        public static void WritePlayerAction(string action)
         {
-            if (Program.Log == null) return;
-
-            if ((text.Contains("----") && text.Contains("We are awesome!") && text.Contains("---")) ||
-                (text.Contains("Version") && text.Contains("Errors") && text.Contains("Online") &&
-                 text.Count(x => x == Char.Parse("/")) == 4))
-                return;
-
-            Program.Log.Write(text);
+            Debug.WriteLine("P-ACTION: " + action);
         }
+
+        #endregion
     }
 }

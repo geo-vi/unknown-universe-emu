@@ -19,7 +19,6 @@ namespace NettyBaseReloaded.Main
         public static TickManager TickManager = new TickManager();
         public static StorageManager StorageManager = new StorageManager();
         public static CronjobManager CronjobManager = new CronjobManager();
-        public static DebugLog Log = new DebugLog("global");
 
         public static State State = State.LOADING;
 
@@ -42,7 +41,7 @@ namespace NettyBaseReloaded.Main
         static void InitiateGlobalQueries()
         {
             QueryManager.Load();
-            Log.Write("Global-Queries loaded!");
+            Out.WriteLog("Global-Queries loaded!");
         }
 
         static void InitiateChat()
@@ -50,16 +49,16 @@ namespace NettyBaseReloaded.Main
             Chat.Chat.Init();
             new Server(Server.CHAT_PORT);
 
-            Out.WriteLine("Chat-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
-            Log.Write("Chat-Server started.");
+            Out.WriteLog("Chat-Server started successfully and DB loaded!", "SUCCESS");
+            Out.WriteLog("Chat-Server started.");
         }
 
         static void InitiatePolicy()
         {
             new Server(Server.POLICY_PORT);
 
-            Out.WriteLine("Policy-Server started successfully!", "SUCCESS", ConsoleColor.DarkGreen);
-            Log.Write("Policy-Server started.");
+            Out.WriteLog("Policy-Server started successfully!", "SUCCESS");
+            Out.WriteLog("Policy-Server started.");
         }
         
         static void InitiateGame()
@@ -67,8 +66,8 @@ namespace NettyBaseReloaded.Main
             World.InitiateManagers();
             new Server(Server.GAME_PORT);
 
-            Out.WriteLine("Game-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
-            Log.Write("Game-Server started.");
+            Out.WriteLog("Game-Server started successfully and DB loaded!", "SUCCESS");
+            Out.WriteLog("Game-Server started.");
         }
 
         private static void InitiateWebSocks()
@@ -76,16 +75,16 @@ namespace NettyBaseReloaded.Main
             WebSocks.packets.Handler.AddHandlers();
             WebSocketListener.InitiateListener();
 
-            Out.WriteLine("WebSocks - ready to listen!", "SUCCESS", ConsoleColor.DarkGreen);
-            Log.Write("WebSocks started.");
+            Out.WriteLog("WebSocks - ready to listen!", "SUCCESS");
+            Out.WriteLog("WebSocks started.");
         }
 
         static void InitiateDiscord()
         {
             new Server(Server.DISCORD_PORT);
 
-            Out.WriteLine("Discord-Server started successfully and DB loaded!", "SUCCESS", ConsoleColor.DarkGreen);
-            Log.Write("Discord-Server started.");
+            Out.WriteLog("Discord-Server started successfully and DB loaded!", "SUCCESS");
+            Out.WriteLog("Discord-Server started.");
         }
 
         static void InitiateRandomResetTimer()

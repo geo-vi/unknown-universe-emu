@@ -5,12 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.npcs;
 using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.npc
 {
     class Mothership : INpc
     {
+        private Cubikon Mother;
+
         private NpcController Controller { get; set; }
 
         private bool Opened = false;
@@ -19,13 +22,23 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public int DaughterSpawnCount { get; set; }
 
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="controller"></param>
+        /// <param name="daughterType"></param>
+        /// <param name="daughterSpawnCount"></param>
         public Mothership(NpcController controller, Ship daughterType, int daughterSpawnCount = 20)
         {
             Controller = controller;
+            Mother = controller.Npc as Cubikon;
             DaughterType = daughterType;
             DaughterSpawnCount = daughterSpawnCount;
         }
 
+        /// <summary>
+        /// Will jump to Inactive if not interacted for more than 2 seconds
+        /// </summary>
         public void Tick()
         {
             if (Opened) Paused();
@@ -42,6 +55,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             for (int i = 0; i <= DaughterSpawnCount; i++)
             {
                 var minionId = Controller.Npc.Spacemap.CreateNpc(DaughterType, AILevels.DAUGHTER, Controller.Npc);
+                Mother.Children.TryAdd(minionId, Mother.Spacemap.Entities[minionId] as Npc);
                 GameClient.SendToPlayerView(Controller.Npc, netty.commands.old_client.NpcUndockCommand.write(Controller.Npc.Id, minionId));
             }
             LastActiveTime = DateTime.Now;
@@ -50,11 +64,11 @@ namespace NettyBaseReloaded.Game.controllers.npc
         private Tuple<DateTime, Character> TickAttacked = null;
         public void Inactive()
         {
-            if (Controller.Character.LastCombatTime.AddMilliseconds(100) > DateTime.Now)
+            if (Controller.Character.LastCombatTime.AddMilliseconds(2000) > DateTime.Now)
             {
                 if (TickAttacked == null)
-                    TickAttacked = new Tuple<DateTime, Character>(DateTime.Now, Controller.Npc.MotherShip.Controller.Attack.GetActiveAttackers().OrderBy(x => x.Damage).FirstOrDefault());
-                if (TickAttacked.Item1.AddSeconds(1) < DateTime.Now)
+                    TickAttacked = new Tuple<DateTime, Character>(DateTime.Now, Controller.Attack.GetActiveAttackers().OrderBy(x => x.Damage).FirstOrDefault());
+                if (TickAttacked.Item1.AddSeconds(2) < DateTime.Now)
                     Active();
             }
         }
@@ -67,6 +81,11 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     netty.commands.old_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
                 GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
 
+            }
+
+            if (Mother.Children.Count < 5)
+            {
+                Active();
             }
         }
 

@@ -61,7 +61,7 @@ namespace NettyBaseReloaded.Networking
         {
             foreach (var user in Chat.Chat.StorageManager.ChatSessions.Values)
             {
-                if (user.Character.Id == character.Id && !sendToSelf) return;
+                if (user.Player.Id == character.Id && !sendToSelf) return;
 
                 user.Client.Send(packet);
             }
@@ -71,7 +71,7 @@ namespace NettyBaseReloaded.Networking
         {
             foreach (var user in targetRoom.ConnectedUsers.Values)
             {
-                if (user is Player || user is Moderator)
+                if (user is Player)
                 {
                     var chatSession = Chat.Chat.StorageManager.GetChatSession(user.Id);
                     chatSession.Client.Send(packet);
@@ -90,7 +90,7 @@ namespace NettyBaseReloaded.Networking
             }
             catch (Exception)
             {
-                Out.WriteLine("Error disconnecting user from Chat", "CHAT", ConsoleColor.DarkRed);
+                Out.WriteLog("Error disconnecting user from Chat", "CHAT");
             }
         }
     }
