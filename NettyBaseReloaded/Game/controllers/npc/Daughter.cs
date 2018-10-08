@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.npcs;
 
 namespace NettyBaseReloaded.Game.controllers.npc
 {
@@ -17,7 +18,6 @@ namespace NettyBaseReloaded.Game.controllers.npc
         {
             Controller = controller;
             Center = controller.Npc.MotherShip.Position;
-            LastActiveTime = DateTime.Now;
         }
 
         public void Tick()
@@ -28,7 +28,6 @@ namespace NettyBaseReloaded.Game.controllers.npc
             else Active();
         }
 
-        private DateTime LastActiveTime = new DateTime();
         public void Active()
         {
             if (!Controller.Npc.SelectedCharacter.InRange(Controller.Npc))
@@ -37,17 +36,10 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 return;
             }
             Controller.Attack.Attacking = true;
-            LastActiveTime = DateTime.Now;
         }
 
         public void Inactive()
         {
-            if (LastActiveTime.AddSeconds(10) < DateTime.Now)
-            {
-                Exit();
-                return;
-            }
-
             if (Controller.Npc.MotherShip == null)
             {
                 return;
@@ -76,7 +68,13 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Exit()
         {
-            if (Controller.Npc.Spacemap.RemoveEntity(Controller.Npc)) Controller.StopAll();
+            if (Controller.Npc.Spacemap.RemoveEntity(Controller.Npc))
+            {
+                Controller.StopAll();
+                var cube = Controller.Npc.MotherShip as Cubikon;
+                Npc removed;
+                cube?.Children.TryRemove(Controller.Npc.Id, out removed);
+            }
         }
 
     }

@@ -35,6 +35,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public DateTime LastCombatTime { get; set; }
 
+        public int CollectedDamage { get; set; }
+
         public virtual int AttackRange => 700;
 
         public EntityStates EntityState { get; set; }

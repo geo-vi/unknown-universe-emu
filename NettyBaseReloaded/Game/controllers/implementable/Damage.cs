@@ -60,11 +60,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         private DateTime LastTick = new DateTime();
         public override void Tick()
         {
-            if (LastTick.AddMilliseconds(500) < DateTime.Now)
-            {
+            //if (LastTick.AddMilliseconds(500) < DateTime.Now)
+            //{
                 DistributeDamage();
-                LastTick = DateTime.Now;
-            }
+            //    LastTick = DateTime.Now;
+            //}
         }
 
         public override void Stop()
@@ -290,7 +290,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             target.Hit(totalDamage, attackerId);
 
             foreach (var session in AssembleSelectedSessions(target))
-                Packet.Builder.AttackHitCommand(session, attackerId, target, totalDamage + totalAbsDamage, (short)damageType);
+            {
+                Packet.Builder.AttackHitCommand(session, attackerId, target, totalDamage + totalAbsDamage,
+                    (short) damageType);
+            }
 
             if (target is AttackableAssetCore)
                 foreach (var session in target.Spacemap.Entities.Values.Where(x => x is Player))

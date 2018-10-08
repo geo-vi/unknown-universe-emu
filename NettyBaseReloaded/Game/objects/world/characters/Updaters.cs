@@ -72,6 +72,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 if (Character.Controller == null || LastRegeneratedTime.AddSeconds(1) >= DateTime.Now) return;
                 LastRegeneratedTime = DateTime.Now;
 
+                if (Character is Npc && Character.LastCombatTime.AddSeconds(30) < DateTime.Now)
+                {
+                    Character.Controller.Heal.Execute(Character.MaxHealth / 100);
+                }
+
                 // Takes 25 secs to recover the shield
                 var amount = Character.MaxShield / 25;
                 if (Character.Formation == DroneFormation.DIAMOND)

@@ -87,6 +87,18 @@ namespace NettyBaseReloaded.Game.controllers.npc
             {
                 Active();
             }
+
+            if (Controller.Npc.LastCombatTime > DateTime.Now.AddSeconds(10))
+            {
+                Opened = false;
+                if (Controller.Npc is Cubikon cube)
+                {
+                    foreach (var child in cube.Children)
+                    {
+                        child.Value.Controller.ExitAI();
+                    }
+                }
+            }
         }
 
         public void Exit()

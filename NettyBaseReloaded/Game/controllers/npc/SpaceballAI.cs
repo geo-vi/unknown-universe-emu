@@ -14,10 +14,10 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         private Spaceball Npc;
 
-        public SpaceballAI(Spaceball npc, NpcController controller)
+        public SpaceballAI(NpcController controller)
         {
             Controller = controller;
-            Npc = npc;
+            Npc = Controller.Npc as Spaceball;
         }
 
         public void Tick()

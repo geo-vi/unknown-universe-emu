@@ -121,5 +121,10 @@ namespace NettyBaseReloaded.Game.controllers
             slave = new Slave(this, ownedByCharacter);
             CurrentNpc = slave;
         }
+
+        public void ExitAI()
+        {
+            CurrentNpc.Exit();
+        }
     }
 }
