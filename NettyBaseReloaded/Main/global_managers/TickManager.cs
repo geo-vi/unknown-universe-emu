@@ -48,7 +48,7 @@ namespace NettyBaseReloaded.Main.global_managers
             {
                 UpdateCollection();
                 foreach (var tickable in Tickables) { 
-                    await Task.Factory.StartNew(tickable.Tick);
+                    Task.Factory.StartNew(tickable.Tick);
                 }
                 await Task.Delay(84);
             }

@@ -40,7 +40,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Active()
         {
             if (CustomPlacement) return;
-            if (!FleeToMurder && !Vector.IsPositionInCircle(Controller.Npc.Position, MasterCharacter.Position, 300))
+            if (!FleeToMurder && (!Vector.IsPositionInCircle(Controller.Npc.Position, MasterCharacter.Position, 300) || !Vector.IsPositionInCircle(Controller.Npc.Destination, MasterCharacter.Position, 300)))
             {
                 MovementController.Move(Controller.Npc, Vector.GetPosOnCircle(MasterCharacter.Position, 300));
             }

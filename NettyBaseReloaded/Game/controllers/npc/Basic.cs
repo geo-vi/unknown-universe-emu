@@ -22,6 +22,16 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Tick()
         {
+            if (Controller.Npc.CurrentHealth < Controller.Npc.MaxHealth * 0.1)
+            {
+                if (!Flee)
+                {
+                    MovementController.Move(Controller.Npc, Vector.Random(Controller.Npc.Spacemap));
+                    Flee = true;
+                }
+            }
+            else Flee = false;
+
             if (Controller.Npc.Selected == null)
                 Inactive();
             else Paused();
@@ -54,7 +64,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     Controller.Npc.Range.Objects.Where(
                         x => x.Value is Asteroid || x.Value is Asset || x.Value is Station || x.Value is Jumpgate);
                 var keyValuePairs = noAccessObjects as KeyValuePair<int, Object>[] ?? noAccessObjects.ToArray();
-                if (LastMovedTime.AddSeconds(45) <= DateTime.Now || keyValuePairs.Any())
+                if (LastMovedTime.AddSeconds(45) <= DateTime.Now || keyValuePairs.Any() && Controller.Npc.CurrentHealth > Controller.Npc.MaxHealth * 0.1)
                 {
                     newDest:
                     var dest = Vector.Random(Controller.Npc.Spacemap);
@@ -97,6 +107,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             }
         }
 
+        private bool Flee = false;
         public void Paused()
         {
             var target = Controller.Npc.Selected as Player;
@@ -129,13 +140,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
                         return;
                     }
 
-                    if (npc.CurrentHealth < npc.MaxHealth * 0.1)
-                    {
-                        MovementController.Move(npc, Vector.Random(npc.Spacemap));
-                    }
-                    else if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400))
+                    if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400) && !Flee)
                         MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
-
+                    
                 }
                 
                 if (Controller.Character.LastCombatTime.AddMilliseconds(500) > DateTime.Now || !Controller.Npc.Hangar.Ship.IsNeutral &&

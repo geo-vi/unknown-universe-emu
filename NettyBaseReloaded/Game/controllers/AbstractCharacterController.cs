@@ -1,10 +1,12 @@
 ﻿using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.objects.world;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Main;
+using NettyBaseReloaded.Main.interfaces;
 
 namespace NettyBaseReloaded.Game.controllers
 {
-    class AbstractCharacterController
+    class AbstractCharacterController : ITick
     {
         public Character Character { get; }
 
@@ -43,34 +45,33 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Active = true;
             StopController = false;
-            Task.Factory.StartNew(Tick);
+            Global.TickManager.Add(this);
         }
 
-        public async void Tick()
+        public void Tick()
         {
-            while (Active)
+            if (StopController || Character.EntityState == EntityStates.DEAD)
             {
-                if (StopController || Character.EntityState == EntityStates.DEAD)
-                {
-                    StopAll();
-                    return;
-                }
+                StopAll();
+                return;
+            }
 
-                await Task.Factory.StartNew(TickClasses);
+            TickClasses();
 
-                if (this is PlayerController)
-                {
-                    var player = (Player)Character;
-                    await Task.Factory.StartNew(player.Controller.Tick);
-                }
-                else if (this is PetController)
-                {
-                    var pet = (Pet) Character;
-                    await Task.Factory.StartNew(pet.Controller.Tick);
-                }
-                await Task.Delay(50);
+            if (this is PlayerController playerController)
+            {
+                playerController.Tick();
+            }
+            else if (this is NpcController npcController)
+            {
+                npcController.Tick(); 
+            }
+            else if (this is PetController petController)
+            {
+                petController.Tick();
             }
         }
+
 
         public void TickClasses()
         {

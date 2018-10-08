@@ -581,18 +581,18 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public string BuildExtrasPacket()
         {
-            bool rep = false;
-            bool droneRep = false;
-            bool ammoBuy = false;
-            bool cloak = false;
-            bool tradeDrone = false;
-            bool aim = false;
-            bool autoRocket = false;
-            bool autoRocketLauncer = false;
-            bool rocketBuy = false;
-            bool jump = false;
-            bool petRefuel = false;
-            bool jumpToBase = false;
+            bool rep = true;
+            bool droneRep = true;
+            bool ammoBuy = true;
+            bool cloak = true;
+            bool tradeDrone = true;
+            bool aim = true;
+            bool autoRocket = true;
+            bool autoRocketLauncer = true;
+            bool rocketBuy = true;
+            bool jump = true;
+            bool petRefuel = true;
+            bool jumpToBase = true;
 
             foreach (var item in Extras)
             {
@@ -657,13 +657,14 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void LoadExtras()
         {
-            Controller.CPUs.LoadCpus();
             UpdateExtras();
+            Controller.CPUs.LoadCpus();
         }
 
         public void UpdateExtras()
         {
-            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|ITM|" + BuildExtrasPacket());
+            if (UsingNewClient) BuildExtrasPacket();
+            else Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|ITM|" + BuildExtrasPacket());
             foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Update((CPU.Types)type);
         }
 

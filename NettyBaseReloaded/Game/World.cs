@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Game
             Out.WriteLog(DateTime.Now - timeStarted + " : World loaded.");
         }
 
-        private static void InitiateWorld()
+        private static void InitiateWorld() //todo create ores
         {
             foreach (var map in StorageManager.Spacemaps)
             {

@@ -2250,5 +2250,21 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
+        #region TradeWindowActivationCommand
+
+        public void TradeWindowActivationCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                LegacyModule(gameSession, "0|UI|W|MAW|6"); // trade window
+            }
+        }
+
+        #endregion
     }
 }

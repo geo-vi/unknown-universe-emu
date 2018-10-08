@@ -103,6 +103,7 @@ namespace NettyBaseReloaded.Game.controllers.login
 
             Packet.Builder.AttributeOreCountUpdateCommand(GameSession, GameSession.Player.Information.Cargo);
             //Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
+            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
         }
 
         public void InitiateEvents()
