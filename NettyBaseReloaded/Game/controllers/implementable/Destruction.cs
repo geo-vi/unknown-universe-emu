@@ -108,6 +108,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 eventP.Value.DestroyAttackable(target);
                             foreach (var quest in player.AcceptedQuests)
                                 quest.AddKill(target);
+                            player.Information.AddKill(target.Hangar.Ship.Id);
                         }
                     }
                     if (target is Npc)

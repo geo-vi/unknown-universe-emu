@@ -196,7 +196,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
         public void Follow(GameSession gameSession, GameSession followedSession)
         {
-            if (followedSession.Player.Controller.Active)
+            if (followedSession.Player.Controller.Active && gameSession.Player.Spacemap == followedSession.Player.Spacemap)
                 gameSession.Player.Group?.Follow(gameSession.Player, followedSession.Player);
         }
 

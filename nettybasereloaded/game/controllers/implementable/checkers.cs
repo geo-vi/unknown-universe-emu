@@ -63,11 +63,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         private void AddedToSpacemap(object sender, CharacterArgs args)
         {
             //if (!InVisibleZone && args.Character.InRange(Character, VisibilityRange) || InVisibleZone && args.Character.Controller.Checkers.InVisibleZone)
+            if (args.Character == Controller.Character) return;
             AddCharacter(Character, args.Character);
         }
 
         private void RemovedFromSpacemap(object sender, CharacterArgs args)
         {
+            if (args.Character == Controller.Character) return;
             RemoveCharacter(args.Character, Character);
         }
 
@@ -141,10 +143,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void EntityCheck(Character entity)
         {
-            if (entity == Character || entity.Controller == null)
+            if (entity == Character)
                 return;
 
-            if ((entity.Spacemap != Character.Spacemap || !Character.Spacemap.Entities.ContainsKey(entity.Id) || entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
+            if (entity.Controller == null || (entity.Spacemap != Character.Spacemap || !Character.Spacemap.Entities.ContainsKey(entity.Id) || entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
             {
                 RemoveCharacter(entity, Character);
                 return;
@@ -162,7 +164,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (pet.GetOwner() == Character)
                     return;
             }
-            if (GetForSelection(entity)) return;
+            //if (GetForSelection(entity)) return;
 
             if (Character.InRange(entity, VisibilityRange))
             {

@@ -34,14 +34,19 @@ namespace NettyBaseReloaded.Game.objects.world.players
             if (LootId.Contains("ammunition_laser"))
             {
                 fireCount = Player.Equipment.LaserCount();
+                if (fireCount > Amount) return 0;
                 Player.Skylab.ReduceLaserOre(fireCount);
             }
             else if (LootId.Contains("ammunition_rocket"))
             {
                 fireCount = 1;
+                if (fireCount > Amount) return 0;
                 Player.Skylab.ReduceRocketOre(fireCount);
             }
             else fireCount = 1;
+
+            if (fireCount > Amount) return 0;
+
             Add(-fireCount);
             return fireCount;
         }

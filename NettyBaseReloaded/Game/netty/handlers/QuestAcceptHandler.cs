@@ -28,6 +28,9 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 case 0:
                     gameSession.Player.AcceptedQuests.Add(new KillstreakQuest(gameSession.Player, new KillstreakQuestStat()));
                     break;
+                case 2:
+                    gameSession.Player.AcceptedQuests.Add(new StarterBaseQuest(gameSession.Player, new StarterBaseQuestStats()));
+                    break;
             }
 
             Packet.Builder.QuestInitializationCommand(gameSession);

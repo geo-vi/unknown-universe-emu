@@ -92,25 +92,5 @@ namespace NettyBaseReloaded.Game.controllers
             StopAll();
             CheckedClasses.Clear();
         }
-
-        public bool IsAutoRocketCpuActive()
-        {
-            if (Active && CheckedClasses.Count > 0 && CPUs != null)
-            {
-                return CPUs.Active.Exists(x => x == CPU.Types.AUTO_ROK);
-            }
-
-            return false;
-        }
-
-        public bool IsAutoLauncherCpuActive()
-        {
-            if (Active && CheckedClasses.Count > 0 && CPUs != null)
-            {
-                return CPUs.Active.Exists(x => x == CPU.Types.AUTO_ROCKLAUNCHER);
-            }
-
-            return false;
-        }
     }
 }

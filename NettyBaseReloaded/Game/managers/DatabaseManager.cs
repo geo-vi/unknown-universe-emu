@@ -264,7 +264,7 @@ namespace NettyBaseReloaded.Game.managers
                         foreach (DataRow row in queryTable.Rows)
                         {
                             var Id = intConv(row["ID"]);
-                            var Exp = longConv(row["EXP"]);
+                            var Exp = doubleConv(row["EXP"]);
                             World.StorageManager.Levels.PlayerLevels.Add(Id, new Level(Id, Exp));
                         }
                     }
@@ -277,7 +277,7 @@ namespace NettyBaseReloaded.Game.managers
                         foreach (DataRow row in queryTable.Rows)
                         {
                             var Id = intConv(row["ID"]);
-                            var Exp = longConv(row["EXP"]);
+                            var Exp = doubleConv(row["EXP"]);
                             World.StorageManager.Levels.DroneLevels.Add(Id, new Level(Id, Exp));
                         }
                     }
@@ -547,17 +547,10 @@ namespace NettyBaseReloaded.Game.managers
                     var ship = World.StorageManager.Ships[shipId];
                     var position = new Vector(intConv(querySet["SHIP_X"]), intConv(querySet["SHIP_Y"]));
                     var mapId = intConv(querySet["SHIP_MAP_ID"]);
-                    var levelId = intConv(querySet["LVL"]);
 
                     if (!World.StorageManager.Spacemaps.ContainsKey(mapId))
                     {
                         Console.WriteLine("PROBLEM -> MAPID " + mapId + " DOESN'T EXIST!");
-                        return null;
-                    }
-
-                    if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(levelId))
-                    {
-                        Console.WriteLine("PROBLEM -> LEVELID " + levelId + " DOESN'T EXIST!");
                         return null;
                     }
 
@@ -823,6 +816,23 @@ namespace NettyBaseReloaded.Game.managers
                 Console.WriteLine("error " + e);
             }
         }
+
+        public void SetInfo(Player player, string row, double new_amount)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery(
+                        $"UPDATE player_data SET {row}={new_amount} WHERE PLAYER_ID={player.Id}");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("error " + e);
+            }
+        }
+
 
         public int UpdateAmmo(Ammunition ammunition, int ammo_change)
         {
@@ -1378,6 +1388,24 @@ namespace NettyBaseReloaded.Game.managers
                             completed.Add(new KillstreakQuest(player, quest0Stat));
                         else player.AcceptedQuests.Add(new KillstreakQuest(player, quest0Stat));
                     }
+                    var quest1 = queryRow["QUEST_1"].ToString();
+                    if (quest1 != "" && quest1 != "null")
+                    {
+                        //todo: fly no die
+                    }
+                    var quest2 = queryRow["QUEST_2"].ToString();
+                    if (quest2 != "" && quest2 != "null")
+                    {
+                        var quest2Stat = JsonConvert.DeserializeObject<StarterBaseQuestStats>(quest0);
+                        if (quest2Stat.Complete)
+                            completed.Add(new StarterBaseQuest(player, quest2Stat));
+                        else player.AcceptedQuests.Add(new StarterBaseQuest(player, quest2Stat));
+                    }
+                    var quest3 = queryRow["QUEST_3"].ToString();
+                    if (quest3 != "" && quest3 != "null")
+                    {
+                        //todo: makedemfly
+                    }
                 }
             }
             catch (Exception e)
@@ -1397,6 +1425,12 @@ namespace NettyBaseReloaded.Game.managers
                     {
                         if (quest.Canceled) killstreakQuest.Stats = null;
                         mySqlClient.ExecuteNonQuery($"UPDATE player_queststats SET QUEST_0='{JsonConvert.SerializeObject(killstreakQuest.Stats)}' WHERE PLAYER_ID='{player.Id}'");
+                    }
+
+                    if (quest is StarterBaseQuest starterBaseQuest)
+                    {
+                        if (quest.Canceled) starterBaseQuest.Stats = null;
+                        mySqlClient.ExecuteNonQuery($"UPDATE player_queststats SET QUEST_2='{JsonConvert.SerializeObject(starterBaseQuest.Stats)}' WHERE PLAYER_ID='{player.Id}'");
                     }
                 }
             }
@@ -1520,6 +1554,51 @@ namespace NettyBaseReloaded.Game.managers
                 Debug.WriteLine(e.Message);
             }
             return null;
+        }
+
+        public Dictionary<int, int> LoadStats(Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var reader = mySqlClient.ExecuteQueryReader("SELECT STATS FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
+                    while (reader.Read())
+                    {
+                        var statsString = reader["STATS"].ToString();
+                        Dictionary<int, int> stats = JsonConvert.DeserializeObject<Dictionary<int, int>>(statsString);
+                        if (stats == null || statsString == "null")
+                        {
+                            stats = new Dictionary<int, int>();
+                        }
+
+                        return stats;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            return null;
+        }
+
+        public void SaveStats(Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery(
+                        $"UPDATE player_extra_data SET STATS='{JsonConvert.SerializeObject(player.Information.KilledShips)}' WHERE PLAYER_ID=" +
+                        player.Id);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
         }
     }
 }

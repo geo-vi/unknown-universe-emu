@@ -15,7 +15,6 @@ namespace NettyBaseReloaded
     {
         private static object WriteLock = new object();
 
-        
         public static string GetCaller(int level = 2)
         {
             var m = new StackTrace().GetFrame(level).GetMethod();
@@ -30,8 +29,28 @@ namespace NettyBaseReloaded
             return className + "->" + methodName;
         }
 
+        public static async void Worker()
+        {
+            while (true)
+            {
+                foreach (var buffedText in Buffer)
+                {
+                    var location = buffedText.Key.Split('%')[0];
+
+                    switch (location)
+                    {
+                        case "log":
+                            await LogWriter.WriteLineAsync("#" + buffedText.Key.Split('%')[1] + "->" + buffedText.Value);
+                            break;
+                    }
+
+                    Buffer.TryRemove(buffedText.Key, out location);
+                }
+            }
+        }
+
         #region Writer methods
-        private static ConcurrentDictionary<short, string> Buffer = new ConcurrentDictionary<short, string>();
+        private static ConcurrentDictionary<string, string> Buffer = new ConcurrentDictionary<string, string>();
 
         private static StreamWriter LogWriter = new StreamWriter(SessionDirCreator.PATH_LOG);
         private static StreamWriter DbLogWriter = new StreamWriter(SessionDirCreator.PATH_DBLOG);
@@ -55,12 +74,21 @@ namespace NettyBaseReloaded
 
             builder.Append(" - ");
             builder.Append(message);
+
+            //var md5Key = "log%" + Encode.MD5(message + DateTime.Now);
+             
             Debug.WriteLine("LOG: " + builder.ToString());
         }
 
         public static void WriteDbLog(string request)
         {
-            Debug.WriteLine("DBLOG: " + request);
+            StringBuilder builder = new StringBuilder("[" + DateTime.Now + "]");
+
+            builder.Append(" - ");
+            builder.Append(request);
+
+
+            Debug.WriteLine("DBLOG: " + builder.ToString());
 
         }
 

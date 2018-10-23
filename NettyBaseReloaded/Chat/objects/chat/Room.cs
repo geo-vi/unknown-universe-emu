@@ -62,7 +62,7 @@ namespace NettyBaseReloaded.Chat.objects.chat
 
         public void Kick(Character character)
         {
-
+            ConnectedUsers.Remove(character.Id);
         }
 
         public void Ban(Character character)

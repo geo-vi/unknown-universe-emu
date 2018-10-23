@@ -24,5 +24,13 @@ namespace NettyBaseReloaded.Chat.objects.chat
         {
             return Chat.StorageManager.GetChatSession(Id);
         }
+
+        public void DisconnectRooms()
+        {
+            foreach (var room in ConnectedRooms)
+            {
+                room.Value.Kick(this);
+            }
+        }
     }
 }

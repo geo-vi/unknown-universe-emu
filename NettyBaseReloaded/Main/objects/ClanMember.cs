@@ -14,5 +14,11 @@ namespace NettyBaseReloaded.Main.objects
         public string Name { get; set; }
 
         public Player Player => World.StorageManager.GetGameSession(Id)?.Player;
+
+        public ClanMember(int id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
     }
 }

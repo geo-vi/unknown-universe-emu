@@ -72,10 +72,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public static Vector GetPosOnCircle(Vector circleCenter, int radius)
         {
-            var randomInstance = new Random();
+            var randomInstance = RandomInstance.getInstance(circleCenter);
             var a = randomInstance.Next(0, 360);
-            var calculateX = circleCenter.X + Convert.ToInt32(radius * Math.Cos(a));
-            var calculateY = circleCenter.Y + Convert.ToInt32(radius * Math.Sin(a));
+            var calculateX = circleCenter.X + Convert.ToInt32(radius * Math.Cos(a / (180 / Math.PI)));
+            var calculateY = circleCenter.Y + Convert.ToInt32(radius * Math.Sin(a / (180 / Math.PI)));
 
             return new Vector(calculateX, calculateY);
         }

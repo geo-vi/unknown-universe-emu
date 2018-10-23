@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable.attack;
+using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
@@ -148,29 +149,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         break;
                 }
 
-                //TODO: RECODE!!!
-                if (gameSession.Player.Controller.IsAutoRocketCpuActive())
-                {
-                    LaunchMissle(gameSession.Player.Settings.CurrentRocket.LootId);
-                }
-
-                if (gameSession.Player.Controller.IsAutoLauncherCpuActive())
-                {
-                    var rocketLauncher = Character.RocketLauncher;
-                    if (rocketLauncher != null && rocketLauncher.Launchers.Length > 0)
-                    {
-                        if (rocketLauncher.CurrentLoad != rocketLauncher.GetMaxLoad())
-                        {
-                            rocketLauncher.Reload();
-                        }
-                        else
-                        {
-                            LaunchRocketLauncher();
-                            rocketLauncher.Reload();
-                        }
-                    }
-                }
-
                 if (enemy is Character)
                     UpdateAttacker(enemy as Character, gameSession.Player);
             }
@@ -260,6 +238,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             energyLeech.ExecuteHeal(damage);
                         }
                     }
+                }
+
+                if (player.Controller.CPUs.Active.Contains(CPU.Types.AUTO_ROK))
+                {
+                    LaunchMissle(player.Settings.CurrentRocket.LootId);
+                }
+
+                if (player.Controller.CPUs.Active.Contains(CPU.Types.AUTO_ROCKLAUNCHER))
+                {
+                    LaunchRocketLauncher();
                 }
             }
         }

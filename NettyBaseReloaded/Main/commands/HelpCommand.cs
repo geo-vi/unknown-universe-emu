@@ -8,7 +8,7 @@ namespace NettyBaseReloaded.Main.commands
 {
     class HelpCommand : Command
     {
-        public HelpCommand() : base("help", "Lists all the commands", false)
+        public HelpCommand() : base("commands", "Lists all the commands", false)
         {
         }
 
@@ -62,7 +62,7 @@ namespace NettyBaseReloaded.Main.commands
                     }
                     catch (Exception)
                     {
-                        if (arg != "help")
+                        if (arg != "commands")
                         {
                             MessageController.System(session.Player, PrintCmd(arg).ToString());
                             return;

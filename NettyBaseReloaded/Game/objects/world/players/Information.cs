@@ -20,8 +20,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public BaseInfo Uridium { get; set; }
 
-        private DateTime LastInfoUpdate { get; set; }
-
         public Level Level { get; set; }
 
         public Title Title { get; set; }
@@ -32,9 +30,11 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public Cargo Cargo { get; set; }
 
-        public DateTime RegisteredTime { get; set; }
+        public int Vouchers;
 
-        public int Ranking { get; set; }
+        public int GGSpins;
+
+        public Dictionary<int, int> KilledShips;
 
         public Information(Player player) : base(player)
         {
@@ -45,7 +45,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Premium = new Premium();
             Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
             Cargo = World.DatabaseManager.LoadCargo(player);
+
             UpdateAll();
+            Level = World.StorageManager.Levels.DeterminatePlayerLvl(Experience.Get());
+            KilledShips = World.DatabaseManager.LoadStats(player);
             player.Ticked += Ticked;
         }
 
@@ -57,24 +60,18 @@ namespace NettyBaseReloaded.Game.objects.world.players
             LastUpd = DateTime.Now;
         }
 
+        public void AddKill(int shipId)
+        {
+            if (Player.Information.KilledShips.ContainsKey(shipId))
+                Player.Information.KilledShips[shipId]++;
+            else Player.Information.KilledShips.Add(shipId, 1);
+        }
+
         private DateTime LastUpd = new DateTime();
         
         public void UpdateAll()
         {
-
-            //Experience.Refresh();
-            //Honor.Refresh();
-            //Credits.Refresh();
-            //Uridium.Refresh();
-            //Level = World.StorageManager.Levels.PlayerLevels[World.DatabaseManager.LoadInfo(Player, "LVL")];
-            //var premiumActive = Premium.Active;
-            //Premium = World.DatabaseManager.LoadPremium(Player);
-            //if (Premium.Active != premiumActive) Premium.Update(Player);
             World.DatabaseManager.PerformFullRefresh(this);
-            //var oldTitle = Title;
-            //Title = World.DatabaseManager.LoadTitle(Player);
-            //if (Title != oldTitle) UpdateTitle();
-            //LastUpd = DateTime.Now;
         }
 
         /* THIS IS NOT A INFO SETTER !!!!!!! */
@@ -85,9 +82,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public void LevelUp(Level targetLevel)
         {
-            var amountChange = targetLevel.Id - Level.Id;
             Level = targetLevel;
-            World.DatabaseManager.UpdateInfo(Player, "LVL", amountChange);
+            World.DatabaseManager.SetInfo(Player, "LVL", targetLevel.Id);
         }
 
         public void UpdateTitle()

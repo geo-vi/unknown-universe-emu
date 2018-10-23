@@ -376,7 +376,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
                 0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
-                ship.Damage, 10);
+                ship.Damage, 90);
 
             if (Entities.ContainsKey(npc.Id))
             {

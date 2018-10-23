@@ -8,6 +8,7 @@ namespace NettyBaseReloaded.Game.objects.world.events
 {
     enum EventTypes
     {
-        SCOREMAGEDDON
+        SCOREMAGEDDON,
+        SPACEBALL
     }
 }

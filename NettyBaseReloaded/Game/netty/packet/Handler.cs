@@ -67,6 +67,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.QuestAcceptRequest.ID, new QuestAcceptHandler());
             OldClientCommands.Add(commands.old_client.requests.LabRefinementRequest.ID, new LabRefinementHandler());
             OldClientCommands.Add(commands.old_client.requests.LabUpdateItemRequest.ID, new LabUpdateItemHandler());
+            OldClientCommands.Add(commands.old_client.requests.TradeRequest.ID, new TradeHandler());
+            OldClientCommands.Add(commands.old_client.requests.QuestPrivilegeRequest.ID, new QuestPrivilegeHandler());
+            OldClientCommands.Add(commands.old_client.requests.TradeSellOreRequest.ID, new TradeSellOreHandler());
+            LegacyCommands.Add("JCPU", new JumpCPUHandler());
+            OldClientCommands.Add(commands.old_client.requests.ClanMemberInvitationRequest.ID, new ClanMemberInvitationHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)

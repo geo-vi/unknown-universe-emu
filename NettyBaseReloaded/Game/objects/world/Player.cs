@@ -553,27 +553,23 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        private DateTime LastLevelCheck = new DateTime();
         public void LevelChecker()
         {
-            if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(Information.Level.Id + 1))
-                return;
+            if (LastLevelCheck.AddSeconds(1) > DateTime.Now) return;
 
-            foreach (var level in World.StorageManager.Levels.PlayerLevels)
+            var determined = World.StorageManager.Levels.DeterminatePlayerLvl(Information.Experience.Get());
+            if (Information.Level != determined)
             {
-                if (Information.Experience.Get() > level.Value.Experience && level.Key > Information.Level.Id)
-                    LevelUp();
+                LevelUp(determined);
             }
+
+            LastLevelCheck = DateTime.Now;
         }
 
-        public void LevelUp()
+        public void LevelUp(Level newLevel)
         {
-            if (!World.StorageManager.Levels.PlayerLevels.ContainsKey(Information.Level.Id + 1))
-                return;
-            var lvl = World.StorageManager.Levels.PlayerLevels[Information.Level.Id + 1];
-            if (Information.Experience.Get() < lvl.Experience)
-                Information.Experience.Add(lvl.Experience - Information.Experience.Get() + 1);
-
-            Information.LevelUp(lvl);
+            Information.LevelUp(newLevel);
             var gameSession = World.StorageManager.GetGameSession(Id);
             Packet.Builder.LevelUpCommand(gameSession);
             Refresh();
@@ -663,9 +659,14 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void UpdateExtras()
         {
+            var config = Hangar.Configurations[CurrentConfig - 1];
             if (UsingNewClient) BuildExtrasPacket();
             else Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|ITM|" + BuildExtrasPacket());
             foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Update((CPU.Types)type);
+            foreach (var extra in config.Extras)
+            {
+                extra.Value.initiate();
+            }
         }
 
         private void TickBoosters()
@@ -737,6 +738,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void MoveToMap(Spacemap map, Vector pos, int vwid)
         {
+            Character character;
+            Spacemap.Entities.TryRemove(Id, out character);
             Storage.Clean();
             State.Reset();
             VirtualWorldId = vwid;
@@ -764,6 +767,37 @@ namespace NettyBaseReloaded.Game.objects.world
             }
             OwnedGates.TryAdd(id, gate);
             return id;
+        }
+
+        public void ChangeClan(Clan clan)
+        {
+            Clan = clan;
+            Clan.Members.Add(Id, new ClanMember(Id, Name));
+            RefreshPlayersView();
+            Packet.Builder.ClanTagChangedCommand(GetGameSession());
+            var chatSession = Chat.Chat.StorageManager.GetChatSession(Id);
+            if (chatSession != null)
+            {
+                chatSession.Player.Clan = clan;
+            }
+            RefreshPlayersView();
+            RefreshMyView();
+            ILogin.UpdateClanWindow(GetGameSession());
+        }
+
+
+        /// <summary>
+        /// Will refresh my view
+        /// all the players in range will get added and removed
+        /// </summary>
+        public void RefreshMyView()
+        {
+            var session = GetGameSession();
+            foreach (var rangeCharacter in Range.Entities.Values)
+            {
+                Packet.Builder.ShipRemoveCommand(session, rangeCharacter);
+                Packet.Builder.ShipCreateCommand(session, rangeCharacter);
+            }
         }
     }
 }

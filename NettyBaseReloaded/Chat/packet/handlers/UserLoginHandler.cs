@@ -27,7 +27,7 @@ namespace NettyBaseReloaded.Chat.packet.handlers
             if (!ValidateSession(player, sessionId))
             {
                 //send msg
-                Console.WriteLine("Invalid login.");
+                client.Send("dq%Invalid Session#");
                 return;
             }
 

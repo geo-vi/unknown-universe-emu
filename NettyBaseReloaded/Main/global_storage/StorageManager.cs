@@ -9,6 +9,8 @@ namespace NettyBaseReloaded.Main.global_storage
     {
         public Dictionary<int, Clan> Clans = new Dictionary<int, Clan>();
 
+        public Dictionary<int, ClanDiplomacy> ClanDiplomacys = new Dictionary<int, ClanDiplomacy>();
+
         public Clan GetClan(int id)
         {
             if (Clans.ContainsKey(id))

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.npcs;
 
 namespace NettyBaseReloaded.Game.controllers.npc
@@ -14,15 +15,43 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         private Spaceball Npc;
 
+
+        private Jumpgate MmoPortal;
+
+        private Jumpgate EicPortal;
+
+        private Jumpgate VruPortal;
+
+
         public SpaceballAI(NpcController controller)
         {
             Controller = controller;
             Npc = Controller.Npc as Spaceball;
+            LoadPortals();
+        }
+
+        public void LoadPortals()
+        {
+            var map = World.StorageManager.Spacemaps[16];
+            MmoPortal = map.Objects.FirstOrDefault(x => x.Value is Jumpgate gate && gate.DestinationMapId == 17).Value as Jumpgate;
+            EicPortal = map.Objects.FirstOrDefault(x => x.Value is Jumpgate gate && gate.DestinationMapId == 21).Value as Jumpgate;
+            VruPortal = map.Objects.FirstOrDefault(x => x.Value is Jumpgate gate && gate.DestinationMapId == 25).Value as Jumpgate;
         }
 
         public void Tick()
         {
-            if (Npc.Position == new Vector(0, 0) || Npc.Position == new Vector(0,0) || Npc.Position == new Vector(0,0)) Restart();
+            if (Npc.Position == MmoPortal.Position)
+            {
+                ScoreGoal(Faction.MMO);
+            }
+            else if (Npc.Position == EicPortal.Position)
+            {
+                ScoreGoal(Faction.EIC);
+            }
+            else if (Npc.Position == VruPortal.Position)
+            {
+                ScoreGoal(Faction.VRU);
+            }
             else Active();
         }
 
@@ -53,15 +82,20 @@ namespace NettyBaseReloaded.Game.controllers.npc
             switch (Npc.LeadingFaction)
             {
                 case Faction.MMO:
-                    // move to left portal
+                    MovementController.Move(Npc, MmoPortal.Position);
                     break;
                 case Faction.EIC:
-                    // move to upper portal
+                    MovementController.Move(Npc, EicPortal.Position);
                     break;
                 case Faction.VRU:
-                    // move to lower portal
+                    MovementController.Move(Npc, VruPortal.Position);
                     break;
             }
+        }
+
+        public void ScoreGoal(Faction faction)
+        {
+            Restart();
         }
 
         public void Inactive()
@@ -82,9 +116,6 @@ namespace NettyBaseReloaded.Game.controllers.npc
             Npc.EICHitDamage = 0;
             Npc.MMOHitDamage = 0;
             Npc.VRUHitDamage = 0;
-            Npc.EICAttackers = new List<int>();
-            Npc.MMOAttackers = new List<int>();
-            Npc.VRUAttackers = new List<int>();
         }
 
         public void Exit()

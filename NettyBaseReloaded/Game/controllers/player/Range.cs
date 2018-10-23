@@ -68,6 +68,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                     var session = baseController.Player.GetGameSession();
                     if (session != null)
                     {
+                        baseController.Player.State.InTradeArea = true;
                         baseController.Player.State.InEquipmentArea = true;
                         //Packet.Builder.EquipReadyCommand(session, true);
                         //World.DatabaseManager.Refresh(baseController.Player);
@@ -84,6 +85,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                     //if (session != null)
                     //    Packet.Builder.EquipReadyCommand(session, false);
                     baseController.Player.State.InEquipmentArea = false;
+                    baseController.Player.State.InTradeArea = false;
                 }
             }
             catch (Exception e)

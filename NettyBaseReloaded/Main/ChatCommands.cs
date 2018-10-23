@@ -26,6 +26,7 @@ namespace NettyBaseReloaded.Main
             Commands.Add("create", new CreateCommand());
             Commands.Add("rcon", new RconCommand());
             Commands.Add("w", new WhisperCommand());
+            Commands.Add("relog", new RelogCommand());
         }
 
         public static void Handle(ChatSession session, string txt)

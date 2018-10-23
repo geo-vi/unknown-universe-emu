@@ -11,14 +11,20 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public Dictionary<int, Level> PlayerLevels = new Dictionary<int, Level>();
         public Dictionary<int, Level> DroneLevels = new Dictionary<int, Level>();
         public Dictionary<int, Level> PetLevels = new Dictionary<int, Level>();
+
+        public Level DeterminatePlayerLvl(double get)
+        {
+            var levelsForCurrentExp = PlayerLevels.FirstOrDefault(x => x.Value.Experience >= get).Value;
+            return levelsForCurrentExp;
+        }
     }
 
     class Level
     {
         public int Id { get; set; }
-        public long Experience { get; set; }
+        public double Experience { get; set; }
 
-        public Level(int id, long exp)
+        public Level(int id, double exp)
         {
             Id = id;
             Experience = exp;

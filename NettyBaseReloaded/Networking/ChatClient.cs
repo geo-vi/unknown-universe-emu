@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Networking
 
         private void XSocketOnConnectionClosedEvent(object sender, EventArgs eventArgs)
         {
-            Disconnect();
+            Chat.Chat.StorageManager.GetChatSession(UserId)?.Close();
         }
 
         private void XSocketOnReceive(object sender, EventArgs eventArgs)

@@ -43,6 +43,12 @@ namespace NettyBaseReloaded.Chat.objects
         public void Kick(string reason)
         {
             MessageController.System(Player, reason);
+            Close();
+        }
+
+        public void Close()
+        {
+            Player.DisconnectRooms();
             Client.Disconnect();
         }
     }

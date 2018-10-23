@@ -50,19 +50,62 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public void LoadClans()
         {
-            Global.StorageManager.Clans.Add(0, new Clan(0, "", "",0));
-            Global.StorageManager.Clans.Add(1, new Clan(1, "Administrators", "ADM",0));
-            Global.StorageManager.Clans.Add(2, new Clan(2, "Developers", "DEV",0));
-            Global.StorageManager.Clans.Add(3, new Clan(3, "Bulgarian United Legends^", "BUL*", 1000));
-            Global.StorageManager.Clans[3].Diplomacy.Add(2, Diplomacy.ALLIED);
-            Global.StorageManager.Clans[2].Diplomacy.Add(3, Diplomacy.ALLIED);
-            Global.StorageManager.Clans[3].Diplomacy.Add(1, Diplomacy.AT_WAR);
-            Global.StorageManager.Clans[1].Diplomacy.Add(3, Diplomacy.AT_WAR);
+            Global.StorageManager.Clans.Add(0, new Clan(0, "", "", 0));
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable =
+                        mySqlClient.ExecuteQueryTable(
+                            $"SELECT * FROM server_clans");
+
+                    foreach (DataRow row in queryTable.Rows)
+                    {
+                        var id = Convert.ToInt32(row["ID"].ToString());
+                        var name = row["NAME"].ToString();
+                        var tag = row["TAG"].ToString();
+                        var rank = Convert.ToInt32(row["RANK"]);
+                        Global.StorageManager.Clans.Add(id, new Clan(id, name, tag, rank));
+                    }
+
+                    var reader  =
+                        mySqlClient.ExecuteQueryReader(
+                            $"SELECT player_data.PLAYER_ID, player_data.CLAN_ID, player_data.PLAYER_NAME FROM server_clans_members,player_data WHERE player_data.USER_ID=server_clans_members.PLAYER_ID");
+                    while (reader.Read())
+                    {
+                        var id = Convert.ToInt32(reader["PLAYER_ID"].ToString());
+                        var clanId = Convert.ToInt32(reader["CLAN_ID"]);
+                        Global.StorageManager.Clans[clanId].Members.Add(id, new ClanMember(id, reader["PLAYER_NAME"].ToString()));
+                    }
+                    reader.Close();
+
+                    queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_clans_diplomacy");
+                    foreach (DataRow row in queryTable.Rows)
+                    {
+                        var id = Convert.ToInt32(row["ID"]);
+                        var clanId = Convert.ToInt32(row["CLAN_ID"].ToString());
+                        var diplomacy = (Diplomacy)Convert.ToInt32(row["DIPLOMACY"].ToString());
+                        var targetId = Convert.ToInt32(row["TARGET_CLAN_ID"].ToString());
+
+                        var diplo = new ClanDiplomacy();
+                        diplo.Diplomacy = diplomacy;
+                        diplo.Clans.Add(Global.StorageManager.GetClan(clanId));
+                        diplo.Clans.Add(Global.StorageManager.GetClan(targetId));
+
+                        Global.StorageManager.ClanDiplomacys.Add(id, diplo);
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
 
         public void SaveAll()
         {
-
+            
         }
 
         public List<Server> GetServers()

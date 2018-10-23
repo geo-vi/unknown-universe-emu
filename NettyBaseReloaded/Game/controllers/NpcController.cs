@@ -89,12 +89,22 @@ namespace NettyBaseReloaded.Game.controllers
             ActiveTick();
         }
 
+        private bool Restarting = false;
         public void DelayedRestart()
         {
+            Restarting = true;
             Task.Factory.StartNew(() =>
             {
                 Thread.Sleep(Npc.RespawnTime * 1000);
-                if (StopController) return;
+                if (!Restarting)
+                {
+                    return;
+                }
+                Restarting = false;
+
+                if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
+                    Character.Spacemap.AddEntity(Character);
+
                 Restart();
             });
             // TODO

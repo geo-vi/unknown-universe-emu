@@ -8,7 +8,10 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests.quest_stats
 {
     class StarterBaseQuestStats
     {
-        public int KilledAliens;
-        public bool Complete;
+        public int KilledStreuner;
+        public bool Complete1;
+        public int KilledLordakia;
+        public bool Complete2;
+        public bool Complete => Complete1 && Complete2;
     }
 }

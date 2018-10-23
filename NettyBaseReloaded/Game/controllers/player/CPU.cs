@@ -17,7 +17,7 @@ namespace NettyBaseReloaded.Game.controllers.player
         {
             ROBOT,
             CLOAK,
-            JCPU,
+            ADVANCED_JCPU,
             AUTO_ROK,
             AUTO_ROCKLAUNCHER
         }
@@ -60,6 +60,18 @@ namespace NettyBaseReloaded.Game.controllers.player
             LastTimeCheckedCpus = DateTime.Now;
 
             if (baseController.Repairing) Robot();
+            if (JumpSequenceActive) AdvancedJCPU();
+
+            foreach (var activeCpu in Active)
+            {
+                switch (activeCpu)
+                {
+                    case Types.AUTO_ROK:
+                        break;
+                    case Types.AUTO_ROCKLAUNCHER:
+                        break;
+                }
+            }
         }
 
         public void Update(Types type)
@@ -103,20 +115,42 @@ namespace NettyBaseReloaded.Game.controllers.player
                     Cloak();
                     break;
                 case Types.AUTO_ROK:
-                    AutoRocket();
+                    var arExtra = baseController.Player.Extras.FirstOrDefault(x => x.Value is AutoRocket);
+                    var autoRocket = arExtra.Value;
+                    if (autoRocket != null && autoRocket.Amount > 0)
+                    {
+                        if (autoRocket.Active)
+                        {
+                            Active.Remove(Types.AUTO_ROK);
+                            autoRocket.Active = false;
+                        }
+                        else
+                        {
+                            Active.Add(Types.AUTO_ROK);
+                            autoRocket.Active = true;
+                        }
+
+                        Update(Types.AUTO_ROK);
+                    }
                     break;
                 case Types.AUTO_ROCKLAUNCHER:
-                    AutoRocketLauncher();
-                    break;
-            }
-        }
+                    var arlExtra = baseController.Player.Extras.FirstOrDefault(x => x.Value is AutoRocketLauncher);
+                    var autoRocketLauncher = arlExtra.Value;
+                    if (autoRocketLauncher != null && autoRocketLauncher.Amount > 0)
+                    {
+                        if (autoRocketLauncher.Active)
+                        {
+                            Active.Remove(Types.AUTO_ROCKLAUNCHER);
+                            autoRocketLauncher.Active = false;
+                        }
+                        else
+                        {
+                            Active.Add(Types.AUTO_ROCKLAUNCHER);
+                            autoRocketLauncher.Active = true;
+                        }
 
-        public void DeActivate(Types type)
-        {
-            switch (type)
-            {
-                case Types.ROBOT:
-                    baseController.Repairing = false;
+                        Update(Types.AUTO_ROCKLAUNCHER);
+                    }
                     break;
             }
         }
@@ -157,55 +191,30 @@ namespace NettyBaseReloaded.Game.controllers.player
             }
         }
 
-        void AutoRocket() {
-            var arExtra = baseController.Player.Extras.FirstOrDefault(x => x.Value is AutoRocket);
-            var autoRocket = arExtra.Value;
-            if (autoRocket != null && autoRocket.Amount > 0)
-            {
-                if (autoRocket.Active)
-                {
-                    Active.Remove(Types.AUTO_ROK);
-                    autoRocket.Active = false;
-                }
-                else
-                {
-                    Active.Add(Types.AUTO_ROK);
-                    autoRocket.Active = true;
-                }
-
-                Update(Types.AUTO_ROK);
-            }
-        }
-
-        void AutoRocketLauncher()
-        {
-            var arlExtra = baseController.Player.Extras.FirstOrDefault(x => x.Value is AutoRocketLauncher);
-            var autoRocketLauncher = arlExtra.Value;
-            if (autoRocketLauncher != null && autoRocketLauncher.Amount > 0)
-            {
-                if (autoRocketLauncher.Active)
-                {
-                    Active.Remove(Types.AUTO_ROCKLAUNCHER);
-                    autoRocketLauncher.Active = false;
-                }
-                else
-                {
-                    Active.Add(Types.AUTO_ROCKLAUNCHER);
-                    autoRocketLauncher.Active = true;
-                }
-
-                Update(Types.AUTO_ROCKLAUNCHER);
-            }
-        }
-
         void DroneRepair()
         {
 
         }
 
-        void JCPU()
-        {
+        public int SelectedMapId;
 
+        public bool JumpSequenceActive;
+        public DateTime JumpSequenceEnd;
+
+        void AdvancedJCPU()
+        {
+            if (JumpSequenceActive && SelectedMapId != 0 && JumpSequenceEnd <= DateTime.Now && baseController.Player.LastCombatTime.AddSeconds(3) < DateTime.Now)
+            {
+                JumpSequenceActive = false;
+                var map = World.StorageManager.Spacemaps[SelectedMapId];
+                Packet.Builder.LegacyModule(baseController.Player.GetGameSession(), "0|A|JCPU|S|-1|-1");
+                baseController.Player.MoveToMap(map, Vector.Random(map),0);
+            }
+            else if (baseController.Player.LastCombatTime.AddSeconds(3) > DateTime.Now || SelectedMapId == 0 || !JumpSequenceActive)
+            {
+                Packet.Builder.LegacyModule(baseController.Player.GetGameSession(), "0|A|JCPU|S|-1|-1");
+                JumpSequenceActive = false;
+            }
         }
     }
 }

@@ -103,7 +103,20 @@ namespace NettyBaseReloaded.Game.controllers.login
 
             Packet.Builder.AttributeOreCountUpdateCommand(GameSession, GameSession.Player.Information.Cargo);
             //Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
-            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
+            UpdateClanWindow(GameSession);
+        }
+
+        public static void UpdateClanWindow(GameSession gameSession)
+        {
+            foreach (var member in gameSession.Player.Clan.Members)
+            {
+                var memberPlayer = member.Value.Player;
+                if (memberPlayer != null)
+                {
+                    var memberSession = memberPlayer.GetGameSession();
+                    Packet.Builder.ClanWindowInitCommand(memberSession);
+                }
+            }
         }
 
         public void InitiateEvents()

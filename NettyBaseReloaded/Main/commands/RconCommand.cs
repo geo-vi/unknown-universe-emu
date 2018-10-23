@@ -12,6 +12,7 @@ using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.extra.boosters;
+using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Main.commands
 {
@@ -39,6 +40,8 @@ namespace NettyBaseReloaded.Main.commands
                     Console.WriteLine("No authorized RCON Session set.");
                     return;
                 }
+                int id = 0;
+                string msg = "";
                 switch (args[1])
                 {
                     case "set":
@@ -81,12 +84,31 @@ namespace NettyBaseReloaded.Main.commands
                     case "createcubi":
                         RconSession.Player.Spacemap.CreateCubikon(RconSession.Player.Position);
                         break;
+                    case "createcbs":
+                        RconSession.Player.Spacemap.CreateAsteroid("nigger#1", RconSession.Player.Position);
+                        break;
+                    case "setclan":
+                        Clan clan;
+                        if (int.TryParse(args[2], out id))
+                        {
+                            clan = Main.Global.StorageManager.GetClan(id);
+                        }
+                        else clan = Main.Global.StorageManager.GetClan(args[2]);
+
+                        if (clan == null) return;
+                        msg = "Moving you to clan " + clan.Tag + "/" + clan.Name + "/" + clan.Id;
+                        Packet.Builder.LegacyModule(RconSession, "0|A|STD|" + msg);
+                        Console.WriteLine(msg);
+                        RconSession.Player.ChangeClan(clan);
+                        break;
                     case "dmg":
                         var p = RconSession.Player;
                         p.Hangar.Configurations[p.CurrentConfig - 1].Damage = int.Parse(args[2]);
+                        msg = "Damage set to: " + args[2];
+                        Packet.Builder.LegacyModule(RconSession, "0|A|STD|" + msg);
+                        Console.WriteLine(msg);
                         break;
                     case "enslave":
-                        int id = 0;
                         if (args[2] == "sel") id = RconSession.Player.SelectedCharacter.Id;
                         else if (args[2] == "all")
                         {
@@ -132,6 +154,9 @@ namespace NettyBaseReloaded.Main.commands
                                     slave.Exit();
                                 break;
                         }
+                        break;
+                    case "send":
+                        Packet.Builder.LegacyModule(RconSession, args[2]);
                         break;
                 }
             }

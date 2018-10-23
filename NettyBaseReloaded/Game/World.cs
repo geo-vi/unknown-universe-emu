@@ -16,6 +16,7 @@ namespace NettyBaseReloaded.Game
     {    
         public static managers.StorageManager StorageManager = new StorageManager();
         public static managers.DatabaseManager DatabaseManager = new DatabaseManager();
+        public static managers.PortalSystemManager PortalSystemManager = new PortalSystemManager();
 
         public static void InitiateManagers()
         {
@@ -53,6 +54,33 @@ namespace NettyBaseReloaded.Game
                         map.Value.CreateStation(Faction.VRU, new Vector(19800, 11800));
                         map.Value.CreateQuestGiver(Faction.VRU, new Vector(17800, 9800));
                         break;
+                    case 18: // 1-6
+                        map.Value.CreateCubikon(new Vector(14800, 2600));
+                        map.Value.CreateCubikon(new Vector(15200, 9400));
+                        map.Value.CreateCubikon(new Vector(7100, 8000));
+                        map.Value.CreateCubikon(new Vector(6100, 3600));
+                        break;
+                    case 20:
+                        map.Value.CreateStation(Faction.MMO, new Vector(2000, 6400));
+                        break;
+                    case 22: // 2-6
+                        map.Value.CreateCubikon(new Vector(14800, 2600));
+                        map.Value.CreateCubikon(new Vector(15200, 9400));
+                        map.Value.CreateCubikon(new Vector(7100, 8000));
+                        map.Value.CreateCubikon(new Vector(6100, 3600));
+                        break;
+                    case 24:
+                        map.Value.CreateStation(Faction.EIC, new Vector(14000, 2000));
+                        break;
+                    case 26: // 3-6 148/26 ;  152/94   ,    71/80 , 61/36
+                        map.Value.CreateCubikon(new Vector(14800, 2600));
+                        map.Value.CreateCubikon(new Vector(15200, 9400));
+                        map.Value.CreateCubikon(new Vector(7100, 8000));
+                        map.Value.CreateCubikon(new Vector(6100, 3600));
+                        break;
+                    case 28:
+                        map.Value.CreateStation(Faction.VRU, new Vector(18800, 6400));
+                        break;
                     case 42: // ???
                         map.Value.CreatePortal(16, 10400, 6400, 0, 0);
                         break;
@@ -62,11 +90,6 @@ namespace NettyBaseReloaded.Game
                         map.Value.CreateRelayStation(new Vector(6200, 11700));
                         map.Value.CreateRelayStation(new Vector(18300, 10900));
                         map.Value.CreateRelayStation(new Vector(18200, 4000));
-                        break;
-                    default:
-                        if (map.Key > 12)
-                            map.Value.DisablePortals();
-                        else map.Value.DisablePortals(new List<int>{13,14,15});
                         break;
                 }
                 map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));

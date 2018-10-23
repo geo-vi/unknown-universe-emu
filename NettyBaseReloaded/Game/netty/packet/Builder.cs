@@ -2266,5 +2266,134 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
+        #region ClanTagChangedCommand
+
+        public void ClanTagChangedCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.ClanTagChangedCommand.write(gameSession.Player.Clan.Tag).Bytes);
+            }
+        }
+        #endregion
+
+        #region QuestPrivilegeCommand
+
+        public void QuestPrivilegeCommand(GameSession gameSession, int questId)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.QuestPrivilegeCommand.write(questId).Bytes);
+            }
+        }
+        #endregion
+
+        #region OrePriceCommand
+
+        public void OrePriceCommand(GameSession gameSession, int prometium, int endurium, int terbium, int prometid,
+            int duranium, int promerium, int palladium)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                LegacyModule(gameSession, "0|g|" + prometium + "|" + endurium + "|" + terbium + "|" + prometid + "|" + duranium + "|" + promerium + "|" + palladium);
+            }
+        }
+        #endregion
+
+        #region JumpCPUFeedbackCommand
+
+        public void JumpCPUFeedbackCommand(GameSession gameSession, int mapId, int uridiumPrice, bool possible)
+        {
+            LegacyModule(gameSession, "0|A|JCPU|C|" + mapId + "|" + uridiumPrice + "|" + Convert.ToInt32(possible));
+        }
+        #endregion
+
+        #region SpaceBallInitializeScoreCommand
+
+        public void SpaceBallInitializeScoreCommand(GameSession gameSession, Spaceball ball)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.SpaceBallInitializeScoreCommand.write(ball.ScoreMmo, ball.ScoreEic, ball.ScoreVru, ball.Owner, ball.Speed).Bytes);
+            }
+        }
+        #endregion
+
+        #region ClanWindowInitCommand
+
+        public void ClanWindowInitCommand(GameSession gameSession)
+        {
+            var clan = gameSession.Player.Clan;
+            if (clan.Id == 0) return;
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                var list = new List<commands.old_client.ClanMemberModule>();
+                var onMyMap = new List<int>();
+                foreach (var clanMember in clan.Members)
+                {
+                    if (clanMember.Key == gameSession.Player.Id) continue;
+                    list.Add(new commands.old_client.ClanMemberModule(clanMember.Value.Id, clanMember.Value.Name));
+                    if (clanMember.Value.Player != null)
+                    {
+                        onMyMap.Add(clanMember.Value.Id);
+                    }
+                }
+
+                gameSession.Client.Send(commands.old_client.ClanWindowInitCommand.write(clan.Id, clan.Name, clan.Tag, list, onMyMap).Bytes);
+            }
+        }
+        #endregion
+
+        #region ClanMemberOnlineInfoCommand
+
+        public void ClanMemberOnlineInfoCommand(GameSession session, ClanMember onlineMember)
+        {
+            if (session.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                session.Client.Send(commands.old_client.ClanMemberOnlineInfoCommand.write(onlineMember.Id, onlineMember.Player == null).Bytes);
+            }
+        }
+        #endregion
+
+        #region ClanMemberMapInfoCommand
+
+        public void ClanMemberMapInfoCommand(GameSession session, ClanMember member)
+        {
+            if (session.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                session.Client.Send(commands.old_client.ClanMemberMapInfoCommand.write(member.Id, member.Player.Spacemap.Id).Bytes);
+            }
+        }
+
+        #endregion
     }
 }

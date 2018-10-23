@@ -24,15 +24,32 @@ namespace NettyBaseReloaded.Chat.controllers
 
         public static void Room(Character character, int roomId, string message)
         {
-            var room = Chat.StorageManager.Rooms[roomId];
-            if (room == null) return;
+            try
+            {
+                var room = Chat.StorageManager.Rooms[roomId];
+                if (room == null) return;
 
-            if(character is Moderator)
-                ChatClient.SendToRoom(character, "j%" + roomId + "@" + character.Name + "@" + message + "@" + (int)((Moderator)character).AdminLevel + "#", room);
-            if (character is Bot)
-                throw new NotImplementedException();
-            if (character is Player)
-                ChatClient.SendToRoom(character, "a%" + roomId + "@" + character.Name + "@" + message + "@" + character.Clan.Tag + "#", room);
+                if (character is Moderator)
+                    ChatClient.SendToRoom(character,
+                        "j%" + roomId + "@" + character.Name + "@" + message + "@" +
+                        (int) ((Moderator) character).AdminLevel + "#", room);
+                if (character is Bot)
+                    throw new NotImplementedException();
+                if (character is Player)
+                {
+                    var packet = "a%" + roomId + "@" + character.Name + "@" + message + "#";
+                    if (character.Clan.Id != 0)
+                    {
+                        packet = packet.Replace("#", "@" + character.Clan.Tag + "#");
+                    }
+
+                    ChatClient.SendToRoom(character,
+                        packet, room);
+                }
+            }
+            catch (Exception e)
+            {
+            }
         }
 
         public static void System(Player player, string message)
@@ -46,7 +63,6 @@ namespace NettyBaseReloaded.Chat.controllers
 
         public static void Whisper(string target, string from, string msg)
         {
-            Console.WriteLine($"{target} {from} {msg}");
             var foundTarget = Chat.StorageManager.ChatSessions.FirstOrDefault(x => x.Value.Player.Name == target).Value;
             var foundAuthor = Chat.StorageManager.ChatSessions.FirstOrDefault(x => x.Value.Player.Name == from).Value;
             if (foundTarget == null)

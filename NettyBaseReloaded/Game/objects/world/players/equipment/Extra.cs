@@ -19,6 +19,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             Player = player;
         }
 
+        public virtual void initiate()
+        {
+
+        }
+
         public virtual void execute()
         {
             var cpus = Player.Settings.OldClientShipSettingsCommand.activeCpus;
@@ -43,7 +48,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                 switch (consumable.Key)
                 {
                     case "equipment_extra_cpu_ajp-01":
-                        // TODO add Jump
+                        extras.Add(consumable.Key, new AdvancedJumpCpu(player, consumable.Value.Id, consumable.Value.LootId,
+                            consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_rok-t01":
                         extras.Add(consumable.Key,

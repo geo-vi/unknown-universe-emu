@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 
 namespace NettyBaseReloaded.Main.objects
@@ -16,7 +17,6 @@ namespace NettyBaseReloaded.Main.objects
         /// <summary>
         /// Clan id, diplomacy relations
         /// </summary>
-        public Dictionary<int,Diplomacy> Diplomacy { get; set; }
 
         public Dictionary<int, ClanMember> Members { get; set; }
 
@@ -25,18 +25,20 @@ namespace NettyBaseReloaded.Main.objects
             Id = id;
             Name = name;
             Tag = tag;
-            Diplomacy = new Dictionary<int, Diplomacy>();
             Members = new Dictionary<int, ClanMember>();
             RankPoints = rankPoints;
         }
         
         public short GetRelation(Clan clan)
         {
-            if (clan == this && clan.Id != 0)
-                return (short)objects.Diplomacy.ALLIED;
-            if (Diplomacy.ContainsKey(clan.Id))
-                return (short)Diplomacy[clan.Id];
-            return (short) objects.Diplomacy.NONE;
+            var relationship = Global.StorageManager.ClanDiplomacys.Values.FirstOrDefault(x =>
+                x.Clans.Exists(z => z == clan) && x.Clans.Exists(z => z == this));
+            if (relationship != null)
+            {
+                return (short) relationship.Diplomacy;
+            }
+
+            return 0;
         }
     }
 }

@@ -75,14 +75,26 @@ namespace NettyBaseReloaded.Chat.objects.chat
             var room = Chat.StorageManager.Rooms[roomId];
             if (room == null) return;
 
-            if (room.ConnectedUsers.Count > room.MaxUsers) return;
-
-            room.ConnectedUsers.Add(Id, this);
-            ConnectedRooms.Add(roomId, room);
-
-            if (this is Player || this is Moderator)
+            if (room.ConnectedUsers.Count > room.MaxUsers)
             {
-                Packet.Builder.SendRooms(Chat.StorageManager.GetChatSession(Id));
+                if (this is Player p)
+                    Packet.Builder.SystemMessage(p.GetSession(), "Maximal amount of users connected. Please try again later.");
+                return;
+            }
+
+            if (room.ConnectedUsers.ContainsKey(Id))
+            {
+                room.ConnectedUsers[Id] = this;
+            }
+            else room.ConnectedUsers.Add(Id, this);
+
+            if (!ConnectedRooms.ContainsKey(roomId))
+                ConnectedRooms.Add(roomId, room);
+            else ConnectedRooms[roomId] = room;
+
+            if (this is Player player)
+            {
+                Packet.Builder.SendRooms(player.GetSession());
             }
         }
     }

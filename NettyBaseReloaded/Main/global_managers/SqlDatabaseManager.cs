@@ -25,7 +25,10 @@ namespace NettyBaseReloaded.Main.global_managers
         public static void Initialize()
         {
             GenerateConnectionString();
-            GetClient().ExecuteNonQuery("SELECT 1");
+            using (var client = GetClient())
+            {
+                client.ExecuteNonQuery("SELECT 1");
+            }
         }
 
         //public static ConcurrentDictionary<int, MySqlConnection> Connections = new ConcurrentDictionary<int, MySqlConnection>();
@@ -57,6 +60,7 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.Password = PWD;
                 ConnectionStringBuilder.Database = DB_EXT;
                 ConnectionStringBuilder.ConvertZeroDateTime = true;
+                ConnectionStringBuilder.Pooling = false;
                 ConnectionStringBuilder.SslMode = MySqlSslMode.None;
                 GlobalConnectionString = ConnectionStringBuilder.ToString();
             }
@@ -76,6 +80,7 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.Password = PWD;
                 ConnectionStringBuilder.Database = DB;
                 ConnectionStringBuilder.ConvertZeroDateTime = true;
+                ConnectionStringBuilder.Pooling = false;
                 ConnectionStringBuilder.SslMode = MySqlSslMode.None;
                 ConnectionString = ConnectionStringBuilder.ToString();
             }
