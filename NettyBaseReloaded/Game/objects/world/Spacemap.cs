@@ -393,7 +393,31 @@ namespace NettyBaseReloaded.Game.objects.world
             npc.Controller.Initiate();
         }
 
+        public void CreateSpaceball(int designId, Vector position)
+        {
+            var id = GetNextAvailableId();
+            var ship = World.StorageManager.Ships[designId];
+            var npc = new Spaceball(id, ship.Name,
+                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
+                    new Dictionary<string, Item>()),
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                ship.Damage, 90);
 
+            if (Entities.ContainsKey(npc.Id))
+            {
+                if (Properties.Server.DEBUG)
+                    Console.WriteLine(id + "#Failed adding NPC");
+                return;
+            }
+
+            AddEntity(npc);
+
+            if (!Global.TickManager.Exists(npc))
+                Global.TickManager.Add(npc);
+            npc.Controller = new NpcController(npc) { CustomSetAI = AILevels.SPACEBALL };
+            npc.Controller.Initiate();
+            Console.WriteLine("Created spaceball @4-4");
+        }
         #endregion
 
         #region Zones

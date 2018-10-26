@@ -6,7 +6,29 @@
 
         SHIP_LOOT,
 
-        BONUS_BOX
+        BONUS_BOX,
+
+        EASTER_EGG,
+
+        BIG_PUMPKIN,
+
+        ORANGE_PUMPKIN,
+
+        TURKEY,
+
+        BIG_XMAS_STAR,
+
+        STD_XMAS_STAR,
+
+        FLOWER_MOTHERSDAY,
+
+        ITALIAN_BOX,
+
+        CREST_AND_STAR,
+
+        POLISH_BONUS_BOX,
+
+        WINTER_GIFT_BOX
     }
 
     public enum OreTypes

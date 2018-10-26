@@ -42,15 +42,15 @@ namespace NettyBaseReloaded.Game.controllers.npc
         {
             if (Npc.Position == MmoPortal.Position)
             {
-                ScoreGoal(Faction.MMO);
+                ScoreGoal(Faction.MMO, MmoPortal.Id);
             }
             else if (Npc.Position == EicPortal.Position)
             {
-                ScoreGoal(Faction.EIC);
+                ScoreGoal(Faction.EIC, EicPortal.Id);
             }
             else if (Npc.Position == VruPortal.Position)
             {
-                ScoreGoal(Faction.VRU);
+                ScoreGoal(Faction.VRU, VruPortal.Id);
             }
             else Active();
         }
@@ -77,6 +77,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             else
             {
                 Npc.MovingSpeed = 0;
+                Npc.LeadingFaction = Faction.NONE;
             }
 
             switch (Npc.LeadingFaction)
@@ -90,11 +91,24 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 case Faction.VRU:
                     MovementController.Move(Npc, VruPortal.Position);
                     break;
+                default:
+                    MovementController.Move(Npc, MovementController.ActualPosition(Npc));
+                    break;
+            }
+
+            if (Npc.LastCombatTime.AddSeconds(3) < DateTime.Now)
+            {
+                Npc.MMOHitDamage = 0;
+                Npc.EICHitDamage = 0;
+                Npc.VRUHitDamage = 0;
+                Npc.LeadingFaction = Faction.NONE;
+                Npc.MovingSpeed = 0;
             }
         }
 
-        public void ScoreGoal(Faction faction)
+        public void ScoreGoal(Faction faction, int portalId)
         {
+            Npc.Score(faction, portalId);
             Restart();
         }
 
@@ -110,8 +124,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Restart()
         {
-            var position = new Vector(0, 0);
+            var position = Vector.GetMiddle(Npc.Spacemap);
             Npc.SetPosition(position);
+            Npc.RefreshPlayersView();
             Npc.LeadingFaction = Faction.NONE;
             Npc.EICHitDamage = 0;
             Npc.MMOHitDamage = 0;

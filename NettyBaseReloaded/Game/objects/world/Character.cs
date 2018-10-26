@@ -162,7 +162,7 @@ namespace NettyBaseReloaded.Game.objects.world
         /*********
          * EXTRA *
          *********/
-        public int RenderRange { get; set; }
+        public virtual int RenderRange => 2000;
         public IAttackable Selected { get; set; }
         public Character SelectedCharacter => Selected as Character;
 
@@ -197,7 +197,6 @@ namespace NettyBaseReloaded.Game.objects.world
             MovementStartTime = new DateTime();
             MovementTime = 0;
 
-            RenderRange = 2000;
             Range = new Range {Character = this};
 
             Skills = new Skilltree(this);
@@ -292,6 +291,11 @@ namespace NettyBaseReloaded.Game.objects.world
                 Packet.Builder.ShipRemoveCommand(session, this);
                 p.Refresh();
             }
+        }
+
+        public bool HasWarnBox()
+        {
+            return false;
         }
     }
 }

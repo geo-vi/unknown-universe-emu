@@ -85,5 +85,15 @@ namespace NettyBaseReloaded.Game.objects.world
                 cubi.Children.TryRemove(Id, out removedNpc);
             }
         }
+
+        public int GetMotherShipId()
+        {
+            if (MotherShip != null)
+            {
+                return MotherShip.Id;
+            }
+
+            return 0;
+        }
     }
 }

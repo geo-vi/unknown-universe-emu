@@ -99,5 +99,11 @@ namespace NettyBaseReloaded.Game.objects.world
             float yDiff = secPoint.Y - Y;
             return Math.Atan2(yDiff, xDiff) * 180.0 / Math.PI;
         }
+
+        public static Vector GetMiddle(Spacemap spacemap)
+        {
+            var limit = spacemap.Limits[1];
+            return new Vector(limit.X / 2, limit.Y / 2);
+        }
     }
 }

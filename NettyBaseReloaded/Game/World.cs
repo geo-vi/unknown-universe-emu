@@ -92,7 +92,7 @@ namespace NettyBaseReloaded.Game
                         map.Value.CreateRelayStation(new Vector(18200, 4000));
                         break;
                 }
-                map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));
+                //map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));
                 map.Value.SpawnNpcs();
                 
                 if (map.Key != 200 && map.Key != 54 && map.Key != 53 && map.Key != 52 && map.Key != 51 && map.Key != 16)
@@ -105,6 +105,7 @@ namespace NettyBaseReloaded.Game
             }
             Out.WriteLog("Loaded World");
             StreamMessageToWorld("World fully loaded, have fun playing.");
+            DatabaseManager.LoadEvents();
         }
 
         public static void StreamMessageToWorld(string msg)

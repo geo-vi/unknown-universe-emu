@@ -525,7 +525,9 @@
     <Compile Include="Game\objects\world\EntityStates.cs" />
     <Compile Include="Game\objects\world\Events.cs" />
     <Compile Include="Game\objects\world\events\GameEvent.cs" />
+    <Compile Include="Game\objects\world\events\SpaceballGameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
+    <Compile Include="Game\objects\world\map\collectables\LootBox.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\BoosterStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\LaserStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\RocketStationModule.cs" />

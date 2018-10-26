@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.characters;
+using Console = System.Console;
 
 namespace NettyBaseReloaded.Game.objects.world.npcs
 {
@@ -16,6 +19,8 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
 
         public override int MaxHealth => 999999999;
 
+        public override int RenderRange => -1;
+
         /// <summary>
         /// Each company hitting harder than the other one
         /// </summary>
@@ -27,6 +32,15 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
 
         public Faction LeadingFaction;
         public int MovingSpeed; // will be done from controller
+
+        public override int Speed
+        {
+            get
+            {
+                var speed = Hangar.Ship.Speed;
+                return speed * MovingSpeed; 
+            }
+        }
 
         public int MMOScore = 0;
 
@@ -41,49 +55,117 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
         public override void AssembleTick(object sender, EventArgs eventArgs)
         {
             base.AssembleTick(sender, eventArgs);
-            WipeDamage();
+            Calculate();
         }
 
-        private DateTime LastWipe;
+        public void Calculate()
+        {
+            var mmoDamage = 0;
+            Character tempCharacter = null;
+            foreach (var nigga in mmoNiggas.Values)
+            {
+                if (IsNigga(nigga))
+                {
+                    mmoDamage += nigga.Damage;
+                }
+                else mmoNiggas.TryRemove(nigga.Id, out tempCharacter);
+            }
+
+            var eicDamage = 0;
+            foreach (var nigga in eicNiggas.Values)
+            {
+                if (IsNigga(nigga))
+                {
+                    eicDamage += nigga.Damage;
+                }
+                else eicNiggas.TryRemove(nigga.Id, out tempCharacter);
+            }
+
+            var vruDamage = 0;
+            foreach (var nigga in vruNiggas.Values)
+            {
+                if (IsNigga(nigga))
+                {
+                    vruDamage += nigga.Damage;
+                }
+                else vruNiggas.TryRemove(nigga.Id, out tempCharacter);
+            }
+
+            MMOHitDamage = mmoDamage;
+            EICHitDamage = eicDamage;
+            VRUHitDamage = vruDamage;
+        }
+
+        public bool IsNigga(Character nigga) => nigga.Controller.Active && nigga.Controller.Attack.Attacking &&
+                                                nigga.Selected == this && LastCombatTime.AddSeconds(2) > DateTime.Now;
+
         public void WipeDamage()
         {
-            if (LastWipe.AddSeconds(1) > DateTime.Now) return;
             MMOHitDamage = 0;
             EICHitDamage = 0;
             VRUHitDamage = 0;
-            LastWipe = DateTime.Now;
         }
+
+        private ConcurrentDictionary<int, Character> mmoNiggas = new ConcurrentDictionary<int, Character>();
+        private ConcurrentDictionary<int, Character> eicNiggas = new ConcurrentDictionary<int, Character>();
+        private ConcurrentDictionary<int, Character> vruNiggas = new ConcurrentDictionary<int, Character>();
 
         public override void Hit(int totalDamage, int attackerId)
         {
             if (Spacemap.Entities.ContainsKey(attackerId))
             {
+                Character character;
                 var attacker = Spacemap.Entities[attackerId];
                 switch (attacker.FactionId)
                 {
                     case Faction.MMO:
-                        MMOHitDamage += totalDamage;
+                        character = GetCharacter(attackerId);
+                        if (!mmoNiggas.ContainsKey(attackerId)) mmoNiggas.TryAdd(attackerId, character);
                         break;
                     case Faction.EIC:
-                        EICHitDamage += totalDamage;
+                        character = GetCharacter(attackerId);
+                        if (!eicNiggas.ContainsKey(attackerId)) eicNiggas.TryAdd(attackerId, character);
                         break;
                     case Faction.VRU:
-                        VRUHitDamage += totalDamage;
+                        character = GetCharacter(attackerId);
+                        if (!vruNiggas.ContainsKey(attackerId)) vruNiggas.TryAdd(attackerId, character);
                         break;
                 }
             }
         }
 
-        public void Score(Faction faction)
+        public Character GetCharacter(int id)
+        {
+            return Spacemap.Entities[id];
+        }
+
+        public void Score(Faction faction, int portalId)
         {
             switch (faction)
             {
                 case Faction.MMO:
-
+                    MMOScore++;
+                    foreach (var session in World.StorageManager.GameSessions.Values)
+                    {
+                        if (session == null || !session.Player.Controller.Active) continue;
+                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, MMOScore, portalId);
+                    }
                     break;
                 case Faction.EIC:
+                    EICScore++;
+                    foreach (var session in World.StorageManager.GameSessions.Values)
+                    {
+                        if (session == null || !session.Player.Controller.Active) continue;
+                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, EICScore, portalId);
+                    }
                     break;
                 case Faction.VRU:
+                    VRUScore++;
+                    foreach (var session in World.StorageManager.GameSessions.Values)
+                    {
+                        if (session == null || !session.Player.Controller.Active) continue;
+                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, VRUScore, portalId);
+                    }
                     break;
             }
         }

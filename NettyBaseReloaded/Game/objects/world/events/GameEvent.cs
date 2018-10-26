@@ -41,7 +41,7 @@ namespace NettyBaseReloaded.Game.objects.world.events
             Active = active;
         }
 
-        public void Start()
+        public virtual void Start()
         {
             Active = true;
             World.DatabaseManager.UpdateServerEvent(Id, Active);
@@ -61,6 +61,10 @@ namespace NettyBaseReloaded.Game.objects.world.events
                 if (EventType == EventTypes.SCOREMAGEDDON)
                 {
                     playerEvent = new ScoreMageddon(player, Id);
+                }
+                else if (EventType == EventTypes.SPACEBALL)
+                {
+                    playerEvent = new Spaceball(player, Id);
                 }
                 if (playerEvent != null)
                 {

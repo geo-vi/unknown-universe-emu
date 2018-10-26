@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Chat.objects.chat;
+using NettyBaseReloaded.Game.objects.world.players;
 
 namespace NettyBaseReloaded.Chat.managers
 {
@@ -21,6 +22,11 @@ namespace NettyBaseReloaded.Chat.managers
         public ChatSession GetChatSession(int userId)
         {
             return ChatSessions.ContainsKey(userId) ? ChatSessions[userId] : null;
+        }
+
+        public void CreateRoomForGroup(Group group, string roomName)
+        {
+            //todo;
         }
     }
 }

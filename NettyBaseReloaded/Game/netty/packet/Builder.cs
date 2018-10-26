@@ -403,16 +403,15 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     PetActivationCommand(gameSession, character as Pet);
                 }
-                else
+                else if (character is Npc npc)
                 {
                     bytes = commands.old_client.ShipCreateCommand.write(character.Id,
                             character.Hangar.ShipDesign.Id, 0, character.Clan.Tag, character.Name, character.Position.X,
                             character.Position.Y,
-                            (int) character.FactionId, character.Clan.Id, 0, false,
-                            new commands.old_client.ClanRelationModule(
-                                character.Clan.GetRelation(gameSession.Player.Clan)),
+                            (int) character.FactionId, character.Clan.Id, 0, character.HasWarnBox(),
+                            new commands.old_client.ClanRelationModule(0),
                             0,
-                            false, true, character.Invisible, 0, 0,
+                            false, true, character.Invisible, npc.GetMotherShipId(), 0,
                             new List<commands.old_client.VisualModifierCommand>())
                         .Bytes;
                 }
@@ -2393,6 +2392,38 @@ namespace NettyBaseReloaded.Game.netty.packet
                 session.Client.Send(commands.old_client.ClanMemberMapInfoCommand.write(member.Id, member.Player.Spacemap.Id).Bytes);
             }
         }
+
+        #endregion
+
+        #region SpaceBallUpdateSpeedCommand
+
+        public void SpaceBallUpdateSpeedCommand(GameSession gameSession, Spaceball spaceballEvent)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.SpaceBallUpdateSpeedCommand.write(spaceballEvent.Owner, spaceballEvent.Speed).Bytes);
+            }
+        }
+
+        #endregion
+
+        #region SpaceBallUpdateScoreCommand
+
+        public void SpaceBallUpdateScoreCommand(GameSession gameSession, Faction faction, int score, int gate)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.SpaceBallUpdateScoreCommand.write((int) faction, score, gate).Bytes);
+            }
+        } 
 
         #endregion
     }

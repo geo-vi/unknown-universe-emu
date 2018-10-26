@@ -38,7 +38,7 @@ namespace NettyBaseReloaded.Game.managers
             LoadSpacemaps();
             LoadLevels();
             LoadCollectableRewards();
-            LoadEvents();
+            //LoadEvents();
             LoadTitles();
         }
 
@@ -519,7 +519,19 @@ namespace NettyBaseReloaded.Game.managers
                             string name = reader["NAME"].ToString();
                             EventTypes type = (EventTypes) intConv(reader["TYPE"]);
                             bool active = Convert.ToBoolean(intConv(reader["ACTIVE"]));
-                            World.StorageManager.Events.Add(eventId, new GameEvent(eventId, name, type, active));
+                            GameEvent gameEvent;
+                            switch (type)
+                            {
+                                case EventTypes.SPACEBALL:
+                                    gameEvent = new SpaceballGameEvent(eventId, name, type, active);
+                                    break;
+                                default:
+                                    gameEvent = new GameEvent(eventId, name, type, active);
+                                    break;
+                            }
+                            if (active)
+                                gameEvent.Start();
+                            World.StorageManager.Events.Add(eventId, gameEvent);
                         }
                     }
 
@@ -772,7 +784,7 @@ namespace NettyBaseReloaded.Game.managers
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow = mySqlClient.ExecuteQueryRow($"UPDATE player_data SET CREDITS=CREDITS+{creChange}, URIDIUM=URIDIUM+{uriChange}, EXP=EXP+{expChange}, HONOR=HONOR+{honChange} WHERE" +
+                    var queryRow = mySqlClient.ExecuteQueryRow($"UPDATE player_data SET CREDITS=CREDITS+{creChange}, URIDIUM=URIDIUM+{uriChange},LVL={player.Information.Level.Id}, EXP=EXP+{expChange}, HONOR=HONOR+{honChange} WHERE" +
                                                                $" PLAYER_ID={player.Id}");
                     player.Information.Credits.SyncedValue = doubleConv(queryRow["CREDITS"]);
                     player.Information.Credits.Value = player.Information.Credits.SyncedValue;
@@ -870,19 +882,11 @@ namespace NettyBaseReloaded.Game.managers
                         var uri = doubleConv(queryRow["URIDIUM"]);
                         var exp = doubleConv(queryRow["EXP"]);
                         var hon = doubleConv(queryRow["HONOR"]);
-                        var lvl = intConv(queryRow["LVL"]);
                         var premEnd = Convert.ToDateTime(queryRow["PREMIUM_UNTIL"]);
                         info.Credits.Sync(cre);
                         info.Uridium.Sync(uri);
                         info.Experience.Sync(exp);
                         info.Honor.Sync(hon);
-
-                        var newLvl = World.StorageManager.Levels.PlayerLevels[lvl];
-                        if (newLvl.Experience < exp)
-                            newLvl = World.StorageManager.Levels.PlayerLevels[1];
-
-                        if (info.Level == null)
-                            info.Level = newLvl;
                         info.Premium.Sync(premEnd);
                     }
                     queryRow.Close();

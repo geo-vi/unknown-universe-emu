@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Game.objects.world.players.events
 {
     class Spaceball : PlayerEvent
     {
         public npcs.Spaceball BallNpc;
+
+        
 
         public Spaceball(Player player, int id) : base(player, id, 500)
         {
@@ -26,11 +29,17 @@ namespace NettyBaseReloaded.Game.objects.world.players.events
         public override void Start()
         {
             //todo initiate scoreboard
+            Packet.Builder.SpaceBallInitializeScoreCommand(Player.GetGameSession(), this);
         }
 
+        private int PrevSpeed = 0;
         public override void Tick()
         {
-            
+            if (Speed != PrevSpeed)
+            {
+                PrevSpeed = Speed;
+                Packet.Builder.SpaceBallUpdateSpeedCommand(Player.GetGameSession(), this);
+            }
         }
 
         public override void End()
