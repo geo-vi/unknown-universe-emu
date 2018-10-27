@@ -13,6 +13,7 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Networking;
 using NettyBaseReloaded.Game.objects.world.players.extra.techs;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -216,12 +217,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             damage = RandomizeDamage(damage);
             absDamage = RandomizeDamage(absDamage);
+
             GameClient.SendToPlayerView(Character,
                 netty.commands.old_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
-                    Character is Player), true);
+                    Character.Skills.HasFatLasers()), true);
             GameClient.SendToPlayerView(Character,
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
-                    Character is Player), true);
+                    Character.Skills.HasFatLasers()), true);
 
             Controller.Damage?.Laser(enemy, damage, false);
             Controller.Damage?.Laser(enemy, absDamage, true);

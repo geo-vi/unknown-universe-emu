@@ -16,7 +16,15 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public int UsedSpace => Prometium + Endurium + Terbium + Prometid + Duranium + Promerium + Seprom;
 
-        public int TotalSpace => Player.Hangar.Ship.Cargo;
+        public int TotalSpace
+        {
+            get
+            {
+                var baseValue = Player.Hangar.Ship.Cargo;
+                if (Player.Extras.ContainsKey("equipment_extra_cpu_g3x-crgo-x")) baseValue *= 2;
+                return baseValue;
+            }
+        }
 
         public Cargo(Player player, int prometium, int endurium,
                         int terbium, int prometid, int duranium, int xenomit, int promerium, int seprom) : base(prometium, endurium, terbium, prometid, duranium, xenomit, promerium, seprom)

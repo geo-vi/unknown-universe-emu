@@ -1048,9 +1048,8 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public Skilltree LoadSkilltree(Player player)
+        public void LoadSkilltree(Player player, Skilltree skilltree)
         {
-            Skilltree skilltree = new Skilltree(player);
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
@@ -1074,7 +1073,6 @@ namespace NettyBaseReloaded.Game.managers
             {
                 Console.WriteLine("error " + e);
             }
-            return null;
         }
 
         public Premium LoadPremium(Player player)

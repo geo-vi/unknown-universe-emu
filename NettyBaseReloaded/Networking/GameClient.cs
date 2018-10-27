@@ -63,7 +63,7 @@ namespace NettyBaseReloaded.Networking
                         gameSession.LastActiveTime = DateTime.Now;
 
                     XSocket.Write(bytes);
-                    //Console.WriteLine(Out.GetCaller() + $" ({DateTime.Now})");
+                    //Console.WriteLine(Out.GetCaller() + $" ({DateTime.Now}): OUT");
                 }
             }
             catch (Exception)

@@ -105,11 +105,16 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public int ElectroOptics { get; set; }
         #endregion
 
-        public Character Character { get; set; }
+        private Character Character { get; set; }
 
         public Skilltree(Character character)
         {
             Character = character;
+
+            if (Character is Player player)
+            {
+                World.DatabaseManager.LoadSkilltree(player, this);
+            }
         }
 
         public bool HasFatLasers()

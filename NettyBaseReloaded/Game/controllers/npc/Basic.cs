@@ -141,7 +141,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     }
 
                     if (!Vector.IsPositionInCircle(npc.Destination, target.Position, 400) && !Flee)
+                    {
                         MovementController.Move(npc, Vector.GetPosOnCircle(target.Position, 400));
+                    }
                     
                 }
                 

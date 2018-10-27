@@ -166,7 +166,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             //if (GetForSelection(entity)) return;
 
-            if (Character.InRange(entity, VisibilityRange))
+            if (Character.InRange(entity, entity.RenderRange))
             {
                 if (!Character.Range.Entities.ContainsKey(entity.Id))
                     AddCharacter(Character, entity);

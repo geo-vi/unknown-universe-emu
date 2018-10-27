@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.map.collectables;
+using NettyBaseReloaded.Game.objects.world.map.objects;
 using Console = System.Console;
 
 namespace NettyBaseReloaded.Game.objects.world.npcs
@@ -139,7 +141,7 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
             return Spacemap.Entities[id];
         }
 
-        public void Score(Faction faction, int portalId)
+        public void Score(Faction faction, Jumpgate portal)
         {
             switch (faction)
             {
@@ -148,7 +150,7 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
                     foreach (var session in World.StorageManager.GameSessions.Values)
                     {
                         if (session == null || !session.Player.Controller.Active) continue;
-                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, MMOScore, portalId);
+                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, MMOScore, portal.Id);
                     }
                     break;
                 case Faction.EIC:
@@ -156,7 +158,7 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
                     foreach (var session in World.StorageManager.GameSessions.Values)
                     {
                         if (session == null || !session.Player.Controller.Active) continue;
-                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, EICScore, portalId);
+                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, EICScore, portal.Id);
                     }
                     break;
                 case Faction.VRU:
@@ -164,9 +166,14 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
                     foreach (var session in World.StorageManager.GameSessions.Values)
                     {
                         if (session == null || !session.Player.Controller.Active) continue;
-                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, VRUScore, portalId);
+                        Packet.Builder.SpaceBallUpdateScoreCommand(session, faction, VRUScore, portal.Id);
                     }
                     break;
+            }
+
+            for (var i = 0; i < 50; i++)
+            {
+                Spacemap.CreateLootBox(Vector.GetPosOnCircle(portal.Position, 50 * i), new Reward(RewardType.URIDIUM, 750), Types.BIG_PUMPKIN, 25000);
             }
         }
     }
