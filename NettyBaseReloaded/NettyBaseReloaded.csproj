@@ -528,6 +528,7 @@
     <Compile Include="Game\objects\world\events\SpaceballGameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
     <Compile Include="Game\objects\world\map\collectables\LootBox.cs" />
+    <Compile Include="Game\objects\world\map\collectables\PirateBooty.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\BoosterStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\LaserStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\RocketStationModule.cs" />
@@ -586,6 +587,7 @@
     <Compile Include="Game\objects\world\players\equipment\Drone.cs" />
     <Compile Include="Game\objects\world\players\equipment\Extra.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AdvancedJumpCpu.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\CargoXtender.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\Turbo.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AutoRocketLauncher.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AutoRocket.cs" />

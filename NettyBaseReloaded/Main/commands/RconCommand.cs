@@ -10,9 +10,12 @@ using NettyBaseReloaded.Game.controllers.npc;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.extra.boosters;
 using NettyBaseReloaded.Main.objects;
+using Enum = Google.Protobuf.WellKnownTypes.Enum;
 
 namespace NettyBaseReloaded.Main.commands
 {
@@ -157,6 +160,35 @@ namespace NettyBaseReloaded.Main.commands
                         break;
                     case "send":
                         Packet.Builder.LegacyModule(RconSession, args[2]);
+                        break;
+                    case "createlootbox":
+                        if (args.Length < 4)
+                        {
+                            if (args.Length == 3 && args[2] == "types")
+                            {
+                                int i = 0;
+                                foreach (var record in System.Enum.GetValues(typeof(Types)))
+                                {
+                                    Console.WriteLine("LOOT: " + record.ToString() + " :: " + i);
+                                    i++;
+                                }
+                            }
+                            Console.WriteLine("ARGS: /rcon createlootbox [uri] [amount] [typeID]");
+                            Console.WriteLine("/rcon createlootbox types");
+                            return;
+                        }
+                        Reward reward = null;
+                        switch (args[2])
+                        {
+                            case "uri":
+                                reward = new Reward(RewardType.URIDIUM, Convert.ToInt32(args[3]));
+                                break;
+                            default:
+                                reward = new Reward(RewardType.URIDIUM, 500);
+                                break;
+                        }
+
+                        RconSession.Player.Spacemap.CreateLootBox(RconSession.Player.Position, reward, (Types)Convert.ToInt32(args[4]), 15000);
                         break;
                 }
             }

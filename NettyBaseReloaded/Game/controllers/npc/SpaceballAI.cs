@@ -42,15 +42,15 @@ namespace NettyBaseReloaded.Game.controllers.npc
         {
             if (Npc.Position == MmoPortal.Position)
             {
-                ScoreGoal(Faction.MMO, MmoPortal.Id);
+                ScoreGoal(Faction.MMO, MmoPortal);
             }
             else if (Npc.Position == EicPortal.Position)
             {
-                ScoreGoal(Faction.EIC, EicPortal.Id);
+                ScoreGoal(Faction.EIC, EicPortal);
             }
             else if (Npc.Position == VruPortal.Position)
             {
-                ScoreGoal(Faction.VRU, VruPortal.Id);
+                ScoreGoal(Faction.VRU, VruPortal);
             }
             else Active();
         }
@@ -83,16 +83,20 @@ namespace NettyBaseReloaded.Game.controllers.npc
             switch (Npc.LeadingFaction)
             {
                 case Faction.MMO:
-                    MovementController.Move(Npc, MmoPortal.Position);
+                    if (!Npc.Moving)
+                        MovementController.Move(Npc, MmoPortal.Position);
                     break;
                 case Faction.EIC:
-                    MovementController.Move(Npc, EicPortal.Position);
+                    if (!Npc.Moving)
+                        MovementController.Move(Npc, EicPortal.Position);
                     break;
                 case Faction.VRU:
-                    MovementController.Move(Npc, VruPortal.Position);
+                    if (!Npc.Moving)
+                        MovementController.Move(Npc, VruPortal.Position);
                     break;
                 default:
-                    MovementController.Move(Npc, MovementController.ActualPosition(Npc));
+                    if (Npc.Moving)
+                        MovementController.Move(Npc, MovementController.ActualPosition(Npc));
                     break;
             }
 
@@ -106,9 +110,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
             }
         }
 
-        public void ScoreGoal(Faction faction, int portalId)
+        public void ScoreGoal(Faction faction, Jumpgate portal)
         {
-            Npc.Score(faction, portalId);
+            Npc.Score(faction, portal);
             Restart();
         }
 

@@ -99,6 +99,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                     case "equipment_extra_cpu_dr-02":
                         // TODO: add drone rep
                         break;
+                    case "equipment_extra_cpu_g3x-crgo-x":
+                        extras.Add("equipment_extra_cpu_g3x-crgo-x", new CargoXtender(player, consumable.Value.Id,
+                            consumable.Value.LootId,
+                            consumable.Value.Amount));
+                        break;
                 }
             }
 

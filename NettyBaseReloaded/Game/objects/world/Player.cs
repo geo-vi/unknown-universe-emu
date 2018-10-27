@@ -15,6 +15,7 @@ using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.extra;
 using NettyBaseReloaded.Main.objects;
+using Newtonsoft.Json;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
 using State = NettyBaseReloaded.Game.objects.world.players.State;
 
@@ -83,8 +84,6 @@ namespace NettyBaseReloaded.Game.objects.world
         public List<Ability> Abilities { get; set; }
 
         public ConcurrentDictionary<Player, Booster> InheritedBoosters = new ConcurrentDictionary<Player, Booster>();
-
-        public override Skilltree Skills { get; set; }
 
         public Group Group { get; set; }
 
@@ -399,7 +398,6 @@ namespace NettyBaseReloaded.Game.objects.world
             Statistics = World.DatabaseManager.LoadStatistics(this);
             Information = new Information(this);
             State = new State(this);
-            Skills = World.DatabaseManager.LoadSkilltree(this);
             Storage = new Storage(this);
             Boosters = new List<Booster>();
             Abilities = Hangar.Ship.Abilities(this);
@@ -407,6 +405,8 @@ namespace NettyBaseReloaded.Game.objects.world
             CompletedQuests = World.DatabaseManager.LoadQuests(this);
             Skylab = World.DatabaseManager.LoadSkylab(this);
             Pet = World.DatabaseManager.LoadPet(this);
+            Console.WriteLine("is my skilltree null? " + Skills == null);
+            Console.WriteLine("then what is my skill tree made of? " + JsonConvert.SerializeObject(Skills));
         }
 
         public void ClickableCheck(Object obj)

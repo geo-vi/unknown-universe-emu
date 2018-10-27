@@ -170,7 +170,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public virtual RocketLauncher RocketLauncher { get; set; }
 
-        public virtual Skilltree Skills { get; set; }
+        public Skilltree Skills { get; set; }
 
         public DroneFormation Formation = DroneFormation.STANDARD;
 

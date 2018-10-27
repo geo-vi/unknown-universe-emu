@@ -611,6 +611,16 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public void CreateLootBox(Vector position, Reward reward, Types type, int disposeMs)
+        {
+            var id = GetNextObjectId();
+            var hash = HashedObjects.Keys.ToList()[id];
+            var box = new LootBox(id, hash, type, position, this, reward, disposeMs);
+            HashedObjects[hash] = box;
+            if (AddObject(box))
+                Out.WriteLog("Created LootBox [" + type + "] on mapId " + Id);
+        }
+
         #endregion
 
         #region POI

@@ -105,16 +105,68 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public int ElectroOptics { get; set; }
         #endregion
 
-        public Character Character { get; set; }
+        private Character Character { get; set; }
 
         public Skilltree(Character character)
         {
             Character = character;
+
+            if (Character is Player player)
+            {
+                World.DatabaseManager.LoadSkilltree(player, this);
+            }
         }
 
         public bool HasFatLasers()
         {
             return BountyHunter == 5;
+        }
+
+        public double GetLaserDamageBonus(bool isNpc)
+        {
+            var baseValue = 0.0;
+            switch (BountyHunter)
+            {
+                case 1:
+                    baseValue += 0.02;
+                    break;
+                case 2:
+                    baseValue += 0.04;
+                    break;
+                case 3:
+                    baseValue += 0.06;
+                    break;
+                case 4:
+                    baseValue += 0.08;
+                    break;
+                case 5:
+                    baseValue += 0.12;
+                    break;
+            }
+
+            if (isNpc)
+            {
+                switch (AlienHunter)
+                {
+                    case 1:
+                        baseValue += 0.02;
+                        break;
+                    case 2:
+                        baseValue += 0.04;
+                        break;
+                    case 3:
+                        baseValue += 0.06;
+                        break;
+                    case 4:
+                        baseValue += 0.08;
+                        break;
+                    case 5:
+                        baseValue += 0.12;
+                        break;
+                }
+            }
+
+            return baseValue;
         }
     }
 }

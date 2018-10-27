@@ -13,6 +13,7 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Networking;
 using NettyBaseReloaded.Game.objects.world.players.extra.techs;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -216,12 +217,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             damage = RandomizeDamage(damage);
             absDamage = RandomizeDamage(absDamage);
+
             GameClient.SendToPlayerView(Character,
                 netty.commands.old_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
-                    Character is Player), true);
+                    Character.Skills.HasFatLasers()), true);
             GameClient.SendToPlayerView(Character,
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
-                    Character is Player), true);
+                    Character.Skills.HasFatLasers()), true);
 
             Controller.Damage?.Laser(enemy, damage, false);
             Controller.Damage?.Laser(enemy, absDamage, true);
@@ -408,37 +410,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             return true;
         }
 
-        private int RandomizeDamage(int baseDmg, double missProbability = 1.00)
+        private int RandomizeDamage(int baseDmg, double missProbability = 0.25)
         {
             var random = RandomInstance.getInstance(this);
-            var randNums = random.Next(0, 6);
-
-            if (missProbability == 0)
-                randNums = random.Next(0, 3) | random.Next(4, 7);
-            if (missProbability < 1.00 && missProbability != 0)
-                randNums = random.Next(0, 7);
-            if (missProbability > 1.00 && missProbability < 2.00)
-                randNums = random.Next(0, 4);
-            if (missProbability >= 2.00)
-                randNums = random.Next(2, 4);
-
-            switch (randNums)
+            double randNums = random.Next(0, 100) / 100;
+            if (missProbability - randNums < 0)
             {
-                case 0:
-                    return (int)(baseDmg * 1.10);
-                case 1:
-                    return (int)(baseDmg * 0.98);
-                case 2:
-                    return (int)(baseDmg * 1.02);
-                case 3:
-                    return 0;
-                case 4:
-                    return (int)(baseDmg * 0.92);
-                case 5:
-                    return (int)(baseDmg * 0.99);
-                default:
-                    return baseDmg;
+                return 0;
             }
+            if (randNums > 0.5)
+                return baseDmg + (int)(baseDmg * randNums);
+            return baseDmg - (int)(baseDmg * randNums);
         }
 
         public void Wizard(Character target)

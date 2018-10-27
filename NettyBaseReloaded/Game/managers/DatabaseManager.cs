@@ -1048,9 +1048,8 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public Skilltree LoadSkilltree(Player player)
+        public void LoadSkilltree(Player player, Skilltree skilltree)
         {
-            Skilltree skilltree = new Skilltree(player);
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
@@ -1074,7 +1073,6 @@ namespace NettyBaseReloaded.Game.managers
             {
                 Console.WriteLine("error " + e);
             }
-            return null;
         }
 
         public Premium LoadPremium(Player player)
@@ -1597,6 +1595,27 @@ namespace NettyBaseReloaded.Game.managers
                     mySqlClient.ExecuteNonQuery(
                         $"UPDATE player_extra_data SET STATS='{JsonConvert.SerializeObject(player.Information.KilledShips)}' WHERE PLAYER_ID=" +
                         player.Id);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+        }
+
+        public void LoadExtraData(Player player, Information information)
+        {
+            information.Vouchers = 0;
+            information.GGSpins = 0;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var row =
+                        mySqlClient.ExecuteQueryRow("SELECT * FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
+                    var bkJson = row["BOOTY_KEYS"].ToString();
+                    int[] bks = JsonConvert.DeserializeObject<int[]>(bkJson);
+                    information.BootyKeys = bks;
                 }
             }
             catch (Exception e)

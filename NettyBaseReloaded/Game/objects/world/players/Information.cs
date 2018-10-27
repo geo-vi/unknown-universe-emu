@@ -34,6 +34,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public int GGSpins;
 
+        public int[] BootyKeys;
+
         public Dictionary<int, int> KilledShips;
 
         public Information(Player player) : base(player)
@@ -49,6 +51,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             UpdateAll();
             Level = World.StorageManager.Levels.DeterminatePlayerLvl(Experience.Get());
             KilledShips = World.DatabaseManager.LoadStats(player);
+            World.DatabaseManager.LoadExtraData(player, this);
             player.Ticked += Ticked;
         }
 

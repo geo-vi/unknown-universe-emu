@@ -59,9 +59,9 @@ namespace NettyBaseReloaded.Game.controllers.login
             Packet.Builder.DronesCommand(GameSession, GameSession.Player);
             //Packet.Builder.LegacyModule(GameSession, "0|n|t|" + GameSession.Player.Id + "|222|most_wanted");
 
-            Packet.Builder.LegacyModule(GameSession, "0|A|BK|0"); //green booty
-            Packet.Builder.LegacyModule(GameSession, "0|A|BKR|0"); //red booty
-            Packet.Builder.LegacyModule(GameSession, "0|A|BKB|0"); //blue booty
+            Packet.Builder.LegacyModule(GameSession, "0|A|BK|" + GameSession.Player.Information.BootyKeys[0]); //green booty
+            Packet.Builder.LegacyModule(GameSession, "0|A|BKR|" + GameSession.Player.Information.BootyKeys[1]); //red booty
+            Packet.Builder.LegacyModule(GameSession, "0|A|BKB|" + GameSession.Player.Information.BootyKeys[2]); //blue booty
             Packet.Builder.LegacyModule(GameSession, "0|TR");
             Packet.Builder.LegacyModule(GameSession, "0|A|CC|" + GameSession.Player.CurrentConfig);
             Packet.Builder.LegacyModule(GameSession, "0|ps|nüscht|");
