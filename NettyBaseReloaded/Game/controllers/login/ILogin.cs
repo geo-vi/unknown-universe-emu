@@ -56,54 +56,58 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public static void SendLegacy(GameSession GameSession)
         {
-            Packet.Builder.DronesCommand(GameSession, GameSession.Player);
-            //Packet.Builder.LegacyModule(GameSession, "0|n|t|" + GameSession.Player.Id + "|222|most_wanted");
+            try
+            {
+                Packet.Builder.DronesCommand(GameSession, GameSession.Player);
+                //Packet.Builder.LegacyModule(GameSession, "0|n|t|" + GameSession.Player.Id + "|222|most_wanted");
 
-            Packet.Builder.LegacyModule(GameSession, "0|A|BK|" + GameSession.Player.Information.BootyKeys[0]); //green booty
-            Packet.Builder.LegacyModule(GameSession, "0|A|BKR|" + GameSession.Player.Information.BootyKeys[1]); //red booty
-            Packet.Builder.LegacyModule(GameSession, "0|A|BKB|" + GameSession.Player.Information.BootyKeys[2]); //blue booty
-            Packet.Builder.LegacyModule(GameSession, "0|TR");
-            Packet.Builder.LegacyModule(GameSession, "0|A|CC|" + GameSession.Player.CurrentConfig);
-            Packet.Builder.LegacyModule(GameSession, "0|ps|nüscht|");
-            Packet.Builder.LegacyModule(GameSession, "0|ps|blk|0");
-            Packet.Builder.LegacyModule(GameSession, "0|g|a|b,1000,1,10000.0,C,2,500.0,U,3,1000.0,U,5,4000.0,U|r,100,1,10000,C,2,50000,C,3,500.0,U,4,700.0,");
-            GameSession.Player.LoadExtras();
-            //Packet.Builder.VideoWindowCreateCommand(GameSession, 1, "c", true, new List<string> { "login_dialog_1", "login_dialog_2" }, 0, 1);
-            //Packet.Builder.MineCreateCommand(GameSession, "asdf", 6, GameSession.Player.Position, false);
+                Packet.Builder.LegacyModule(GameSession, "0|A|BK|" + GameSession.Player.Information.BootyKeys[0]); //green booty
+                Packet.Builder.LegacyModule(GameSession, "0|A|BKR|" + GameSession.Player.Information.BootyKeys[1]); //red booty
+                Packet.Builder.LegacyModule(GameSession, "0|A|BKB|" + GameSession.Player.Information.BootyKeys[2]); //blue booty
+                Packet.Builder.LegacyModule(GameSession, "0|TR");
+                Packet.Builder.LegacyModule(GameSession, "0|A|CC|" + GameSession.Player.CurrentConfig);
+                Packet.Builder.LegacyModule(GameSession, "0|ps|nüscht|");
+                Packet.Builder.LegacyModule(GameSession, "0|ps|blk|0");
+                Packet.Builder.LegacyModule(GameSession, "0|g|a|b,1000,1,10000.0,C,2,500.0,U,3,1000.0,U,5,4000.0,U|r,100,1,10000,C,2,50000,C,3,500.0,U,4,700.0,");
+                GameSession.Player.LoadExtras();
+                //Packet.Builder.VideoWindowCreateCommand(GameSession, 1, "c", true, new List<string> { "login_dialog_1", "login_dialog_2" }, 0, 1);
+                //Packet.Builder.MineCreateCommand(GameSession, "asdf", 6, GameSession.Player.Position, false);
+                Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
+                Packet.Builder.HellstormStatusCommand(GameSession);
 
-            Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
-            Packet.Builder.HellstormStatusCommand(GameSession);
+                Packet.Builder.LegacyModule(GameSession, "0|n|w|0");
 
-            Packet.Builder.LegacyModule(GameSession, "0|n|w|0");
+                //MBA -> MenuButtonAccess
+                //DB -> Disable button
+                //EB -> Enable button
+                //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
+                //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
+                //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
+                Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
+                //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
 
-            //MBA -> MenuButtonAccess
-            //DB -> Disable button
-            //EB -> Enable button
-            //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
-            //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
-            //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
-            Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|4");
-            //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
+                Packet.Builder.LegacyModule(GameSession
+                    , "0|A|CC|" + GameSession.Player.CurrentConfig);
 
-            Packet.Builder.LegacyModule(GameSession
-                , "0|A|CC|" + GameSession.Player.CurrentConfig);
+                if (GameSession.Player.Group != null)
+                    Packet.Builder.GroupInitializationCommand(GameSession);
 
-            if (GameSession.Player.Group != null)
-                Packet.Builder.GroupInitializationCommand(GameSession);
+                if (GameSession.Player.Information.Title != null)
+                    Packet.Builder.TitleCommand(GameSession, GameSession.Player);
+                GameSession.Player.Information.Premium.Login(GameSession);
+                Packet.Builder.QuestInitializationCommand(GameSession);
 
-            if (GameSession.Player.Information.Title != null)
-                Packet.Builder.TitleCommand(GameSession, GameSession.Player);
-            GameSession.Player.Information.Premium.Login(GameSession);
-
-            Packet.Builder.QuestInitializationCommand(GameSession);
-
-            CreateFormations(GameSession);
-            CreateTechs(GameSession);
-            CreateAbilities(GameSession);
-
-            Packet.Builder.AttributeOreCountUpdateCommand(GameSession, GameSession.Player.Information.Cargo);
-            //Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
-            UpdateClanWindow(GameSession);
+                CreateFormations(GameSession);
+                CreateTechs(GameSession);
+                CreateAbilities(GameSession);
+                Packet.Builder.AttributeOreCountUpdateCommand(GameSession, GameSession.Player.Information.Cargo);
+                //Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
+                UpdateClanWindow(GameSession);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
         }
 
         public static void UpdateClanWindow(GameSession gameSession)

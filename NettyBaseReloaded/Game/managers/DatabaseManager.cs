@@ -1614,6 +1614,7 @@ namespace NettyBaseReloaded.Game.managers
                     var row =
                         mySqlClient.ExecuteQueryRow("SELECT * FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
                     var bkJson = row["BOOTY_KEYS"].ToString();
+                    if (bkJson == "") bkJson = "[0,0,0]";
                     int[] bks = JsonConvert.DeserializeObject<int[]>(bkJson);
                     information.BootyKeys = bks;
                 }

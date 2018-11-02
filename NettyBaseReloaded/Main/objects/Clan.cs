@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 
@@ -18,14 +19,14 @@ namespace NettyBaseReloaded.Main.objects
         /// Clan id, diplomacy relations
         /// </summary>
 
-        public Dictionary<int, ClanMember> Members { get; set; }
+        public ConcurrentDictionary<int, ClanMember> Members { get; set; }
 
         public Clan(int id, string name, string tag, int rankPoints)
         {
             Id = id;
             Name = name;
             Tag = tag;
-            Members = new Dictionary<int, ClanMember>();
+            Members = new ConcurrentDictionary<int, ClanMember>();
             RankPoints = rankPoints;
         }
         

@@ -28,11 +28,8 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public override void Execute()
         {
-            Debug.WriteLine("events");
             InitiateEvents();
-            Debug.WriteLine("settings");
             SendSettings();
-            Debug.WriteLine("problem");
             Spawn();
             SendLegacy();
             //SendTestQuest();

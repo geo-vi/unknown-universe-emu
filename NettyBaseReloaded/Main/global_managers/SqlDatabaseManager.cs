@@ -22,8 +22,14 @@ namespace NettyBaseReloaded.Main.global_managers
         /* test1 
         */
 
-        public static void Initialize()
+        public static void Initialize(bool remote = true)
         {
+            if (remote)
+            {
+                SERVER = "5.9.14.50";
+                UID = "remote";
+                PWD = "789456123gta";
+            }
             GenerateConnectionString();
             using (var client = GetClient())
             {

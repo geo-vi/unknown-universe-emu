@@ -405,8 +405,6 @@ namespace NettyBaseReloaded.Game.objects.world
             CompletedQuests = World.DatabaseManager.LoadQuests(this);
             Skylab = World.DatabaseManager.LoadSkylab(this);
             Pet = World.DatabaseManager.LoadPet(this);
-            Console.WriteLine("is my skilltree null? " + Skills == null);
-            Console.WriteLine("then what is my skill tree made of? " + JsonConvert.SerializeObject(Skills));
         }
 
         public void ClickableCheck(Object obj)
@@ -772,7 +770,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void ChangeClan(Clan clan)
         {
             Clan = clan;
-            Clan.Members.Add(Id, new ClanMember(Id, Name));
+            Clan.Members.TryAdd(Id, new ClanMember(Id, Name));
             RefreshPlayersView();
             Packet.Builder.ClanTagChangedCommand(GetGameSession());
             var chatSession = Chat.Chat.StorageManager.GetChatSession(Id);

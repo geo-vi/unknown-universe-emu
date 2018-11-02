@@ -70,12 +70,13 @@ namespace NettyBaseReloaded.Main.global_managers
 
                     var reader  =
                         mySqlClient.ExecuteQueryReader(
-                            $"SELECT player_data.PLAYER_ID, player_data.CLAN_ID, player_data.PLAYER_NAME FROM server_clans_members,player_data WHERE player_data.USER_ID=server_clans_members.USER_ID");
+                            $"SELECT player_data.PLAYER_ID, player_data.CLAN_ID, player_data.PLAYER_NAME FROM server_clans_members,player_data WHERE player_data.PLAYER_ID=server_clans_members.PLAYER_ID");
                     while (reader.Read())
                     {
                         var id = Convert.ToInt32(reader["PLAYER_ID"].ToString());
                         var clanId = Convert.ToInt32(reader["CLAN_ID"]);
-                        Global.StorageManager.Clans[clanId].Members.Add(id, new ClanMember(id, reader["PLAYER_NAME"].ToString()));
+                        
+                        Global.StorageManager.Clans[clanId].Members.TryAdd(id, new ClanMember(id, reader["PLAYER_NAME"].ToString()));
                     }
                     reader.Close();
 
