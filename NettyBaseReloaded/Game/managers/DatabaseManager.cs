@@ -1676,12 +1676,14 @@ namespace NettyBaseReloaded.Game.managers
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    mySqlClient.ExecuteNonQuery($"UPDATE player_pet SET HP='{pet.CurrentHealth}' WHERE ID='{pet.Id}'");
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_pet SET HP='{pet.CurrentHealth}' WHERE ID='{pet.DbId}'");
                 }
             }
             catch (Exception e)
             {
-
+                Console.WriteLine("Error");
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
             }
         }
 
@@ -1691,12 +1693,15 @@ namespace NettyBaseReloaded.Game.managers
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    mySqlClient.ExecuteNonQuery($"UPDATE player_pet SET HP='{pet.CurrentHealth}', PET_TYPE='{Pet.GetShipByLevel(pet.Level.Id)}', LEVEL='{pet.Level.Id}', EXPERIENCE='{pet.Experience}', FUEL='{pet.Fuel}' WHERE ID='{pet.Id}'");
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_pet SET HP='{pet.CurrentHealth}', PET_TYPE='{Pet.GetShipByLevel(pet.Level.Id).Id}', LEVEL='{pet.Level.Id}', EXPERIENCE='{pet.Experience}', FUEL='{pet.Fuel}' WHERE ID='{pet.DbId}'");
+
                 }
             }
             catch (Exception e)
             {
-
+                Console.WriteLine("Error");
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
             }
         }
     }

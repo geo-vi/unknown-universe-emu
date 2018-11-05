@@ -15,6 +15,11 @@ namespace NettyBaseReloaded.Game.objects.world
     class Pet : Character
     {
         /// <summary>
+        /// DB Id since original is auto incremented by 2000000
+        /// </summary>
+        public int DbId { get; }
+
+        /// <summary>
         /// Id of PET owner
         /// </summary>
         private int OwnerId { get; }
@@ -31,13 +36,16 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public override int CurrentHealth { get => Hangar.Health; set => Hangar.Health = value; }
+
         public sealed override int MaxHealth => Hangar.Ship.Health;
 
         public sealed override int Damage
         {
             get
             {
-                return Hangar.Configurations[CurrentConfig - 1].Damage;
+                var value = Hangar.Configurations[CurrentConfig - 1].Damage;
+                return value;
             }
         }
 
@@ -103,6 +111,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Level level, int experience, int fuel) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
             new Reward(0,0))
         {
+            DbId = id;
             OwnerId = owner.Id;
             Level = level;
             Experience = experience;

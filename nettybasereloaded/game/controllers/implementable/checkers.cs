@@ -162,7 +162,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 var pet = entity as Pet;
                 if (pet.GetOwner() == Character)
-                    return;
+                {
+                    if (!pet.Controller.Active)
+                        RemoveCharacter(entity, Character);
+                }
             }
             //if (GetForSelection(entity)) return;
 
