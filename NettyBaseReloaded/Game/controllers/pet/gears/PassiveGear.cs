@@ -26,6 +26,7 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
 
         public override void End(bool shutdown = false)
         {
+            Active = false;
         }
     }
 }

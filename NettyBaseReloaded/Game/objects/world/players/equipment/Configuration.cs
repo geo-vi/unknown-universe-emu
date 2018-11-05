@@ -43,5 +43,15 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                 RocketLauncher = new RocketLauncher(player, loadedRocketLaunchers);
             Extras = Extra.LoadExtras(player, Consumables);
         }
+
+        public Configuration(int id, int damage, int shield, int maxShield, int shieldAbsorbation, Dictionary<string, Item> consumables) : base(null)
+        {
+            Id = id;
+            Damage = damage;
+            CurrentShield = shield;
+            MaxShield = maxShield;
+            ShieldAbsorbation = shieldAbsorbation;
+            Consumables = consumables;
+        }
     }
 }

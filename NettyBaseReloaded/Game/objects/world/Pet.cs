@@ -31,17 +31,43 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public sealed override int MaxHealth { get; set; }
+        public sealed override int MaxHealth => Hangar.Ship.Health;
 
-        public sealed override int Damage { get; set; }
+        public sealed override int Damage
+        {
+            get
+            {
+                return Hangar.Configurations[CurrentConfig - 1].Damage;
+            }
+        }
 
-        public sealed override int CurrentShield { get; set; }
+        public sealed override int CurrentShield
+        {
+            get
+            {
+                return Hangar.Configurations[CurrentConfig - 1].CurrentShield;
+            }
+            set
+            {
+                Hangar.Configurations[CurrentConfig - 1].CurrentShield = value;
+            }
+        }
 
-        public sealed override int MaxShield { get; set; }
+        public sealed override int MaxShield
+        {
+            get
+            {
+                return Hangar.Configurations[CurrentConfig - 1].MaxShield;
+            }
+        }
 
-        public sealed override double ShieldAbsorption { get; set; }
-
-        public sealed override double ShieldPenetration { get; set; }
+        public sealed override double ShieldAbsorption
+        {
+            get
+            {
+                return Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation;
+            }
+        }
 
         public int Fuel { get; set; }
 
@@ -69,25 +95,21 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public short ExpansionStage => 1;
+        public short ExpansionStage => (short)Hangar.Configurations[CurrentConfig - 1].LaserCount;
 
-        public Pet(int id,int ownerId, string name, Hangar hangar, int currentHealth, Faction factionId,
-            Level level, int experience, int fuel, List<Gear> gears) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
+        public int CurrentConfig => GetOwner().CurrentConfig;
+
+        public Pet(int id,Player owner, string name, Hangar hangar, int currentHealth, Faction factionId,
+            Level level, int experience, int fuel) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
             new Reward(0,0))
         {
-            OwnerId = ownerId;
-            MaxHealth = 10000;
-            CurrentHealth = 10000;
-            Damage = 1000;
-            CurrentShield = 1000;
-            MaxShield = 1000;
-            ShieldAbsorption = 0.8;
-            ShieldPenetration = 0;
+            OwnerId = owner.Id;
             Level = level;
             Experience = experience;
             Fuel = fuel;
-            Gears = gears;
-            Clan = GetOwner().Clan;
+            Clan = owner.Clan;
+            Gears = new List<Gear>();
+            if (CurrentHealth <= 0) EntityState = EntityStates.DEAD;
         }
 
         /// <summary>
@@ -96,7 +118,13 @@ namespace NettyBaseReloaded.Game.objects.world
         /// <returns>Returning Player class of pet's owner</returns>
         public Player GetOwner()
         {
-            return World.StorageManager.GameSessions[OwnerId].Player;
+            var ownerSession = World.StorageManager.GetGameSession(OwnerId);
+            if (ownerSession == null)
+            {
+                Controller.Exit();
+                return null;
+            }
+            return ownerSession.Player;
         }
 
         public override void AssembleTick(object sender, EventArgs eventArgs)
@@ -114,13 +142,14 @@ namespace NettyBaseReloaded.Game.objects.world
 
             if (Moving) Fuel -= 10;
             Fuel -= 5;
+            if (Fuel < 0) Fuel = 0;
             Packet.Builder.PetFuelUpdateCommand(GetOwner().GetGameSession(), this);
             LastTimeSynced = DateTime.Now;
         }
 
         public void BasicSave()
         {
-            
+            World.DatabaseManager.SavePet(this);
         }
 
         public bool HasFuel()
@@ -131,21 +160,26 @@ namespace NettyBaseReloaded.Game.objects.world
         private DateTime LastLevelCheck = new DateTime();
         private void LevelChecker()
         {
-            if (LastLevelCheck.AddSeconds(2) < DateTime.Now && World.StorageManager.Levels.PetLevels.ContainsKey(Level.Id + 1))
+            if (LastLevelCheck.AddSeconds(1) > DateTime.Now) return;
+
+            var determined = World.StorageManager.Levels.DeterminatePlayerLvl(Experience);
+            if (Level != determined)
             {
-                var nextLevel = World.StorageManager.Levels.PetLevels[Level.Id + 1];
-                if (Experience > nextLevel.Experience)
-                {
-                    Level = nextLevel;
-
-                    if (World.StorageManager.Levels.PetLevels.ContainsKey(Level.Id + 1))
-                        nextLevel = World.StorageManager.Levels.PetLevels[Level.Id + 1];
-
-                    Packet.Builder.PetLevelUpdateCommand(GetOwner().GetGameSession(), this,
-                        nextLevel);
-                }
-                LastLevelCheck = DateTime.Now;
+                LevelUp(determined);
             }
+
+            LastLevelCheck = DateTime.Now;
+        }
+
+        public void LevelUp(Level targetLevel)
+        {
+            Level = targetLevel;
+            BasicSave();
+            var gameSession = GetOwner().GetGameSession();
+            var levels = World.StorageManager.Levels.PetLevels;
+            Level nextLevel = targetLevel;
+            if (levels.ContainsKey(targetLevel.Id + 1)) targetLevel = levels[targetLevel.Id + 1];
+            Packet.Builder.PetLevelUpdateCommand(gameSession, this, nextLevel);
         }
 
         public override void Destroy()
@@ -158,6 +192,31 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             base.Destroy(destroyer);
             Controller.Destroy();
+        }
+
+        public static Ship GetShipByLevel(int level)
+        {
+            switch(level)
+            {
+                case 4:
+                case 5:
+                case 6:
+                    return World.StorageManager.Ships[13];
+                case 7:
+                case 8:
+                case 9:
+                    return World.StorageManager.Ships[14];
+                case 10:
+                case 11:
+                case 12:
+                    return World.StorageManager.Ships[15];
+                case 13:
+                case 14:
+                case 15:
+                    return World.StorageManager.Ships[22];
+                default:
+                    return World.StorageManager.Ships[12];
+            }
         }
     }
 }

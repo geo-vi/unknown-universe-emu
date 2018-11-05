@@ -465,6 +465,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void SetPosition(Vector targetPosition)
         {
+            if (Pet != null) Pet.Controller.Deactivate();
             ChangePosition(targetPosition);
             MovementController.Move(this, targetPosition);
             Refresh();
@@ -592,15 +593,22 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 if (item.Value.Amount > 0)
                 {
-                    var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
-                    if (slotbarItem != null)
+                    if (Settings.Slotbar._items.ContainsKey(item.Value.LootId))
                     {
-                        slotbarItem.CounterValue = item.Value.Amount;
-                        slotbarItem.Visible = true;
-                        if (UsingNewClient)
+                        var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
+                        if (slotbarItem != null)
                         {
-                            World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
+                            slotbarItem.CounterValue = item.Value.Amount;
+                            slotbarItem.Visible = true;
+                            if (UsingNewClient)
+                            {
+                                World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
+                            }
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("unknown extra: " + item.Value.LootId);
                     }
                     switch (item.Key)
                     {
@@ -736,6 +744,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void MoveToMap(Spacemap map, Vector pos, int vwid)
         {
+            if (Pet != null) Pet.Controller.Deactivate();
             Character character;
             Spacemap.Entities.TryRemove(Id, out character);
             Storage.Clean();

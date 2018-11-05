@@ -26,6 +26,8 @@ using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Game.objects.world.players.quests.player_quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.quest_stats;
 using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
+using NettyBaseReloaded.Game.controllers.pet;
+using NettyBaseReloaded.Game.controllers.pet.gears;
 
 namespace NettyBaseReloaded.Game.managers
 {
@@ -282,6 +284,17 @@ namespace NettyBaseReloaded.Game.managers
                         }
                     }
 
+                    queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_levels_pet");
+
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow row in queryTable.Rows)
+                        {
+                            var Id = intConv(row["ID"]);
+                            var Exp = doubleConv(row["EXP"]);
+                            World.StorageManager.Levels.PetLevels.Add(Id, new Level(Id, Exp));
+                        }
+                    }
 
                     Out.WriteDbLog(
                         "Loaded successfully " + World.StorageManager.Levels.PlayerLevels.Count +
@@ -289,6 +302,10 @@ namespace NettyBaseReloaded.Game.managers
                     Out.WriteDbLog(
                         "Loaded successfully " + World.StorageManager.Levels.DroneLevels.Count +
                         " drone levels from DB.");
+                    Out.WriteDbLog(
+                        "Loaded successfully " + World.StorageManager.Levels.PetLevels.Count +
+                        " pet levels from DB.");
+
                 }
             }
             catch (Exception e)
@@ -1549,11 +1566,39 @@ namespace NettyBaseReloaded.Game.managers
         {
             try
             {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var reader = mySqlClient.ExecuteQueryReader("SELECT * FROM player_pet, player_pet_config WHERE player_pet.PLAYER_ID=player_pet_config.PLAYER_ID AND player_pet.PLAYER_ID=" + player.Id);
+                    while (reader.Read())
+                    {
+                        var id = intConv(reader["ID"]);
+                        var name = reader["NAME"].ToString();
+                        var level = intConv(reader["LEVEL"]);
+                        var exp = intConv(reader["EXPERIENCE"]);
+                        var hp = intConv(reader["HP"]);
+                        var fuel = intConv(reader["FUEL"]);
 
+                        var petShip = Pet.GetShipByLevel(level);
+
+                        var damageC1 = intConv(reader["CONFIG_1_DMG"]);
+                        var maxShieldC1 = intConv(reader["CONFIG_1_SHIELD"]);
+                        var shieldAbsC1 = maxShieldC1;
+                        var consumablesC1 = new Dictionary<string, Item>();
+
+                        var damageC2 = intConv(reader["CONFIG_2_DMG"]);
+                        var maxShieldC2 = intConv(reader["CONFIG_2_SHIELD"]);
+                        var shieldAbsC2 = maxShieldC2;
+                        var consumablesC2 = new Dictionary<string, Item>();
+
+                        return new Pet(id, player, name, new Hangar(petShip, new List<Drone>(), player.Position, player.Spacemap, hp, 0, new Dictionary<string, Item>(), true, new Configuration[] { new Configuration(1, damageC1, maxShieldC1, maxShieldC1, shieldAbsC1, consumablesC1), new Configuration(2, damageC2, maxShieldC2, maxShieldC2, shieldAbsC2, consumablesC2) }), player.CurrentHealth, player.FactionId,
+                             World.StorageManager.Levels.PetLevels[level], exp, fuel);
+                    }
+                }
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e.Message);
+                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
             }
             return null;
         }
@@ -1622,6 +1667,36 @@ namespace NettyBaseReloaded.Game.managers
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
+            }
+        }
+
+        public void RepairPet(Pet pet)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_pet SET HP='{pet.CurrentHealth}' WHERE ID='{pet.Id}'");
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        public void SavePet(Pet pet)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_pet SET HP='{pet.CurrentHealth}', PET_TYPE='{Pet.GetShipByLevel(pet.Level.Id)}', LEVEL='{pet.Level.Id}', EXPERIENCE='{pet.Experience}', FUEL='{pet.Fuel}' WHERE ID='{pet.Id}'");
+                }
+            }
+            catch (Exception e)
+            {
+
             }
         }
     }

@@ -23,8 +23,6 @@ namespace NettyBaseReloaded.Game.controllers
         public Pet Pet { get; }
         private Gear Gear { get; set; }
 
-        internal event EventHandler Shutdown;
-
         public PetController(Character character) : base(character)
         {
             Pet = Character as Pet;
@@ -32,19 +30,23 @@ namespace NettyBaseReloaded.Game.controllers
 
         private void Start()
         {
-            LoadGears();
-            Initiate();
+            if (Pet.GetOwner() == null) return;
+
             Global.TickManager.Add(Pet);
+            Initiate();
             MovementController.Move(Pet, Vector.GetPosOnCircle(Pet.GetOwner().Position, 250));
         }
 
         private void LoadGears()
         {
-            Pet.Gears.Add(new PassiveGear(this));
-            Pet.Gears.Add(new GuardGear(this));
-            //Pet.Gears.Add(new AutoLootGear(this));
-            Pet.Gears.Add(new ComboRepairGear(this));
-            //Pet.Gears.Add(new AutoResourceCollectionGear(this));
+            if (Pet.Gears.Count == 0)
+            {
+                Pet.Gears.Add(new PassiveGear(this));
+                Pet.Gears.Add(new GuardGear(this));
+                //Pet.Gears.Add(new AutoLootGear(this));
+                //Pet.Gears.Add(new ComboRepairGear(this));
+                //Pet.Gears.Add(new AutoResourceCollectionGear(this));
+            }
             Gear = Pet.Gears[0];
             var owner = Pet.GetOwner();
             var gameSession = World.StorageManager.GetGameSession(owner.Id);
@@ -57,37 +59,68 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Exit()
         {
+            Destruction.Remove();
+
+            Pet.BasicSave();
+            StopController = true;
+            Active = false;
             Global.TickManager.Remove(Pet);
             StopAll();
-            Shutdown?.Invoke(this, EventArgs.Empty);
-            Checkers.Stop();
-            Gear = null;
-            Pet.Gears.Clear();
+            if (Character.Moving)
+                Character.SetPosition(MovementController.ActualPosition(Character));
+            StopGears();
+
+            var owner = Pet.GetOwner();
+            if (owner != null && owner.GetGameSession() != null)
+            {
+                Packet.Builder.PetInitializationCommand(owner.GetGameSession(), Pet);
+            }
         }
 
+        public void StopGears()
+        {
+            foreach (var gear in Pet.Gears)
+            {
+                gear.End(true);
+            }
+        }
+        
         public new void Tick()
         {
-            Gear.Check();
+            if (Active || !StopController)
+            {
+                if (!Pet.HasFuel())
+                {
+                    Deactivate();
+                    return;
+                }
+                Gear.Check();
+            }
         }
 
         public void Activate()
         {
-            Pet.Position = Pet.GetOwner().Position;
+            if (Pet.Fuel <= 0) return;
+
+            Character character;
+            if (Pet.Spacemap.Entities.ContainsKey(Pet.Id))
+                Pet.Spacemap.Entities.TryRemove(Pet.Id, out character);
             Pet.Spacemap = Pet.GetOwner().Spacemap;
+            Pet.SetPosition(Pet.GetOwner().Position);
 
             if (!Pet.Spacemap.Entities.ContainsKey(Pet.Id))
                 Pet.Spacemap.AddEntity(Pet);
 
+            Start();
             var session = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             Packet.Builder.PetHeroActivationCommand(session, Pet);
             Packet.Builder.PetStatusCommand(session, Pet);
-            Start();
+            LoadGears();
         }
 
         public void Deactivate()
         {
             Exit();
-            Destruction.Remove();
 
             var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             if (ownerSession != null)
@@ -97,7 +130,6 @@ namespace NettyBaseReloaded.Game.controllers
         public void Destroy()
         {
             Exit();
-            Destruction.Remove();
 
             var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             if (ownerSession != null)
@@ -114,6 +146,7 @@ namespace NettyBaseReloaded.Game.controllers
             var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             if (ownerSession != null)
                 Packet.Builder.PetRepairCompleteCommand(ownerSession);
+            World.DatabaseManager.RepairPet(Pet);
         }
 
         public void SwitchGear(short gearType, int optParam)

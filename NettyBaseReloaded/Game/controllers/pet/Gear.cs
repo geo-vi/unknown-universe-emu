@@ -31,10 +31,6 @@ namespace NettyBaseReloaded.Game.controllers.pet
             Enabled = enabled;
             Level = level;
             Amount = amount;
-            controller.Shutdown += (sender, args) =>
-            {
-                End(true);
-            };
         }
 
         public abstract void Activate();
@@ -45,6 +41,8 @@ namespace NettyBaseReloaded.Game.controllers.pet
 
         public void Follow(Character character)
         {
+            if (!baseController.Active) return;
+
             var pet = baseController.Pet;
             var distance = pet.Position.DistanceTo(character.Position);
             if (distance < 200 && character.Moving) return;

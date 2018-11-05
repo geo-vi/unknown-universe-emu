@@ -17,6 +17,12 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             var levelsForCurrentExp = PlayerLevels.FirstOrDefault(x => x.Value.Experience >= get).Value;
             return levelsForCurrentExp;
         }
+
+        public Level DeterminePetLvl(int get)
+        {
+            var levelsForCurrentExp = PetLevels.FirstOrDefault(x => x.Value.Experience >= get).Value;
+            return levelsForCurrentExp;
+        }
     }
 
     class Level

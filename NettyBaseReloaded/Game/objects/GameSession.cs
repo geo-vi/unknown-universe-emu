@@ -93,6 +93,10 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Disconnect(DisconnectionType dcType)
         {
+            if (Player.Pet != null)
+            {
+                Player.Pet.Controller.Deactivate();
+            }
             InProcessOfDisconnection = true;
             if (dcType == DisconnectionType.SOCKET_CLOSED)
             {

@@ -106,6 +106,8 @@ namespace NettyBaseReloaded.Game.controllers.login
             }
             catch (Exception e)
             {
+                Console.WriteLine("legacy:");
+                Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
             }
         }

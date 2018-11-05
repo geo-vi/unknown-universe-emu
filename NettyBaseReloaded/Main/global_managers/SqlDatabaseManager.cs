@@ -22,7 +22,7 @@ namespace NettyBaseReloaded.Main.global_managers
         /* test1 
         */
 
-        public static void Initialize(bool remote = true)
+        public static void Initialize(bool remote = false)
         {
             if (remote)
             {

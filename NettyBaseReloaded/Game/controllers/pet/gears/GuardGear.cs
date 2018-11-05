@@ -30,6 +30,7 @@ namespace NettyBaseReloaded.Game.controllers.pet.gears
         {
             baseController.Attack.Attacking = false;
             baseController.Pet.Selected = null;
+            Active = false;
         }
 
         private void CheckAttackables()
