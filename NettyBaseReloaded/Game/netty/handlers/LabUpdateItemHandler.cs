@@ -25,6 +25,12 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             var ore = (Ores) request.updateWith.oreType.typeValue;
             var amount = (int)request.updateWith.count;
+            if (amount < 0)
+            {
+                // BAN.EXE
+                Packet.Builder.LegacyModule(gameSession, "0|A|STD|How is the feeling of sitting on the 3rd leg?");
+                return;
+            }
             switch (request.itemToUpdate.itemValue)
             {
                 case LabItemModule.LASER:

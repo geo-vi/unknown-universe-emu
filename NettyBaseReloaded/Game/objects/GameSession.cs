@@ -54,6 +54,17 @@ namespace NettyBaseReloaded.Game.objects
             }
         }
 
+        public static Dictionary<int, GameSession> GetRangeSessions(IAttackable attackable)
+        {
+            Dictionary<int, GameSession> playerSessions = new Dictionary<int, GameSession>();
+            foreach (var player in attackable.Spacemap.Entities.Where(x => x.Value is Player).ToDictionary(x => x.Key, y => y.Value as Player))
+            {
+                var session = player.Value.GetGameSession();
+                playerSessions.Add(player.Key, session);
+            }
+            return playerSessions;
+        }
+
         public void Relog(Spacemap spacemap = null, Vector pos = null)
         {
             InProcessOfReconection = true;

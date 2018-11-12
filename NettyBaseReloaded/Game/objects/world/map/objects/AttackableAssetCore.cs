@@ -43,6 +43,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
         public override void Tick()
         {
             Update();
+            TickVisuals();
         }
 
         public void Update()

@@ -96,7 +96,6 @@ namespace NettyBaseReloaded.Game.managers
                             rewards.Add(RewardType.URIDIUM, ship_uri);
                             var ship_rewards = new Reward(rewards);
 
-                            ////@ToDo: Dropables
                             DropableRewards ship_drops =
                                 JsonConvert.DeserializeObject<DropableRewards>(reader["dropJSON"].ToString());
 
@@ -1257,6 +1256,7 @@ namespace NettyBaseReloaded.Game.managers
 
         public Killscreen GetLastKillscreen(Player player)
         {
+            Killscreen killscreen = new Killscreen();
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
@@ -1270,7 +1270,7 @@ namespace NettyBaseReloaded.Game.managers
                     var alias = queryRow["ALIAS"].ToString();
                     var tod = Convert.ToDateTime(queryRow["TIME_OF_DEATH"]);
 
-                    return new Killscreen()
+                    killscreen =  new Killscreen()
                     {
                         Id = id,
                         KilledPlayer = player,
@@ -1285,7 +1285,7 @@ namespace NettyBaseReloaded.Game.managers
             {
                 Console.WriteLine(e.Message);
             }
-            return null; // TODO
+            return killscreen;
         }
 
 
@@ -1599,6 +1599,7 @@ namespace NettyBaseReloaded.Game.managers
             {
                 Console.WriteLine(e);
                 Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
             }
             return null;
         }

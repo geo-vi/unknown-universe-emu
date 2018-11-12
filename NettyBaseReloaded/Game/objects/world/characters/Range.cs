@@ -23,22 +23,15 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             return Entities.ContainsKey(id) ? Entities[id] : null;
         }
 
-        public event EventHandler<CharacterArgs> EntityAdded;
         public bool AddEntity(Character entity)
         {
             var success = Entities.TryAdd(entity.Id, entity);
-            if (success) EntityAdded?.Invoke(this, new CharacterArgs(entity));
             return success;
         }
 
-        public event EventHandler<CharacterArgs> EntityRemoved;
         public bool RemoveEntity(Character entity)
         {
             var success = Entities.TryRemove(entity.Id, out entity);
-            if (success)
-            {
-                EntityRemoved?.Invoke(this, new CharacterArgs(entity));
-            }
             return success;
         }
 
@@ -60,22 +53,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 Collectables.Remove(collectable.Hash);
             }
             return Objects.TryRemove(obj.Id, out obj);
-        }
-
-        public void Clear()
-        {
-            ClearEntities();
-            Collectables.Clear();
-            Resources.Clear();
-            Zones.Clear();
-            Objects.Clear();
-        }
-
-        private void ClearEntities()
-        {
-            foreach (var entity in Entities)
-                EntityRemoved?.Invoke(this, new CharacterArgs(entity.Value));
-            Entities.Clear();
         }
     }
 }

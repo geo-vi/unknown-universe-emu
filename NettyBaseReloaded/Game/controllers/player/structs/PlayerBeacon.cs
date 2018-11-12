@@ -14,5 +14,15 @@ namespace NettyBaseReloaded.Game.controllers.player.structs
         public bool InRadiationArea;
         public bool InDemiZone;
         public bool InEquipmentArea;
+
+        public void Reset()
+        {
+            Repairing = false;
+            InPortalArea = false;
+            InTradeArea = false;
+            InRadiationArea = false;
+            InDemiZone = false;
+            InEquipmentArea = false;
+        }
     }
 }

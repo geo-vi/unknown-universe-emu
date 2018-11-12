@@ -308,8 +308,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public ConcurrentDictionary<int, PlayerEvent> EventsPraticipating = new ConcurrentDictionary<int, PlayerEvent>();
 
-        public List<VisualEffect> Visuals = new List<VisualEffect>();
-
         public ConcurrentDictionary<int, GalaxyGate> OwnedGates = new ConcurrentDictionary<int, GalaxyGate>();
 
         public List<Quest> AcceptedQuests = new List<Quest>();
@@ -343,7 +341,6 @@ namespace NettyBaseReloaded.Game.objects.world
                 AssembleEnemyWarn();
                 Hangar.DronesLevelChecker(this);
                 TickEvents();
-                TickVisuals();
                 TickTechs();
                 //TickGates();
                 TickAbilities();
@@ -351,11 +348,6 @@ namespace NettyBaseReloaded.Game.objects.world
                 TickAnnouncements();
                 Skylab.Tick();
             });
-        }
-
-        private void TickVisuals()
-        {
-            Parallel.ForEach(Visuals, visual => { visual.Tick(); });
         }
 
         private void TickTechs()

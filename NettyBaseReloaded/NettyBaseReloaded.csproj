@@ -120,6 +120,10 @@
     <Compile Include="Game\controllers\events\IEvent.cs" />
     <Compile Include="Game\controllers\implementable\Attack.cs" />
     <Compile Include="Game\controllers\implementable\Checkers.cs" />
+    <Compile Include="Game\controllers\implementable\checkers\EntityRangeChecker.cs" />
+    <Compile Include="Game\controllers\implementable\checkers\ObjectRangeChecker.cs" />
+    <Compile Include="Game\controllers\implementable\checkers\RangeChecker.cs" />
+    <Compile Include="Game\controllers\implementable\checkers\ZoneRangeChecker.cs" />
     <Compile Include="Game\controllers\implementable\Damage.cs" />
     <Compile Include="Game\controllers\implementable\Destruction.cs" />
     <Compile Include="Game\controllers\implementable\Effects.cs" />
@@ -678,7 +682,7 @@
     <Compile Include="Game\objects\world\players\State.cs" />
     <Compile Include="Game\objects\world\players\Statistics.cs" />
     <Compile Include="Game\objects\world\players\statistics\DeathStat.cs" />
-    <Compile Include="Game\objects\world\players\VisualEffect.cs" />
+    <Compile Include="Game\objects\world\VisualEffect.cs" />
     <Compile Include="Main\ChatCommands.cs" />
     <Compile Include="Main\commands\CleanCommand.cs" />
     <Compile Include="Main\commands\Command.cs" />
@@ -839,9 +843,6 @@
     <None Include="Resources\univ3rse_logo.png" />
     <None Include="Resources\gray_diagonal_stripes_seamless_background_pattern.jpg" />
     <Content Include="Unused_Codes\Old_Program_cs.unused" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Client\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

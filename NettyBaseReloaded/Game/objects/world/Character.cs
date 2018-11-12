@@ -218,6 +218,7 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 Cooldowns.Tick();
                 RocketLauncher?.Tick();
+                TickVisuals();
             });
         }
 
@@ -296,6 +297,15 @@ namespace NettyBaseReloaded.Game.objects.world
         public bool HasWarnBox()
         {
             return false;
+        }
+
+        public void RemoveSelection()
+        {
+            Selected = null;
+            if (this is Player player)
+            {
+                Packet.Builder.ShipSelectionCommand(player.GetGameSession(), SelectedCharacter);
+            }
         }
     }
 }

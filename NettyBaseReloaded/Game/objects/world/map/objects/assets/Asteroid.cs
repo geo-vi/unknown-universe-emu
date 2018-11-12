@@ -77,7 +77,6 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
                 if (Building)
                 {
                     Packet.Builder.BattleStationBuildingStateCommand(player.GetGameSession(), this);
-                    player.GetGameSession().Client.Send(netty.commands.old_client.VisualModifierCommand.write(Id, (short)ShipVisuals.BATTLESTATION_CONSTRUCTING, 1, true));
                     return;
                 }
                 if (player.Clan == Global.StorageManager.Clans[0])
@@ -125,7 +124,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
             foreach (var rangeSession in builder.Range.Entities.Where(x => x.Value is Player && x.Value.Range.Objects.ContainsKey(Id)))
                 Packet.Builder.BattleStationBuildingStateCommand(((Player)rangeSession.Value).GetGameSession(), this);
             Packet.Builder.BattleStationBuildingStateCommand(builder.GetGameSession(), this);
-            GameClient.SendRangePacket(builder, new Command(netty.commands.old_client.VisualModifierCommand.write(Id, (short)ShipVisuals.BATTLESTATION_CONSTRUCTING, 1, true), false), true);
+            var visual = new VisualEffect(builder, ShipVisuals.BATTLESTATION_CONSTRUCTING, DateTime.Now.AddMinutes(minutes));
+            visual.Start();
             Building = true;
         }
 

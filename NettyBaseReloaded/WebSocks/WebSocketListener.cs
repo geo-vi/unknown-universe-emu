@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,9 @@ namespace NettyBaseReloaded.WebSocks
     {
         public static void InitiateListener()
         {
-            var wssv = new WebSocketServer(666);
+            var wssv = new WebSocketServer(666) { KeepClean = true, ReuseAddress = true};
+            wssv.Log.Level = WebSocketSharp.LogLevel.Info;
+            wssv.Log.File = Directory.GetCurrentDirectory() + "/wsslog.txt";
             wssv.AddWebSocketService<WebSocketReceiver>("/cmslistener");
             wssv.AddWebSocketService<WebSocketReceiver>("/external");
             wssv.Start();

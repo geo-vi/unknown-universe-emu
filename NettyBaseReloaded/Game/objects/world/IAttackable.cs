@@ -47,6 +47,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool Invisible { get; set; }
 
+        public List<VisualEffect> Visuals = new List<VisualEffect>();
+
         protected IAttackable(int id)
         {
             Id = id;
@@ -70,5 +72,10 @@ namespace NettyBaseReloaded.Game.objects.world
         }
 
         public virtual void Hit(int totalDamage, int attackerId) { }
+
+        public void TickVisuals()
+        {
+            Parallel.ForEach(Visuals, visual => { visual.Tick(); });
+        }
     }
 }

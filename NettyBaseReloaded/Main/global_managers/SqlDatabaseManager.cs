@@ -40,11 +40,13 @@ namespace NettyBaseReloaded.Main.global_managers
         //public static ConcurrentDictionary<int, MySqlConnection> Connections = new ConcurrentDictionary<int, MySqlConnection>();
         public static SqlDatabaseClient GetClient()
         {
-            MySqlConnection Connection = new MySqlConnection(GenerateConnectionString());
-            Connection.Open();
-            //Connections.TryAdd(Connections.Count, Connection);
-            Out.WriteDbLog("Client requested from " + Out.GetCaller());
-            return new SqlDatabaseClient(Connection);
+            using (MySqlConnection Connection = new MySqlConnection(GenerateConnectionString()))
+            {
+                Connection.Open();
+                //Connections.TryAdd(Connections.Count, Connection);
+                Out.WriteDbLog("Client requested from " + Out.GetCaller());
+                return new SqlDatabaseClient(Connection);
+            }
         }
 
         public static SqlDatabaseClient GetGlobalClient()
@@ -86,7 +88,8 @@ namespace NettyBaseReloaded.Main.global_managers
                 ConnectionStringBuilder.Password = PWD;
                 ConnectionStringBuilder.Database = DB;
                 ConnectionStringBuilder.ConvertZeroDateTime = true;
-                ConnectionStringBuilder.Pooling = false;
+                ConnectionStringBuilder.Pooling = true;
+                ConnectionStringBuilder.MaximumPoolSize = 100;
                 ConnectionStringBuilder.SslMode = MySqlSslMode.None;
                 ConnectionString = ConnectionStringBuilder.ToString();
             }

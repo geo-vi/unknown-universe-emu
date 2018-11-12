@@ -92,7 +92,6 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client
             this.modifier = modifier;
             this.attribute = attribute;
             this.activated = activated;
-            write();
         }
 
         public byte[] write()
@@ -105,14 +104,14 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client
             return cmd.Message.ToArray();
         }
 
-        public static byte[] write(int userId, short modifier, int attribute, bool activated)
+        public static Command write(int userId, short modifier, int attribute, bool activated)
         {
             var cmd = new ByteArray(ID);
             cmd.Integer(userId);
             cmd.Short(modifier);
             cmd.Integer(attribute);
             cmd.Boolean(activated);
-            return cmd.ToByteArray();
+            return new Command(cmd.ToByteArray(), false);
         }
     }
 }

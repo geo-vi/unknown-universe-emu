@@ -171,7 +171,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             if (LastLevelCheck.AddSeconds(1) > DateTime.Now) return;
 
-            var determined = World.StorageManager.Levels.DeterminatePlayerLvl(Experience);
+            var determined = World.StorageManager.Levels.DeterminePetLvl(Experience);
             if (Level != determined)
             {
                 LevelUp(determined);

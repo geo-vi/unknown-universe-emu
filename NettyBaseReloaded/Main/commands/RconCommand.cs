@@ -190,6 +190,32 @@ namespace NettyBaseReloaded.Main.commands
 
                         RconSession.Player.Spacemap.CreateLootBox(RconSession.Player.Position, reward, (Types)Convert.ToInt32(args[4]), 15000);
                         break;
+                    case "addvisual":
+                        if (args[2] == "types")
+                        {
+                            int i = 0;
+                            foreach (var record in System.Enum.GetValues(typeof(ShipVisuals)))
+                            {
+                                Console.WriteLine("Visual: " + record.ToString() + " :: " + i);
+                                i++;
+                            }
+                            return;
+                        }
+                        var visualId = int.Parse(args[2]);
+                        IAttackable target = RconSession.Player.Selected;
+                        var t = 10;
+                        //if (args.Length > 2)
+                        //{
+                        //    if (args[3].StartsWith("t="))
+                        //    {
+                        //        t = int.Parse(args[3].Split('=')[1]);
+                        //    }
+                        //    target = RconSession.Player.Spacemap.Entities[int.Parse(args[3])];
+                            
+                        //}
+                        var visual = new VisualEffect(target, (ShipVisuals)visualId, DateTime.Now.AddSeconds(t));
+                        visual.Start();
+                        break;
                 }
             }
             catch (Exception)
@@ -229,10 +255,12 @@ namespace NettyBaseReloaded.Main.commands
                 Console.WriteLine("RCON SUCCESSFULLY SET TO " + RconSession.Player.Name);
                 RconSession.Player.Hangar.Ship = World.StorageManager.Ships[98];
                 RconSession.Player.Hangar.ShipDesign = World.StorageManager.Ships[98];
-                RconSession.Player.Visuals.Add(new VisualEffect(RconSession.Player, ShipVisuals.INVINCIBILITY, DateTime.MaxValue));
+                var vsEffect = new VisualEffect(RconSession.Player, ShipVisuals.INVINCIBILITY, DateTime.MaxValue);
+                vsEffect.Start();
                 RconSession.Player.RankId = Rank.ADMINISTRATOR;
                 RconSession.Player.Invincible = true;
                 RconSession.Player.Refresh();
+                RconSession.Player.RefreshPlayersView();
                 RconSession.Player.Controller.Heal.Execute(RconSession.Player.Hangar.Ship.Health);
             }
         }

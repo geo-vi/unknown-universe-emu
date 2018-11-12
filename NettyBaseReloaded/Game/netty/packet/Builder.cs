@@ -396,7 +396,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                             new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)),
                             0,
                             false, false, character.Invisible, 0, 0,
-                            new List<commands.old_client.VisualModifierCommand>())
+                            VisualEffect.ToOldModifierCommand(pChar))
                         .Bytes;
                 }
                 else if (character is Pet)
@@ -412,7 +412,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                             new commands.old_client.ClanRelationModule(0),
                             0,
                             false, true, character.Invisible, npc.GetMotherShipId(), 0,
-                            new List<commands.old_client.VisualModifierCommand>())
+                            VisualEffect.ToOldModifierCommand(npc))
                         .Bytes;
                 }
             }
@@ -2230,7 +2230,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.VisualModifierCommand.write(visual.Player.Id, (short)visual.Visual, visual.Attribute, visual.Active));
+                gameSession.Client.Send(commands.old_client.VisualModifierCommand.write(visual.Entity.Id, (short)visual.Visual, visual.Attribute, visual.Active).Bytes);
             }
         }
         #endregion
