@@ -40,13 +40,13 @@ namespace NettyBaseReloaded.Main.global_managers
         //public static ConcurrentDictionary<int, MySqlConnection> Connections = new ConcurrentDictionary<int, MySqlConnection>();
         public static SqlDatabaseClient GetClient()
         {
-            using (MySqlConnection Connection = new MySqlConnection(GenerateConnectionString()))
-            {
-                Connection.Open();
-                //Connections.TryAdd(Connections.Count, Connection);
-                Out.WriteDbLog("Client requested from " + Out.GetCaller());
-                return new SqlDatabaseClient(Connection);
-            }
+            var Connection = new MySqlConnection(GenerateConnectionString());
+
+            Connection.Open();
+            //Connections.TryAdd(Connections.Count, Connection);
+            Out.WriteDbLog("Client requested from " + Out.GetCaller());
+            return new SqlDatabaseClient(Connection);
+
         }
 
         public static SqlDatabaseClient GetGlobalClient()

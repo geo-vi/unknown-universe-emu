@@ -202,7 +202,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 var player = (Player)Character;
                 player.Storage.Clean();
             }
-            Character.Range.Clear();
         }
 
         public void Deselect(Character targetCharacter)
@@ -236,7 +235,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void RespawnPlayer()
         {
             Character.EntityState = EntityStates.ALIVE;
-            Character.Range.Clear();
 
             var player = (Player) Character;
             var killscreen = Killscreen.Load(player);
@@ -269,7 +267,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         private void RespawnAlien()
         {
             Character.EntityState = EntityStates.ALIVE;
-            Character.Range.Clear();
 
             Vector newPos;
 

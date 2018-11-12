@@ -98,7 +98,7 @@ namespace NettyBaseReloaded.Game.controllers.login
             }
             else
             {
-                player.Range.Clear();
+                player.Controller.Checkers.ResetEntityRange();
                 player.Storage.Clean();
             }
 

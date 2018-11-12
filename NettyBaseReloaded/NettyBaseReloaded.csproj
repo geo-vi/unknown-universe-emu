@@ -120,10 +120,6 @@
     <Compile Include="Game\controllers\events\IEvent.cs" />
     <Compile Include="Game\controllers\implementable\Attack.cs" />
     <Compile Include="Game\controllers\implementable\Checkers.cs" />
-    <Compile Include="Game\controllers\implementable\checkers\EntityRangeChecker.cs" />
-    <Compile Include="Game\controllers\implementable\checkers\ObjectRangeChecker.cs" />
-    <Compile Include="Game\controllers\implementable\checkers\RangeChecker.cs" />
-    <Compile Include="Game\controllers\implementable\checkers\ZoneRangeChecker.cs" />
     <Compile Include="Game\controllers\implementable\Damage.cs" />
     <Compile Include="Game\controllers\implementable\Destruction.cs" />
     <Compile Include="Game\controllers\implementable\Effects.cs" />
