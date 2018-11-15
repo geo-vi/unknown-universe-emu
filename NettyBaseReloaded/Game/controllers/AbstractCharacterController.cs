@@ -98,12 +98,11 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void StopAll()
         {
+            Global.TickManager.Remove(this);
             StopController = true;
             Active = false;
             Checkers.Stop();
             Attack.Stop();
-            Global.TickManager.Remove(this);
         }
-
     }
 }

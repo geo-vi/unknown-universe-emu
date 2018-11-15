@@ -42,32 +42,54 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public override void Stop()
         {
             ResetEntityRange();
+            Character.Range.Objects.Clear();
+            Character.Range.Resources.Clear();
+            Character.Range.Collectables.Clear();
+            Character.Range.Zones.Clear();
         }
 
         #region Character related
-        public ConcurrentDictionary<int, Character> DisplayedRangeCharacters => Controller.Character.Range.Entities;
 
-        public ConcurrentDictionary<int, Character> SpacemapEntities => Controller.Character.Spacemap.Entities;
+        private ConcurrentDictionary<int, Character> DisplayedRangeCharacters => Controller.Character.Range.Entities;
 
-        public void EntityChecker()
+        private ConcurrentDictionary<int, Character> SpacemapEntities => Controller.Character.Spacemap.Entities;
+
+        private void EntityChecker()
         {
-            var allEntities = DisplayedRangeCharacters.Union(SpacemapEntities);
-            
-            foreach (var entity in allEntities)
+//            var allEntities = DisplayedRangeCharacters.Union(SpacemapEntities);
+//            
+//            foreach (var entity in allEntities)
+//            {
+//                var eValue = entity.Value;
+//                if (Character.InRange(eValue) && !DisplayedRangeCharacters.ContainsKey(entity.Key))
+//                {
+//                    AddCharacterToDisplay(eValue);
+//                }
+//                else if (!Character.InRange(eValue) && DisplayedRangeCharacters.ContainsKey(entity.Key))
+//                {
+//                    RemoveCharacterFromDisplay(eValue);
+//                }
+//            }
+            foreach (var entity in SpacemapEntities)
             {
                 var eValue = entity.Value;
                 if (Character.InRange(eValue) && !DisplayedRangeCharacters.ContainsKey(entity.Key))
                 {
                     AddCharacterToDisplay(eValue);
                 }
-                else if (!Character.InRange(eValue) && DisplayedRangeCharacters.ContainsKey(entity.Key))
+            }
+
+            foreach (var entity in DisplayedRangeCharacters)
+            {
+                var eValue = entity.Value;
+                if (!Character.InRange(eValue))
                 {
                     RemoveCharacterFromDisplay(eValue);
                 }
             }
         }
-        
-        public void AddCharacterToDisplay(Character character)
+
+        private void AddCharacterToDisplay(Character character)
         {
             if (DisplayedRangeCharacters.TryAdd(character.Id, character) && Character is Player player)
             {
@@ -81,7 +103,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
-        public void RemoveCharacterFromDisplay(Character character)
+        private void RemoveCharacterFromDisplay(Character character)
         {
             Character removed;
             if (DisplayedRangeCharacters.TryRemove(character.Id, out removed))
@@ -93,6 +115,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 if (Character is Player player)
                 {
+                    //Console.WriteLine("Removing @POS: " + character.Position.ToPacket());
+                    //Packet.Builder.LegacyModule(player.GetGameSession(), $"0|ps|png|{character.Position.X}|{character.Position.Y}");
                     Packet.Builder.ShipRemoveCommand(player.GetGameSession(), character);
                 }
             }

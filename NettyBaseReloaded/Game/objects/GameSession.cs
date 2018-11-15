@@ -91,8 +91,8 @@ namespace NettyBaseReloaded.Game.objects
             Global.TickManager.Remove(this);
             Global.TickManager.Remove(Player);
             Player.Save();
-            Player.Controller.Destruction.Remove();
             Player.Controller.Exit();
+            Player.Controller.Destruction.Remove();
         }
 
         public void Kick()

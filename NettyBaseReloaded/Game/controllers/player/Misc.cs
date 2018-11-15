@@ -200,6 +200,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             {
                 if (_baseController.Character.EntityState == EntityStates.DEAD || _baseController.StopController) return;
 
+                Console.WriteLine("Assigned new map id: " + targetMapId + " Starting jump sequence");
                 TargetVirtualWorldId = targetVW;
                 TargetMap = World.StorageManager.Spacemaps[targetMapId];
                 TargetPosition = targetPos;
@@ -240,6 +241,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
                 if (DateTime.Now > _jumpEndTime)
                 {
+                    Console.WriteLine("Sequence finishing.. TargetMap: " + TargetMap.Id);
                     _baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition, TargetVirtualWorldId);
                     Reset();
                 }
@@ -261,6 +263,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         public void Jump(int targetMapId, Vector targetPos, int portalId = -1, int targetVW = 0)
         {
+            Console.WriteLine("Jump: " + targetMapId);
             JClass.Initiate(targetVW, targetMapId, targetPos, portalId);
         }
 
