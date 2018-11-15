@@ -194,12 +194,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Remove()
         {
-            Deselect(Character);
             Character.Controller.StopAll();
+            Deselect(Character);
             Character.Spacemap.RemoveEntity(Character);
-            if (Character is Player)
+            if (Character is Player player)
             {
-                var player = (Player)Character;
                 player.Storage.Clean();
             }
         }

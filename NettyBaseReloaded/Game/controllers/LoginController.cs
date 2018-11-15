@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using NettyBaseReloaded.Game.controllers.login;
-using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
@@ -58,8 +57,10 @@ namespace NettyBaseReloaded.Game.controllers
             var config = World.DatabaseManager.LoadConfig(player);;
             player.Hangar.Configurations = config;
             player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
-            //if (/*player.RankId == Rank.ADMINISTRATOR ||*/ player.Id == 9001)
-            //player.Pet = new Pet(player.Id, player.Id, $"{player.Name}'s little toy", new Hangar(World.StorageManager.Ships[15], new List<Drone>(), player.Position, player.Spacemap, 1000, 0, new Dictionary<string, Item>()), 1000, player.FactionId, new Level(1, 1000), 500, 1000, new List<Gear>());
+            if (player.Pet != null)
+            {
+                //todo load pet configs
+            }
         }
 
         private void CheckPos()
@@ -99,7 +100,9 @@ namespace NettyBaseReloaded.Game.controllers
 
         private void LoadTicks()
         {
-            Global.TickManager.Add(_gameSession.Player);
+            var tickId = 0;
+            Global.TickManager.Add(_gameSession.Player, out tickId);
+            _gameSession.Player.SetTickId(tickId);
             _gameSession.Player.Controller.Initiate();
         }
     }

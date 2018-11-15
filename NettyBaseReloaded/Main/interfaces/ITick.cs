@@ -8,6 +8,7 @@ namespace NettyBaseReloaded.Main.interfaces
 {
     interface ITick
     {
+        int GetId();
         void Tick();
     }
 }

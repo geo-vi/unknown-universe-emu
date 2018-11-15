@@ -15,7 +15,7 @@ using NettyBaseReloaded.Main.objects;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
-    class Checkers : IAbstractCharacter, ITick
+    class Checkers : IAbstractCharacter
     {
         public int VisibilityRange { get; set; }
 
@@ -30,24 +30,18 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Start()
         {
-            //Global.TickManager.Add(this);
         }
-
-        private DateTime LastTick = new DateTime();
 
         public override void Tick()
         {
             EntityChecker();
             ZoneChecker();
             ObjectChecker();
-            LastTick = DateTime.Now;
         }
 
         public override void Stop()
         {
             ResetEntityRange();
-            //Controller.StopController = true;
-            //Global.TickManager.Remove(this);
         }
 
         #region Character related
@@ -57,16 +51,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void EntityChecker()
         {
-            var allEntities = DisplayedRangeCharacters.Concat(SpacemapEntities.Where( x=> !DisplayedRangeCharacters.Keys.Contains(x.Key)));
-    
+            var allEntities = DisplayedRangeCharacters.Union(SpacemapEntities);
+            
             foreach (var entity in allEntities)
             {
                 var eValue = entity.Value;
-                if (eValue.InRange(Character) && !DisplayedRangeCharacters.ContainsKey(entity.Key))
+                if (Character.InRange(eValue) && !DisplayedRangeCharacters.ContainsKey(entity.Key))
                 {
                     AddCharacterToDisplay(eValue);
                 }
-                else if (!eValue.InRange(Character) && DisplayedRangeCharacters.ContainsKey(entity.Key))
+                else if (!Character.InRange(eValue) && DisplayedRangeCharacters.ContainsKey(entity.Key))
                 {
                     RemoveCharacterFromDisplay(eValue);
                 }

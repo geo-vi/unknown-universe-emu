@@ -18,27 +18,64 @@ namespace NettyBaseReloaded.Main.global_managers
         /// <summary>
         /// ITick, Delay *TODO* 
         /// </summary>
-        private List<ITick> Tickables = new List<ITick>();
+        private ConcurrentDictionary<int, ITick> Tickables = new ConcurrentDictionary<int, ITick>();
 
-        private List<ITick> PendingToBeAdded = new List<ITick>();
-        private List<ITick> PendingRemoval = new List<ITick>();
+        private int GetNextTickId()
+        {
+            using (var enumerator = Tickables.GetEnumerator())
+            {
+                if (!enumerator.MoveNext())
+                    return 0;
 
-        public void Add(ITick tick)
-        {           
-            if (!Tickables.Contains(tick))
-                PendingToBeAdded.Add(tick);
+                var nextKeyInSequence = enumerator.Current.Key + 1;
+
+                if (nextKeyInSequence < 1)
+                    throw new InvalidOperationException("The dictionary contains keys less than 0");
+
+                if (nextKeyInSequence != 1)
+                    return 0;
+
+                while (enumerator.MoveNext())
+                {
+                    var key = enumerator.Current.Key;
+                    if (key > nextKeyInSequence)
+                        return nextKeyInSequence;
+
+                    ++nextKeyInSequence;
+                }
+
+                return nextKeyInSequence;
+            }
+        }
+        
+        public void Add(ITick tick, out int id)
+        {
+            id = -1;
+            if (Tickables.Values.Contains(tick))
+            {
+                return;
+            }
+
+            id = GetNextTickId();
+            Tickables.TryAdd(id, tick);
         }
 
         public void Remove(ITick tick)
         {
-            if (Tickables.Contains(tick))
-                PendingRemoval.Remove(tick);
+            ITick output;
+            if (!Tickables.ContainsKey(tick.GetId()))
+            {
+                Console.WriteLine("Trying to remove nonexistent tick");
+                return;
+            }
+
+            Tickables.TryRemove(tick.GetId(), out output);
         }
 
         public bool Exists(ITick tickable)
         {
             if (Tickables.Count == 0) return false;
-            if (Tickables.Contains(tickable)) return true;
+            if (Tickables.ContainsKey(tickable.GetId())) return true;
             return false;
         }
 
@@ -46,26 +83,10 @@ namespace NettyBaseReloaded.Main.global_managers
         {
             while (true)
             {
-                UpdateCollection();
                 foreach (var tickable in Tickables) { 
-                    Task.Factory.StartNew(tickable.Tick);
+                    tickable.Value.Tick();
                 }
                 await Task.Delay(84);
-            }
-        }
-
-        private void UpdateCollection()
-        {
-            if (PendingToBeAdded.Count > 0)
-            {
-                Tickables.AddRange(PendingToBeAdded);
-                PendingToBeAdded.Clear();
-            }
-            if (PendingRemoval.Count > 0)
-            {
-                foreach (var tick in PendingRemoval)
-                    Tickables.Remove(tick);
-                PendingRemoval.Clear();
             }
         }
     }

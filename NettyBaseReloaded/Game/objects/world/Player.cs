@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Game.objects.world
         /**********
          * BASICS *
          **********/
-
+        
         public string SessionId { get; set; }
 
         public Rank RankId { get; set; }
@@ -397,8 +397,6 @@ namespace NettyBaseReloaded.Game.objects.world
             CompletedQuests = World.DatabaseManager.LoadQuests(this);
             Skylab = World.DatabaseManager.LoadSkylab(this);
             Pet = World.DatabaseManager.LoadPet(this);
-            Console.WriteLine("is my skilltree null? " + Skills == null);
-            Console.WriteLine("then what is my skill tree made of? " + JsonConvert.SerializeObject(Skills));
         }
 
         public void ClickableCheck(Object obj)

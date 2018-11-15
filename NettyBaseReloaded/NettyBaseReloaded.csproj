@@ -142,13 +142,9 @@
     <Compile Include="Game\controllers\npc\Slave.cs" />
     <Compile Include="Game\controllers\npc\SpaceballAI.cs" />
     <Compile Include="Game\controllers\PetController.cs" />
-    <Compile Include="Game\controllers\pet\gears\AutoLootGear.cs" />
-    <Compile Include="Game\controllers\pet\gears\AutoResourceCollectionGear.cs" />
-    <Compile Include="Game\controllers\pet\gears\ComboRepairGear.cs" />
-    <Compile Include="Game\controllers\pet\gears\GuardGear.cs" />
-    <Compile Include="Game\controllers\pet\gears\KamikazeGear.cs" />
-    <Compile Include="Game\controllers\pet\gears\PassiveGear.cs" />
-    <Compile Include="Game\controllers\pet\Gear.cs" />
+    <Compile Include="Game\controllers\pet\CollectableFinder.cs" />
+    <Compile Include="Game\controllers\pet\PathFollower.cs" />
+    <Compile Include="Game\controllers\pet\ResourceFinder.cs" />
     <Compile Include="Game\controllers\PlayerController.cs" />
     <Compile Include="Game\controllers\EventController.cs" />
     <Compile Include="Game\controllers\player\CPU.cs" />
@@ -332,6 +328,7 @@
     <Compile Include="Game\netty\commands\old_client\PetActivationCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetBuffCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetDeactivationCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetExperiencePointsUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetFuelUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearAddCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearSelectCommand.cs" />
@@ -578,7 +575,10 @@
     <Compile Include="Game\objects\world\npcs\Hitac.cs" />
     <Compile Include="Game\objects\world\npcs\Spaceball.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetGuardGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetPassiveGear.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
+    <Compile Include="Game\objects\world\pets\PetGear.cs" />
     <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
     <Compile Include="Game\objects\world\players\Ammunition.cs" />
     <Compile Include="Game\objects\world\players\Equipment.cs" />
@@ -702,7 +702,6 @@
     <Compile Include="Main\commands\WhisperCommand.cs" />
     <Compile Include="Main\ConsoleCommands.cs" />
     <Compile Include="Main\ConsoleMonitor.cs" />
-    <Compile Include="Main\global_managers\CronjobManager.cs" />
     <Compile Include="Main\global_managers\PerformanceManager.cs" />
     <Compile Include="Main\global_managers\QueryManager.cs" />
     <Compile Include="Main\global_managers\SqlDatabaseManager.cs" />
@@ -732,7 +731,6 @@
     <Compile Include="Main\objects\ClanDiplomacy.cs" />
     <Compile Include="Main\objects\ClanMember.cs" />
     <Compile Include="Main\objects\Diplomacy.cs" />
-    <Compile Include="Main\objects\Cronjob.cs" />
     <Compile Include="Main\objects\SqlDatabaseClient.cs" />
     <Compile Include="Main\tasks\Reader.cs" />
     <Compile Include="Main\Global.cs" />

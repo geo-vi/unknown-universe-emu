@@ -8,6 +8,11 @@ namespace NettyBaseReloaded.Game.controllers
 {
     class AbstractCharacterController : ITick
     {
+        /// <summary>
+        /// TICK ID
+        /// </summary>
+        private int TickId { get; set; }
+        
         public Character Character { get; }
 
         public Checkers Checkers { get; }
@@ -45,7 +50,14 @@ namespace NettyBaseReloaded.Game.controllers
         {
             Active = true;
             StopController = false;
-            Global.TickManager.Add(this);
+            var id = -1;
+            Global.TickManager.Add(this, out id);
+            TickId = id;
+        }
+
+        public int GetId()
+        {
+            return TickId;
         }
 
         public void Tick()
@@ -90,6 +102,7 @@ namespace NettyBaseReloaded.Game.controllers
             Active = false;
             Checkers.Stop();
             Attack.Stop();
+            Global.TickManager.Remove(this);
         }
 
     }

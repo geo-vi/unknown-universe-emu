@@ -176,9 +176,9 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         private class jClass
         {
-            private DateTime JumpEndTime = new DateTime(2017, 1, 24, 0, 0, 0);
+            private DateTime _jumpEndTime;
 
-            private PlayerController baseController;
+            private readonly PlayerController _baseController;
 
             private int TargetVirtualWorldId { get; set; }
             private Spacemap TargetMap { get; set; }
@@ -186,19 +186,26 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             public jClass(PlayerController baseController)
             {
-                this.baseController = baseController;
+                this._baseController = baseController;
             }
 
+            /// <summary>
+            /// Starting the Jump sequence
+            /// </summary>
+            /// <param name="targetVW"></param>
+            /// <param name="targetMapId"></param>
+            /// <param name="targetPos"></param>
+            /// <param name="portalId"></param>
             public void Initiate(int targetVW, int targetMapId, Vector targetPos, int portalId = -1)
             {
-                if (baseController.Character.EntityState == EntityStates.DEAD || baseController.StopController) return;
+                if (_baseController.Character.EntityState == EntityStates.DEAD || _baseController.StopController) return;
 
                 TargetVirtualWorldId = targetVW;
                 TargetMap = World.StorageManager.Spacemaps[targetMapId];
                 TargetPosition = targetPos;
 
-                var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
-                if (TargetMap.Level > baseController.Player.Information.Level.Id)
+                var gameSession = World.StorageManager.GetGameSession(_baseController.Player.Id);
+                if (TargetMap.Level > _baseController.Player.Information.Level.Id)
                 {
                     Packet.Builder.LegacyModule(gameSession, $"0|k|{TargetMap.Level}");
                     Cancel();
@@ -206,34 +213,34 @@ namespace NettyBaseReloaded.Game.controllers.player
                 }
                 if (portalId != -1)
                 {
-                    Packet.Builder.ActivatePortalCommand(gameSession, baseController.Player.Spacemap.Objects[portalId] as Jumpgate);
+                    Packet.Builder.ActivatePortalCommand(gameSession, _baseController.Player.Spacemap.Objects[portalId] as Jumpgate);
                 }
-                JumpEndTime = DateTime.Now.AddSeconds(3);
-                baseController.Jumping = true;
+                _jumpEndTime = DateTime.Now.AddSeconds(3);
+                _baseController.Jumping = true;
             }
 
             public void Checker()
             {
-                if (baseController.Jumping) Refresh();
+                if (_baseController.Jumping) Refresh();
             }
 
             void Refresh()
             {
-                if (baseController.Character.EntityState == EntityStates.DEAD || baseController.StopController)
+                if (_baseController.Character.EntityState == EntityStates.DEAD || _baseController.StopController)
                 {
                     Cancel();
                     return;
                 }
 
-                if (baseController.Attack.GetActiveAttackers().Any(x => x.InRange(baseController.Character, x.AttackRange)) && baseController.Player.Spacemap.Pvp)
+                if (_baseController.Attack.GetActiveAttackers().Any(x => x.InRange(_baseController.Character, x.AttackRange)) && _baseController.Player.Spacemap.Pvp)
                 {
                     Cancel();
                     return;
                 }
 
-                if (DateTime.Now > JumpEndTime)
+                if (DateTime.Now > _jumpEndTime)
                 {
-                    baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition, TargetVirtualWorldId);
+                    _baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition, TargetVirtualWorldId);
                     Reset();
                 }
             }
@@ -245,8 +252,8 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             void Reset()
             {
-                baseController.Jumping = false;
-                JumpEndTime = DateTime.Now;
+                _baseController.Jumping = false;
+                _jumpEndTime = DateTime.Now;
                 TargetMap = null;
                 TargetPosition = null;
             }
@@ -257,37 +264,14 @@ namespace NettyBaseReloaded.Game.controllers.player
             JClass.Initiate(targetVW, targetMapId, targetPos, portalId);
         }
 
-        public void ForceChangeMap(Spacemap targetMap, Vector targetPosition, int vw = 0)
+        private void ForceChangeMap(Spacemap targetMap, Vector targetPosition, int vw = 0)
         {
+            baseController.Player.Pet?.Invalidate();
             if (baseController.Player.Spacemap == targetMap) return;
-            //baseController.Player.Pet?.Controller.Deactivate();
             var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
             Packet.Builder.MapChangeCommand(gameSession);
-            baseController.Destruction.Deselect(baseController.Player);
             gameSession.Relog(targetMap, targetPosition);
             gameSession.Player.VirtualWorldId = vw;
-            //baseController.Player.Position = targetPosition;
-            //baseController.Player.Spacemap = targetMap;
-            //baseController.Player.Save();
-        }
-
-        public void ChangeDroneFormation(DroneFormation targetFormation)
-        {
-            //if (
-            //    !baseController.CooldownStorage.Finished(
-            //        objects.world.storages.playerStorages.CooldownStorage.DRONE_FORMATION_COOLDOWN)) return;
-
-            //var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
-            //baseController.Player.Formation = targetFormation;
-            //gameSession.Client.Send(DroneFormationChangeCommand.write(baseController.Player.Id, (int)targetFormation));
-            //baseController.CooldownStorage.Setup(gameSession, objects.world.storages.playerStorages.CooldownStorage.DRONE_FORMATION_COOLDOWN);
-            //baseController.Player.Update();
-        }
-
-        private DateTime LastReloadedTime = new DateTime(2016, 1, 1, 0, 0, 0);
-        public void ReloadConfigs()
-        {
-            
         }
     }
 }

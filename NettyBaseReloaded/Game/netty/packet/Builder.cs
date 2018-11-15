@@ -16,6 +16,7 @@ using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.map.objects.stations;
+using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.ammo;
 using NettyBaseReloaded.Game.objects.world.players.events;
@@ -809,7 +810,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 if (gameSession.Player.UsingNewClient)
                 {
                     gameSession.Client.Send(commands.new_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id,
-                        pet.DesignId, pet.ExpansionStage, pet.Name,
+                        (short)pet.Hangar.Ship.Id, pet.ExpansionStage, pet.Name,
                         (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
                         new commands.new_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
                         pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible,
@@ -818,7 +819,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else
                 {
                     gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id,
-                        pet.DesignId, pet.ExpansionStage, pet.Name,
+                        (short)pet.Hangar.Ship.Id, pet.ExpansionStage, pet.Name,
                         (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
                         new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
                         pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible).Bytes);
@@ -839,7 +840,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 gameSession.Client.Send(commands.old_client.PetHeroActivationCommand.write(pet.GetOwner().Id, pet.Id,
-                    pet.DesignId, pet.ExpansionStage, pet.Name, (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
+                    (short)pet.Hangar.Ship.Id, pet.ExpansionStage, pet.Name, (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
                     pet.Position.X, pet.Position.Y, pet.Speed).Bytes);
             }
         }
@@ -853,13 +854,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.PetStatusCommand.write(pet.Id, pet.Level.Id, pet.Experience,
-                    1000, pet.CurrentHealth,
+                    pet.Level.Experience, pet.CurrentHealth,
                     pet.MaxHealth, pet.CurrentShield, pet.MaxShield, pet.Fuel, 50000, pet.Speed, pet.Name).Bytes);
             }
             else
             {
                 gameSession.Client.Send(commands.old_client.PetStatusCommand.write(pet.Id, pet.Level.Id, pet.Experience,
-                    1000, pet.CurrentHealth,
+                    pet.Level.Experience, pet.CurrentHealth,
                     pet.MaxHealth, pet.CurrentShield, pet.MaxShield, pet.Fuel, 50000, pet.Speed, pet.Name).Bytes);
             }
         }
@@ -1146,7 +1147,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region PetGearAddCommand
 
-        public void PetGearAddCommand(GameSession gameSession, Gear gear)
+        public void PetGearAddCommand(GameSession gameSession, PetGear gear)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -1156,7 +1157,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 gameSession.Client.Send(netty.commands.old_client.PetGearAddCommand
-                    .write(new commands.old_client.PetGearTypeModule((short) gear.Type), gear.Level, gear.Amount,
+                    .write(new commands.old_client.PetGearTypeModule((short) gear.TypeOfGear), gear.Level, gear.Amount,
                         gear.Enabled).Bytes);
             }
         }
@@ -1165,7 +1166,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region PetGearSelectCommand
 
-        public void PetGearSelectCommand(GameSession gameSession, Gear gear)
+        public void PetGearSelectCommand(GameSession gameSession, PetGear gear)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -1175,7 +1176,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 gameSession.Client.Send(commands.old_client.PetGearSelectCommand
-                    .write(new commands.old_client.PetGearTypeModule((short) gear.Type), gear.OptionalParams).Bytes);
+                    .write(new commands.old_client.PetGearTypeModule((short) gear.TypeOfGear), gear.OptionalParams).Bytes);
             }
         }
 
@@ -2103,12 +2104,12 @@ namespace NettyBaseReloaded.Game.netty.packet
         #endregion
         #region PetLevelUpdateCommand
 
-        public void PetLevelUpdateCommand(GameSession gameSession, Pet pet, Level nextLevel)
+        public void PetLevelUpdateCommand(GameSession gameSession, Pet pet)
         {
             if (gameSession.Player.UsingNewClient) { }
             else
             {
-                gameSession.Client.Send(commands.old_client.PetLevelUpdateCommand.write((short)pet.Level.Id, nextLevel.Experience, pet.DesignId, pet.ExpansionStage).Bytes);
+                gameSession.Client.Send(commands.old_client.PetLevelUpdateCommand.write((short)pet.Level.Id, pet.Level.Experience, (short)pet.Hangar.Ship.Id, pet.ExpansionStage).Bytes);
             }
         }
 
@@ -2425,6 +2426,21 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         } 
 
+        #endregion
+        
+        #region PetExperiencePointsUpdateCommand
+
+        public void PetExperiencePointsUpdateCommand(GameSession gameSession, double exp, double maxExp)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+                
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetExperiencePointsUpdateCommand.write(exp, maxExp).Bytes);
+            }
+        }
         #endregion
     }
 }

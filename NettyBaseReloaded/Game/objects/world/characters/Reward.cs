@@ -112,23 +112,28 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             if (TotalAddedCre > 0 || TotalAddedUri > 0 || TotalAddedExp > 0 || TotalAddedHon > 0)
             {
                 player.Information.UpdateInfoBulk(TotalAddedCre, TotalAddedUri, TotalAddedExp, TotalAddedHon);
+                var gameSession = player.GetGameSession();
                 if (TotalAddedCre > 0)
                 {
-                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                    Packet.Builder.LegacyModule(gameSession,
                         "0|LM|ST|CRE|" + TotalAddedCre + "|" + player.Information.Credits.Get());
                 }
 
                 if (TotalAddedUri > 0)
                 {
-                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                    Packet.Builder.LegacyModule(gameSession,
                         "0|LM|ST|URI|" + TotalAddedUri + "|" + player.Information.Uridium.Get());
                 }
 
                 if (TotalAddedExp > 0)
                 {
-                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                    Packet.Builder.LegacyModule(gameSession,
                         "0|LM|ST|EP|" + TotalAddedExp + "|" + player.Information.Experience.Get() + "|" +
                         player.Information.Level.Id);
+                    if (player.Pet != null && player.Pet.Controller.Active)
+                    {
+                        Packet.Builder.PetExperiencePointsUpdateCommand(gameSession, player.Pet.Experience, player.Pet.GetMaxExp());
+                    }
                 }
 
                 if (TotalAddedHon > 0)

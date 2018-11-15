@@ -81,6 +81,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void UpdateInfoBulk(double creChange, double uriChange, double expChange, double honChange)
         {
             World.DatabaseManager.UpdateInfoBulk(Player, creChange, uriChange, expChange, honChange);
+            if (Player.Pet != null && Player.Pet.Controller.Active)
+            {
+                Player.Pet.Experience += expChange * 0.1;
+            }
         }
 
         public void LevelUp(Level targetLevel)

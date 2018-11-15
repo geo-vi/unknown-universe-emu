@@ -37,6 +37,7 @@ namespace NettyBaseReloaded.Game.objects.world
          * BASICS *
          **********/
         public int Id { get; }
+        private int TickId { get; set; }
         public string Name { get; }
         public Faction Faction { get; }
         public bool Pvp { get; }
@@ -79,7 +80,9 @@ namespace NettyBaseReloaded.Game.objects.world
             PortalBase = portals;
             Npcs = npcs;
 
-            Global.TickManager.Add(this);
+            var tickId = -1;
+            Global.TickManager.Add(this, out tickId);
+            TickId = tickId;
         }
 
         private void ParseLimits()
@@ -94,6 +97,11 @@ namespace NettyBaseReloaded.Game.objects.world
         private bool isPvp()
         {
             return Id == 16 || Id == 15 || Id == 14 || Id == 13;
+        }
+
+        public int GetId()
+        {
+            return TickId;
         }
 
         public void Tick()
@@ -361,8 +369,13 @@ namespace NettyBaseReloaded.Game.objects.world
 
             AddEntity(npc);
 
+            var tickId = -1;
             if (!Global.TickManager.Exists(npc))
-                Global.TickManager.Add(npc);
+            {
+                Global.TickManager.Add(npc, out tickId);
+                npc.SetTickId(tickId);
+            }
+
             npc.Controller = new NpcController(npc);
             npc.Controller.Initiate();
             Out.WriteLog("Created NPC [" + npc.Id + ", " + npc.Hangar.Ship.ToStringLoot() + "] on mapId " + Id);
@@ -371,6 +384,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateCubikon(Vector position)
         {
             var id = GetNextAvailableId();
+            var tickId = -1;
             var ship = World.StorageManager.Ships[80];
             var npc = new Cubikon(id, ship.Name,
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
@@ -388,7 +402,11 @@ namespace NettyBaseReloaded.Game.objects.world
             AddEntity(npc);
 
             if (!Global.TickManager.Exists(npc))
-                Global.TickManager.Add(npc);
+            {
+                Global.TickManager.Add(npc, out tickId);
+                npc.SetTickId(tickId);
+            }
+            
             npc.Controller = new NpcController(npc) { CustomSetAI = AILevels.MOTHERSHIP };
             npc.Controller.Initiate();
         }
@@ -413,7 +431,12 @@ namespace NettyBaseReloaded.Game.objects.world
             AddEntity(npc);
 
             if (!Global.TickManager.Exists(npc))
-                Global.TickManager.Add(npc);
+            {
+                var tickId = -1;
+                Global.TickManager.Add(npc, out tickId);
+                npc.SetTickId(tickId);
+            }
+
             npc.Controller = new NpcController(npc) { CustomSetAI = AILevels.SPACEBALL };
             npc.Controller.Initiate();
             Console.WriteLine("Created spaceball @4-4");

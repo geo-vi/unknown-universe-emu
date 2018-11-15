@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.objects;
+using NettyBaseReloaded.Game.objects.world.pets;
 using PetGearTypeModule = NettyBaseReloaded.Game.netty.commands.old_client.PetGearTypeModule;
 
 namespace NettyBaseReloaded.Game.netty.handlers
@@ -16,7 +17,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             var cmd = new PetGearActivationRequest();
             cmd.readCommand(bytes);
 
-            gameSession.Player.Pet?.Controller?.SwitchGear(cmd.gearTypeToActivate.typeValue, cmd.optParam);
+            gameSession.Player.Pet?.Controller?.SwitchGear((GearType)cmd.gearTypeToActivate.typeValue, cmd.optParam);
         }
     }
 }

@@ -168,45 +168,5 @@ namespace NettyBaseReloaded.Main.global_managers
         {
             return null;
         }
-
-        public List<Cronjob> LoadCrons()
-        {
-            List<Cronjob> crons = new List<Cronjob>();
-            try
-            {
-                using (var mySqlClient = SqlDatabaseManager.GetGlobalClient())
-                {
-                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_crons WHERE ACTIVE=1");
-                    foreach (DataRow row in queryTable.Rows)
-                    {
-                        int id = Convert.ToInt32(row["ID"]);
-                        string name = row["NAME"].ToString();
-                        bool repeat = Convert.ToBoolean(Convert.ToInt16(row["REPEAT"]));
-                        DateTime time = Convert.ToDateTime(row["TIME"]);
-                        int interval = Convert.ToInt32(row["INTERVAL"]);
-                        string exec = row["EXEC"].ToString();
-                        crons.Add(new Cronjob(id){ExecuteStr = exec, ExecutionTime = time, Intervals = interval, Name = name, RepeatedTask = repeat});
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-            }
-            return crons;
-        }
-
-        public void UpdateCronjob(Cronjob cronjob)
-        {
-            try
-            {
-                using (var mySqlClient = SqlDatabaseManager.GetGlobalClient())
-                {
-                    mySqlClient.ExecuteNonQuery($"UPDATE server_crons SET REPEAT={Convert.ToInt16(cronjob.RepeatedTask)}, TIME={cronjob.ExecutionTime}, INTERVAL={cronjob.Intervals}, ACTIVE={Convert.ToInt32(Global.CronjobManager.Cronjobs.Contains(cronjob))} WHERE ID={cronjob.Id}");
-                }
-            }
-            catch (Exception e)
-            {
-            }
-        }
     }
 }

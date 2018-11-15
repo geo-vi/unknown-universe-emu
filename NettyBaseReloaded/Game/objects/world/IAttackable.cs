@@ -11,6 +11,8 @@ namespace NettyBaseReloaded.Game.objects.world
     {
         public int Id { get; }
 
+        private int TickId { get; set; }
+
         public abstract Vector Position { get; set; }
 
         public abstract Spacemap Spacemap { get; set; }
@@ -56,6 +58,16 @@ namespace NettyBaseReloaded.Game.objects.world
             Targetable = true;
         }
 
+        public int GetId()
+        {
+            return TickId;
+        }
+
+        public void SetTickId(int id)
+        {
+            TickId = id;
+        }
+
         public abstract void Tick();
 
         public abstract void Destroy();
@@ -66,6 +78,13 @@ namespace NettyBaseReloaded.Game.objects.world
         public bool InRange(IAttackable attackable, int range = 2000)
         {
             if (attackable == null || attackable.Spacemap.Id != Spacemap.Id) return false;
+            if (attackable is Character character)
+            {
+                if (!character.Controller.Active || character.Controller.StopController)
+                {
+                    return false;
+                }
+            }
             if (range == -1 || attackable.Spacemap.RangeDisabled) return true;
             return attackable.Id != Id &&
                    Position.DistanceTo(attackable.Position) <= range;

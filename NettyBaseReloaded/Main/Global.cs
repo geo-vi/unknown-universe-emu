@@ -18,7 +18,6 @@ namespace NettyBaseReloaded.Main
         public static QueryManager QueryManager = new QueryManager();
         public static TickManager TickManager = new TickManager();
         public static StorageManager StorageManager = new StorageManager();
-        public static CronjobManager CronjobManager = new CronjobManager();
 
         public static State State = State.LOADING;
 
@@ -33,7 +32,6 @@ namespace NettyBaseReloaded.Main
             InitiateRandomResetTimer();
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
-            CronjobManager.Initiate();
             var task = new Task(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
             task.Start();
         }
@@ -89,7 +87,8 @@ namespace NettyBaseReloaded.Main
 
         static void InitiateRandomResetTimer()
         {
-            TickManager.Add(RandomInstance.getInstance(new object()));
+            int randomId = 0;
+            TickManager.Add(RandomInstance.getInstance(new object()), out randomId);
         }
 
         public static void SaveAll()

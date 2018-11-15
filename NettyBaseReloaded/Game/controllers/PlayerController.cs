@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Main;
 using Range = NettyBaseReloaded.Game.controllers.player.Range;
 
 namespace NettyBaseReloaded.Game.controllers
@@ -91,6 +92,8 @@ namespace NettyBaseReloaded.Game.controllers
         {
             StopAll();
             CheckedClasses.Clear();
+            Jumping = false;
+            Console.WriteLine("ticking? " + Global.TickManager.Exists(this));
         }
     }
 }

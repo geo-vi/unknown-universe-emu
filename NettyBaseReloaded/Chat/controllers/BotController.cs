@@ -3,7 +3,7 @@ using NettyBaseReloaded.Main.interfaces;
 
 namespace NettyBaseReloaded.Chat.controllers
 {
-    class BotController : AbstractCharacterController, ITick
+    class BotController : AbstractCharacterController
     {
         public BotController(Character character) : base(character)
         {

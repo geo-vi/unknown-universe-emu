@@ -26,8 +26,8 @@ using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Game.objects.world.players.quests.player_quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.quest_stats;
 using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
-using NettyBaseReloaded.Game.controllers.pet;
-using NettyBaseReloaded.Game.controllers.pet.gears;
+using NettyBaseReloaded.Game.objects.world.pets;
+using NettyBaseReloaded.Game.objects.world.pets.gears;
 
 namespace NettyBaseReloaded.Game.managers
 {
@@ -40,7 +40,7 @@ namespace NettyBaseReloaded.Game.managers
             LoadSpacemaps();
             LoadLevels();
             LoadCollectableRewards();
-            //LoadEvents();
+            LoadEvents();
             LoadTitles();
         }
 
@@ -1564,6 +1564,7 @@ namespace NettyBaseReloaded.Game.managers
 
         public Pet LoadPet(Player player)
         {
+            Pet pet = null;
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
@@ -1574,7 +1575,7 @@ namespace NettyBaseReloaded.Game.managers
                         var id = intConv(reader["ID"]);
                         var name = reader["NAME"].ToString();
                         var level = intConv(reader["LEVEL"]);
-                        var exp = intConv(reader["EXPERIENCE"]);
+                        var exp = doubleConv(reader["EXPERIENCE"]);
                         var hp = intConv(reader["HP"]);
                         var fuel = intConv(reader["FUEL"]);
 
@@ -1590,8 +1591,10 @@ namespace NettyBaseReloaded.Game.managers
                         var shieldAbsC2 = maxShieldC2;
                         var consumablesC2 = new Dictionary<string, Item>();
 
-                        return new Pet(id, player, name, new Hangar(petShip, new List<Drone>(), player.Position, player.Spacemap, hp, 0, new Dictionary<string, Item>(), true, new Configuration[] { new Configuration(1, damageC1, maxShieldC1, maxShieldC1, shieldAbsC1, consumablesC1), new Configuration(2, damageC2, maxShieldC2, maxShieldC2, shieldAbsC2, consumablesC2) }), player.CurrentHealth, player.FactionId,
+                        pet = new Pet(id, player, name, new Hangar(petShip, new List<Drone>(), player.Position, player.Spacemap, hp, 0, new Dictionary<string, Item>(), true, new Configuration[] { new Configuration(1, damageC1, maxShieldC1, maxShieldC1, shieldAbsC1, consumablesC1), new Configuration(2, damageC2, maxShieldC2, maxShieldC2, shieldAbsC2, consumablesC2) }), player.FactionId,
                              World.StorageManager.Levels.PetLevels[level], exp, fuel);
+                        pet.PetGears.Add(GearType.PASSIVE, new PetPassiveGear(pet));
+                        pet.PetGears.Add(GearType.GUARD, new PetGuardGear(pet));
                     }
                 }
             }
@@ -1601,7 +1604,7 @@ namespace NettyBaseReloaded.Game.managers
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
             }
-            return null;
+            return pet;
         }
 
         public Dictionary<int, int> LoadStats(Player player)

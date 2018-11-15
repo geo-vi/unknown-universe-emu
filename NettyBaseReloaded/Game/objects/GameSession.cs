@@ -16,6 +16,8 @@ namespace NettyBaseReloaded.Game.objects
 {
     class GameSession : ITick
     {
+        private int TickId { get; set; }
+        
         public enum DisconnectionType
         {
             NORMAL,
@@ -40,8 +42,15 @@ namespace NettyBaseReloaded.Game.objects
         public GameSession(Player player)
         {
             Player = player;
-            Global.TickManager.Add(this);
+            var tickId = -1;
+            Global.TickManager.Add(this, out tickId);
+            TickId = tickId;
             LastActiveTime = DateTime.Now;
+        }
+
+        public int GetId()
+        {
+            return TickId;
         }
 
         public void Tick()
@@ -79,13 +88,11 @@ namespace NettyBaseReloaded.Game.objects
 
         private void PrepareForDisconnect()
         {
-            Player.Save();
-            Player.Controller.Attack.Attacking = false;
-            Player.Controller.Exit();
-            Player.Controller.Destruction.Remove();
-            
             Global.TickManager.Remove(this);
             Global.TickManager.Remove(Player);
+            Player.Save();
+            Player.Controller.Destruction.Remove();
+            Player.Controller.Exit();
         }
 
         public void Kick()

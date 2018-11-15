@@ -37,6 +37,11 @@ namespace NettyBaseReloaded
             FixActivity();
         }
 
+        public int GetId()
+        {
+            throw new NotImplementedException();
+        }
+
         public void Tick()
         {
             foreach (var instance in Instances)

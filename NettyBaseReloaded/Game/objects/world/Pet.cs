@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers;
-using NettyBaseReloaded.Game.controllers.pet;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.characters;
-using NettyBaseReloaded.Game.objects.world.players;
-using Gear = NettyBaseReloaded.Game.controllers.pet.Gear;
+using NettyBaseReloaded.Game.objects.world.pets;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -26,6 +21,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public new PetController Controller { get; set; }
 
+        // INFOS //
         public override int Speed
         {
             get
@@ -61,54 +57,30 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public sealed override int MaxShield
-        {
-            get
-            {
-                return Hangar.Configurations[CurrentConfig - 1].MaxShield;
-            }
-        }
+        public override int MaxShield => Hangar.Configurations[CurrentConfig - 1].MaxShield;
 
-        public sealed override double ShieldAbsorption
-        {
-            get
-            {
-                return Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation;
-            }
-        }
+        public override double ShieldAbsorption => Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation;
 
         public int Fuel { get; set; }
 
         public int MaxFuel => 50000;
 
-        public int Experience { get; set; }
+        public double Experience { get; set; }
 
         public Level Level { get; set; }
-
-        public List<Gear> Gears { get; set; }
-
-        public short DesignId
-        {
-            get
-            {
-                if (Level.Id <= 3)
-                    return 12;
-                if (Level.Id <= 6)
-                    return 13;
-                if (Level.Id <= 9)
-                    return 14;
-                if (Level.Id <= 12)
-                    return 15;
-                return 22;
-            }
-        }
 
         public short ExpansionStage => (short)Hangar.Configurations[CurrentConfig - 1].LaserCount;
 
         public int CurrentConfig => GetOwner().CurrentConfig;
 
-        public Pet(int id,Player owner, string name, Hangar hangar, int currentHealth, Faction factionId,
-            Level level, int experience, int fuel) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
+        
+        // GEARS //
+        public Dictionary<GearType, PetGear> PetGears = new Dictionary<GearType, PetGear>();
+
+        public PetGear ActiveGear;
+        
+        public Pet(int id,Player owner, string name, Hangar hangar, Faction factionId,
+            Level level, double experience, int fuel) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
             new Reward(0,0))
         {
             DbId = id;
@@ -117,8 +89,6 @@ namespace NettyBaseReloaded.Game.objects.world
             Experience = experience;
             Fuel = fuel;
             Clan = owner.Clan;
-            Gears = new List<Gear>();
-            if (CurrentHealth <= 0) EntityState = EntityStates.DEAD;
         }
 
         /// <summary>
@@ -144,16 +114,16 @@ namespace NettyBaseReloaded.Game.objects.world
             LevelChecker();
         }
 
-        public DateTime LastTimeSynced = new DateTime(2017, 2, 5, 0, 0, 0);
-        public void FuelReduction()
+        private DateTime _lastTimeSynced;
+        private void FuelReduction()
         {
-            if (LastTimeSynced.AddSeconds(5) > DateTime.Now) return;
+            if (_lastTimeSynced.AddSeconds(5) > DateTime.Now) return;
 
             if (Moving) Fuel -= 10;
             Fuel -= 5;
             if (Fuel < 0) Fuel = 0;
             Packet.Builder.PetFuelUpdateCommand(GetOwner().GetGameSession(), this);
-            LastTimeSynced = DateTime.Now;
+            _lastTimeSynced = DateTime.Now;
         }
 
         public void BasicSave()
@@ -166,10 +136,13 @@ namespace NettyBaseReloaded.Game.objects.world
             return Fuel > 0;
         }
 
-        private DateTime LastLevelCheck = new DateTime();
+        /// <summary>
+        /// Checking levels, appends to LastLevelCheck and controls for not too many checks (overloads CPU)
+        /// </summary>
+        private DateTime _lastLevelCheck;
         private void LevelChecker()
         {
-            if (LastLevelCheck.AddSeconds(1) > DateTime.Now) return;
+            if (_lastLevelCheck.AddSeconds(1) > DateTime.Now) return;
 
             var determined = World.StorageManager.Levels.DeterminePetLvl(Experience);
             if (Level != determined)
@@ -177,36 +150,58 @@ namespace NettyBaseReloaded.Game.objects.world
                 LevelUp(determined);
             }
 
-            LastLevelCheck = DateTime.Now;
+            _lastLevelCheck = DateTime.Now;
         }
 
-        public void LevelUp(Level targetLevel)
+        /// <summary>
+        /// Levels up the PET
+        /// </summary>
+        /// <param name="targetLevel"></param>
+        private void LevelUp(Level targetLevel)
         {
             Level = targetLevel;
             BasicSave();
+            Hangar.Ship = GetShipByLevel(targetLevel.Id);
             var gameSession = GetOwner().GetGameSession();
-            var levels = World.StorageManager.Levels.PetLevels;
-            Level nextLevel = targetLevel;
-            if (levels.ContainsKey(targetLevel.Id + 1)) targetLevel = levels[targetLevel.Id + 1];
-            Packet.Builder.PetLevelUpdateCommand(gameSession, this, nextLevel);
+            Packet.Builder.PetLevelUpdateCommand(gameSession, this);
         }
 
+        /// <summary>
+        /// Same as the other Destroy method
+        /// </summary>
         public override void Destroy()
         {
             base.Destroy();
-            Controller.Destroy();
+            Controller.OnPetDestruction();
         }
 
+        /// <summary>
+        /// After Pet got destroyed this method gets called and should disable pet
+        /// </summary>
+        /// <param name="destroyer"></param>
         public override void Destroy(Character destroyer)
         {
             base.Destroy(destroyer);
-            Controller.Destroy();
+            Controller.OnPetDestruction();
         }
 
+        private void RefreshPetInitializationWindow()
+        {
+            var owner = GetOwner();
+            if (owner == null) return;
+            Packet.Builder.PetInitializationCommand(owner.GetGameSession(), this);
+        }
+
+        /// <summary>
+        /// Gets the pet level's ship
+        /// </summary>
+        /// <param name="level">level id</param>
+        /// <returns></returns>
         public static Ship GetShipByLevel(int level)
         {
             switch(level)
             {
+                case 3:
                 case 4:
                 case 5:
                 case 6:
@@ -226,6 +221,26 @@ namespace NettyBaseReloaded.Game.objects.world
                 default:
                     return World.StorageManager.Ships[12];
             }
+        }
+
+        /// <summary>
+        /// Will stop the pet
+        /// </summary>
+        public void Invalidate()
+        {
+            Controller.Exit();
+        }
+
+        private Level GetNextLevel()
+        {
+            var levels = World.StorageManager.Levels.PetLevels;
+            if (levels.ContainsKey(Level.Id + 1)) return levels[Level.Id + 1];
+            return Level;
+        }
+        
+        public double GetMaxExp()
+        {
+            return Level.Experience;
         }
     }
 }

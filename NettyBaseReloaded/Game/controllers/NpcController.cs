@@ -50,11 +50,8 @@ namespace NettyBaseReloaded.Game.controllers
                     CurrentNpc = new SpaceballAI(this);
                     break;
             }
-            Active = true;
-            //Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) Setted AI to {ai}");
+            base.Initiate();
             Checkers.Start();
-            Global.TickManager.Add(this);
-            //Task.Factory.StartNew(ActiveTick);
         }
 
         public new void Tick()
