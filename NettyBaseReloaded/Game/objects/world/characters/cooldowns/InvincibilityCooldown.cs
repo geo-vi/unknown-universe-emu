@@ -15,15 +15,15 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
             base.OnStart(character);
 
             character.Invincible = true;
-            //if (ShowEffect)
-            //character.Controller.UpdateVisuals(); TODO
+            if (ShowEffect)
+            {
+                character.Visuals.Add(new VisualEffect(character, ShipVisuals.INVINCIBILITY, EndTime));
+            }
         }
 
         public override void OnFinish(Character character)
         {
             character.Invincible = false;
-            //if (ShowEffect)
-                //1character.Controller.UpdateVisuals(); TODO
         }
 
         public override void Send(GameSession gameSession)

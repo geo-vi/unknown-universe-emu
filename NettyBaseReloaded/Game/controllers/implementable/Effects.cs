@@ -11,27 +11,24 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 {
     class Effects : IAbstractCharacter
     {
-        public bool SlowedDown { get; set; }
-
+        public bool SlowedDown => false;
+        
         public Effects(AbstractCharacterController controller) : base(controller)
         {
         }
 
         public override void Tick()
         {
-            //throw new NotImplementedException();
         }
 
         public override void Stop()
         {
-            throw new NotImplementedException();
         }
 
-        public void Slowdown(Character targetCharacter)
+        public void Slowdown(DateTime slowEnd)
         {
-            //TODO
-            GameClient.SendToSpacemap(targetCharacter.Spacemap, netty.commands.new_client.LegacyModule.write("0|n|fx|start|GRAPHIC_FX_SABOTEUR_DEBUFF|" + targetCharacter.Id));
-            GameClient.SendToSpacemap(targetCharacter.Spacemap, netty.commands.old_client.LegacyModule.write("0|n|fx|start|GRAPHIC_FX_SABOTEUR_DEBUFF|" + targetCharacter.Id));
+            GameClient.SendToSpacemap(Character.Spacemap, netty.commands.new_client.LegacyModule.write("0|n|fx|start|GRAPHIC_FX_SABOTEUR_DEBUFF|" + Character.Id));
+            GameClient.SendToSpacemap(Character.Spacemap, netty.commands.old_client.LegacyModule.write("0|n|fx|start|GRAPHIC_FX_SABOTEUR_DEBUFF|" + Character.Id));
         }
 
         public void SetInvincible(int time, bool showEffect = false)

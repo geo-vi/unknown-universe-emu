@@ -73,7 +73,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public new void Tick()
         {
-            Controller.Tick();
+            //Controller.Tick();
         }
 
         public override void Destroy(Character destroyer)

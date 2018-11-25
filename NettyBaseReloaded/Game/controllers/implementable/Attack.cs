@@ -34,12 +34,23 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Attacking)
                 LaserAttack();
             RefreshAttackers();
+
+//            if (Character is Player player)
+//            {
+//                var session = player.GetGameSession();
+//                var attackers = GetActiveAttackers();
+//                foreach (var attacker in attackers)
+//                {
+//                    Packet.Builder.LegacyModule(session, "0|A|STD|" + attacker.Name + "\n" + Math.Round(attacker.Position.DistanceTo(player.Position)) + "\n" + attacker.CurrentHealth + "/" + attacker.MaxHealth + "::" + attacker.CurrentShield + "/" + attacker.MaxShield);
+//                }
+//            }
         }
 
         public override void Stop()
         {
-            Controller.Attack.MainAttacker = null;
-            Controller.Attack.Attackers.Clear();
+            Attacking = false;
+            MainAttacker = null;
+            Attackers.Clear();
         }
 
         public List<Character> GetActiveAttackers()
@@ -294,7 +305,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     rocketId = 8;
                     if (Character.Cooldowns.Any(c => c is WizardCooldown)) return;
                     Wizard(enemy as Character);
-                    break;
+                    return;
             }
 
             if (Character.Cooldowns.Any(c => c is RocketCooldown)) return;
@@ -335,48 +346,49 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             int rocketId = 0;
             Damage.Types dmgTypes = Damage.Types.ROCKET;
 
+            var loadedRockets = Character.RocketLauncher.LoadedRockets;
+            
             switch (Character.RocketLauncher.LoadLootId)
             {
                 case "ammunition_rocketlauncher_eco-10":
                     rocketId = 9;
-                    damage = RandomizeDamage(2000 * Character.RocketLauncher.CurrentLoad);
+                    damage = RandomizeDamage(2000 * loadedRockets);
                     break;
                 case "ammunition_rocketlauncher_hstrm-01":
                     rocketId = 10;
-                    damage = RandomizeDamage(2000 * Character.RocketLauncher.CurrentLoad);
+                    damage = RandomizeDamage(4000 * loadedRockets);
                     break;
                 case "ammunition_rocketlauncher_ubr-100":
                     rocketId = 11;
                     var baseDamage = 4000;
                     if (enemy is Npc) baseDamage = 7500;
-                    damage = RandomizeDamage(baseDamage * Character.RocketLauncher.CurrentLoad);
+                    damage = RandomizeDamage(baseDamage * loadedRockets);
                     break;
                 case "ammunition_rocketlauncher_sar-01":
                     rocketId = 12;
-                    absDamage = RandomizeDamage(1200 * Character.RocketLauncher.CurrentLoad);
+                    absDamage = RandomizeDamage(1200 * loadedRockets);
                     dmgTypes = Damage.Types.SHIELD_ABSORBER_ROCKET_CREDITS;
                     break;
                 case "ammunition_rocketlauncher_sar-02":
                     rocketId = 13;
-                    absDamage = RandomizeDamage(5000 * Character.RocketLauncher.CurrentLoad);
+                    absDamage = RandomizeDamage(5000 * loadedRockets);
                     dmgTypes = Damage.Types.SHIELD_ABSORBER_ROCKET_URIDIUM;
                     break;
             }
 
             if (Character.Cooldowns.Any(cooldown => cooldown is RocketLauncherCooldown)) return;
 
+            Character.RocketLauncher.Shoot(loadedRockets);
+
             var newCooldown = new RocketLauncherCooldown();
             Character.Cooldowns.Add(newCooldown);
 
-            Character.RocketLauncher.Shoot();
-
-            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
-            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + Character.RocketLauncher.CurrentLoad + "|" + rocketId), true);
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + loadedRockets + "|" + rocketId), true);
+            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + loadedRockets + "|" + rocketId), true);
 
             Controller.Damage?.Rocket(enemy, absDamage, true, dmgTypes);
             Controller.Damage?.Rocket(enemy, damage, false, dmgTypes);
 
-            Character.RocketLauncher.CurrentLoad = 0;
             if (player != null && enemy is Character)
             {
                 Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));

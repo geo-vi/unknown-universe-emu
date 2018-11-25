@@ -45,6 +45,8 @@ namespace NettyBaseReloaded.Game.objects.world.pets.gears
 
         public override void End()
         {
+            Pet.Controller.Attack
+                .Attacking = false;
         }
     }
 }

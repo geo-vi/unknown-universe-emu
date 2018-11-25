@@ -164,12 +164,14 @@ namespace NettyBaseReloaded.Game.objects.world
                 switch (Formation)
                 {
                     case DroneFormation.CRAB:
-                        value += 0.2;
+                        value += 0.4;
                         break;
                     case DroneFormation.BARRAGE:
                         value -= 0.15;
                         break;
                 }
+
+                if (value > 1) value = 1;
 
                 return value;
             }
@@ -211,6 +213,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
                 if (BoostedAcceleration > 0)
                     value = (int)(value * (1 + BoostedAcceleration));
+                if (Controller.Effects.SlowedDown) value = (int)(value * 0.1);
+                
                 return value;
             }
         }
@@ -378,7 +382,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 var gameSession = GetGameSession();
                 if (gameSession != null)
                 {
-                    Packet.Builder.LegacyModule(gameSession, "0|A|STD|Support the server, a little donation to keep the server alive. If you wish to show your support to the server\nWrite to the Discord BOT (Tony Montana / Don Univ3rse): donate");
+                    Packet.Builder.LegacyModule(gameSession, "0|A|STD|You've been granted a special access to the BETA server.\nPlease report bugs.\nACCOUNTS WILL BE RESET");
                     LastAnnouncementTime = DateTime.Now;
                 }
             }
@@ -566,89 +570,6 @@ namespace NettyBaseReloaded.Game.objects.world
             Refresh();
         }
 
-        public string BuildExtrasPacket()
-        {
-            bool rep = true;
-            bool droneRep = true;
-            bool ammoBuy = true;
-            bool cloak = true;
-            bool tradeDrone = true;
-            bool aim = true;
-            bool autoRocket = true;
-            bool autoRocketLauncer = true;
-            bool rocketBuy = true;
-            bool jump = true;
-            bool petRefuel = true;
-            bool jumpToBase = true;
-
-            foreach (var item in Extras)
-            {
-                if (item.Value.Amount > 0)
-                {
-                    if (Settings.Slotbar._items.ContainsKey(item.Value.LootId))
-                    {
-                        var slotbarItem = Settings.Slotbar._items[item.Value.LootId];
-                        if (slotbarItem != null)
-                        {
-                            slotbarItem.CounterValue = item.Value.Amount;
-                            slotbarItem.Visible = true;
-                            if (UsingNewClient)
-                            {
-                                World.StorageManager.GetGameSession(Id)?.Client.Send(slotbarItem.ChangeStatus());
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("unknown extra: " + item.Value.LootId);
-                    }
-                    switch (item.Key)
-                    {
-                        case "equipment_extra_cpu_ajp-01":
-                            jump = true;
-                            break;
-                        case "equipment_extra_repbot_rep-s":
-                        case "equipment_extra_repbot_rep-1":
-                        case "equipment_extra_repbot_rep-2":
-                        case "equipment_extra_repbot_rep-3":
-                        case "equipment_extra_repbot_rep-4":
-                            rep = true;
-                            break;
-                        case "equipment_extra_cpu_aim-01":
-                        case "equipment_extra_cpu_aim-02":
-                            aim = true;
-                            break;
-                        case "equipment_extra_cpu_jp-01":
-                        case "equipment_extra_cpu_jp-02":
-                            jumpToBase = true;
-                            break;
-                        case "equipment_extra_cpu_cl04k-xl":
-                        case "equipment_extra_cpu_cl04k-m":
-                        case "equipment_extra_cpu_cl04k-xs":
-                            cloak = true;
-                            break;
-                        case "equipment_extra_cpu_arol-x":
-                            autoRocket = true;
-                            break;
-                        case "equipment_extra_cpu_rllb-x":
-                            autoRocketLauncer = true;
-                            break;
-                        case "equipment_extra_cpu_dr-01":
-                        case "equipment_extra_cpu_dr-02":
-                            droneRep = true;
-                            break;
-                    }
-                }
-            }
-
-            return Convert.ToInt32(droneRep) + "|1|" + Convert.ToInt32(jumpToBase) + "|" +
-                   Convert.ToInt32(ammoBuy) + "|" + Convert.ToInt32(rep) + "|" + Convert.ToInt32(tradeDrone) +
-                   "|0|" + 1 + "|" + 1 + "|0|" + Convert.ToInt32(aim) + "|" +
-                   Convert.ToInt32(autoRocket) + "|" + Convert.ToInt32(cloak) + "|" +
-                   Convert.ToInt32(autoRocketLauncer) + "|" + Convert.ToInt32(rocketBuy) + "|" +
-                   Convert.ToInt32(jump) + "|" + Convert.ToInt32(petRefuel);
-        }
-
         public void LoadExtras()
         {
             UpdateExtras();
@@ -658,13 +579,10 @@ namespace NettyBaseReloaded.Game.objects.world
         public void UpdateExtras()
         {
             var config = Hangar.Configurations[CurrentConfig - 1];
-            if (UsingNewClient) BuildExtrasPacket();
-            else Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|ITM|" + BuildExtrasPacket());
-            foreach (var type in Enum.GetValues(typeof(CPU.Types))) Controller.CPUs.Update((CPU.Types)type);
-            foreach (var extra in config.Extras)
-            {
-                extra.Value.initiate();
-            }
+            if (UsingNewClient) Equipment.GetConsumablesPacket();
+            else Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|ITM|" + Equipment.GetConsumablesPacket());
+            Controller.CPUs.Clear();
+            Controller.CPUs.LoadCpus();
         }
 
         private void TickBoosters()

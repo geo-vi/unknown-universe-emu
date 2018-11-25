@@ -40,8 +40,19 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             LaserTypes = laserTypes;
             Consumables = consumables;
             if (loadedRocketLaunchers?.Length > 0)
-                RocketLauncher = new RocketLauncher(player, loadedRocketLaunchers);
+                RocketLauncher = new RocketLauncher(player, GetRocketLaunchers(loadedRocketLaunchers));
             Extras = Extra.LoadExtras(player, Consumables);
+        }
+
+        private RocketLaunchers[] GetRocketLaunchers(int[] rocketLauncherIds)
+        {
+            var rocketLaunchers = new List<RocketLaunchers>();
+            foreach (var rlTypeId in rocketLauncherIds)
+            {
+                rocketLaunchers.Add((RocketLaunchers) rlTypeId);
+            }
+
+            return rocketLaunchers.ToArray();
         }
 
         public Configuration(int id, int damage, int shield, int maxShield, int shieldAbsorbation, Dictionary<string, Item> consumables) : base(null)

@@ -576,10 +576,11 @@
     <Compile Include="Game\objects\world\npcs\Spaceball.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetGuardGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetKamikazeGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetPassiveGear.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
     <Compile Include="Game\objects\world\pets\PetGear.cs" />
-    <Compile Include="Game\objects\world\players\ammo\Converter.cs" />
+    <Compile Include="Game\objects\world\players\ammo\AmmoConverter.cs" />
     <Compile Include="Game\objects\world\players\Ammunition.cs" />
     <Compile Include="Game\objects\world\players\Equipment.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\BattleStationModule.cs" />
@@ -588,6 +589,7 @@
     <Compile Include="Game\objects\world\players\equipment\Extra.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AdvancedJumpCpu.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\CargoXtender.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\SmartbombCpu.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\Turbo.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AutoRocketLauncher.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AutoRocket.cs" />

@@ -156,7 +156,7 @@ namespace NettyBaseReloaded.Game.objects.world
         LEGENDARY_NPC_NAME = 35
     }
 
-    enum OreCollection
+    public enum OreCollection
     {
         IN_PROGRESS,
         FINISHED,
@@ -164,7 +164,7 @@ namespace NettyBaseReloaded.Game.objects.world
         FAILED_ALREADY_COLLECTED
     }
 
-    enum Ores
+    public enum Ores
     {
         PROMETIUM,
         ENDURIUM,
@@ -176,6 +176,12 @@ namespace NettyBaseReloaded.Game.objects.world
         SEPROM,
         PALLADIUM
     }
-    #pragma warning restore 1591
 
+    public enum RocketLaunchers
+    {
+        NONE,
+        HST_01,
+        HST_02
+    }
+    #pragma warning restore 1591
 }

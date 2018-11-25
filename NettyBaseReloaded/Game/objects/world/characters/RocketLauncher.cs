@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NettyBaseReloaded.Game.controllers.player;
 using NettyBaseReloaded.Game.netty;
-using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
+using NettyBaseReloaded.Game.objects.world.players;
 
 namespace NettyBaseReloaded.Game.objects.world.characters
 {
@@ -12,99 +11,99 @@ namespace NettyBaseReloaded.Game.objects.world.characters
     {
         private Character Character;
 
-        public int CurrentLoad { get; set; }
+        private RocketLaunchers[] RocketLaunchers;
 
-        public string LoadLootId { get; set; }
+        public int LoadedRockets;
 
-        public int[] Launchers { get; set; }
+        public bool ReadyForLaunch => !Loading;
 
-        private bool ReloadingActive = false;
+        private int MaxLoadableRockets
+        {
+            get
+            {
+                var value = RocketLaunchers.Count(x => x == world.RocketLaunchers.HST_01) * 3 +
+                            RocketLaunchers.Count(x => x == world.RocketLaunchers.HST_02) * 5;
+                return value;
+            }
+        }
 
-        public RocketLauncher(Character character, int[] launchers = null)
+        public string LoadLootId;
+
+        public bool Loading;
+
+        private Ammunition LoadedAmmunition
+        {
+            get
+            {
+                var player = Character as Player;
+                return player?.Information.Ammunitions[LoadLootId];
+            }
+        }
+        
+        public RocketLauncher(Character character, RocketLaunchers[] launchers = null)
         {
             Character = character;
+            RocketLaunchers = launchers;
             LoadLootId = "ammunition_rocketlauncher_eco-10";
-            Launchers = launchers;
+            if (character is Player player)
+            {
+                LoadLootId = player.Settings.CurrentHellstorm.LootId;
+            }
         }
 
         public void Tick()
         {
-            if (Launchers != null)
+            AddRocket();
+            if (Character is Player player)
             {
-                if (ReloadingActive) Reload();
-                GetCPU();
+                if (!player.Controller.CPUs.Active.Contains(CPU.Types.AUTO_ROCKLAUNCHER)) return;
+                Loading = true;
             }
+            else Loading = true;
         }
 
-        public int GetMaxLoad()
+        private DateTime _lastLoadedRocketTime;
+        private void AddRocket()
         {
-            int maxLoad = 0;
-            foreach (var launcher in Launchers)
+            if (!Loading || LoadedRockets == MaxLoadableRockets || _lastLoadedRocketTime.AddSeconds(1) > DateTime.Now) return;
+            _lastLoadedRocketTime = DateTime.Now;
+            if (Character is Player player)
             {
-                if (launcher == 2)
-                    maxLoad += 5;
-                else maxLoad += 3;
-            }
-            return maxLoad;
-        }
-
-        private void GetCPU()
-        {
-            // AUTO RL
-            if (LastShoot.AddSeconds(3) < DateTime.Now)
-                ReloadingActive = true;
-        }
-
-        private DateTime LastReloadTime = new DateTime();
-        public void Reload()
-        {
-            if (LastReloadTime.AddSeconds(1) > DateTime.Now) return;
-            if (CurrentLoad == GetMaxLoad())
-            {
-                ReloadingActive = false;
-                return;
-            }
-
-            var player = Character as Player;
-            if (player != null)
-            {
-                if (player.Information.Ammunitions[LoadLootId].Get() > CurrentLoad)
+                if (LoadedAmmunition.Shoot() == 0)
                 {
-                    CurrentLoad++;
-                    Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
+                    Loading = false;
                 }
-                else ReloadingActive = false;
+                else LoadedRockets++;
+                Packet.Builder.HellstormStatusCommand(player.GetGameSession());
             }
-            else CurrentLoad++;
-
-            ReloadingActive = true;
-
-            LastReloadTime = DateTime.Now;
+            else LoadedRockets++;
+            if (LoadedRockets == MaxLoadableRockets) Loading = false;
         }
 
-        private DateTime LastShoot= new DateTime();
-        public void Shoot()
+        public void Shoot(int loadedAmount)
         {
-            var player = Character as Player;
-            if (player != null)
-            {
-                for (var i = 0; i <= CurrentLoad; i++)
-                {
-                    player.Information.Ammunitions[LoadLootId].Shoot();
-                }
-                ReloadingActive = false;
-                LastShoot = DateTime.Now;
-            }
+            LoadedRockets -= loadedAmount;
+            Loading = false;
         }
 
         public void ChangeLoad(string lootId)
         {
-            ReloadingActive = false;
-            CurrentLoad = 0;
+            GameSession gameSession = null;
+            if (Character is Player player)
+            {
+                LoadedAmmunition.Add(LoadedRockets);
+                gameSession = player.GetGameSession();
+            }
+            
+            LoadedRockets = 0;
             LoadLootId = lootId;
-            var player = Character as Player;
-            if (player != null)
-                Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
+            if (gameSession != null)
+                Packet.Builder.HellstormStatusCommand(gameSession);
+        }
+
+        public List<int> GetLaunchersInt()
+        {
+            return RocketLaunchers.Select(launcher => (int) launcher).ToList();
         }
     }
 }

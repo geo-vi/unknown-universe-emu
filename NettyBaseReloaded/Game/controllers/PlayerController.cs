@@ -92,7 +92,6 @@ namespace NettyBaseReloaded.Game.controllers
         {
             StopAll();
             CheckedClasses.Clear();
-            Console.WriteLine("ticking? " + Global.TickManager.Exists(this));
         }
     }
 }

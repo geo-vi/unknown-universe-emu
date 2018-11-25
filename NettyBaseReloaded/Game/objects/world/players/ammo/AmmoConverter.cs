@@ -8,7 +8,7 @@ using NettyBaseReloaded.Game.objects.world.players.settings;
 
 namespace NettyBaseReloaded.Game.objects.world.players.ammo
 {
-    static class Converter
+    static class AmmoConverter
     {
         public static string AmmoToDbString(string lootId)
         {

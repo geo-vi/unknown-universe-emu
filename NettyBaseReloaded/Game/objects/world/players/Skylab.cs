@@ -157,18 +157,19 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void UpgradeLaser(Ores ore, int amount)
         {
             amount *= 10;
-            if (LaserUpgrades == null)
+            if (LaserUpgrades == null || LaserUpgrades.Ore != ore)
             {
                 LaserUpgrades = new Upgrade {Ore = ore, Amount = amount};
             }
-            else LaserUpgrades.Amount += amount;
+            else LaserUpgrades.Amount += amount;                
+            
             World.DatabaseManager.SaveSkylab(Player, this);
         }
 
         public void UpgradeRockets(Ores ore, int amount)
         {
             amount *= 10;
-            if (RocketUpgrades == null)
+            if (RocketUpgrades == null || RocketUpgrades.Ore != ore)
             {
                 RocketUpgrades = new Upgrade { Ore = ore, Amount = amount };
             }
@@ -178,7 +179,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public void UpgradeGenerators(Ores ore, int amount)
         {
-            if (GeneratorsUpgrades == null)
+            if (GeneratorsUpgrades == null || GeneratorsUpgrades.Ore != ore)
             {
                 GeneratorsUpgrades = new Upgrade { Ore = ore, Amount = amount };
             }
@@ -188,7 +189,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public void UpgradeShields(Ores ore, int amount)
         {
-            if (ShieldUpgrades == null)
+            if (ShieldUpgrades == null || ShieldUpgrades.Ore != ore)
             {
                 ShieldUpgrades = new Upgrade { Ore = ore, Amount = amount };
             }

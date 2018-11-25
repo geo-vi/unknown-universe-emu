@@ -22,7 +22,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 var selectCmd = new commands.old_client.requests.SelectRocketRequest();
                 selectCmd.readCommand(bytes);
                 var type = selectCmd.type;
-                gameSession.Player.Controller.Miscs.UseItem(Converter.AmmoTypeToString(type));
+                gameSession.Player.Controller.Miscs.UseItem(AmmoConverter.AmmoTypeToString(type));
             }
         }
     }

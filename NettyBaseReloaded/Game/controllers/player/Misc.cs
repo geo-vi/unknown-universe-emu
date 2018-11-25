@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.controllers.player.structs;
 using NettyBaseReloaded.Game.netty;
-using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.players.settings.slotbars;
-using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.player
 {
@@ -172,6 +167,8 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             if (baseController.Player.Moving)
                 MovementController.Move(baseController.Player, baseController.Player.Destination);
+            
+            baseController.Player.Pet?.RefreshConfig();
         }
 
         private class jClass
@@ -198,9 +195,8 @@ namespace NettyBaseReloaded.Game.controllers.player
             /// <param name="portalId"></param>
             public void Initiate(int targetVW, int targetMapId, Vector targetPos, int portalId = -1)
             {
-                if (_baseController.Character.EntityState == EntityStates.DEAD || _baseController.StopController) return;
+                if (_baseController.Character.EntityState == EntityStates.DEAD || _baseController.StopController || _baseController.Jumping) return;
 
-                Console.WriteLine("Assigned new map id: " + targetMapId + " Starting jump sequence");
                 TargetVirtualWorldId = targetVW;
                 TargetMap = World.StorageManager.Spacemaps[targetMapId];
                 TargetPosition = targetPos;
@@ -241,7 +237,6 @@ namespace NettyBaseReloaded.Game.controllers.player
 
                 if (DateTime.Now > _jumpEndTime)
                 {
-                    Console.WriteLine("Sequence finishing.. TargetMap: " + TargetMap.Id);
                     _baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition, TargetVirtualWorldId);
                     Reset();
                 }
@@ -263,7 +258,6 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         public void Jump(int targetMapId, Vector targetPos, int portalId = -1, int targetVW = 0)
         {
-            Console.WriteLine("Jump: " + targetMapId);
             JClass.Initiate(targetVW, targetMapId, targetPos, portalId);
         }
 

@@ -11,7 +11,8 @@ namespace NettyBaseReloaded.Game.netty.handlers
     {
         public void execute(GameSession gameSession, byte[] bytes)
         {
-            gameSession.Player.RocketLauncher?.Reload();
+            var player = gameSession.Player;
+            player.RocketLauncher.Loading = true;
         }
     }
 }

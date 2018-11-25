@@ -15,7 +15,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
         {
             var request = new HellstormSelectRocketRequest();
             request.readCommand(bytes);
-            gameSession.Player.RocketLauncher?.ChangeLoad(Converter.AmmoTypeToString(request.rocketType.type));
+            gameSession.Player.RocketLauncher?.ChangeLoad(AmmoConverter.AmmoTypeToString(request.rocketType.type));
         }
     }
 }

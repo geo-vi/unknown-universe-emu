@@ -41,10 +41,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     var attackers = target.Controller.Attack.Attackers.ToList();
 
                     target.Controller.Destruction.Kill();
-                    if (Character is Player)
+                    if (Character is Player || Character is Pet)
                     {
                         var player = Character as Player;
 
+                        if (Character is Pet pet)
+                        {
+                            player = pet.GetOwner();
+                        }
+                        
                         if (player != target)
                         {
                             if (target.FactionId == player.FactionId)//
@@ -96,7 +101,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                             reward.ParseRewards(_attacker.Value.Player);
                                         }
                                     }
-                                    target.Hangar.Ship.Reward.ParseRewards(mainAttacker);
+                                    else 
+                                        target.Hangar.Ship.Reward.ParseRewards(mainAttacker);
                                 }
                                 else
                                 {
@@ -170,15 +176,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Kill()
         {
-            Character.CurrentHealth = 0;
-            Character.CurrentNanoHull = 0;
-            Character.CurrentShield = 0;
-
             GameClient.SendToPlayerView(Character, ShipDestroyedCommand.write(Character.Id, 1), true);
             GameClient.SendToPlayerView(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 1),
                 true);
-
             Remove();
+
+            Character.EntityState = EntityStates.DEAD;
+            Character.CurrentHealth = 0;
+            Character.CurrentNanoHull = 0;
+            Character.CurrentShield = 0;
 
             if (Character is Player)
             {
@@ -189,11 +195,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 player.SetPosition(newPos);
                 player.Save();
             }
-            Character.EntityState = EntityStates.DEAD;
         }
 
         public void Remove()
         {
+            Character.Selected = null;
             Character.Controller.StopAll();
             Deselect(Character);
             Character.Spacemap.RemoveEntity(Character);
@@ -288,10 +294,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
-            Character.SetPosition(newPos);
-
-            if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
-                Character.Spacemap.AddEntity(Character);
+            npc.SetPosition(newPos);
 
             npc.Controller.Restart();
         }

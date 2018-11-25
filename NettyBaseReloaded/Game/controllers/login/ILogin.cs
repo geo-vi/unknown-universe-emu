@@ -72,6 +72,7 @@ namespace NettyBaseReloaded.Game.controllers.login
                 GameSession.Player.LoadExtras();
                 //Packet.Builder.VideoWindowCreateCommand(GameSession, 1, "c", true, new List<string> { "login_dialog_1", "login_dialog_2" }, 0, 1);
                 //Packet.Builder.MineCreateCommand(GameSession, "asdf", 6, GameSession.Player.Position, false);
+               
                 Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet);
                 Packet.Builder.HellstormStatusCommand(GameSession);
 
@@ -103,6 +104,8 @@ namespace NettyBaseReloaded.Game.controllers.login
                 Packet.Builder.AttributeOreCountUpdateCommand(GameSession, GameSession.Player.Information.Cargo);
                 //Packet.Builder.EventActivationStateCommand(GameSession, EventActivationStateCommand.APRIL_FOOLS, true);
                 UpdateClanWindow(GameSession);
+                Packet.Builder.EventActivationStateCommand(GameSession, 0, true);
+                Packet.Builder.EventActivationStateCommand(GameSession, 1, true);
             }
             catch (Exception e)
             {

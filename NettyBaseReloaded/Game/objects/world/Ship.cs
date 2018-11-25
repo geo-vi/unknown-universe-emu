@@ -115,7 +115,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         private int CalculateDamage()
         {
-            return Damage = (MaxDamage - MinDamage) + MinDamage;
+            return Damage = (MaxDamage - MinDamage) / 2 + MinDamage;
         }
 
         public double GetHealthBonus(Player player)

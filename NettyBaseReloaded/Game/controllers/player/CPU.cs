@@ -33,17 +33,14 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         public void LoadCpus()
         {
-            var activeCPUs = baseController.Player.Settings?.OldClientShipSettingsCommand?.activeCpus;
-            if (activeCPUs == null) return;
-
-            foreach (string activeCPU in activeCPUs)
+            foreach (var extra in baseController.Player.Extras)
             {
-                if (activeCPU == "equipment_extra_cpu_arol-x")
+                if (extra.Key == "equipment_extra_cpu_arol-x" && extra.Value.Active)
                 {
                     Active.Add(Types.AUTO_ROK);
                     Update(Types.AUTO_ROK);
                 }
-                else if (activeCPU == "equipment_extra_cpu_rllb-x")
+                else if (extra.Key == "equipment_extra_cpu_rllb-x" && extra.Value.Active)
                 {
                     Active.Add(Types.AUTO_ROCKLAUNCHER);
                     Update(Types.AUTO_ROCKLAUNCHER);
@@ -52,8 +49,7 @@ namespace NettyBaseReloaded.Game.controllers.player
         }
 
 
-        DateTime LastTimeCheckedCpus = new DateTime(2017, 1, 18, 0, 0, 0);
-
+        DateTime LastTimeCheckedCpus;
         public void Check()
         {
             if (LastTimeCheckedCpus.AddSeconds(1) > DateTime.Now) return;
@@ -135,18 +131,17 @@ namespace NettyBaseReloaded.Game.controllers.player
                     break;
                 case Types.AUTO_ROCKLAUNCHER:
                     var arlExtra = baseController.Player.Extras.FirstOrDefault(x => x.Value is AutoRocketLauncher);
-                    var autoRocketLauncher = arlExtra.Value;
-                    if (autoRocketLauncher != null && autoRocketLauncher.Amount > 0)
+                    if (arlExtra.Value != null && arlExtra.Value.Amount > 0)
                     {
-                        if (autoRocketLauncher.Active)
+                        if (arlExtra.Value.Active)
                         {
                             Active.Remove(Types.AUTO_ROCKLAUNCHER);
-                            autoRocketLauncher.Active = false;
+                            arlExtra.Value.Active = false;
                         }
                         else
                         {
                             Active.Add(Types.AUTO_ROCKLAUNCHER);
-                            autoRocketLauncher.Active = true;
+                            arlExtra.Value.Active = true;
                         }
 
                         Update(Types.AUTO_ROCKLAUNCHER);
@@ -215,6 +210,13 @@ namespace NettyBaseReloaded.Game.controllers.player
                 Packet.Builder.LegacyModule(baseController.Player.GetGameSession(), "0|A|JCPU|S|-1|-1");
                 JumpSequenceActive = false;
             }
+        }
+
+        public void Clear()
+        {
+            JumpSequenceActive = false;
+            baseController.Repairing = false;
+            Active.Clear();
         }
     }
 }

@@ -781,6 +781,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 hasFuel = pet.HasFuel();
                 petIsAlive = pet.EntityState == EntityStates.ALIVE;
+                if (hasFuel && petIsAlive && pet.Controller != null && pet.Controller.Active)
+                {
+                    Packet.Builder.PetStatusCommand(gameSession, pet);
+                    return;
+                }
             }
 
             if (gameSession.Player.UsingNewClient)
@@ -1240,7 +1245,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 gameSession.Client.Send(commands.old_client.AmmunitionCountUpdateCommand
                     .write(new List<commands.old_client.AmmunitionCountModule>()
                     {
-                        new commands.old_client.AmmunitionCountModule(Converter.ToAmmoType(lootId), amount)
+                        new commands.old_client.AmmunitionCountModule(AmmoConverter.ToAmmoType(lootId), amount)
                     }).Bytes);
             }
         }
@@ -1256,20 +1261,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                if (gameSession.Player.RocketLauncher?.Launchers != null)
-                {
-                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand
-                        .write(gameSession.Player.RocketLauncher.Launchers.ToList(),
-                            new commands.old_client.AmmunitionTypeModule(Converter
-                                .ToAmmoType(gameSession.Player.RocketLauncher.LoadLootId).type),
-                            gameSession.Player.RocketLauncher.CurrentLoad).Bytes);
-                }
-                else
-                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand
-                        .write(new List<int>(),
-                            new commands.old_client.AmmunitionTypeModule(commands.old_client.AmmunitionTypeModule
-                                .ECO_ROCKET), 0).Bytes);
+                var player = gameSession.Player;
 
+                if (player.RocketLauncher != null)
+                {
+                    gameSession.Client.Send(commands.old_client.HellstormStatusCommand.write(player.RocketLauncher.GetLaunchersInt(), AmmoConverter
+                        .ToAmmoType(gameSession.Player.RocketLauncher.LoadLootId), player.RocketLauncher.LoadedRockets).Bytes);
+                }
             }
         }
 

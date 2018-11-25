@@ -65,7 +65,6 @@ namespace NettyBaseReloaded.Main.global_managers
             ITick output;
             if (!Tickables.ContainsKey(tick.GetId()))
             {
-                Console.WriteLine("Trying to remove nonexistent tick");
                 return;
             }
 
@@ -84,7 +83,7 @@ namespace NettyBaseReloaded.Main.global_managers
             while (true)
             {
                 foreach (var tickable in Tickables) { 
-                    tickable.Value.Tick();
+                     Task.Factory.StartNew(tickable.Value.Tick);
                 }
                 await Task.Delay(84);
             }

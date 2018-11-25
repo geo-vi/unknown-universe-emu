@@ -80,7 +80,7 @@ namespace NettyBaseReloaded.Game.objects.world
             if (attackable == null || attackable.Spacemap.Id != Spacemap.Id) return false;
             if (attackable is Character character)
             {
-                if (!character.Controller.Active || character.Controller.StopController)
+                if (character.Controller == null || !character.Controller.Active || character.Controller.StopController)
                 {
                     return false;
                 }

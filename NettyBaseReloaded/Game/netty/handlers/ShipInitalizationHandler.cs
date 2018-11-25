@@ -80,9 +80,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 World.StorageManager.GameSessions[Player.Id].Disconnect(GameSession.DisconnectionType.NORMAL);
                 World.StorageManager.GameSessions[Player.Id] = GameSession;
             }
-
-            if (GameSession.Player.Controller != null)
-                Console.WriteLine($"INITIATING LOGIN: \nController state: ACTIVE-{GameSession.Player.Controller.Active} | STOPCONTROLLER-{GameSession.Player.Controller.StopController} | TICK: {Global.TickManager.Exists(GameSession.Player.Controller)}");
             
             LoginController.Initiate(GameSession);
         }

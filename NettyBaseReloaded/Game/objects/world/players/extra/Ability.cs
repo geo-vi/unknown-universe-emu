@@ -48,6 +48,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
 
         public void Start()
         {
+            if (Active || CooldownActive) return;
             Task.Factory.StartNew(() =>
             {
                 while (Active && Player.Controller.Active)

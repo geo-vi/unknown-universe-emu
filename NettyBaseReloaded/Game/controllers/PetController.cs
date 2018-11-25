@@ -54,6 +54,8 @@ namespace NettyBaseReloaded.Game.controllers
             Pet.SetPosition(owner.Position);
 
             Pet.Spacemap.AddEntity(Pet);
+            
+            Pet.RefreshConfig();
 
             SwitchGear(GearType.PASSIVE, 0);
             
@@ -100,8 +102,10 @@ namespace NettyBaseReloaded.Game.controllers
                 return;
             }
 
+            Pet.ActiveGear?.End();
             Pet.ActiveGear = Pet.PetGears[newGear];
             Pet.ActiveGear.SwitchTo(optParam);
+            Packet.Builder.PetGearSelectCommand(Pet.GetOwner().GetGameSession(), Pet.ActiveGear);
         }
 
         public void Crash(Character character, int damage = 0)

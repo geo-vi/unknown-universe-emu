@@ -66,7 +66,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
                                 consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_smb-01":
-                        // TODO: add Smartbomb
+                        extras.Add(consumable.Key, new SmartbombCpu(player, consumable.Value.Id, consumable.Value.LootId,
+                            consumable.Value.Amount));
                         break;
                     case "equipment_extra_cpu_ish-01":
                         // TODO: Add ISH

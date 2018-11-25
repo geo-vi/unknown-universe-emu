@@ -10,7 +10,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
     class Settings : PlayerBaseClass
     {
         public Slotbar Slotbar { get; set; }
-        public Window Window { get; set; }
+        private Window Window { get; set; }
 
         #region JSON Loaded Stuff
 
@@ -24,21 +24,22 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         #endregion
 
-        public Ammunition CurrentAmmo { get; set; }
-
-        public Ammunition CurrentRocket { get; set; }
-
         public int ASSET_VERSION = 0;
 
+        public Ammunition CurrentAmmo;
+
+        public Ammunition CurrentRocket;
+
+        public Ammunition CurrentHellstorm;
+        
         public Settings(Player player) : base(player)
         {
             Slotbar = new Slotbar();
             Window = new Window();
-
-            CurrentAmmo = Player.Information.Ammunitions["ammunition_laser_lcb-10"];
-            CurrentRocket = Player.Information.Ammunitions["ammunition_rocket_r-310"];
-
             LoadSettings();
+            CurrentAmmo = GetLaserLoot();
+            CurrentRocket = GetRocketLoot();
+            CurrentHellstorm = GetRocketLauncherLoot();
         }
 
         public void LoadSettings()
@@ -85,6 +86,42 @@ namespace NettyBaseReloaded.Game.objects.world.players
             World.DatabaseManager.SavePlayerGameplaySettings(this);
             World.DatabaseManager.SavePlayerShipSettings(this);
             World.DatabaseManager.SetPlayerAssetsVersion(this);
+        }
+
+        private Ammunition GetLaserLoot()
+        {
+//            if (OldClientShipSettingsCommand == null)
+//            {
+//                return Player.Information.Ammunitions["ammunition_laser_lcb-10"];
+//            }
+//
+//            var lootId = Slotbar.Items.LaserIds[OldClientShipSettingsCommand.selectedLaser - 1];
+//            return Player.Information.Ammunitions[lootId];
+            return Player.Information.Ammunitions["ammunition_laser_lcb-10"];
+        }
+
+        private Ammunition GetRocketLoot()
+        {
+//            if (OldClientShipSettingsCommand == null)
+//            {
+//                return Player.Information.Ammunitions["ammunition_rocket_r-310"];
+//            }
+//
+//            var lootId = Slotbar.Items.LaserIds[OldClientShipSettingsCommand.selectedRocket - 1];
+//            return Player.Information.Ammunitions[lootId];
+            return Player.Information.Ammunitions["ammunition_rocket_r-310"];
+        }
+
+        private Ammunition GetRocketLauncherLoot()
+        {
+//            if (OldClientShipSettingsCommand == null)
+//            {
+//                return Player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"];
+//            }
+//
+//            Console.WriteLine("Selected HST rocket: " + OldClientShipSettingsCommand.selectedHellstormRocket);
+            //var lootId = Slotbar.Items.LaserIds[OldClientShipSettingsCommand.selectedLaser - 1];
+            return Player.Information.Ammunitions["ammunition_rocketlauncher_eco-10"];
         }
     }
 }

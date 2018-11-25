@@ -866,7 +866,7 @@ namespace NettyBaseReloaded.Game.managers
         {
             try
             {
-                var row = Converter.AmmoToDbString(ammunition.LootId);
+                var row = AmmoConverter.AmmoToDbString(ammunition.LootId);
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     mySqlClient.ExecuteNonQuery(
@@ -1581,20 +1581,34 @@ namespace NettyBaseReloaded.Game.managers
 
                         var petShip = Pet.GetShipByLevel(level);
 
-                        var damageC1 = intConv(reader["CONFIG_1_DMG"]);
-                        var maxShieldC1 = intConv(reader["CONFIG_1_SHIELD"]);
+                        var damageC1 = intConv(reader["CONFIG_1_DMG_PET"]);
+                        var maxShieldC1 = intConv(reader["CONFIG_1_SHIELD_PET"]);
                         var shieldAbsC1 = maxShieldC1;
-                        var consumablesC1 = new Dictionary<string, Item>();
+                        var gearsC1 = reader["CONFIG_1_GEARS"].ToString();
+                        
+                        var gears1List = JsonConvert.DeserializeObject<List<Item>>(gearsC1);
+                        Dictionary<string, Item> gearsC1Dictionary = new Dictionary<string, Item>();
+                        if (gears1List != null && gears1List.Count > 0)
+                        {
+                            gearsC1Dictionary = gears1List.ToDictionary(x => x.LootId);
+                        }
 
-                        var damageC2 = intConv(reader["CONFIG_2_DMG"]);
-                        var maxShieldC2 = intConv(reader["CONFIG_2_SHIELD"]);
+                        
+                        var damageC2 = intConv(reader["CONFIG_2_DMG_PET"]);
+                        var maxShieldC2 = intConv(reader["CONFIG_2_SHIELD_PET"]);
                         var shieldAbsC2 = maxShieldC2;
-                        var consumablesC2 = new Dictionary<string, Item>();
-
-                        pet = new Pet(id, player, name, new Hangar(petShip, new List<Drone>(), player.Position, player.Spacemap, hp, 0, new Dictionary<string, Item>(), true, new Configuration[] { new Configuration(1, damageC1, maxShieldC1, maxShieldC1, shieldAbsC1, consumablesC1), new Configuration(2, damageC2, maxShieldC2, maxShieldC2, shieldAbsC2, consumablesC2) }), player.FactionId,
+                        var gearsC2 = reader["CONFIG_2_GEARS"].ToString();
+                        
+                        var gears2List = JsonConvert.DeserializeObject<List<Item>>(gearsC2);
+                        Dictionary<string, Item> gearsC2Dictionary = new Dictionary<string, Item>();
+                        if (gears2List != null && gears2List.Count > 0)
+                        {
+                            gearsC2Dictionary = gears2List.ToDictionary(x => x.LootId);
+                        }
+                        
+                        //TODO: Protocols
+                        pet = new Pet(id, player, name, new Hangar(petShip, new List<Drone>(), player.Position, player.Spacemap, hp, 0, new Dictionary<string, Item>(), true, new Configuration[] { new Configuration(1, damageC1, maxShieldC1, maxShieldC1, shieldAbsC1, gearsC1Dictionary), new Configuration(2, damageC2, maxShieldC2, maxShieldC2, shieldAbsC2, gearsC2Dictionary) }), player.FactionId,
                              World.StorageManager.Levels.PetLevels[level], exp, fuel);
-                        pet.PetGears.Add(GearType.PASSIVE, new PetPassiveGear(pet));
-                        pet.PetGears.Add(GearType.GUARD, new PetGuardGear(pet));
                     }
                 }
             }

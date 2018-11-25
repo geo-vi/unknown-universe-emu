@@ -59,33 +59,6 @@ namespace NettyBaseReloaded.Game.controllers
             CurrentNpc.Tick();            
         }
 
-        private async void ActiveTick()
-        {
-            while (Active)
-            {
-                if (Character.EntityState == EntityStates.DEAD || StopController)
-                    Active = false;
-                else
-                {
-                    await Task.Factory.StartNew(TickClasses);
-                    await Task.Factory.StartNew(CurrentNpc.Tick);
-                }
-                await Task.Delay(500);
-            }
-            //Npc.Log.Write($"(ID: {Npc.Id}, {DateTime.Now}) NPC went inactive");
-            Sleep();
-        }
-
-        private async void Sleep()
-        {
-            while (!Active)
-            {
-                if (StopController) return;
-                await Task.Delay(5000);
-            }
-            ActiveTick();
-        }
-
         private bool Restarting = false;
         public void DelayedRestart()
         {
@@ -98,9 +71,6 @@ namespace NettyBaseReloaded.Game.controllers
                     return;
                 }
                 Restarting = false;
-
-                if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
-                    Character.Spacemap.AddEntity(Character);
 
                 Restart();
             });
@@ -115,9 +85,6 @@ namespace NettyBaseReloaded.Game.controllers
         {
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
-
-            if (!StopController) return;
-            StopController = false;
             Initiate();
         }
 

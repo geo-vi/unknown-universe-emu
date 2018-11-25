@@ -144,7 +144,17 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public virtual int Speed => Hangar.Ship.Speed;
+        public virtual int Speed
+        {
+            get
+            {
+                var value = Hangar.Ship.Speed;
+                
+                if (Controller.Effects.SlowedDown) value = (int)(value * 0.1);
+                
+                return value;
+            }
+        }
 
         public virtual int Damage { get; set; }
         public virtual int RocketDamage { get; set; }

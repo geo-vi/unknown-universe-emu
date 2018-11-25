@@ -4,6 +4,8 @@ using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.pets;
+using NettyBaseReloaded.Game.objects.world.pets.gears;
+using Newtonsoft.Json.Serialization;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
@@ -164,6 +166,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Hangar.Ship = GetShipByLevel(targetLevel.Id);
             var gameSession = GetOwner().GetGameSession();
             Packet.Builder.PetLevelUpdateCommand(gameSession, this);
+            Packet.Builder.PetStatusCommand(gameSession, this);
         }
 
         /// <summary>
@@ -241,6 +244,30 @@ namespace NettyBaseReloaded.Game.objects.world
         public double GetMaxExp()
         {
             return Level.Experience;
+        }
+
+        public void RefreshConfig()
+        {
+            PetGears.Clear();
+            PetGears.Add(GearType.PASSIVE, new PetPassiveGear(this));
+            PetGears.Add(GearType.GUARD, new PetGuardGear(this));
+            foreach (var item in Hangar.Configurations[CurrentConfig - 1].Consumables)
+            {
+                if (item.Key.StartsWith("pet_gear"))
+                {
+                    switch (item.Key)
+                    {
+                            case "pet_gear_g-kk1": // Kamikaze lvl 1
+                                PetGears.Add(GearType.KAMIKAZE, new PetKamikazeGear(this, 1));
+                                break;
+                    }
+                }
+                else if (item.Key.StartsWith("pet_protocol"))
+                {
+                    
+                }
+            }
+            Controller.SwitchGear(GearType.PASSIVE, 0);
         }
     }
 }

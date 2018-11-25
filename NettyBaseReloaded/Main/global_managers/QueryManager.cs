@@ -50,7 +50,6 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public void LoadClans()
         {
-            Global.StorageManager.Clans.Add(0, new Clan(0, "", "", 0));
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())

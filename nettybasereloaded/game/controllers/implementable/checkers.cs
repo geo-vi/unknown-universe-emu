@@ -56,20 +56,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void EntityChecker()
         {
-//            var allEntities = DisplayedRangeCharacters.Union(SpacemapEntities);
-//            
-//            foreach (var entity in allEntities)
-//            {
-//                var eValue = entity.Value;
-//                if (Character.InRange(eValue) && !DisplayedRangeCharacters.ContainsKey(entity.Key))
-//                {
-//                    AddCharacterToDisplay(eValue);
-//                }
-//                else if (!Character.InRange(eValue) && DisplayedRangeCharacters.ContainsKey(entity.Key))
-//                {
-//                    RemoveCharacterFromDisplay(eValue);
-//                }
-//            }
             foreach (var entity in SpacemapEntities)
             {
                 var eValue = entity.Value;
@@ -99,7 +85,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 //Send movement
                 var timeElapsed = (DateTime.Now - character.MovementStartTime).TotalMilliseconds;
-                Packet.Builder.MoveCommand(gameSession, character, (int) (character.MovementTime - timeElapsed));                
+                Packet.Builder.MoveCommand(gameSession, character, (int) (character.MovementTime - timeElapsed));
+                if (character.Invisible)
+                {
+                    Packet.Builder.LegacyModule(gameSession, "0|n|INV|" + Controller.Character.Id + "|" +
+                                                            Convert.ToInt32(Controller.Character.Invisible));
+                }
             }
         }
 

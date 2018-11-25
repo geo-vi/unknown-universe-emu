@@ -165,14 +165,14 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                         amount = RewardMultiplyer(type, amount, player);
                         player.Information.Ammunitions[item.LootId].Add(amount);
                         Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
-                            "0|LM|ST|BAT|" + Converter.GetLootAmmoId(item.LootId) + "|" + amount);
+                            "0|LM|ST|BAT|" + AmmoConverter.GetLootAmmoId(item.LootId) + "|" + amount);
                     }
                     else if (item.LootId.Contains("ammunition_rocket"))
                     {
                         amount = RewardMultiplyer(type, amount, player);
                         player.Information.Ammunitions[item.LootId].Add(amount);
                         Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
-                            "0|LM|ST|ROK|" + Converter.GetLootAmmoId(item.LootId) + "|" + amount);
+                            "0|LM|ST|ROK|" + AmmoConverter.GetLootAmmoId(item.LootId) + "|" + amount);
                     }
                     break;
                 case RewardType.ITEM:
