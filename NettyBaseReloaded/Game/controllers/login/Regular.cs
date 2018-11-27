@@ -13,7 +13,6 @@ using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.quests;
-using NettyBaseReloaded.Game.objects.world.players.quests.player_quests;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
 using VisualModifierCommand = NettyBaseReloaded.Game.netty.commands.old_client.VisualModifierCommand;
@@ -43,7 +42,6 @@ namespace NettyBaseReloaded.Game.controllers.login
             }
             else
             {
-                player.Controller.Checkers.ResetEntityRange();
                 player.Storage.Clean();
             }
 

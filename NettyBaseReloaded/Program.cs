@@ -10,6 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using NettyBaseReloaded.Game.objects.world.players.quests;
+using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Properties;
@@ -52,8 +54,7 @@ namespace NettyBaseReloaded
 
             InitiateConsole();
             //InitiatePanel();
-        }
-
+        }        
 
         private static void InitiateConsole()
         {

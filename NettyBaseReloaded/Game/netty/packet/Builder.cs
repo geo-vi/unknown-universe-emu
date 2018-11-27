@@ -1977,7 +1977,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                var quests = Quest.Quests;
+                var quests = World.StorageManager.Quests.Values;
 
                 var list = new List<commands.old_client.QuestSlimInfoModule>();
                 foreach (var quest in quests)
@@ -2035,14 +2035,14 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                foreach (var quest in gameSession.Player.AcceptedQuests)
-                {
-                    var elements = QuestElement.ParseElementsOld(quest.Root.Elements);
-                    var definition = new QuestDefinitionModule(quest.Id, new List<QuestTypeModule> { new QuestTypeModule((short)quest.QuestType) },
-                        new QuestCaseModule(quest.Root.Id, quest.Root.Active, quest.Root.Mandatory, quest.Root.Ordered, quest.Root.MandatoryCount, elements),
-                        quest.GetOldLootModule(), new List<QuestIconModule> { new QuestIconModule((short)quest.Icon) });
-                    gameSession.Client.Send(commands.old_client.QuestInitializationCommand.write(definition).Bytes);
-                }
+//                foreach (var quest in gameSession.Player.AcceptedQuests)
+//                {
+//                    var elements = QuestElement.ParseElementsOld(quest.Root.Elements);
+//                    var definition = new QuestDefinitionModule(quest.Id, new List<QuestTypeModule> { new QuestTypeModule((short)quest.QuestType) },
+//                        new QuestCaseModule(quest.Root.Id, quest.Root.Active, quest.Root.Mandatory, quest.Root.Ordered, quest.Root.MandatoryCount, elements),
+//                        quest.GetOldLootModule(), new List<QuestIconModule> { new QuestIconModule((short)quest.Icon) });
+//                    gameSession.Client.Send(commands.old_client.QuestInitializationCommand.write(definition).Bytes);
+//                }
             }
         }
         #endregion

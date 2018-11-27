@@ -14,6 +14,7 @@ using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.extra;
+using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Main.objects;
 using Newtonsoft.Json;
 using Object = NettyBaseReloaded.Game.objects.world.map.Object;
@@ -314,9 +315,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public ConcurrentDictionary<int, GalaxyGate> OwnedGates = new ConcurrentDictionary<int, GalaxyGate>();
 
-        public List<Quest> AcceptedQuests = new List<Quest>();
-
-        public List<Quest> CompletedQuests = new List<Quest>();
+        public QuestPlayerData QuestData;
 
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
@@ -348,7 +347,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 TickTechs();
                 //TickGates();
                 TickAbilities();
-                TickQuests();
+                //TickQuests();
                 TickAnnouncements();
                 Skylab.Tick();
             });
@@ -371,7 +370,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         private void TickQuests()
         {
-            Parallel.ForEach(AcceptedQuests, quest => { quest.Tick(); });
+            QuestData.Tick();
         }
 
         private DateTime LastAnnouncementTime = new DateTime();
@@ -398,9 +397,9 @@ namespace NettyBaseReloaded.Game.objects.world
             Boosters = new List<Booster>();
             Abilities = Hangar.Ship.Abilities(this);
             Settings = new Settings(this);
-            CompletedQuests = World.DatabaseManager.LoadQuests(this);
             Skylab = World.DatabaseManager.LoadSkylab(this);
             Pet = World.DatabaseManager.LoadPet(this);
+            //QuestData = new QuestPlayerData(this);
         }
 
         public void ClickableCheck(Object obj)

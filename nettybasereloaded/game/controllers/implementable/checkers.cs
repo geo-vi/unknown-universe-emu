@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,13 +18,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
     {
         public int VisibilityRange { get; set; }
 
-        //public int PacketSendRange => 1000;
-
         public bool InVisibleZone => !Character.Range.Zones.Any(x => x.Value is PalladiumZone);
 
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
             VisibilityRange = 2000;//900
+            Character.Spacemap.EntityAdded += AddedToSpacemap;
+            Character.Spacemap.EntityRemoved += RemovedFromSpacemap;
         }
 
         public void Start()
@@ -34,94 +33,167 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Tick()
         {
-            EntityChecker();
+            SpacemapChecker();
+            RangeChecker();
             ZoneChecker();
             ObjectChecker();
         }
 
         public override void Stop()
         {
-            ResetEntityRange();
-            Character.Range.Objects.Clear();
-            Character.Range.Resources.Clear();
-            Character.Range.Collectables.Clear();
-            Character.Range.Zones.Clear();
+            Character.Spacemap.EntityAdded -= AddedToSpacemap;
+            Character.Spacemap.EntityRemoved -= RemovedFromSpacemap;
         }
 
         #region Character related
-
-        private ConcurrentDictionary<int, Character> DisplayedRangeCharacters => Controller.Character.Range.Entities;
-
-        private ConcurrentDictionary<int, Character> SpacemapEntities => Controller.Character.Spacemap.Entities;
-
-        private void EntityChecker()
+        private void AddedToSpacemap(object sender, CharacterArgs args)
         {
-            foreach (var entity in SpacemapEntities)
+            if (args.Character == Controller.Character) return;
+            AddCharacter(Character, args.Character);
+        }
+
+        private void RemovedFromSpacemap(object sender, CharacterArgs args)
+        {
+            if (args.Character == Controller.Character) return;
+            RemoveCharacter(args.Character, Character);
+        }
+
+        private void AddCharacter(Character main, Character entity)
+        {
+            try
             {
-                var eValue = entity.Value;
-                if (Character.InRange(eValue) && !DisplayedRangeCharacters.ContainsKey(entity.Key))
+                if (main.Range.AddEntity(entity))
                 {
-                    AddCharacterToDisplay(eValue);
+                    if (!(main is Player) || entity is Pet) return;
+                    var gameSession = World.StorageManager.GameSessions[main.Id];
+
+                    //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
+                    //Draws the entity ship for character
+                    Packet.Builder.ShipCreateCommand(gameSession, entity);
+                    Packet.Builder.DronesCommand(gameSession, entity);
+
+                    //Send movement
+                    var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
+                    Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
+
+                    TitleCheck(gameSession.Player, entity);
                 }
             }
-
-            foreach (var entity in DisplayedRangeCharacters)
+            catch (Exception)
             {
-                var eValue = entity.Value;
-                if (!Character.InRange(eValue))
-                {
-                    RemoveCharacterFromDisplay(eValue);
-                }
+
             }
         }
 
-        private void AddCharacterToDisplay(Character character)
+        private void RemoveCharacter(Character main, Character entity)
         {
-            if (DisplayedRangeCharacters.TryAdd(character.Id, character) && Character is Player player)
+            //if (!entity.Controller.Active) return;
+            try
             {
-                var gameSession = player.GetGameSession();
-                Packet.Builder.ShipCreateCommand(gameSession, character);
-                Packet.Builder.DronesCommand(gameSession, character);
-
-                //Send movement
-                var timeElapsed = (DateTime.Now - character.MovementStartTime).TotalMilliseconds;
-                Packet.Builder.MoveCommand(gameSession, character, (int) (character.MovementTime - timeElapsed));
-                if (character.Invisible)
+                if (entity.Range.RemoveEntity(main))
                 {
-                    Packet.Builder.LegacyModule(gameSession, "0|n|INV|" + Controller.Character.Id + "|" +
-                                                            Convert.ToInt32(Controller.Character.Invisible));
+                    if (!(entity is Player)) return;
+                    var gameSession = World.StorageManager.GameSessions[entity.Id];
+
+                    //Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
+                    Packet.Builder.ShipRemoveCommand(gameSession, main);
+                    if (main.Selected != null && main.Selected.Id == entity.Id)
+                    {
+                        Packet.Builder.ShipSelectionCommand(gameSession, null);
+                        main.Selected = null;
+                    }
                 }
+            }
+            catch(Exception) { }
+        }
+
+        public void SpacemapChecker()
+        {
+            foreach (var entry in Character.Spacemap.Entities)
+            {
+                var entity = entry.Value;
+                EntityCheck(entity);
             }
         }
 
-        private void RemoveCharacterFromDisplay(Character character)
+        public void RangeChecker()
         {
-            Character removed;
-            if (DisplayedRangeCharacters.TryRemove(character.Id, out removed))
+            foreach (var entry in Character.Range.Entities)
             {
-                if (Character.Selected == character)
-                {
-                    Character.RemoveSelection();
-                }
-
-                if (Character is Player player)
-                {
-                    //Console.WriteLine("Removing @POS: " + character.Position.ToPacket());
-                    //Packet.Builder.LegacyModule(player.GetGameSession(), $"0|ps|png|{character.Position.X}|{character.Position.Y}");
-                    Packet.Builder.ShipRemoveCommand(player.GetGameSession(), character);
-                }
+                var entity = entry.Value;
+                EntityCheck(entity);
             }
         }
 
-        public void ResetEntityRange()
+        private void EntityCheck(Character entity)
         {
-            foreach (var displayed in DisplayedRangeCharacters)
+            if (entity == Character)
+                return;
+
+            if (entity.Controller == null || (entity.Spacemap != Character.Spacemap || !Character.Spacemap.Entities.ContainsKey(entity.Id) || entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
             {
-                RemoveCharacterFromDisplay(displayed.Value);
+                RemoveCharacter(entity, Character);
+                return;
             }
 
+            //if (entity.Spacemap != Character.Spacemap || entity.Controller.StopController || !Character.Range.Entities.ContainsKey(entity.Id))
+            //{
+            //    RemoveCharacter(entity, Character);
+            //    return;
+            //}
+
+            if (entity is Pet)
+            {
+                var pet = entity as Pet;
+                if (pet.GetOwner() == Character)
+                {
+                    if (!pet.Controller.Active)
+                        RemoveCharacter(entity, Character);
+                }
+            }
+            //if (GetForSelection(entity)) return;
+
+            if (Character.InRange(entity, entity.RenderRange))
+            {
+                if (!Character.Range.Entities.ContainsKey(entity.Id))
+                    AddCharacter(Character, entity);
+            }
+            else
+            {
+                if (Character.Range.Entities.ContainsKey(entity.Id))
+                    RemoveCharacter(entity, Character);
+            }
         }
-        
+
+        private bool GetForSelection(Character entity)
+        {
+            if (Character.Spacemap.Entities.ContainsKey(entity.Id))
+            {
+                if (entity.Selected == Character && Character.Selected == entity)
+                {
+                    if (!Character.Range.Entities.ContainsKey(entity.Id))
+                        Character.Range.AddEntity(entity);
+                    if (!entity.Range.Entities.ContainsKey(Character.Id))
+                        entity.Range.AddEntity(Character);
+                    return true;
+                }
+            }
+            else
+            {
+
+            }
+            return false;
+        }
+
+        private void TitleCheck(Player main, Character entity)
+        {
+            var player = entity as Player;
+            if (player?.Information.Title != null)
+            {
+                Packet.Builder.TitleCommand(main.GetGameSession(), player);
+            }
+        }
+
         #endregion
         #region Zone related
         private void ZoneChecker()

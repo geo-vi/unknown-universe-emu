@@ -23,11 +23,11 @@ using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.players.events;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
-using NettyBaseReloaded.Game.objects.world.players.quests.player_quests;
-using NettyBaseReloaded.Game.objects.world.players.quests.quest_stats;
 using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
 using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.pets.gears;
+using NettyBaseReloaded.Game.objects.world.players.quests;
+using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 
 namespace NettyBaseReloaded.Game.managers
 {
@@ -42,6 +42,7 @@ namespace NettyBaseReloaded.Game.managers
             LoadCollectableRewards();
             LoadEvents();
             LoadTitles();
+            LoadQuests();
         }
 
         public void SaveAll()
@@ -377,6 +378,60 @@ namespace NettyBaseReloaded.Game.managers
             {
             }
 
+        }
+        
+        public void LoadQuests()
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_quests");
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow reader in queryTable.Rows)
+                        {
+                            var id = intConv(reader["ID"]);
+                            var elements = reader["ELEMENTS"].ToString();
+                            var reward = reader["REWARDS"].ToString();
+                            var type = reader["TYPE"].ToString();
+                            var icon = reader["ICON"].ToString();
+                            var expiryDate = DateTime.Parse(reader["EXPIRY_DATE"].ToString());
+                            int dayOfWeek = 0;
+                            if (reader.IsNull("DAY_OF_WEEK"))
+                            {
+                                dayOfWeek = -1;
+                            }
+                            else intConv(reader["DAY_OF_WEEK"]);
+
+                            QuestIcons questIcon;
+                            if (!QuestIcons.TryParse(icon, out questIcon))
+                            {
+                                questIcon = QuestIcons.DISCOVER;
+                            }
+
+                            QuestTypes questType;
+                            if (!QuestTypes.TryParse(type, out questType))
+                            {
+                                questType = QuestTypes.UNDEFINED;
+                            }
+                            
+                            QuestLoader loader = new QuestLoader()
+                            {
+                                Id = id, Elements = JsonConvert.DeserializeObject<List<QuestElement>>(elements),
+                                DayOfWeek = dayOfWeek, ExpireDate = expiryDate, Icon = questIcon, QuestType = questType,
+                                Rewards = JsonConvert.DeserializeObject<QuestSerializableReward>(reward)
+                            };
+                            World.StorageManager.Quests.Add(id, QuestLoader.Load(loader));
+                            Console.WriteLine("Quest loaded");
+                            Console.WriteLine(JsonConvert.SerializeObject(World.StorageManager.Quests[id]));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+            }
         }
 
         //"SELECT * FROM player_hangar WHERE PLAYER_ID=" + player.Id + " AND ACTIVE=1"
@@ -1389,73 +1444,21 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public List<Quest> LoadQuests(Player player)
+        public Dictionary<int, QuestSerializableState> LoadPlayerQuestData(Player player)
         {
-            //returns completed quests
-            // adds active to list
-            List<Quest> completed = new List<Quest>();
+            Dictionary<int, QuestSerializableState> data = new Dictionary<int, QuestSerializableState>();
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_queststats WHERE PLAYER_ID=" + player.Id);
-                    var quest0 = queryRow["QUEST_0"].ToString();
-                    if (quest0 != "" && quest0 != "null")
-                    {
-                        var quest0Stat = JsonConvert.DeserializeObject<KillstreakQuestStat>(quest0);
-                        if (quest0Stat.Complete)
-                            completed.Add(new KillstreakQuest(player, quest0Stat));
-                        else player.AcceptedQuests.Add(new KillstreakQuest(player, quest0Stat));
-                    }
-                    var quest1 = queryRow["QUEST_1"].ToString();
-                    if (quest1 != "" && quest1 != "null")
-                    {
-                        //todo: fly no die
-                    }
-                    var quest2 = queryRow["QUEST_2"].ToString();
-                    if (quest2 != "" && quest2 != "null")
-                    {
-                        var quest2Stat = JsonConvert.DeserializeObject<StarterBaseQuestStats>(quest0);
-                        if (quest2Stat.Complete)
-                            completed.Add(new StarterBaseQuest(player, quest2Stat));
-                        else player.AcceptedQuests.Add(new StarterBaseQuest(player, quest2Stat));
-                    }
-                    var quest3 = queryRow["QUEST_3"].ToString();
-                    if (quest3 != "" && quest3 != "null")
-                    {
-                        //todo: makedemfly
-                    }
+                    
                 }
             }
             catch (Exception e)
             {
             }
 
-            return completed;
-        }
-
-        public void SaveQuestData(Player player, Quest quest)
-        {
-            try
-            {
-                using (var mySqlClient = SqlDatabaseManager.GetClient())
-                {
-                    if (quest is KillstreakQuest killstreakQuest)
-                    {
-                        if (quest.Canceled) killstreakQuest.Stats = null;
-                        mySqlClient.ExecuteNonQuery($"UPDATE player_queststats SET QUEST_0='{JsonConvert.SerializeObject(killstreakQuest.Stats)}' WHERE PLAYER_ID='{player.Id}'");
-                    }
-
-                    if (quest is StarterBaseQuest starterBaseQuest)
-                    {
-                        if (quest.Canceled) starterBaseQuest.Stats = null;
-                        mySqlClient.ExecuteNonQuery($"UPDATE player_queststats SET QUEST_2='{JsonConvert.SerializeObject(starterBaseQuest.Stats)}' WHERE PLAYER_ID='{player.Id}'");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-            }
+            return data;
         }
 
         public void Reset(GameSession session, string query)

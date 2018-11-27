@@ -7,76 +7,36 @@ using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.players.quests;
-using NettyBaseReloaded.Game.objects.world.players.quests.player_quests;
-using NettyBaseReloaded.Game.objects.world.players.quests.quest_stats;
+using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
-    class Quest : PlayerBaseClass
-    {
-        #region Static
-
-        public static List<Quest> Quests = new List<Quest>
-        {
-            new KillstreakQuest(null, new KillstreakQuestStat()),
-            //new FlyNoDieQuest(null, new FlyNoDieQuestStats()),
-            new StarterBaseQuest(null, new StarterBaseQuestStats()) ,
-            //new MakeDemFlyQuest(null, new MakeDemFlyQuestStats())
-        };
-
-
-        #endregion
-
+    class Quest
+    {     
         public int Id { get; set; }
 
-        public virtual QuestTypes QuestType { get; }
+        public QuestTypes QuestType { get; private set; }
 
-        public virtual QuestRoot Root { get; }
+        public QuestRoot Root { get; private set; }
 
-        public virtual QuestIcons Icon { get; }
+        public QuestIcons Icon { get; private set; }
 
-        public virtual Reward Reward { get; }
+        public Reward Reward { get; private set; }
 
         public bool Canceled;
 
-        public Quest(Player player, int id) : base(player)
+        public Quest(int id)
         {
             Id = id;
-            Root.LoadPlayerData(player);
-        }
-
-        public virtual void Tick() { }
-
-        public virtual void AddKill(IAttackable attackable)
-        {
-            World.DatabaseManager.SaveQuestData(Player, this);
-        }
-
-        public virtual void AddCollection(Collectable collectable)
-        {
-            World.DatabaseManager.SaveQuestData(Player, this);
-        }
-
-        public virtual void AddResourceCollection(Ore ore)
-        {
-            World.DatabaseManager.SaveQuestData(Player, this);
-        }
-
-        /// <summary>
-        /// If Position monitor is needed just override Tick and add PositionMonitor - (saving resources).
-        /// </summary>
-        public void PositionMonitor()
-        {
-
         }
 
         public QuestAcceptability GetAcceptabilityStatus(Player player)
         {
-            if (player.AcceptedQuests.Exists(x => x.GetType() == GetType()))
-                return QuestAcceptability.RUNNING;
+//            if (player.AcceptedQuests.Exists(x => x.GetType() == GetType()))
+//                return QuestAcceptability.RUNNING;
             
-            if (player.CompletedQuests.Exists(x => x.GetType() == GetType()))
-                return QuestAcceptability.COMPLETED;
+//            if (player.QuestData.CompletedQuests.ContainsKey(Id))
+//                return QuestAcceptability.COMPLETED;
 
             return QuestAcceptability.NOT_STARTED;
         }
@@ -121,6 +81,41 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
             return rewardsList;
 
+        }
+
+        public void SetReward(Reward reward)
+        {
+            Reward = reward;
+        }
+
+        public void SetType(QuestTypes type)
+        {
+            QuestType = type;
+        }
+
+        public void SetRoot(QuestRoot root)
+        {
+            Root = root;
+        }
+
+        public void SetIcon(QuestIcons icon)
+        {
+            Icon = icon;
+        }
+
+        public bool IsComplete(Dictionary<int, QuestSerializableState> conditions)
+        {
+            bool completed = false;
+            foreach (var element in Root.Elements)
+            {
+                if (conditions.ContainsKey(element.Condition.Id))
+                {
+                    completed = conditions[element.Condition.Id].Completed;
+                }
+                else completed = false;
+            }
+
+            return completed;
         }
     }
 }

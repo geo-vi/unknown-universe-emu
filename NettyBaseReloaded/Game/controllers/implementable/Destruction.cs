@@ -112,8 +112,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
                             foreach (var eventP in player.EventsPraticipating)
                                 eventP.Value.DestroyAttackable(target);
-                            foreach (var quest in player.AcceptedQuests)
-                                quest.AddKill(target);
+                            player.QuestData.AddKill(target);
                             player.Information.AddKill(target.Hangar.Ship.Id);
                         }
                     }
