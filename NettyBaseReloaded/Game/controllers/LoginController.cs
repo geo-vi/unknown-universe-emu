@@ -23,31 +23,11 @@ namespace NettyBaseReloaded.Game.controllers
         private LoginController(GameSession gameSession)
         {
             _gameSession = gameSession;
-            ReloadPlayer();
             LoadConfigs();
             CheckPos();
             LoadControllers();
             GetLoginType();
             LoadTicks();
-        }
-
-        private void ReloadPlayer()
-        {
-            if (_gameSession.InProcessOfDisconnection || _gameSession.InProcessOfReconection)
-            {
-                _gameSession.InProcessOfDisconnection = false;
-                _gameSession.InProcessOfReconection = false;
-                _gameSession.EstDisconnectionTime = DateTime.MaxValue;
-                _gameSession.LastActiveTime = DateTime.Now;
-            }
-
-            if (_gameSession.Player.Controller != null)
-            {
-                if (_gameSession.Player.Controller.Miscs.LoggingOut)
-                    _gameSession.Player.Controller.Miscs.AbortLogout();
-                _gameSession.Player.Controller.Attack.Attacking = false;
-                _gameSession.Player.Selected = null;
-            }
         }
 
         private void LoadConfigs()
@@ -57,17 +37,12 @@ namespace NettyBaseReloaded.Game.controllers
             var config = World.DatabaseManager.LoadConfig(player);;
             player.Hangar.Configurations = config;
             player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
-            if (player.Pet != null)
-            {
-                //todo load pet configs
-            }
         }
 
         private void CheckPos()
         {
-            //41600 * 25600
             var player = _gameSession.Player;
-            if (player.Spacemap.Id == 255) //todo: tutorial on 255
+            if (player.Spacemap.Id == 255 || player.Spacemap.Disabled) //todo: tutorial on 255
             {
                 var closestStation = player.GetClosestStation();
                 player.Spacemap = closestStation.Item2;

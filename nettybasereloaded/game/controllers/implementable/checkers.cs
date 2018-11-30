@@ -62,7 +62,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             try
             {
-                if (main.Range.AddEntity(entity))
+                if (entity.Id != main.Id && main.Range.AddEntity(entity))
                 {
                     if (!(main is Player) || entity is Pet) return;
                     var gameSession = World.StorageManager.GameSessions[main.Id];
@@ -90,7 +90,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             //if (!entity.Controller.Active) return;
             try
             {
-                if (entity.Range.RemoveEntity(main))
+                if (entity.Id != main.Id && entity.Range.RemoveEntity(main))
                 {
                     if (!(entity is Player)) return;
                     var gameSession = World.StorageManager.GameSessions[entity.Id];

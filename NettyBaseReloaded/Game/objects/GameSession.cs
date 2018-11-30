@@ -18,26 +18,9 @@ namespace NettyBaseReloaded.Game.objects
     {
         private int TickId { get; set; }
         
-        public enum DisconnectionType
-        {
-            NORMAL,
-            INACTIVITY,
-            ADMIN,
-            SOCKET_CLOSED,
-            ERROR
-        }
-
         public Player Player { get; set; }
 
         public GameClient Client { get; set; }
-
-        public DateTime LastActiveTime = new DateTime(2016, 12, 15, 0, 0, 0);
-
-        public bool InProcessOfReconection = false;
-
-        public bool InProcessOfDisconnection = false;
-
-        public DateTime EstDisconnectionTime = new DateTime();
 
         public GameSession(Player player)
         {
@@ -45,7 +28,6 @@ namespace NettyBaseReloaded.Game.objects
             var tickId = -1;
             Global.TickManager.Add(this, out tickId);
             TickId = tickId;
-            LastActiveTime = DateTime.Now;
         }
 
         public int GetId()
@@ -55,12 +37,6 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Tick()
         {
-            if (LastActiveTime >= DateTime.Now.AddMinutes(5))
-                Disconnect(DisconnectionType.INACTIVITY);
-            if (EstDisconnectionTime < DateTime.Now && InProcessOfDisconnection)
-            {
-                //Disconnect(DisconnectionType.NORMAL);
-            }
         }
 
         public static Dictionary<int, GameSession> GetRangeSessions(IAttackable attackable)
@@ -76,28 +52,18 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Relog(Spacemap spacemap = null, Vector pos = null)
         {
-            InProcessOfReconection = true;
-            PrepareForDisconnect(); // preparation
-            spacemap = spacemap ?? Player.Spacemap;
-            pos = pos ?? Player.Position;
-            Player.Spacemap = spacemap;
-            Player.ChangePosition(pos);
-            Disconnect(); // closing the socket
-            //Player.Save();
-        }
-
-        private void PrepareForDisconnect()
-        {
-            Global.TickManager.Remove(this);
-            Global.TickManager.Remove(Player);
-            Player.Save();
-            Player.Controller.Exit();
-            Player.Controller.Destruction.Remove();
+            Disconnect();
+            if (spacemap != null)
+                Player.Spacemap = spacemap;
+            if (pos != null)
+                Player.ChangePosition(pos);
+            World.DatabaseManager.SavePlayerHangar(Player);
+            // World.StorageManager.StoredPlayers.Add(Player.Id, Player);
         }
 
         public void Kick()
         {
-            PrepareForDisconnect();
+            Packet.Builder.LegacyModule(this, "ERR|2");
             Disconnect();
         }
 
@@ -106,27 +72,10 @@ namespace NettyBaseReloaded.Game.objects
         /// </summary>
         public void Disconnect()
         {
+            Global.TickManager.Remove(this);
+            if (World.StorageManager.GameSessions.ContainsKey(Player.Id))
+                World.StorageManager.GameSessions.Remove(Player.Id);
             Client.Disconnect();
-        }
-
-        public void Disconnect(DisconnectionType dcType)
-        {
-            if (Player.Pet != null)
-            {
-                Player.Pet.Controller.Deactivate();
-            }
-            InProcessOfDisconnection = true;
-            if (dcType == DisconnectionType.SOCKET_CLOSED)
-            {
-                EstDisconnectionTime = DateTime.Now.AddSeconds(30);
-                return;
-            }
-            PrepareForDisconnect();
-            Packet.Builder.LegacyModule(this, "ERR|2");
-            Client.Disconnect();
-            World.StorageManager.GameSessions.Remove(Player.Id);
-            InProcessOfDisconnection = false;
-            GC.Collect();
         }
     }
 }

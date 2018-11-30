@@ -24,13 +24,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             client.UserId = userId;
 
-            var tempSession = World.StorageManager.GetGameSession(userId);
-            if (tempSession != null && (tempSession.InProcessOfReconection || tempSession.InProcessOfDisconnection))
-            {
-                Player = tempSession.Player;
-                World.StorageManager.GameSessions.Remove(userId);
-            }
-
             Player = GetAccount(userId);
             if (Player != null) GameSession = CreateSession(client, Player);
             else
@@ -51,6 +44,10 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
         private Player GetAccount(int userId)
         {
+            if (World.StorageManager.StoredPlayers.ContainsKey(userId))
+            {
+                Player = World.StorageManager.StoredPlayers[userId];
+            }
             if (Player != null) return Player;
             return World.DatabaseManager.GetAccount(userId);
         }
@@ -65,11 +62,10 @@ namespace NettyBaseReloaded.Game.netty.handlers
             return new GameSession(player)
             {
                 Client = client,
-                LastActiveTime = DateTime.Now
             };
         }
 
-        public void execute()
+        private void execute()
         {
             if (GameSession == null) return;
 
@@ -77,7 +73,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 World.StorageManager.GameSessions.Add(Player.Id, GameSession);
             else
             {
-                World.StorageManager.GameSessions[Player.Id].Disconnect(GameSession.DisconnectionType.NORMAL);
+                World.StorageManager.GameSessions[Player.Id].Disconnect();
                 World.StorageManager.GameSessions[Player.Id] = GameSession;
             }
             

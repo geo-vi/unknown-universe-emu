@@ -83,6 +83,8 @@ namespace NettyBaseReloaded.Networking
         /// </summary>
         public IPAddress RemoteHost => _socket.Connected ? ((IPEndPoint)_socket.RemoteEndPoint).Address : null;
 
+        public bool Connected => _socket.Connected;
+        
         public IPEndPoint IpEndPoint { get; private set; }
 
         private const int BufferSize = 1024 * 3;
