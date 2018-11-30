@@ -44,10 +44,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
         private Player GetAccount(int userId)
         {
-            if (World.StorageManager.StoredPlayers.ContainsKey(userId))
-            {
-                Player = World.StorageManager.StoredPlayers[userId];
-            }
             if (Player != null) return Player;
             return World.DatabaseManager.GetAccount(userId);
         }
