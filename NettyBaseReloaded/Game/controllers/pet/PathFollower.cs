@@ -38,6 +38,8 @@ namespace NettyBaseReloaded.Game.controllers.pet
 
         private void Follow()
         {
+            if (!FollowingActive) return;
+
             var pet = Controller.Pet;
             var petLastMovement = pet.MovementStartTime;
             var petPos = pet.Position;

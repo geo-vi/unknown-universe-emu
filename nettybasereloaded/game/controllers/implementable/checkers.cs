@@ -85,7 +85,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
-        private void RemoveCharacter(Character main, Character entity)
+        public void RemoveCharacter(Character main, Character entity)
         {
             //if (!entity.Controller.Active) return;
             try
@@ -216,9 +216,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                if (Character.Position == null || Character.Spacemap == null) return;
             }
         }
         #endregion

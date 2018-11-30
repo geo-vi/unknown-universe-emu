@@ -28,6 +28,7 @@ using NettyBaseReloaded.Game.objects.world.pets;
 using NettyBaseReloaded.Game.objects.world.pets.gears;
 using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
+using System.Collections.Concurrent;
 
 namespace NettyBaseReloaded.Game.managers
 {
@@ -40,7 +41,6 @@ namespace NettyBaseReloaded.Game.managers
             LoadSpacemaps();
             LoadLevels();
             LoadCollectableRewards();
-            LoadEvents();
             LoadTitles();
             LoadQuests();
         }
@@ -125,11 +125,12 @@ namespace NettyBaseReloaded.Game.managers
                     }
 
                 }
-
+                World.StorageManager.LoadCatalog();
                 Out.WriteDbLog("Loaded successfully " + World.StorageManager.Ships.Count + " ships from DB.");
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading ships, " + e.Message);
             }
         }
 
@@ -250,6 +251,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading spacemaps, " + e.Message);
             }
         }
 
@@ -310,6 +312,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading levels, " + e.Message);
             }
 
         }
@@ -346,6 +349,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading collectable rewards, " + e.Message);
             }
         }
 
@@ -376,6 +380,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading titles, " + e.Message);
             }
 
         }
@@ -405,13 +410,13 @@ namespace NettyBaseReloaded.Game.managers
                             else intConv(reader["DAY_OF_WEEK"]);
 
                             QuestIcons questIcon;
-                            if (!QuestIcons.TryParse(icon, out questIcon))
+                            if (!Enum.TryParse(icon, out questIcon))
                             {
                                 questIcon = QuestIcons.DISCOVER;
                             }
 
                             QuestTypes questType;
-                            if (!QuestTypes.TryParse(type, out questType))
+                            if (!Enum.TryParse(type, out questType))
                             {
                                 questType = QuestTypes.UNDEFINED;
                             }
@@ -423,14 +428,13 @@ namespace NettyBaseReloaded.Game.managers
                                 Rewards = JsonConvert.DeserializeObject<QuestSerializableReward>(reward)
                             };
                             World.StorageManager.Quests.Add(id, QuestLoader.Load(loader));
-                            Console.WriteLine("Quest loaded");
-                            Console.WriteLine(JsonConvert.SerializeObject(World.StorageManager.Quests[id]));
                         }
                     }
                 }
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading Quests, " + e.Message);
             }
         }
 
@@ -459,6 +463,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading hangar, " + e.Message);
             }
 
             return hangar;
@@ -536,6 +541,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading config, " + e.Message);
             }
             return builder;
         }
@@ -571,6 +577,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading Drones, " + e.Message);
             }
             return drones;
         }
@@ -610,6 +617,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading Events, " + e.Message);
             }
         }
 
@@ -646,7 +654,6 @@ namespace NettyBaseReloaded.Game.managers
                     var rank = (Rank) (intConv(querySet["RANK"]));
                     var sessionId = stringConv(querySet["SESSION_ID"]);
                     var clan = Global.StorageManager.Clans[(intConv(querySet["CLAN_ID"]))];
-                    //var clan = playerId == 5036 ? Global.StorageManager.Clans[2] : Global.StorageManager.Clans[1];
                     player = new Player(playerId, name, clan, hangar, currentHealth, currentNanohull, factionId,
                         position, spacemap, null, sessionId, rank, false);
                 }
@@ -654,6 +661,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading account, " + e.Message);
             }
             return player;
         }
@@ -722,7 +730,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                World.StorageManager.GetGameSession(player.Id)?.Disconnect(GameSession.DisconnectionType.ERROR);
+                Debug.WriteLine("Error loading ammo, " + e.Message);
             }
             return ammoDictionary;
         }
@@ -762,6 +770,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading Hangars, " + e.Message);
             }
             return hangars;
         }
@@ -788,7 +797,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("error " + e);
+                Debug.WriteLine("Error loading info, " + e.Message);
             }
             return baseInfo;
         }
@@ -807,7 +816,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("error " + e);
+                Debug.WriteLine("Error loading info, " + e.Message);
             }
             return 0;
         }
@@ -828,7 +837,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("error " + e);
+                Debug.WriteLine("Error updating info, " + e.Message);
             }
         }
 
@@ -845,7 +854,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("error " + e);
+                Debug.WriteLine("Error updating info, " + e.Message);
             }
         }
 
@@ -874,9 +883,9 @@ namespace NettyBaseReloaded.Game.managers
                     player.Information.Honor.LastTimeSynced = DateTime.Now;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Debug.WriteLine("Error updating info, " + e.Message);
             }
         }
 
@@ -896,7 +905,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("error " + e);
+                Debug.WriteLine("Error setting info, " + e.Message);
             }
         }
 
@@ -912,7 +921,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("error " + e);
+                Debug.WriteLine("Error setting info, " + e.Message);
             }
         }
 
@@ -933,8 +942,9 @@ namespace NettyBaseReloaded.Game.managers
                     return intConv(queryRow[row]);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Debug.WriteLine("Error updating ammo, " + e.Message);
             }
             return -1;
         }
@@ -963,16 +973,10 @@ namespace NettyBaseReloaded.Game.managers
                     queryRow.Close();
                 }
             }
-            catch (Exception e )
+            catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
-                Console.WriteLine(e.Message);
+                Debug.WriteLine("Error refreshing user infos, " + e.Message);
             }
-        }
-
-        public void BasicRefresh(Player player)
-        {
-
         }
 
         public bool CheckWhitelist(int id)
@@ -1007,7 +1011,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine("error " + e);
+                Debug.WriteLine("Error setting gameplay settings, " + e.Message);
             }
             return userSettings;
         }
@@ -1034,9 +1038,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                Console.WriteLine(e.StackTrace);
-                Console.WriteLine(e.Message);
+                Debug.WriteLine("Error saving gameplay settings, " + e.Message);
             }
         }
 
@@ -1291,6 +1293,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading event for player, " + e.Message + " [" + player.Id + "]");
             }
         }
 
@@ -1306,6 +1309,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error updating server event, " + e.Message);
             }
         }
 
@@ -1377,6 +1381,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading title, " + e.Message);
             }
             return title;
         }
@@ -1444,18 +1449,34 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public Dictionary<int, QuestSerializableState> LoadPlayerQuestData(Player player)
+        public ConcurrentDictionary<int, QuestSerializableState> LoadPlayerQuestData(Player player)
         {
-            Dictionary<int, QuestSerializableState> data = new Dictionary<int, QuestSerializableState>();
+            ConcurrentDictionary<int, QuestSerializableState> data = new ConcurrentDictionary<int, QuestSerializableState>();
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM player_quests WHERE PLAYER_ID=" + player.Id);
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow row in queryTable.Rows)
+                        {
+                            var conditionId = intConv(row["CONDITION_ID"]);
+                            var stateString = row["STATE"].ToString();
+                            var state = JsonConvert.DeserializeObject<QuestSerializableState>(stateString);
+                            if (state == null)
+                            {
+                                var questId = intConv(row["QUEST_ID"]);
+                                state = new QuestSerializableState { QuestId = questId, ConditionId = conditionId };
+                            }
+                            else data.TryAdd(conditionId, state);
+                        }
+                    }
                 }
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error loading player quests, " + e.Message + " [" + player.Id + "]");
             }
 
             return data;
@@ -1515,7 +1536,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-
+                Debug.WriteLine("Error loading player cargo, " + e.Message);
             }
 
             return null;
@@ -1646,7 +1667,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-
+                Debug.WriteLine("Error loading stats, " + e.Message);
             }
 
             return null;
@@ -1723,6 +1744,51 @@ namespace NettyBaseReloaded.Game.managers
                 Console.WriteLine("Error");
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        public void RemovePlayerQuest(Player player, int questId)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery("DELETE FROM player_quests WHERE PLAYER_ID=" + player.Id + " AND QUEST_ID=" + questId);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Error removing quest, " + e.Message);
+            }
+        }
+
+        public void AddQuestCondition(Player player, QuestSerializableState state)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"INSERT INTO player_quests (PLAYER_ID, QUEST_ID, CONDITION_ID, STATE) VALUES ('{player.Id}', '{state.QuestId}', '{state.ConditionId}' ,'{JsonConvert.SerializeObject(state)}')");
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        public void UpdateQuestCondition(Player player, QuestSerializableState state)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_quests SET STATE='{JsonConvert.SerializeObject(state)}' WHERE PLAYER_ID='{player.Id}' AND CONDITION_ID='{state.ConditionId}'");
+                }
+            }
+            catch (Exception)
+            {
+
             }
         }
     }

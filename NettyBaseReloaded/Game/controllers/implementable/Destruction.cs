@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable.attack;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.statistics;
+using System.Diagnostics;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -161,6 +162,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Failed destruction, " + e.Message + " [" + Character.Id + "]");
             }
         }
 
@@ -285,17 +287,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             npc.CurrentHealth = npc.MaxHealth;
             npc.CurrentShield = npc.MaxShield;
 
-            if (npc.RespawnTime == 0)
-                newPos = Vector.Random(npc.Spacemap, new Vector(1000, 1000), new Vector(20000, 11800));
-            else
+            if (npc.RespawnTime == 5)
             {
-                npc.Controller.DelayedRestart();
-                return;
+                newPos = Vector.Random(npc.Spacemap, new Vector(1000, 1000), new Vector(20000, 11800));
+                npc.SetPosition(newPos);
             }
-
-            npc.SetPosition(newPos);
-
-            npc.Controller.Restart();
+            npc.Controller.DelayedRestart();
         }
     }
 }

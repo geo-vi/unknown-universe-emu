@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics;
+using MySql.Data.MySqlClient;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Chat.objects.chat;
 using NettyBaseReloaded.Chat.objects.chat.rooms;
@@ -45,7 +47,7 @@ namespace NettyBaseReloaded.Chat.managers
             }
             catch (Exception e)
             {
-                //new ExceptionLog("dbmanager", "Failed to load chat moderators...", e);
+                Debug.WriteLine("Failed loading Chat Mods, " + e.Message);
             }
         }
 
@@ -131,6 +133,29 @@ namespace NettyBaseReloaded.Chat.managers
                 //new ExceptionLog("dbmanager", "Failed to load character...", e);
             }
             return player;
+        }
+
+        public void InsertChatLog(Character character, int roomId, string log, MessageType logType)
+        {
+            var playerId = 0;
+            if (character != null) playerId = character.Id;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    MySqlCommand cmd =
+                        new MySqlCommand(
+                            $"INSERT INTO server_chat_logs (PLAYER_ID, ROOM_ID, LOG, LOG_TYPE, LOG_DATE) VALUES ('{playerId}', '{roomId}', @LOG, '{(int) logType}', NOW())",
+                            mySqlClient.mConnection);
+                    cmd.Parameters.AddWithValue("@LOG", log);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }

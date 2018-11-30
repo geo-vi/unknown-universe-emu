@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Threading;
 using NettyBaseReloaded.Main.objects;
 using NettyBaseReloaded.WebSocks.objects;
@@ -35,6 +36,7 @@ namespace NettyBaseReloaded.Main.global_managers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("MySql Error: " + e.Message);
                 Console.WriteLine("MYSQL Connection failed.");
                 Out.WriteDbLog("MySQL Connection failed");
                 if (tries < 6)

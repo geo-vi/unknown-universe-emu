@@ -13,8 +13,6 @@ namespace NettyBaseReloaded.Main.objects
         public MySqlConnection mConnection;
         private MySqlCommand mCommand;
 
-        public bool AttachedToPlayer;
-
         public SqlDatabaseClient(MySqlConnection Connection)
         {
             mConnection = Connection;
@@ -27,7 +25,7 @@ namespace NettyBaseReloaded.Main.objects
         /// </summary>
         public void Dispose()
         {
-            if (mConnection != null && !AttachedToPlayer)
+            if (mConnection != null)
             {
                 mConnection.Close();
                 mConnection = null;

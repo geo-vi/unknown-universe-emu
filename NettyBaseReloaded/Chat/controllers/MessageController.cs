@@ -46,9 +46,11 @@ namespace NettyBaseReloaded.Chat.controllers
                     ChatClient.SendToRoom(character,
                         packet, room);
                 }
+                Chat.DatabaseManager.InsertChatLog(character, roomId, message, MessageType.CHAT);
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error sending chat message, " + e.Message);
             }
         }
 
@@ -61,6 +63,14 @@ namespace NettyBaseReloaded.Chat.controllers
             }
         }
 
+        public static void SystemMessageToAll(string message)
+        {
+            foreach (var chatSession in Chat.StorageManager.ChatSessions)
+            {
+                Packet.Builder.SystemMessage(chatSession.Value, message);
+            }
+        }
+        
         public static void Whisper(string target, string from, string msg)
         {
             var foundTarget = Chat.StorageManager.ChatSessions.FirstOrDefault(x => x.Value.Player.Name == target).Value;

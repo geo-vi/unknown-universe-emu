@@ -43,7 +43,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
             
             quest.SetType(loader.QuestType);
             
-            QuestRoot root = new QuestRoot() {Active = true, Elements = loader.Elements, Mandatory = false};
+            QuestRoot root = new QuestRoot() {Id = loader.Id, Active = true, Elements = loader.Elements};
             quest.SetRoot(root);
             
             quest.SetReward(new Reward(new Dictionary<RewardType, int>

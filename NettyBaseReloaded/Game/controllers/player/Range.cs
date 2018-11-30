@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,6 +52,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error looking up range, " + e.Message);
             }
             LastTimeCheckedZones = DateTime.Now;
         }
@@ -90,6 +92,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error looking up range objects, " + e.Message);
             }
             LastTimeCheckedObjects = DateTime.Now;
         }

@@ -96,6 +96,7 @@
     <Compile Include="Chat\objects\chat\Banned.cs" />
     <Compile Include="Chat\objects\chat\Bot.cs" />
     <Compile Include="Chat\objects\chat\Character.cs" />
+    <Compile Include="Chat\objects\chat\MessageType.cs" />
     <Compile Include="Chat\objects\chat\Moderator.cs" />
     <Compile Include="Chat\objects\chat\Player.cs" />
     <Compile Include="Chat\objects\chat\Room.cs" />

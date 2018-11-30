@@ -68,6 +68,7 @@ namespace NettyBaseReloaded.Networking
             }
             catch (Exception)
             {
+                World.StorageManager.GetGameSession(UserId).Kick();
                 Debug.WriteLine("->" + Out.GetCaller());
                 //new ExceptionLog("socket", "Unable to send packet / Connected?", e);
             }

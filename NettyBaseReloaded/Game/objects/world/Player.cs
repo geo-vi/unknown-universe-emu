@@ -347,7 +347,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 TickTechs();
                 //TickGates();
                 TickAbilities();
-                //TickQuests();
+                TickQuests();
                 TickAnnouncements();
                 Skylab.Tick();
             });
@@ -370,7 +370,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         private void TickQuests()
         {
-            QuestData.Tick();
+            QuestData?.Tick();
         }
 
         private DateTime LastAnnouncementTime = new DateTime();
@@ -399,7 +399,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Settings = new Settings(this);
             Skylab = World.DatabaseManager.LoadSkylab(this);
             Pet = World.DatabaseManager.LoadPet(this);
-            //QuestData = new QuestPlayerData(this);
+            QuestData = new QuestPlayerData(this);
         }
 
         public void ClickableCheck(Object obj)

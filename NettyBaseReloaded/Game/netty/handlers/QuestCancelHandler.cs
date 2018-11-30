@@ -15,8 +15,17 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (gameSession.Player.UsingNewClient) return;
             var questCancelRequest = new QuestCancelRequest();
             questCancelRequest.readCommand(bytes);
-            
-            
+
+            var player = gameSession.Player;
+            if (player.QuestData.IsQuestActive(questCancelRequest.questId))
+            {
+                var quest = World.StorageManager.Quests[questCancelRequest.questId];
+                player.QuestData.CancelQuest(quest);
+            }
+            else
+            {
+                Packet.Builder.QuestCancelledCommand(gameSession, questCancelRequest.questId);
+            }
         }
     }
 }

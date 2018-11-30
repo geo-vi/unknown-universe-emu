@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,12 +33,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public QuestAcceptability GetAcceptabilityStatus(Player player)
         {
-//            if (player.AcceptedQuests.Exists(x => x.GetType() == GetType()))
-//                return QuestAcceptability.RUNNING;
-            
-//            if (player.QuestData.CompletedQuests.ContainsKey(Id))
-//                return QuestAcceptability.COMPLETED;
-
+            if (player.QuestData.IsQuestActive(Id)) return QuestAcceptability.RUNNING;
+            if (player.QuestData.CompletedQuests.ContainsKey(Id))
+                return QuestAcceptability.COMPLETED;
             return QuestAcceptability.NOT_STARTED;
         }
 
@@ -103,7 +101,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Icon = icon;
         }
 
-        public bool IsComplete(Dictionary<int, QuestSerializableState> conditions)
+        public bool IsComplete(ConcurrentDictionary<int, QuestSerializableState> conditions)
         {
             bool completed = false;
             foreach (var element in Root.Elements)

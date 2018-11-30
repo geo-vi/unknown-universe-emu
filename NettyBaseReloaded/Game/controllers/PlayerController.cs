@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -65,6 +66,7 @@ namespace NettyBaseReloaded.Game.controllers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Error adding player checked classes" + e.Message);
             }
         }
         
@@ -85,6 +87,7 @@ namespace NettyBaseReloaded.Game.controllers
             }
             catch (Exception e)
             {
+                Debug.WriteLine("Failed Checking a player class, " + e.Message);
             }
         }
 

@@ -51,10 +51,63 @@ namespace NettyBaseReloaded
 
             Application.ThreadException += ApplicationOnThreadException;
             Application.CurrentCulture = new CultureInfo("en-US");
-
+    
+            //PrintJSON();
             InitiateConsole();
             //InitiatePanel();
-        }        
+        }
+
+        public static void PrintJSON()
+        {
+            var elements = new List<QuestElement>
+            {
+                new QuestElement
+                {
+                    Case = new QuestRoot
+                    {
+                        Active = false,
+                        Elements = new List<QuestElement>(),
+                        Id = 0,
+                        Mandatory = false,
+                        MandatoryCount = 1,
+                        Ordered = false
+                    },
+                    Condition = new QuestCondition
+                    {
+                        Id = 10301,
+                        Mandatory = true,
+                        Matches = new List<int> { 1 },
+                        State = new QuestState { Active = false, Completed = false, CurrentValue = 0},
+                        SubConditions = new List<QuestCondition>(),
+                        Type = QuestConditions.KILL_NPC,
+                        TargetValue = 15
+                    }
+                },
+                new QuestElement
+                {
+                    Case = new QuestRoot
+                    {
+                        Active = false,
+                        Elements = new List<QuestElement>(),
+                        Id = 0,
+                        Mandatory = false,
+                        MandatoryCount = 2,
+                        Ordered = false
+                    },
+                    Condition = new QuestCondition
+                    {
+                        Id = 10302,
+                        Mandatory = false,
+                        Matches = new List<int> { },
+                        State = new QuestState { Active = false, Completed = false, CurrentValue = 5},
+                        SubConditions = new List<QuestCondition>(),
+                        Type = QuestConditions.REAL_TIME_HASTE,
+                        TargetValue = 10
+                    }
+                }
+            };
+            Debug.WriteLine(JsonConvert.SerializeObject(elements));
+        }
 
         private static void InitiateConsole()
         {

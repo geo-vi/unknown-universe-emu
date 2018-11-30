@@ -315,7 +315,7 @@ namespace NettyBaseReloaded.Game.objects.world
                     new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                         new Dictionary<string, Item>()),
                     0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
-                    ship.Damage));
+                    ship.Damage, 5));
             }
         }
 
@@ -327,7 +327,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
                     new Dictionary<string, Item>()),
                 0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
-                ship.Damage));
+                ship.Damage, 5));
         }
 
         public void CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null, int vwId = 0)

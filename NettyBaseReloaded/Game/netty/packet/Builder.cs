@@ -29,6 +29,8 @@ using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Game.objects.world.players.informations;
 using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Main.objects;
+using Newtonsoft.Json;
+using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 
 namespace NettyBaseReloaded.Game.netty.packet
 {
@@ -2010,7 +2012,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                var elements = QuestElement.ParseElementsOld(quest.Root.Elements);
+                var elements = QuestElement.ParseElementsOld(gameSession.Player, quest.Root.Elements);
                 var definition = new QuestDefinitionModule(quest.Id,
                     new List<QuestTypeModule> {new QuestTypeModule((short) quest.QuestType)},
                     new QuestCaseModule(quest.Root.Id, quest.Root.Active, quest.Root.Mandatory, quest.Root.Ordered,
@@ -2035,14 +2037,14 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-//                foreach (var quest in gameSession.Player.AcceptedQuests)
-//                {
-//                    var elements = QuestElement.ParseElementsOld(quest.Root.Elements);
-//                    var definition = new QuestDefinitionModule(quest.Id, new List<QuestTypeModule> { new QuestTypeModule((short)quest.QuestType) },
-//                        new QuestCaseModule(quest.Root.Id, quest.Root.Active, quest.Root.Mandatory, quest.Root.Ordered, quest.Root.MandatoryCount, elements),
-//                        quest.GetOldLootModule(), new List<QuestIconModule> { new QuestIconModule((short)quest.Icon) });
-//                    gameSession.Client.Send(commands.old_client.QuestInitializationCommand.write(definition).Bytes);
-//                }
+                foreach (var quest in gameSession.Player.QuestData.GetActiveQuests())
+                {
+                    var elements = QuestElement.ParseElementsOld(gameSession.Player, quest.Root.Elements);
+                    var definition = new QuestDefinitionModule(quest.Id, new List<QuestTypeModule> { new QuestTypeModule((short)quest.QuestType) },
+                        new QuestCaseModule(quest.Root.Id, quest.Root.Active, quest.Root.Mandatory, quest.Root.Ordered, quest.Root.MandatoryCount, elements),
+                        quest.GetOldLootModule(), new List<QuestIconModule> { new QuestIconModule((short)quest.Icon) });
+                    gameSession.Client.Send(commands.old_client.QuestInitializationCommand.write(definition).Bytes);
+                }
             }
         }
         #endregion
@@ -2064,7 +2066,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region QuestConditionUpdateCommand
 
-        public void QuestConditionUpdateCommand(GameSession gameSession, QuestCondition state)
+        public void QuestConditionUpdateCommand(GameSession gameSession, QuestSerializableState state)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -2072,10 +2074,27 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.QuestConditionUpdateCommand.write(state.Id, new commands.old_client.QuestConditionStateModule(state.State.CurrentValue, state.State.Active, state.State.Completed)).Bytes);
+                gameSession.Client.Send(commands.old_client.QuestConditionUpdateCommand.write(state.ConditionId, new commands.old_client.QuestConditionStateModule(state.CurrentValue, state.Active, state.Completed)).Bytes);
             }
         }
         #endregion
+
+        #region QuestCancelledCommand
+        
+        public void QuestCancelledCommand(GameSession gameSession, int questId)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.QuestCancelledCommand.write(questId).Bytes);
+            }
+        }
+
+        #endregion
+
         #region PetBuffCommand
 
         public void PetBuffCommand(GameSession gameSession, short effectAction, short effectId, List<int> addingParameters)

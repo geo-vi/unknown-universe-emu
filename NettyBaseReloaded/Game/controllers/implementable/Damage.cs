@@ -57,14 +57,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             
         }
 
-        private DateTime LastTick = new DateTime();
         public override void Tick()
         {
-            //if (LastTick.AddMilliseconds(500) < DateTime.Now)
-            //{
-                DistributeDamage();
-            //    LastTick = DateTime.Now;
-            //}
+            DistributeDamage();
         }
 
         public override void Stop()

@@ -58,7 +58,7 @@ namespace NettyBaseReloaded.Game.controllers
 
                 return (int)time;
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
             return -1;

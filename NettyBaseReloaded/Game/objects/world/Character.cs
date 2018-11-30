@@ -262,6 +262,12 @@ namespace NettyBaseReloaded.Game.objects.world
             Direction = targetPosition;
             Moving = false;
 
+            foreach (var rangePlayers in Range.Entities.Where(x => x.Value is Player))
+            {
+                var rangePlayer = rangePlayers.Value as Player;
+                rangePlayer.Controller.Checkers.RemoveCharacter(this, rangePlayer);
+            }
+
             MovementController.Move(this, MovementController.ActualPosition(this));
         }
 
