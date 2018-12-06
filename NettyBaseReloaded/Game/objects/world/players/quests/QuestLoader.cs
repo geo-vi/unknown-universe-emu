@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
         /// <summary>
         /// Conditions
         /// </summary>
-        public List<QuestElement> Elements;
+        public QuestRoot Root;
         /// <summary>
         /// Rewards
         /// </summary>
@@ -43,7 +43,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
             
             quest.SetType(loader.QuestType);
             
-            QuestRoot root = new QuestRoot() {Id = loader.Id, Active = true, Elements = loader.Elements};
+            QuestRoot root = loader.Root;
             quest.SetRoot(root);
             
             quest.SetReward(new Reward(new Dictionary<RewardType, int>

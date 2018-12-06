@@ -9,6 +9,7 @@ namespace NettyBaseReloaded.Game.objects.world.events
     enum EventTypes
     {
         SCOREMAGEDDON,
-        SPACEBALL
+        SPACEBALL,
+        WILD_SANTAS
     }
 }

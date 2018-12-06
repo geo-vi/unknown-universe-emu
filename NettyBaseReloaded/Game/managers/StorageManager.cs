@@ -21,8 +21,9 @@ namespace NettyBaseReloaded.Game.managers
         public readonly Dictionary<int, Ship> Ships = new Dictionary<int, Ship>();
         
         public readonly Dictionary<int, Spacemap> Spacemaps = new Dictionary<int, Spacemap>();
-        
-        
+
+        public readonly Dictionary<int, Player> PlayerStorage = new Dictionary<int, Player>();
+
         public readonly OrePrices OrePrices = new OrePrices(20, 30, 50, 400, 400, 0, 1000, 0, 15);
         
         public readonly Levels Levels = new Levels();

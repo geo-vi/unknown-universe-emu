@@ -317,6 +317,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public QuestPlayerData QuestData;
 
+        public bool IsLoaded => Controller != null && !Controller.StopController;
+
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
             string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, hangar, factionId, position,
@@ -351,6 +353,13 @@ namespace NettyBaseReloaded.Game.objects.world
                 TickAnnouncements();
                 Skylab.Tick();
             });
+        }
+
+        public override void Invalidate()
+        {
+            base.Invalidate();
+            Controller.Exit();
+            Storage.Clean();
         }
 
         private void TickTechs()

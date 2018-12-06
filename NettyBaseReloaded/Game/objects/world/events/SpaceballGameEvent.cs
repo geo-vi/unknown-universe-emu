@@ -15,7 +15,7 @@ namespace NettyBaseReloaded.Game.objects.world.events
 
         public override void Start()
         {
-            World.StorageManager.Spacemaps[16].CreateSpaceball(442, Vector.GetMiddle(World.StorageManager.Spacemaps[16]));
+            World.StorageManager.Spacemaps[16].CreateSpaceball(443, Vector.GetMiddle(World.StorageManager.Spacemaps[16]));
             base.Start();
         }
     }

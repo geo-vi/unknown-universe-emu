@@ -397,7 +397,7 @@ namespace NettyBaseReloaded.Game.managers
                         foreach (DataRow reader in queryTable.Rows)
                         {
                             var id = intConv(reader["ID"]);
-                            var elements = reader["ELEMENTS"].ToString();
+                            var root = reader["ROOT"].ToString();
                             var reward = reader["REWARDS"].ToString();
                             var type = reader["TYPE"].ToString();
                             var icon = reader["ICON"].ToString();
@@ -423,7 +423,7 @@ namespace NettyBaseReloaded.Game.managers
                             
                             QuestLoader loader = new QuestLoader()
                             {
-                                Id = id, Elements = JsonConvert.DeserializeObject<List<QuestElement>>(elements),
+                                Id = id, Root = JsonConvert.DeserializeObject<QuestRoot>(root),
                                 DayOfWeek = dayOfWeek, ExpireDate = expiryDate, Icon = questIcon, QuestType = questType,
                                 Rewards = JsonConvert.DeserializeObject<QuestSerializableReward>(reward)
                             };
@@ -864,28 +864,31 @@ namespace NettyBaseReloaded.Game.managers
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow = mySqlClient.ExecuteQueryRow($"UPDATE player_data SET CREDITS=CREDITS+{creChange}, URIDIUM=URIDIUM+{uriChange},LVL={player.Information.Level.Id}, EXP=EXP+{expChange}, HONOR=HONOR+{honChange} WHERE" +
+                    var queryRow = mySqlClient.ExecuteNonQuery($"UPDATE player_data SET CREDITS=CREDITS+{creChange}, URIDIUM=URIDIUM+{uriChange},LVL={player.Information.Level.Id}, EXP=EXP+{expChange}, HONOR=HONOR+{honChange} WHERE" +
                                                                $" PLAYER_ID={player.Id}");
-                    player.Information.Credits.SyncedValue = doubleConv(queryRow["CREDITS"]);
+
+                    var row = mySqlClient.ExecuteQueryRow("SELECT CREDITS,URIDIUM,EXP,HONOR FROM player_data WHERE PLAYER_ID=" + player.Id);
+
+                    player.Information.Credits.SyncedValue = doubleConv(row["CREDITS"]);
                     player.Information.Credits.Value = player.Information.Credits.SyncedValue;
                     player.Information.Credits.LastTimeSynced = DateTime.Now;
 
-                    player.Information.Uridium.SyncedValue = doubleConv(queryRow["URIDIUM"]);
-                    player.Information.Uridium.Value = player.Information.Credits.SyncedValue;
+                    player.Information.Uridium.SyncedValue = doubleConv(row["URIDIUM"]);
+                    player.Information.Uridium.Value = player.Information.Uridium.SyncedValue;
                     player.Information.Uridium.LastTimeSynced = DateTime.Now;
 
-                    player.Information.Experience.SyncedValue = doubleConv(queryRow["EXP"]);
-                    player.Information.Experience.Value = player.Information.Credits.SyncedValue;
+                    player.Information.Experience.SyncedValue = doubleConv(row["EXP"]);
+                    player.Information.Experience.Value = player.Information.Experience.SyncedValue;
                     player.Information.Experience.LastTimeSynced = DateTime.Now;
 
-                    player.Information.Honor.SyncedValue = doubleConv(queryRow["HONOR"]);
-                    player.Information.Honor.Value = player.Information.Credits.SyncedValue;
+                    player.Information.Honor.SyncedValue = doubleConv(row["HONOR"]);
+                    player.Information.Honor.Value = player.Information.Honor.SyncedValue;
                     player.Information.Honor.LastTimeSynced = DateTime.Now;
                 }
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Error updating info, " + e.Message);
+                Console.WriteLine("Error updating info, " + e.Message);
             }
         }
 

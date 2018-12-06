@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.map.gg;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
@@ -18,6 +19,12 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
         {
             var player = character as Player;
             if (player == null) return;
+            if (!Working && DisabledMessage != "")
+            {
+                Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|" + DisabledMessage);
+                return;
+            }
+
             if (player.Group == null)
             {
                 //TODO Send message player not in group

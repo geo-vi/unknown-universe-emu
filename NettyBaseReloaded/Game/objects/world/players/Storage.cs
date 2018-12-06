@@ -33,6 +33,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public bool BlockedGroupInvites { get; set; }
 
+        public Task<bool> RemoveTask { get; internal set; }
+
         public bool EnergyLeechActivated = false;
         public bool BattleRepairRobotActivated = false;
         public bool PrecisionTargeterActivated = false;

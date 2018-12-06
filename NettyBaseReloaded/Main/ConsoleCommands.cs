@@ -21,6 +21,7 @@ namespace NettyBaseReloaded.Main
             Commands.Add("create", new CreateCommand());
             Commands.Add("rcon", new RconCommand());
             Commands.Add("w", new WhisperCommand());
+            Commands.Add("update", new UpdateCommand());
             ChatCommands.Add();
         }
 

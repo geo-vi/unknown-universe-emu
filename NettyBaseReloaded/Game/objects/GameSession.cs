@@ -28,6 +28,7 @@ namespace NettyBaseReloaded.Game.objects
             var tickId = -1;
             Global.TickManager.Add(this, out tickId);
             TickId = tickId;
+            World.StorageManager.GameSessions.Add(Player.Id, this);
         }
 
         public int GetId()
@@ -57,8 +58,31 @@ namespace NettyBaseReloaded.Game.objects
                 Player.Spacemap = spacemap;
             if (pos != null)
                 Player.ChangePosition(pos);
-            World.DatabaseManager.SavePlayerHangar(Player);
-            // World.StorageManager.StoredPlayers.Add(Player.Id, Player);
+
+            Player.Save();
+            //Store();
+        }
+
+        public void Reset(GameClient client)
+        {
+            if (Client.Connected)
+            {
+                Client.Disconnect();
+            }
+            Player.Invalidate();
+            Client = client;
+        }
+
+        public void Inactivity()
+        {
+            //todo
+        }
+
+        public void Store()
+        {
+            World.StorageManager.PlayerStorage.Add(Player.Id, Player);
+            if (Player.Storage.RemoveTask.Status == TaskStatus.Running) Player.Storage.RemoveTask.Dispose();
+            Player.Storage.RemoveTask = Task.Delay(90000).ContinueWith((t) => World.StorageManager.PlayerStorage.Remove(Player.Id));
         }
 
         public void Kick()
@@ -72,10 +96,16 @@ namespace NettyBaseReloaded.Game.objects
         /// </summary>
         public void Disconnect()
         {
+            Player.Invalidate();
+            Client.Disconnect();
+            EndSession();
+        }
+
+        public void EndSession()
+        {
             Global.TickManager.Remove(this);
             if (World.StorageManager.GameSessions.ContainsKey(Player.Id))
                 World.StorageManager.GameSessions.Remove(Player.Id);
-            Client.Disconnect();
         }
     }
 }

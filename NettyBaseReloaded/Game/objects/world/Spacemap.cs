@@ -153,7 +153,7 @@ namespace NettyBaseReloaded.Game.objects.world
                         RemoveEntity(player);
                         continue;
                     }
-                    if (player.Storage.LoadedObjects.Count != Objects.Count)
+                    if (player.IsLoaded && player.Storage.LoadedObjects.Count != Objects.Count)
                     {
                         var dicOne = player.Storage.LoadedObjects.ToList();
                         var dicTwo = Objects;
@@ -168,7 +168,7 @@ namespace NettyBaseReloaded.Game.objects.world
                         }
                     }
 
-                    if (player.Storage.LoadedPOI.Count != POIs.Count)
+                    if (player.IsLoaded && player.Storage.LoadedPOI.Count != POIs.Count)
                     {
                         var dicOne = player.Storage.LoadedPOI;
                         var dicTwo = POIs;
@@ -504,7 +504,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateLoW(Vector pos)
         {
             var id = GetNextObjectId();
-            AddObject(new LowPortal(id, pos, this, 0));
+            AddObject(new LowPortal(id, pos, this, 0) { Working = false, DisabledMessage = "Reworking..." });
 
             var zoneId = GetNextZoneId();
                 Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500),Faction.NONE));

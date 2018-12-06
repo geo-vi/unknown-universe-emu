@@ -19,5 +19,15 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
         public int MandatoryCount { get; set; }
 
         public List<QuestElement> Elements { get; set; }
+
+        public QuestElement FindElement(int conditionId)
+        {
+            var found = Elements.Find(x => x.Condition.Id == conditionId);
+            if (found == null)
+            {
+                found = Elements.Find(x => x.Case.FindElement(conditionId) != null);
+            }
+            return found;
+        }
     }
 }

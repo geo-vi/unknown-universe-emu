@@ -525,6 +525,7 @@
     <Compile Include="Game\objects\world\Events.cs" />
     <Compile Include="Game\objects\world\events\GameEvent.cs" />
     <Compile Include="Game\objects\world\events\SpaceballGameEvent.cs" />
+    <Compile Include="Game\objects\world\events\WildSantaEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
     <Compile Include="Game\objects\world\map\collectables\LootBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\PirateBooty.cs" />
@@ -575,6 +576,7 @@
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone6.cs" />
     <Compile Include="Game\objects\world\npcs\Cubikon.cs" />
     <Compile Include="Game\objects\world\npcs\Hitac.cs" />
+    <Compile Include="Game\objects\world\npcs\SantaBot.cs" />
     <Compile Include="Game\objects\world\npcs\Spaceball.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetGuardGear.cs" />
@@ -698,6 +700,7 @@
     <Compile Include="Main\commands\HelpCommand.cs" />
     <Compile Include="Main\commands\SpawnCommand.cs" />
     <Compile Include="Main\commands\StartCommand.cs" />
+    <Compile Include="Main\commands\UpdateCommand.cs" />
     <Compile Include="Main\commands\UsersCommand.cs" />
     <Compile Include="Main\commands\WhisperCommand.cs" />
     <Compile Include="Main\ConsoleCommands.cs" />

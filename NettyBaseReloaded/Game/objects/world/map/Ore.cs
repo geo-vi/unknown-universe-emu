@@ -32,17 +32,23 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public virtual void Collect(Character character)
         {
-            var player = character as Player;
+            Player player = null;
+            if (character is Pet pet)
+            {
+                player = pet.GetOwner();
+            }
+            else if (character is Player _player)
+            {
+                player = _player;
+            }
+            if (player == null) return;
             if (Disposed)
             {
-                if (player != null)
-                    Packet.Builder.MapEventOreCommand(player.GetGameSession(), this, OreCollection.FAILED_ALREADY_COLLECTED);
+                Packet.Builder.MapEventOreCommand(player.GetGameSession(), this, OreCollection.FAILED_ALREADY_COLLECTED);
                 return;
             }
-            if (player != null)
-            {
-                Packet.Builder.MapEventOreCommand(player.GetGameSession(), this, OreCollection.FINISHED);
-            }
+            Packet.Builder.MapEventOreCommand(player.GetGameSession(), this, OreCollection.FINISHED);
+            player.QuestData.AddResourceCollection(this);
             Dispose();
         }
 

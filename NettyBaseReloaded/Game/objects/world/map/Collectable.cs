@@ -36,20 +36,20 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public virtual void Collect(Character character)
         {
             if (Disposed) return;
-            if (character is Player)
+            Player player = null;
+            if (character is Player _player)
             {
-                var player = (Player) character;
+                player = _player;
                 if (player.Position.DistanceTo(Position) > 200) return;
-                Dispose();
-                Reward(player);
             }
-            if (character is Pet)
+            else if (character is Pet pet)
             {
-                var pet = (Pet) character;
-                Dispose();
-                if (pet.GetOwner() != null)
-                    Reward(pet.GetOwner());
+                player = pet.GetOwner();
             }
+            if (player == null) return;
+            player.QuestData.AddCollection(this);
+            Dispose();
+            Reward(player);
         }
 
         protected abstract void Reward(Player player);

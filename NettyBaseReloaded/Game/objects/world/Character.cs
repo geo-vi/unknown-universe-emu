@@ -238,6 +238,13 @@ namespace NettyBaseReloaded.Game.objects.world
             Ticked?.Invoke(this, EventArgs.Empty);
         }
 
+        public virtual void Invalidate()
+        {
+            Global.TickManager.Remove(this);
+            Controller.StopController = true;
+            Range.Clean();            
+        }
+
         public void UpdateShip()
         {
             var sessions =

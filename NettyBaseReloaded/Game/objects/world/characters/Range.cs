@@ -40,7 +40,10 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             var collectable = obj as Collectable;
             if (collectable != null)
             {
-                Collectables.Add(collectable.Hash, collectable);
+                if (!Collectables.ContainsKey(collectable.Hash))
+                {
+                    Collectables.Add(collectable.Hash, collectable);
+                }
             }
             return Objects.TryAdd(obj.Id, obj);
         }
@@ -53,6 +56,15 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 Collectables.Remove(collectable.Hash);
             }
             return Objects.TryRemove(obj.Id, out obj);
+        }
+
+        public void Clean()
+        {
+            Entities.Clear();
+            Objects.Clear();
+            Collectables.Clear();
+            Resources.Clear();
+            Zones.Clear();
         }
     }
 }

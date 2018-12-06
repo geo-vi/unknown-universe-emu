@@ -59,54 +59,97 @@ namespace NettyBaseReloaded
 
         public static void PrintJSON()
         {
-            var elements = new List<QuestElement>
+            var root = new QuestRoot()
             {
-                new QuestElement
+                Elements = new List<QuestElement>
                 {
-                    Case = new QuestRoot
+                    new QuestElement
                     {
-                        Active = false,
-                        Elements = new List<QuestElement>(),
-                        Id = 0,
-                        Mandatory = false,
-                        MandatoryCount = 1,
-                        Ordered = false
+                        Case = new QuestRoot
+                        {
+                            Active = false,
+                            Elements = new List<QuestElement>{
+                                new QuestElement() {
+                                    Case = new QuestRoot()
+                                    {
+                                        Id = 0,
+                                        Active = false,
+                                        Elements = new List<QuestElement>(),
+                                        Mandatory = false,
+                                        MandatoryCount = 1,
+                                        Ordered = false
+                                    },
+                                    Condition = new QuestCondition()
+                                    {
+                                        Id = 10001,
+                                        Mandatory = true,
+                                        Matches = new List<int>(),
+                                        State = new QuestState { Active = false, Completed = false, CurrentValue = 0},
+                                        SubConditions = new List<QuestCondition>(),
+                                        Type = QuestConditions.COLLECT_BONUS_BOX,
+                                        TargetValue = 5
+                                    }
+                                },
+                                new QuestElement() {
+                                    Case = new QuestRoot()
+                                    {
+                                        Id = 0,
+                                        Active = false,
+                                        Elements = new List<QuestElement>(),
+                                        Mandatory = false,
+                                        MandatoryCount = 2,
+                                        Ordered = false
+                                    },
+                                    Condition = new QuestCondition()
+                                    {
+                                        Id = 10002,
+                                        Mandatory = true,
+                                        Matches = new List<int>(),
+                                        State = new QuestState { Active = false, Completed = false, CurrentValue = 0},
+                                        SubConditions = new List<QuestCondition>(),
+                                        Type = QuestConditions.VISIT_QUEST_GIVER,
+                                        TargetValue = 0
+                                    }
+                                }
+                            },
+                            Id = 105,
+                            Mandatory = true,
+                            MandatoryCount = 1,
+                            Ordered = false
+                        },
+                        Condition = new QuestCondition
+                        {
+                            Id = 10000,
+                            Mandatory = true,
+                            Matches = new List<int>(),
+                            State = new QuestState { Active = false, Completed = false, CurrentValue = 0},
+                            SubConditions = new List<QuestCondition>(),
+                            Type = QuestConditions.QUESTCASE,
+                            TargetValue = 0
+                        }
                     },
-                    Condition = new QuestCondition
+                    new QuestElement()
                     {
-                        Id = 10301,
-                        Mandatory = true,
-                        Matches = new List<int> { 1 },
-                        State = new QuestState { Active = false, Completed = false, CurrentValue = 0},
-                        SubConditions = new List<QuestCondition>(),
-                        Type = QuestConditions.KILL_NPC,
-                        TargetValue = 15
+                        Case = new QuestRoot() { Id = 0, Active = false, Mandatory = false, Ordered = false, MandatoryCount = 0, Elements = new List<QuestElement>() },
+                        Condition = new QuestCondition()
+                        {
+                            Id = 10003,
+                            Mandatory = true,
+                            Matches = new List<int>{ 1 },
+                            State = new QuestState(){ Active = true, Completed = false, CurrentValue = 0},
+                            SubConditions = new List<QuestCondition>(),
+                            TargetValue = 10,
+                            Type = QuestConditions.KILL_NPC
+                        }
                     }
                 },
-                new QuestElement
-                {
-                    Case = new QuestRoot
-                    {
-                        Active = false,
-                        Elements = new List<QuestElement>(),
-                        Id = 0,
-                        Mandatory = false,
-                        MandatoryCount = 2,
-                        Ordered = false
-                    },
-                    Condition = new QuestCondition
-                    {
-                        Id = 10302,
-                        Mandatory = false,
-                        Matches = new List<int> { },
-                        State = new QuestState { Active = false, Completed = false, CurrentValue = 5},
-                        SubConditions = new List<QuestCondition>(),
-                        Type = QuestConditions.REAL_TIME_HASTE,
-                        TargetValue = 10
-                    }
-                }
+                Id = 1,
+                Active = true,
+                Mandatory = true,
+                Ordered = true,
+                MandatoryCount = 2
             };
-            Debug.WriteLine(JsonConvert.SerializeObject(elements));
+            Debug.WriteLine(JsonConvert.SerializeObject(root));
         }
 
         private static void InitiateConsole()

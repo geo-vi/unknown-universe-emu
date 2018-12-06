@@ -13,9 +13,6 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class ShipInitalizationHandler
     {
-        private GameSession GameSession { get; set; }
-        private Player Player { get; set; }
-        
         public ShipInitalizationHandler(GameClient client, int userId, string sessionId, bool newClient = false)
         {
             if (Properties.Game.PRINTING_CONNECTIONS)
@@ -23,57 +20,31 @@ namespace NettyBaseReloaded.Game.netty.handlers
                               "]");
 
             client.UserId = userId;
+            execute(SessionBuilder(client, userId, sessionId, newClient));
+        }
 
-            Player = GetAccount(userId);
-            if (Player != null) GameSession = CreateSession(client, Player);
-            else
+        private void execute(GameSession session)
+        {
+            if (session == null) return;
+            LoginController.Initiate(session);
+        }
+
+        public GameSession SessionBuilder(GameClient client, int userId, string sessionId, bool usingNewClient)
+        {
+            var account = World.DatabaseManager.GetAccount(userId);
+
+            if (sessionId != account.SessionId)
             {
-                Console.WriteLine("Failed loading user ship / ShipInitializationHandler ERROR");
-                return;
+                Console.WriteLine("Breach attempt by " + client.IPAddress);
+                return null; // Fucked up session
             }
-
-            if (Player.SessionId != sessionId)
+            if (World.StorageManager.GameSessions.ContainsKey(userId))
             {
-                ExecuteWrongSession();
-                return; // Wrong session ID
+                var gameSession = World.StorageManager.GameSessions[userId];
+                gameSession.Reset(client);
+                return gameSession;
             }
-            Player.UsingNewClient = newClient;
-
-            execute();
-        }
-
-        private Player GetAccount(int userId)
-        {
-            if (Player != null) return Player;
-            return World.DatabaseManager.GetAccount(userId);
-        }
-
-        private void ExecuteWrongSession()
-        {
-            Console.WriteLine($"{GameSession.Client.IPAddress} tried breaching into {GameSession.Client.UserId}'s account");
-        }
-
-        private GameSession CreateSession(GameClient client, Player player)
-        {
-            return new GameSession(player)
-            {
-                Client = client,
-            };
-        }
-
-        private void execute()
-        {
-            if (GameSession == null) return;
-
-            if (!World.StorageManager.GameSessions.ContainsKey(Player.Id))
-                World.StorageManager.GameSessions.Add(Player.Id, GameSession);
-            else
-            {
-                World.StorageManager.GameSessions[Player.Id].Disconnect();
-                World.StorageManager.GameSessions[Player.Id] = GameSession;
-            }
-            
-            LoginController.Initiate(GameSession);
+            return new GameSession(account) { Client = client };
         }
     }
 }

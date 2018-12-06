@@ -229,8 +229,9 @@ namespace NettyBaseReloaded.Game.objects.world
         /// <summary>
         /// Will stop the pet
         /// </summary>
-        public void Invalidate()
+        public override void Invalidate()
         {
+            base.Invalidate();
             Controller.Exit();
         }
 

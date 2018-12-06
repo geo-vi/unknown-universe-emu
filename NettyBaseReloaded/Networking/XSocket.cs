@@ -83,7 +83,7 @@ namespace NettyBaseReloaded.Networking
         /// </summary>
         public IPAddress RemoteHost => _socket.Connected ? ((IPEndPoint)_socket.RemoteEndPoint).Address : null;
 
-        public bool Connected => _socket.Connected;
+        public bool Connected => _socket != null && _socket.Connected;
         
         public IPEndPoint IpEndPoint { get; private set; }
 
@@ -322,6 +322,8 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
+                if (_socket == null) return;
+
                 var bytesRead = _socket.EndReceive(ar);
 
                 if (bytesRead <= 0)

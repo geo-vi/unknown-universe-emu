@@ -267,8 +267,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (baseController.Player.Spacemap == targetMap) return;
             var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
             Packet.Builder.MapChangeCommand(gameSession);
-            gameSession.Relog(targetMap, targetPosition);
-            gameSession.Player.VirtualWorldId = vw;
+            baseController.Player.MoveToMap(targetMap, targetPosition, vw);
         }
     }
 }
