@@ -66,6 +66,10 @@ namespace NettyBaseReloaded.Game.objects.world.events
                 {
                     playerEvent = new Spaceball(player, Id);
                 }
+                else if (EventType == EventTypes.BINARY_BOT)
+                {
+                    playerEvent = new BinaryBotEvent(player, Id);
+                }
                 if (playerEvent != null)
                 {
                     player.EventsPraticipating.TryAdd(Id, playerEvent);

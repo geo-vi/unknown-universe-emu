@@ -195,6 +195,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             /// <param name="portalId"></param>
             public void Initiate(int targetVW, int targetMapId, Vector targetPos, int portalId = -1)
             {
+                Console.WriteLine(targetMapId.ToString() + " - targetMapID " + targetPos.ToPacket());
                 if (_baseController.Character.EntityState == EntityStates.DEAD || _baseController.StopController || _baseController.Jumping) return;
 
                 TargetVirtualWorldId = targetVW;
@@ -263,11 +264,13 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         private void ForceChangeMap(Spacemap targetMap, Vector targetPosition, int vw = 0)
         {
+            baseController.Player.State.Jumping = true;
             baseController.Player.Pet?.Invalidate();
             if (baseController.Player.Spacemap == targetMap) return;
             var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
             Packet.Builder.MapChangeCommand(gameSession);
             baseController.Player.MoveToMap(targetMap, targetPosition, vw);
+            baseController.Player.State.Jumping = false;
         }
     }
 }

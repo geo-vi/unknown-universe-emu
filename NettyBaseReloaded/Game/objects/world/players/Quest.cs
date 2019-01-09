@@ -58,6 +58,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 else if (reward is int _amount)
                 {
                     amount = _amount;
+                    if (amount == 0) continue;
                     switch (typeOfReward)
                     {
                         case RewardType.CREDITS:

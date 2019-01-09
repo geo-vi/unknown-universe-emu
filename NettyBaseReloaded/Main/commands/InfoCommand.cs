@@ -34,7 +34,17 @@ namespace NettyBaseReloaded.Main.commands
                         worldSessions.Append($"{chatSession.Key}:{chatSession.Value.Player.Name} ");
                     Console.WriteLine($"World sessions ({World.StorageManager.GameSessions.Count}): {worldSessions}\nChat sessions ({Chat.Chat.StorageManager.ChatSessions.Count}): {chatSessions}");
                     break;
-                case "mysql":
+                case "player":
+                    var id = int.Parse(args[2]);
+                    var player = World.StorageManager.GetGameSession(id)?.Player;
+                    if (player == null) return;
+                    Console.WriteLine(player.Name + "'s Statistics ::");
+                    Console.WriteLine($"HP: {player.CurrentHealth}/{player.MaxHealth}, SHD: {player.CurrentShield}/{player.MaxShield}, NH:{player.CurrentNanoHull}/{player.MaxNanoHull}");
+                    Console.WriteLine($"Range:  entities->{player.Range.Entities.Count}, collectables->{player.Range.Collectables.Count}, objects->{player.Range.Objects.Count}, zones->{player.Range.Zones.Count}");
+                    Console.WriteLine($"Visuals: {player.Visuals.Count}");
+                    Console.WriteLine($"State: InDemiZone->{player.State.InDemiZone}, InPortalArea->{player.State.InPortalArea}," +
+                                      $" Jumping->{player.State.Jumping}, Home->{player.State.IsOnHomeMap()}, InRadiation->{player.State.InRadiationArea}, " +
+                                      $"GroupInit-> {player.State.GroupInitialized}");
                     break;
             }
         }

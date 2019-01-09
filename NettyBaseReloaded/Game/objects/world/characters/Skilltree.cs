@@ -119,7 +119,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public bool HasFatLasers()
         {
-            return BountyHunter == 5;
+            return true;
         }
 
         public double GetLaserDamageBonus(bool isNpc)

@@ -29,6 +29,9 @@ using NettyBaseReloaded.Game.objects.world.pets.gears;
 using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
+using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using DroneFormation = NettyBaseReloaded.Game.objects.world.DroneFormation;
 
 namespace NettyBaseReloaded.Game.managers
 {
@@ -43,6 +46,8 @@ namespace NettyBaseReloaded.Game.managers
             LoadCollectableRewards();
             LoadTitles();
             LoadQuests();
+            //LoadClanBattleStations();
+            //LoadEquippedModules();
         }
 
         public void SaveAll()
@@ -438,6 +443,57 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
+        public void LoadClanBattleStations()
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_clanbattlestations");
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow reader in queryTable.Rows)
+                        {
+                            var id = Convert.ToInt32(reader["ID"]);
+                            var name = reader["NAME"].ToString();
+                            var faction = (Faction) (intConv(reader["FACTION"]));
+                            var type = intConv(reader["TYPE"]);
+                            var mapId = intConv(reader["MAP_ID"]);
+                            var clanId = intConv(reader["CLAN_ID"]);
+                            var pos = reader["POSITION"].ToString();
+                            var hp = intConv(reader["HEALTH"]);
+                            var shield = intConv(reader["SHIELD"]);
+                            var modules = reader["MODULES"].ToString();
+                            var buildStart = reader["BUILD_START"];
+                            var buildEnd = reader["BUILD_END"];
+                            var deflectorEnd = reader["DEFLECTOR_END"];
+
+                            var posSplit = pos.Split('|');
+                            var posVector = new Vector(intConv(posSplit[0]), intConv(posSplit[1]));
+                            var map = World.StorageManager.Spacemaps[mapId];
+                            if (type == 1)
+                            {
+                                var cbs = new ClanBattleStation(map.GetNextObjectId(), id, name, faction, posVector,
+                                    map, null, new Dictionary<int, BattleStationModule>());
+                                World.StorageManager.ClanBattleStations.Add(id, cbs);
+                                map.AddObject(cbs);
+                            }
+                            else
+                            {
+                                var asteroid = new Asteroid(map.GetNextObjectId(), id, name, posVector, map);
+                                World.StorageManager.Asteroids.Add(id, asteroid);
+                                map.AddObject(asteroid);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
         //"SELECT * FROM player_hangar WHERE PLAYER_ID=" + player.Id + " AND ACTIVE=1"
         public Hangar LoadHangar(Player player)
         {
@@ -621,6 +677,45 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
+        public void LoadEquippedModules()
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM player_modules WHERE EQUIPPED=1");
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow reader in queryTable.Rows)
+                        {
+                            int moduleId = intConv(reader["ID"]);
+                            var ownerId = intConv(reader["PLAYER_ID"]);
+                            var type = (Module.Types) (intConv(reader["TYPE"]));
+                            var cbsId = intConv(reader["CBS_ID"]);
+                            var position = intConv(reader["POSITION"]); // slot id (0-9)
+                            var hp = intConv(reader["HP"]);
+                            var shield = intConv(reader["SHIELD"]);
+                            var upgradeLvl = intConv(reader["UPGRADE_LVL"]);
+
+                            if (World.StorageManager.Asteroids.ContainsKey(cbsId))
+                            {
+                                var asteroid = World.StorageManager.Asteroids[cbsId];
+                                var module = new Module(type, new Item(moduleId, "", 1), true);
+                                var bModule = BattleStationModule.Equip(null, module, asteroid, position, 0);
+                                asteroid.EquippedModules.Add(moduleId, bModule);
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("WHATS GOING ON HERE?!??!?!?!");
+                Console.WriteLine(e.Message);
+            }
+        }
+
         public Player GetAccount(int playerId)
         {
             Player player = null;
@@ -661,7 +756,7 @@ namespace NettyBaseReloaded.Game.managers
             }
             catch (Exception e)
             {
-                Debug.WriteLine("Error loading account, " + e.Message);
+                Console.WriteLine("Error loading account, " + e.Message);
             }
             return player;
         }
@@ -777,7 +872,7 @@ namespace NettyBaseReloaded.Game.managers
 
         public Statistics LoadStatistics(Player player)
         {
-            return null;
+            return new Statistics(player);
         }
 
         public BaseInfo LoadInfo(Player player, BaseInfo baseInfo)
@@ -1793,6 +1888,135 @@ namespace NettyBaseReloaded.Game.managers
             {
 
             }
+        }
+
+        public Dictionary<int, Module> LoadPlayerModules(Player player)
+        {
+            var modules = new Dictionary<int, Module>();
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable =
+                        mySqlClient.ExecuteQueryTable("SELECT * FROM player_modules WHERE PLAYER_ID=" + player.Id);
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow row in queryTable.Rows)
+                        {
+                            var id = intConv(row["ID"]);
+                            var typeId = intConv(row["TYPE"]);
+                            var equipped = Convert.ToBoolean(intConv(row["EQUIPPED"]));
+                            var cbsId = intConv(row["CBS_ID"]);
+                            var pos = intConv(row["POSITION"]);
+                            var hp = intConv(row["HP"]);
+                            var shd = intConv(row["SHIELD"]);
+                            var upLevel = intConv(row["UPGRADE_LVL"]);
+
+                            if (!equipped)
+                            {
+                                var module = new Module((Module.Types)typeId, new Item(id, "", 1), false);
+                                modules.Add(id, module);
+                            }
+                            else
+                            {
+                                if (World.StorageManager.Asteroids.ContainsKey(cbsId))
+                                {
+                                    foreach (var equippedModule in World.StorageManager.Asteroids[cbsId]
+                                        .EquippedModules)
+                                    {
+                                        Console.WriteLine("gay module !! "+ equippedModule.Key);
+                                    }
+                                    //var module = World.StorageManager.Asteroids[cbsId].EquippedModules[id];
+                                    //if (module.Owner == player)
+                                    //{
+                                    //    Console.WriteLine("we got a match");
+                                    //}else Console.WriteLine("fok");
+
+                                    //var gaymodule = new Module((Module.Types)typeId, new Item(id, "", 1), true);
+                                    //modules.Add(id, gaymodule);
+                                }
+                                else
+                                {
+                                    //todo
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("bruhhh");
+                Console.WriteLine(e.Message);
+            }
+
+            return modules;
+        }
+
+        public List<DroneFormation> LoadDroneFormations(Player player)
+        {
+            var droneFormationsList = new List<DroneFormation> {DroneFormation.STANDARD};
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow =
+                        mySqlClient.ExecuteQueryRow("SELECT DRONE_FORMATIONS FROM player_extra_data WHERE PLAYER_ID=" +
+                                                    player.Id);
+                    var droneFormationsJson = queryRow["DRONE_FORMATIONS"].ToString().Replace("{\"ID\":", "").Replace("}", "");
+                    var formations = JsonConvert.DeserializeObject<int[]>(droneFormationsJson);
+                    foreach (var formation in formations)
+                    {
+                        switch (formation)
+                        {
+                            case 40:
+                                droneFormationsList.Add(DroneFormation.TURTLE);
+                                break;
+                            case 41:
+                                droneFormationsList.Add(DroneFormation.ARROW);
+                                break;
+                            case 42:
+                                droneFormationsList.Add(DroneFormation.LANCE);
+                                break;
+                            case 43:
+                                droneFormationsList.Add(DroneFormation.STAR);
+                                break;
+                            case 44:
+                                droneFormationsList.Add(DroneFormation.PINCER);
+                                break;
+                            case 45:
+                                droneFormationsList.Add(DroneFormation.DOUBLE_ARROW);
+                                break;
+                            case 46:
+                                droneFormationsList.Add(DroneFormation.DIAMOND);
+                                break;
+                            case 47:
+                                droneFormationsList.Add(DroneFormation.CHEVRON);
+                                break;
+                            case 48:
+                                droneFormationsList.Add(DroneFormation.MOTH);
+                                break;
+                            case 49:
+                                droneFormationsList.Add(DroneFormation.CRAB);
+                                break;
+                            case 50:
+                                droneFormationsList.Add(DroneFormation.HEART);
+                                break;
+                            case 51:
+                                droneFormationsList.Add(DroneFormation.BARRAGE);
+                                break;
+                            case 52:
+                                droneFormationsList.Add(DroneFormation.BAT);
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return droneFormationsList;
         }
     }
 }

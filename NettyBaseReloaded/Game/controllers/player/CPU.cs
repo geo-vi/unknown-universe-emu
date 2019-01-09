@@ -45,6 +45,10 @@ namespace NettyBaseReloaded.Game.controllers.player
                     Active.Add(Types.AUTO_ROCKLAUNCHER);
                     Update(Types.AUTO_ROCKLAUNCHER);
                 }
+                else if (extra.Value is Cloak)
+                {
+                    Update(Types.CLOAK);
+                }
             }
         }
 
@@ -180,9 +184,14 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (cloakExtra.Value != null && cloakExtra.Value.Amount > 0)
             {
                 baseController.Character.Invisible = true;
+                if (baseController.Player.Pet != null)
+                {
+                    baseController.Player.Pet.Invisible = true;
+                    baseController.Player.Pet.Controller.Effects.UpdateCharacterVisibility();
+                }
                 baseController.Player.Extras.FirstOrDefault(x => x.Value is Cloak).Value.Amount -= 1;
                 Update(Types.CLOAK);
-                baseController.Effects.UpdatePlayerVisibility();
+                baseController.Effects.UpdateCharacterVisibility();
             }
         }
 

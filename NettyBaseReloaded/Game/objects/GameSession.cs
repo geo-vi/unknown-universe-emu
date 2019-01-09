@@ -22,13 +22,25 @@ namespace NettyBaseReloaded.Game.objects
 
         public GameClient Client { get; set; }
 
+        public DateTime LastActivityTime { get; set; }
+
+        public bool Active
+        {
+            get
+            {
+                if (Client != null && Client.Connected) return true;
+                return false;
+            }
+        }
+
         public GameSession(Player player)
         {
             Player = player;
+            LastActivityTime = DateTime.Now;
             var tickId = -1;
             Global.TickManager.Add(this, out tickId);
             TickId = tickId;
-            World.StorageManager.GameSessions.Add(Player.Id, this);
+            World.StorageManager.GameSessions.TryAdd(Player.Id, this);
         }
 
         public int GetId()
@@ -38,6 +50,16 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Tick()
         {
+            if (LastActivityTime.AddMinutes(8) < DateTime.Now)
+            {
+                Kick();
+            }
+        }
+
+        public void Start()
+        {
+            LoginController.Initiate(this);
+            LastActivityTime = DateTime.Now;
         }
 
         public static Dictionary<int, GameSession> GetRangeSessions(IAttackable attackable)
@@ -51,8 +73,10 @@ namespace NettyBaseReloaded.Game.objects
             return playerSessions;
         }
 
+        //TODO:
         public void Relog(Spacemap spacemap = null, Vector pos = null)
         {
+            throw new NotImplementedException();
             Disconnect();
             if (spacemap != null)
                 Player.Spacemap = spacemap;
@@ -77,9 +101,11 @@ namespace NettyBaseReloaded.Game.objects
         {
             //todo
         }
-
+        
+        //TODO:
         public void Store()
         {
+            throw new NotImplementedException();
             World.StorageManager.PlayerStorage.Add(Player.Id, Player);
             if (Player.Storage.RemoveTask.Status == TaskStatus.Running) Player.Storage.RemoveTask.Dispose();
             Player.Storage.RemoveTask = Task.Delay(90000).ContinueWith((t) => World.StorageManager.PlayerStorage.Remove(Player.Id));
@@ -87,7 +113,6 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Kick()
         {
-            Packet.Builder.LegacyModule(this, "ERR|2");
             Disconnect();
         }
 
@@ -97,15 +122,16 @@ namespace NettyBaseReloaded.Game.objects
         public void Disconnect()
         {
             Player.Invalidate();
-            Client.Disconnect();
             EndSession();
+            Client.Disconnect();
         }
 
         public void EndSession()
         {
+            GameSession removedSession;
             Global.TickManager.Remove(this);
             if (World.StorageManager.GameSessions.ContainsKey(Player.Id))
-                World.StorageManager.GameSessions.Remove(Player.Id);
+                World.StorageManager.GameSessions.TryRemove(Player.Id, out removedSession);
         }
     }
 }

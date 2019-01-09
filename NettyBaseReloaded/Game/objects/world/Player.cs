@@ -214,7 +214,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
                 if (BoostedAcceleration > 0)
                     value = (int)(value * (1 + BoostedAcceleration));
-                if (Controller.Effects.SlowedDown) value = (int)(value * 0.1);
+                if (Controller.Effects.SlowedDown) value = (int)(value * 0.5);
                 
                 return value;
             }
@@ -317,7 +317,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public QuestPlayerData QuestData;
 
-        public bool IsLoaded => Controller != null && !Controller.StopController;
+        private bool Unloaded = false;
+
+        public bool IsLoaded => Settings != null && Equipment != null && Storage != null && Controller != null &&
+                                !Controller.StopController && !Unloaded && State != null && !State.Jumping;
 
         public Player(int id, string name, Clan clan, Hangar hangar, int currentHealth, int currentNano,
             Faction factionId, Vector position, Spacemap spacemap, Reward rewards,
@@ -331,6 +334,21 @@ namespace NettyBaseReloaded.Game.objects.world
             CurrentConfig = 1;
             CurrentHealth = currentHealth;
             CurrentNanoHull = currentNano;
+        }
+
+        private void InitializeClasses()
+        {
+            Equipment = new Equipment(this);
+            Statistics = World.DatabaseManager.LoadStatistics(this);
+            Information = new Information(this);
+            State = new State(this);
+            Storage = new Storage(this);
+            Boosters = new List<Booster>();
+            Abilities = Hangar.Ship.Abilities(this);
+            Settings = new Settings(this);
+            Skylab = World.DatabaseManager.LoadSkylab(this);
+            Pet = World.DatabaseManager.LoadPet(this);
+            QuestData = new QuestPlayerData(this);
         }
 
         public override void AssembleTick(object sender, EventArgs eventArgs)
@@ -357,9 +375,11 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Invalidate()
         {
+            Unloaded = true;
             base.Invalidate();
             Controller.Exit();
             Storage.Clean();
+            State.Reset();
         }
 
         private void TickTechs()
@@ -396,21 +416,6 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        private void InitializeClasses()
-        {
-            Equipment = new Equipment(this);
-            Statistics = World.DatabaseManager.LoadStatistics(this);
-            Information = new Information(this);
-            State = new State(this);
-            Storage = new Storage(this);
-            Boosters = new List<Booster>();
-            Abilities = Hangar.Ship.Abilities(this);
-            Settings = new Settings(this);
-            Skylab = World.DatabaseManager.LoadSkylab(this);
-            Pet = World.DatabaseManager.LoadPet(this);
-            QuestData = new QuestPlayerData(this);
-        }
-
         public void ClickableCheck(Object obj)
         {
             if (obj is IClickable)
@@ -432,12 +437,14 @@ namespace NettyBaseReloaded.Game.objects.world
             else if (obj is Ore) Storage.LoadResource(obj as Ore);
             else if (obj is Billboard) Storage.LoadBillboard(obj as Billboard);
             else if (obj is Mine) Storage.LoadMine(obj as Mine);
+            else if (obj is Firework) Storage.LoadFirework(obj as Firework);
         }
 
         public void UnloadObject(Object obj)
         {
             if (obj is Collectable) Storage.UnLoadCollectable(obj as Collectable);
-            if (obj is Asset) Storage.UnloadAsset(obj as Asset);
+            else if (obj is Asset) Storage.UnloadAsset(obj as Asset);
+            else if (obj is Jumpgate) Storage.UnloadPortal(obj as Jumpgate);
             else
             {
                 if (Storage.LoadedObjects.ContainsKey(obj.Id))
@@ -460,11 +467,13 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void Refresh()
         {
-            var gameSession = World.StorageManager.GetGameSession(Id);
+            var gameSession = GetGameSession();
             if (gameSession == null) return;
+            Position = MovementController.ActualPosition(this);
             Packet.Builder.ShipInitializationCommand(gameSession);
-            Packet.Builder.MoveCommand(gameSession, this, 0);
+            MovementController.Move(this, Position);
             ILogin.SendLegacy(gameSession);
+            Updaters.Update();
         }
 
         public override void SetPosition(Vector targetPosition)
@@ -637,7 +646,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void UpdateSpeed()
         {
-            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(Id), "0|A|v|" + Speed);
+            Packet.Builder.AttributeShipSpeedUpdateCommand(World.StorageManager.GetGameSession(Id), Speed);
         }
 
         public int EnemyWarningLevel = 0;
@@ -663,16 +672,23 @@ namespace NettyBaseReloaded.Game.objects.world
         public void MoveToMap(Spacemap map, Vector pos, int vwid)
         {
             if (Pet != null) Pet.Controller.Deactivate();
-            Character character;
-            Spacemap.Entities.TryRemove(Id, out character);
-            Storage.Clean();
-            State.Reset();
+            Spacemap.RemoveEntity(this);
+            ResetPlayer();
             VirtualWorldId = vwid;
             Spacemap = map;
             Position = pos;
-            SetPosition(pos);
-            Refresh();
             Spacemap.Entities.TryAdd(Id, this);
+            SetPosition(pos);
+        }
+
+        public void ResetPlayer()
+        {
+            Unloaded = true;
+            Storage.UnloadAll();
+            Storage.Clean();
+            State.Reset();
+            Range.Clean();
+            Unloaded = false;
         }
 
         public int CreateGalaxyGate(GalaxyGate gate)

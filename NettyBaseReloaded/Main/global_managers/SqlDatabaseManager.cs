@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Main.global_managers
         {
             if (remote)
             {
-                SERVER = "5.9.14.50";
+                SERVER = "dtest.univ3rse.com";
                 UID = "remote";
                 PWD = "789456123gta";
             }

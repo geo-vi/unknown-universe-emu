@@ -33,6 +33,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Tick()
         {
+            if (Controller.Character is Player player)
+            {
+                if (!player.IsLoaded) return;
+            }
             SpacemapChecker();
             RangeChecker();
             ZoneChecker();

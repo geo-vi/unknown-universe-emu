@@ -24,6 +24,7 @@ namespace NettyBaseReloaded.WebSocks.packets
             var finalPacket = packet.Contains("|") ? packet.Split('|') : new[] { packet };
             HandledPackets.TryGetValue(finalPacket[0], out handler);
             handler?.execute(receiver, finalPacket);
+            receiver.Send("success");
         }
     }
 }

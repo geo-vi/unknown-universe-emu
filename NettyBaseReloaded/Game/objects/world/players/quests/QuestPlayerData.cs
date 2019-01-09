@@ -177,6 +177,26 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
 
         public void AddResourceCollection(Ore ore)
         {
+            foreach (var activeCondition in ActiveConditions.Values)
+            {
+                var quest = FindQuestByState(activeCondition);
+                var condition = quest.Root.Elements.Find(x => x.Condition.Id == activeCondition.ConditionId).Condition;
+                if (condition.Type == QuestConditions.COLLECT)
+                {
+                    if (activeCondition.CurrentValue + 1 == condition.TargetValue)
+                    {
+                        activeCondition.Completed = true;
+                        activeCondition.Active = false;
+                    }
+                    activeCondition.CurrentValue++;
+                }
+                Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
+                if (quest.IsComplete(Conditions))
+                {
+                    CompleteQuest(quest);
+                }
+                World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
+            }
         }
 
         /// <summary>

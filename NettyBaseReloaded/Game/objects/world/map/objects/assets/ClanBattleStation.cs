@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
     class ClanBattleStation : AttackableAsset, IClickable
     {
         public int BattleStationId { get; set; }
-        public bool DeflectorShieldActive => false;
+        public bool DeflectorShieldActive => true;
         public int DeflectorShieldRate => 1;
         public int RepairPrice => 5000;
         public int DeflectorShieldMin => 30;

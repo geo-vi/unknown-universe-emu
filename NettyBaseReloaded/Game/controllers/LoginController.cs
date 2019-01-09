@@ -33,9 +33,9 @@ namespace NettyBaseReloaded.Game.controllers
         private void LoadConfigs()
         {
             var player = _gameSession.Player;
-            
-            var config = World.DatabaseManager.LoadConfig(player);;
-            player.Hangar.Configurations = config;
+
+            player.Hangar = World.DatabaseManager.LoadHangar(player);
+            player.Hangar.Configurations = World.DatabaseManager.LoadConfig(player); 
             player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
         }
 

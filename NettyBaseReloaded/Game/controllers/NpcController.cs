@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.npc;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.npcs;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.objects;
 
@@ -52,6 +53,7 @@ namespace NettyBaseReloaded.Game.controllers
             }
             base.Initiate();
             Checkers.Start();
+            if (Npc is EventNpc eventNpc) eventNpc.Announce();
         }
 
         public new void Tick()

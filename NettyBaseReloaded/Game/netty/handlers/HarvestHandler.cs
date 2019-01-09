@@ -19,6 +19,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             string itemHash = cmd.itemHash;
             var player = gameSession.Player;
             var resource = player.Spacemap.HashedObjects[itemHash];
+
             if (resource != null)
             {
                 if (player.Position.DistanceTo(resource.Position) > 200) return;

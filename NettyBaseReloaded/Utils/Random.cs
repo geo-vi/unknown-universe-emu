@@ -27,9 +27,11 @@ namespace NettyBaseReloaded
         /// Used to save the seed for the current instance.
         /// If instance is inactive it will get auto removed from the pool.
         /// </summary>
-        public Random Random { get; }
+        public Random Random { get; private set; }
 
         public DateTime LastActiveAt = new DateTime();
+
+        public int RandomsPerformed = 0;
 
         private RandomInstance()
         {
@@ -54,6 +56,7 @@ namespace NettyBaseReloaded
             }
 
             FixActivity();
+
         }
 
         #region Methods
@@ -61,6 +64,12 @@ namespace NettyBaseReloaded
         public void FixActivity()
         {
             LastActiveAt = DateTime.Now;
+            RandomsPerformed++;
+            if (RandomsPerformed > 1000)
+            {
+                Random = new Random();
+                RandomsPerformed = 0;
+            }
         }
 
         /* int methods */
@@ -77,6 +86,17 @@ namespace NettyBaseReloaded
         }
         /* int methods end */
 
+        /// <summary>
+        /// From 0.0 to 0.1
+        /// </summary>
+        /// <returns></returns>
+        public double NextDouble()
+        {
+            FixActivity();
+            return Random.NextDouble();
+        }
+
+
         public void EndPool()
         {
             var instance = Instances.FirstOrDefault(x => x.Value == this);
@@ -87,6 +107,5 @@ namespace NettyBaseReloaded
             }
         }
         #endregion
-
     }
 }

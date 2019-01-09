@@ -14,5 +14,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.mines
         public ACM01(int id, string hash, Vector pos, Spacemap map) : base(id, hash, pos, map)
         {
         }
+
+        public override void Effect()
+        {
+            Damage.Area(Spacemap, Position, 1000,20, Damage.Types.MINE, DamageType.PERCENTAGE);
+        }
+
     }
 }

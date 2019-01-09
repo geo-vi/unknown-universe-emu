@@ -10,6 +10,6 @@ namespace NettyBaseReloaded.Game.objects.world.events
     {
         SCOREMAGEDDON,
         SPACEBALL,
-        WILD_SANTAS
+        BINARY_BOT
     }
 }

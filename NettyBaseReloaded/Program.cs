@@ -47,6 +47,7 @@ namespace NettyBaseReloaded
 
         public static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
 
             Application.ThreadException += ApplicationOnThreadException;
@@ -234,7 +235,7 @@ namespace NettyBaseReloaded
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
             //new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
-            Environment.Exit(0);
+            //Environment.Exit(0);
             // TODO: Save everything and then fuck up
         }
 
@@ -242,8 +243,14 @@ namespace NettyBaseReloaded
         private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs threadExceptionEventArgs)
         {
             //new ExceptionLog("thread_exception", $"Unhandled thread exception trapped and logged", threadExceptionEventArgs.Exception);
-            Environment.Exit(0);
+            //Environment.Exit(0);
         }
+
+        private static void OnProcessExit(object sender, EventArgs e)
+        {
+            Global.Close();
+        }
+
 
         /// <summary>
         /// This is disabling the Console from being resized

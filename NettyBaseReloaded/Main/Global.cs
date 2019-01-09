@@ -95,5 +95,14 @@ namespace NettyBaseReloaded.Main
         {
             QueryManager.SaveAll();
         }
+
+        public static void Close()
+        {
+            foreach (var gameSession in World.StorageManager.GameSessions)
+            {
+                gameSession.Value.Kick();
+            }
+            QueryManager.SaveAll();
+        }
     }
 }

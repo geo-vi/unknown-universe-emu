@@ -170,7 +170,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Character.Invisible)
             {
                 Character.Invisible = false;
-                Character.Controller.Effects.UpdatePlayerVisibility();
+                Character.Controller.Effects.UpdateCharacterVisibility();
             }
 
             target.LastCombatTime = DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
@@ -222,6 +222,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 {
                     var _absDmg = (int)(totalAbs * totalAbsDamage);
                     target.CurrentShield -= _absDmg;
+                    if (target.CurrentShield < 0) target.CurrentShield = 0;
                     if (attacker != null)
                         attacker.CurrentShield += _absDmg;
                 }
@@ -277,7 +278,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         target.CurrentNanoHull -= totalDamage; //Full dmg to nanohull
                 }
                 else
+                {
                     target.CurrentHealth -= totalDamage; //Full dmg to health
+                }
             }
 
             #endregion
@@ -322,7 +325,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         /// <summary>
         /// Causes a damage in area.
         /// </summary>
-        public void Area(int amount, int distance = 0, bool playerOnly = false, DamageType damageType = DamageType.DEFINED)
+        public void Area(int amount, Types attackType, int distance = 0, bool playerOnly = false, DamageType damageType = DamageType.DEFINED)
         {
             if (distance == 0) distance = Character.AttackRange;
 
@@ -340,21 +343,57 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         damage = amount;
                         break;
                     case DamageType.PERCENTAGE:
-                        damage = entry.Value.CurrentHealth * amount / 100;
+                        damage = (int)(entry.Value.CurrentHealth * amount / 100.0);
                         break;
                 }
                 //TODO use Damage() method instead
 
                 entry.Value.CurrentHealth -= damage;
                 entry.Value.LastCombatTime = DateTime.Now;
-                if (entry.Value is Player) Packet.Builder.AttackHitCommand(World.StorageManager.GetGameSession(entry.Value.Id), Character.Id, entry.Value, damage, 14);
-                if (Character is Player) Packet.Builder.AttackHitCommand(World.StorageManager.GetGameSession(Character.Id), Character.Id, entry.Value, damage, 14);
+
+                foreach (var session in AssembleSelectedSessions(entry.Value))
+                {
+                    Packet.Builder.AttackHitCommand(session, Character.Id, entry.Value, damage, (short)attackType);
+                }
+                
+                if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
+                {
+                    entry.Value.Destroy();
+                }
+                entry.Value.Updaters.Update();
             }
         }
 
-        public static void Area(Spacemap map, Vector center, int radius, int baseDamage, DamageType damageType = DamageType.DEFINED)
+        public static void Area(Spacemap map, Vector center, int radius, int amount, Types attackType, DamageType damageType = DamageType.DEFINED)
         {
-            //TODO
+            foreach (var entry in map.Entities.Where(x => x.Value.Position.DistanceTo(center) <= radius))
+            {
+                var damage = 0;
+                switch (damageType)
+                {
+                    case DamageType.DEFINED:
+                        damage = amount;
+                        break;
+                    case DamageType.PERCENTAGE:
+                        damage = (int)(entry.Value.CurrentHealth * amount / 100.0);
+                        break;
+                }
+                //TODO use Damage() method instead
+
+                entry.Value.CurrentHealth -= damage;
+                entry.Value.LastCombatTime = DateTime.Now;
+
+                foreach (var session in AssembleSelectedSessions(entry.Value))
+                {
+                    Packet.Builder.AttackHitCommand(session, 0, entry.Value, damage, (short)attackType);
+                }
+
+                if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
+                {
+                    entry.Value.Destroy();
+                }
+                entry.Value.Updaters.Update();
+            }
         }
 
         private int RandomizeDamage(int damage)

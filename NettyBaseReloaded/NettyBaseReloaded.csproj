@@ -494,6 +494,8 @@
     <Compile Include="Game\objects\world\characters\cooldowns\EnergyLeechCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\NanoClusterCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\PetComboRepairCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\PlasmaCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\PlasmaEffect.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\PrecisionTargeterCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\ChainImpulseCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\SentinelFortressCooldown.cs" />
@@ -503,6 +505,7 @@
     <Compile Include="Game\objects\world\characters\cooldowns\DecelerationEffect.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\DroneFormationCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\RocketLauncherCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\MineCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\WizardCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\WizardEffect.cs" />
     <Compile Include="Game\objects\world\characters\DropableRewards.cs" />
@@ -525,10 +528,15 @@
     <Compile Include="Game\objects\world\Events.cs" />
     <Compile Include="Game\objects\world\events\GameEvent.cs" />
     <Compile Include="Game\objects\world\events\SpaceballGameEvent.cs" />
-    <Compile Include="Game\objects\world\events\WildSantaEvent.cs" />
+    <Compile Include="Game\objects\world\events\BinaryBotGameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
     <Compile Include="Game\objects\world\map\collectables\LootBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\PirateBooty.cs" />
+    <Compile Include="Game\objects\world\map\Firework.cs" />
+    <Compile Include="Game\objects\world\map\mines\DDM01.cs" />
+    <Compile Include="Game\objects\world\map\mines\EMPM01.cs" />
+    <Compile Include="Game\objects\world\map\mines\SABM01.cs" />
+    <Compile Include="Game\objects\world\map\mines\SLM01.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\BoosterStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\LaserStationModule.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\RocketStationModule.cs" />
@@ -558,6 +566,7 @@
     <Compile Include="Game\objects\world\map\objects\stations\StationModule.cs" />
     <Compile Include="Game\objects\world\map\Ore.cs" />
     <Compile Include="Game\objects\world\map\ores\PalladiumOre.cs" />
+    <Compile Include="Game\objects\world\map\ores\RegularOre.cs" />
     <Compile Include="Game\objects\world\map\POI.cs" />
     <Compile Include="Game\objects\world\map\pois\Designs.cs" />
     <Compile Include="Game\objects\world\map\pois\Shapes.cs" />
@@ -576,7 +585,7 @@
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone6.cs" />
     <Compile Include="Game\objects\world\npcs\Cubikon.cs" />
     <Compile Include="Game\objects\world\npcs\Hitac.cs" />
-    <Compile Include="Game\objects\world\npcs\SantaBot.cs" />
+    <Compile Include="Game\objects\world\npcs\EventNpc.cs" />
     <Compile Include="Game\objects\world\npcs\Spaceball.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetGuardGear.cs" />
@@ -602,6 +611,7 @@
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
     <Compile Include="Game\objects\world\events\EventTypes.cs" />
     <Compile Include="Game\objects\world\players\equipment\Module.cs" />
+    <Compile Include="Game\objects\world\players\events\BinaryBotEvent.cs" />
     <Compile Include="Game\objects\world\players\events\ScoreMageddon.cs" />
     <Compile Include="Game\objects\world\players\events\Spaceball.cs" />
     <Compile Include="Game\objects\world\players\events\TeamDeathmatch.cs" />
@@ -683,12 +693,14 @@
     <Compile Include="Game\objects\world\VisualEffect.cs" />
     <Compile Include="Main\ChatCommands.cs" />
     <Compile Include="Main\commands\CleanCommand.cs" />
+    <Compile Include="Main\commands\CloseCommand.cs" />
     <Compile Include="Main\commands\Command.cs" />
     <Compile Include="Main\commands\CreateCommand.cs" />
     <Compile Include="Main\commands\CreateDemiZone.cs" />
     <Compile Include="Main\commands\CreatePOI.cs" />
     <Compile Include="Main\commands\DebugCommand.cs" />
     <Compile Include="Main\commands\DestroyCommand.cs" />
+    <Compile Include="Main\commands\EquipmentCommand.cs" />
     <Compile Include="Main\commands\InfoCommand.cs" />
     <Compile Include="Main\commands\NpcCommand.cs" />
     <Compile Include="Main\commands\RconCommand.cs" />
@@ -700,6 +712,7 @@
     <Compile Include="Main\commands\HelpCommand.cs" />
     <Compile Include="Main\commands\SpawnCommand.cs" />
     <Compile Include="Main\commands\StartCommand.cs" />
+    <Compile Include="Main\commands\UnbugCommand.cs" />
     <Compile Include="Main\commands\UpdateCommand.cs" />
     <Compile Include="Main\commands\UsersCommand.cs" />
     <Compile Include="Main\commands\WhisperCommand.cs" />
@@ -859,6 +872,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controller.resx">
       <DependentUpon>Controller.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MapEditor.resx">
       <DependentUpon>MapEditor.cs</DependentUpon>
@@ -873,6 +887,9 @@
     <EmbeddedResource Include="Utils\form\TextboxPopup.resx">
       <DependentUpon>TextboxPopup.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Game\objects\world\map\fireworks\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

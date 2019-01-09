@@ -27,6 +27,7 @@ namespace NettyBaseReloaded.WebSocks.packets.handlers
                 case "eq":
                     if (player.State.InEquipmentArea)
                     {
+                        player.Hangar = World.DatabaseManager.LoadHangar(player);
                         player.Hangar.Configurations = World.DatabaseManager.LoadConfig(player);
                         player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
                         foreach (var playerEntity in player.Spacemap.Entities.Where(x => x.Value is Player))

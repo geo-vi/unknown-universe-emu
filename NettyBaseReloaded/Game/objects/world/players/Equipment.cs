@@ -22,10 +22,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public bool ModuleEquipping = false;
 
+        public List<DroneFormation> OwnedDroneFormations = new List<DroneFormation>();
+
         public Equipment(Player player) : base(player)
         {
             RefreshHangars();
-            AddModules();
+            //Modules = World.DatabaseManager.LoadPlayerModules(player);
+            OwnedDroneFormations = World.DatabaseManager.LoadDroneFormations(player);
+            //AddModules();
         }
 
         private void AddModules()

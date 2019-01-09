@@ -49,6 +49,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
         /// </summary>
         public bool GroupInitialized { get; set; }
 
+        public bool Jumping;
+
         public State(Player player) : base(player)
         {
             AddHomeMaps();

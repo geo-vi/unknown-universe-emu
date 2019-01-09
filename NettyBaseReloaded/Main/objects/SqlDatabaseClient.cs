@@ -92,5 +92,10 @@ namespace NettyBaseReloaded.Main.objects
             DataTable DataTable = ExecuteQueryTable(CommandText);
             return DataTable.Rows.Count > 0 ? DataTable.Rows[0] : null;
         }
+
+        internal void ExecuteNonQuery(object p)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -24,6 +24,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Hash = hash;
             Type = type;
             Limits = limits;
+            if (Limits == null)
+                Limits = Spacemap.Limits;
         }
 
         public override void execute(Character character)
@@ -57,6 +59,16 @@ namespace NettyBaseReloaded.Game.objects.world.map
             GameClient.SendToSpacemap(Spacemap, netty.commands.old_client.LegacyModule.write("0|q|" + Hash));
             Spacemap.RemoveObject(this);
             Disposed = true;
+            Respawn();
+        }
+
+        private void Respawn()
+        {
+            var newPos = Vector.Random(Spacemap, Limits[0], Limits[1]);
+            Position = newPos;
+            Disposed = false;
+            Spacemap.AddObject(this);
+            Console.WriteLine("respawned @" + newPos.ToPacket());
         }
     }
 }

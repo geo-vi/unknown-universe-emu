@@ -21,12 +21,20 @@ namespace NettyBaseReloaded.Networking
     class GameClient
     {
         private XSocket XSocket;
+
         public int UserId { get; set; }
 
         public IPAddress IPAddress => XSocket.RemoteHost;
 
         public bool Connected => XSocket.Connected;
-        
+
+        /* debug only */
+
+        public int SentPackets;
+        public bool Listening;
+
+        /* -end debug only- */
+
         public GameClient(XSocket gameSocket)
         {
             XSocket = gameSocket;
@@ -51,6 +59,18 @@ namespace NettyBaseReloaded.Networking
             {
                 if (!Connected) return;
                 XSocket.Write(bytes);
+                //SentPackets++;
+                if (Listening)
+                {
+                    var caller = Out.GetCaller();
+                    Console.WriteLine($"Listener ({UserId})::" + caller);
+                    if (caller.EndsWith("LegacyModule"))
+                    {
+                        var legacy = new LegacyModule();
+                        legacy.readCommand(bytes);
+                        Console.WriteLine("[" + legacy.message + "]");
+                    }
+                }
             }
             catch (Exception)
             {

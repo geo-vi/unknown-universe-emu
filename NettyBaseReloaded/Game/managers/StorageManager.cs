@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Game.objects;
@@ -16,7 +18,7 @@ namespace NettyBaseReloaded.Game.managers
 {
     class StorageManager
     {
-        public readonly Dictionary<int, GameSession> GameSessions = new Dictionary<int, GameSession>();
+        public readonly ConcurrentDictionary<int, GameSession> GameSessions = new ConcurrentDictionary<int, GameSession>();
         
         public readonly Dictionary<int, Ship> Ships = new Dictionary<int, Ship>();
         
@@ -36,6 +38,8 @@ namespace NettyBaseReloaded.Game.managers
         
         public readonly Dictionary<int, Quest> Quests = new Dictionary<int, Quest>();
 
+        public readonly Dictionary<int, Asteroid> Asteroids = new Dictionary<int, Asteroid>();
+
         public readonly Dictionary<int, ClanBattleStation> ClanBattleStations = new Dictionary<int, ClanBattleStation>();
         
         public readonly Dictionary<int, QuestGiver> QuestGivers = new Dictionary<int, QuestGiver>();
@@ -49,7 +53,8 @@ namespace NettyBaseReloaded.Game.managers
 
         public GameSession GetGameSession(int userId)
         {
-            return GameSessions.ContainsKey(userId) ? GameSessions[userId] : null;
+            var session = GameSessions.ContainsKey(userId) ? GameSessions[userId] : null;
+            return session;
         }
 
         public GameSession GetGameSession(string name)

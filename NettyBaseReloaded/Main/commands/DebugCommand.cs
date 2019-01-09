@@ -41,6 +41,11 @@ namespace NettyBaseReloaded.Main.commands
             {
                 Console.WriteLine("Access Denied!");
             }
+
+            var playerId = 0;
+            if (args.Length > 2)
+                playerId = int.Parse(args[2]);
+
             switch (args[1])
             {
                 case "commands":
@@ -52,6 +57,7 @@ namespace NettyBaseReloaded.Main.commands
                         Console.WriteLine("Debug::Stopped printing commands");
                         break;
                     }
+
                     Properties.Game.PRINTING_COMMANDS = true;
                     Console.WriteLine("Debug::Commands should now print");
                     break;
@@ -92,12 +98,11 @@ namespace NettyBaseReloaded.Main.commands
                     Console.WriteLine("Debug::Player connections are now printing");
                     break;
                 case "send":
-                    var playerId = args[2];
-                    if (playerId != null)
-                    {
-                        var id = int.Parse(playerId);
-                        Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(id), args[3]);
-                    }
+                    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(playerId), args[3]);
+                    break;
+                case "listen":
+                    var session = World.StorageManager.GetGameSession(playerId);
+                    session.Client.Listening = !session.Client.Listening;
                     break;
             }
         }

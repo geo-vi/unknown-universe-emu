@@ -1,4 +1,5 @@
-﻿using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+﻿using NettyBaseReloaded.Game.controllers.implementable;
+using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects.stations
 {
@@ -19,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.stations
             switch (Type)
             {
                 case AssetTypes.REPAIR_DOCK:
-                    character.Controller.Damage?.Area(character.MaxHealth, Id);
+                    character.Controller.Damage?.Area(character.MaxHealth, Damage.Types.KAMIKAZE);
                     break;
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.objects.world.map
 {
@@ -10,9 +11,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
     {
         public string Hash { get; set; }
 
-        public virtual bool PulseActive => true;
+        public virtual bool PulseActive => false;
 
         public virtual int MineType => -1;
+
+        public DateTime PlacedTime = DateTime.Now;
 
         protected Mine(int id, string hash, Vector pos, Spacemap map) : base(id, pos, map)
         {
@@ -21,7 +24,28 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public override void execute(Character character)
         {
-            Console.WriteLine("bombing.");
         }
+
+        public override void Tick()
+        {
+            var potential = Spacemap.Entities.OrderBy(x => x.Value.Position.DistanceTo(Position));
+            var first = potential.FirstOrDefault(x => x.Value.Position.DistanceTo(Position) < 200 && x.Value is Player);
+            var player = first.Value as Player;
+            if (player != null)
+            {
+                Explode();
+            }
+        }
+
+        public void Explode()
+        {
+            if (PlacedTime.AddSeconds(1) > DateTime.Now) return;
+            GameClient.SendToSpacemap(Spacemap, netty.commands.old_client.LegacyModule.write("0|n|MIN|" + Hash));
+            GameClient.SendToSpacemap(Spacemap, netty.commands.new_client.LegacyModule.write("0|n|MIN|" + Hash));
+            Effect();
+            Spacemap.RemoveObject(this);
+        }
+
+        public abstract void Effect();
     }
 }

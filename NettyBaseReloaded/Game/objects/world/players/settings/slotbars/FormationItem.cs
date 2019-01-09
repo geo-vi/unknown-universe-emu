@@ -17,7 +17,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
         public override void Execute(Player player)
         {
             if (player.Cooldowns.Any(x => x is DroneFormationCooldown)) return;
-
+            
             var gameSession = World.StorageManager.GameSessions[player.Id];
             var formationName = ItemId.Split('_')[2];
             var formation = DroneFormation.STANDARD;
@@ -69,6 +69,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                     break;
             }
             #endregion Formations Switch
+
+            if (!player.Equipment.OwnedDroneFormations.Contains(formation)) return;
 
             player.Formation = formation;
 

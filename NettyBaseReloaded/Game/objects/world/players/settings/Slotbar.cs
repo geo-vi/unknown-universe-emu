@@ -38,7 +38,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
 
             public static string[] SpecialItemsIds =
             {
-                "equipment_extra_cpu_smb-01", "equipment_extra_cpu_ish-01", "ammunition_specialammo_emp-01"
+                "equipment_extra_cpu_smb-01", "equipment_extra_cpu_ish-01", "ammunition_specialammo_emp-01",
+                "ammunition_firework_fwx-s", "ammunition_firework_fwx-m", "ammunition_firework_fwx-l", "ammunition_firework_ignite"
             };
 
             public static string[] MinesIds =

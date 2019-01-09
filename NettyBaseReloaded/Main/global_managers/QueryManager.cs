@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Threading;
+using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Main.objects;
 using NettyBaseReloaded.WebSocks.objects;
 using Newtonsoft.Json;
@@ -69,6 +70,8 @@ namespace NettyBaseReloaded.Main.global_managers
                         Global.StorageManager.Clans.Add(id, new Clan(id, name, tag, rank));
                     }
 
+                    Global.StorageManager.Clans.Add(0, new Clan(0, "", "", 0));
+
                     var reader  =
                         mySqlClient.ExecuteQueryReader(
                             $"SELECT player_data.PLAYER_ID, player_data.CLAN_ID, player_data.PLAYER_NAME FROM server_clans_members,player_data WHERE player_data.PLAYER_ID=server_clans_members.PLAYER_ID");
@@ -96,7 +99,6 @@ namespace NettyBaseReloaded.Main.global_managers
 
                         Global.StorageManager.ClanDiplomacys.Add(id, diplo);
                     }
-
                 }
             }
             catch (Exception e)
@@ -107,7 +109,7 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public void SaveAll()
         {
-            
+            UpdateOnlinePlayers();
         }
 
         public List<Server> GetServers()
@@ -168,6 +170,21 @@ namespace NettyBaseReloaded.Main.global_managers
         public Clan GetClan(int id)
         {
             return null;
+        }
+
+        public void UpdateOnlinePlayers()
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetGlobalClient())
+                {
+                    mySqlClient.ExecuteNonQuery("UPDATE server_infos SET ONLINE_PLAYERS=" + World.StorageManager.GameSessions.Count + " WHERE ID=" + Global.StorageManager.ServerId);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }

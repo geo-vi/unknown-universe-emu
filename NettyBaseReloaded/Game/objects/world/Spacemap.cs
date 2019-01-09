@@ -108,14 +108,12 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             ObjectsTicker();
             //ZoneTicker();
-            PlayerTicker();
             //NpcTicker();
         }
 
         private DateTime LastTimeTicketObjects = new DateTime();
         public void ObjectsTicker()
         {
-            if (LastTimeTicketObjects.AddSeconds(2) > DateTime.Now) return;
             foreach (var obj in Objects)
             {
                 obj.Value?.Tick();
@@ -146,17 +144,20 @@ namespace NettyBaseReloaded.Game.objects.world
             foreach (var entity in Entities)
             {
                 var player = entity.Value as Player;
-                if (player != null)
+                if (player != null && player.IsLoaded)
                 {
                     if (player.Spacemap != this)
                     {
                         RemoveEntity(player);
                         continue;
                     }
-                    if (player.IsLoaded && player.Storage.LoadedObjects.Count != Objects.Count)
+                    if (player.Storage.LoadedObjects.Count != Objects.Count)
                     {
                         var dicOne = player.Storage.LoadedObjects.ToList();
                         var dicTwo = Objects;
+
+                        if (dicOne == null || dicTwo == null) continue;
+
                         var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
 
                         foreach (var differance in diff)
@@ -245,29 +246,12 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int GetNextObjectId()
         {
-            using (var enumerator = Objects.GetEnumerator())
+            var i = 0;
+            while (true)
             {
-                if (!enumerator.MoveNext())
-                    return 0;
-
-                var nextKeyInSequence = enumerator.Current.Key + 1;
-
-                if (nextKeyInSequence < 1)
-                    throw new InvalidOperationException("The dictionary contains keys less than 0");
-
-                if (nextKeyInSequence != 1)
-                    return 0;
-
-                while (enumerator.MoveNext())
-                {
-                    var key = enumerator.Current.Key;
-                    if (key > nextKeyInSequence)
-                        return nextKeyInSequence;
-
-                    ++nextKeyInSequence;
-                }
-
-                return nextKeyInSequence;
+                if (Objects.ContainsKey(i))
+                    i++;
+                else return i;
             }
         }
 
@@ -441,6 +425,39 @@ namespace NettyBaseReloaded.Game.objects.world
             npc.Controller.Initiate();
             Console.WriteLine("Created spaceball @4-4");
         }
+
+        public void CreateBinaryBot(Vector position, bool santa = false)
+        {
+            var id = GetNextAvailableId();
+            var tickId = -1;
+            var ship = World.StorageManager.Ships[104];
+            var npc = new EventNpc(id, ship.Name,
+                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
+                    new Dictionary<string, Item>()),
+                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                ship.Damage, 90);
+            if (santa)
+            {
+                npc.Hangar.ShipDesign = World.StorageManager.Ships[32];
+            }
+            if (Entities.ContainsKey(npc.Id))
+            {
+                if (Properties.Server.DEBUG)
+                    Console.WriteLine(id + "#Failed adding NPC");
+                return;
+            }
+
+            AddEntity(npc);
+
+            if (!Global.TickManager.Exists(npc))
+            {
+                Global.TickManager.Add(npc, out tickId);
+                npc.SetTickId(tickId);
+            }
+
+            npc.Controller = new NpcController(npc) { CustomSetAI = AILevels.AGGRESSIVE };
+            npc.Controller.Initiate();
+        }
         #endregion
 
         #region Zones
@@ -604,7 +621,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
-            var box = new PalladiumOre(id, hash, type, pos, this, limits);
+            var box = new RegularOre(id, hash, type, pos, this, limits);
             HashedObjects[hash] = box;
             if(AddObject(box))
                 Out.WriteLog("Created Ore["+type+"] on mapId " + Id);
@@ -614,7 +631,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
-            var box = new BonusBox(id, hash, pos, this, limits,true);
+            var box = new BonusBox(id, hash, type, pos, this, limits,true);
             HashedObjects[hash] = box;
             if (AddObject(box))
                 Out.WriteLog("Created Box[" + type + "] on mapId " + Id);

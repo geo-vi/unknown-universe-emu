@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
+using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
@@ -18,6 +20,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
         public override void Execute(Player player)
         {
             var gameSession = World.StorageManager.GameSessions[player.Id];
+            int id = 0;
+            string hash = "";
 
             Cooldown cooldown;
             switch (ItemId)
@@ -40,7 +44,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
                     GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
                     GameClient.SendToPlayerView(player, netty.commands.new_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
-                    player.Controller.Damage?.Area(20, 1000, true, DamageType.PERCENTAGE);
+                    player.Controller.Damage?.Area(20, Damage.Types.MINE, 1000, true, DamageType.PERCENTAGE);
 
                     cooldown = new SMBCooldown();
                     player.Cooldowns.Add(cooldown);
@@ -81,6 +85,29 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                     cooldown = new EMPCooldown();
                     player.Cooldowns.Add(cooldown);
                     cooldown.Send(gameSession);
+                    break;
+                case "ammunition_firework_fwx-s":
+                    id = player.Spacemap.GetNextObjectId();
+                    hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
+                    player.Spacemap.AddObject(new Firework(id, hash, 601, player.Position, player.Spacemap, player));
+                    break;
+                case "ammunition_firework_fwx-m":
+                    id = player.Spacemap.GetNextObjectId();
+                    hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
+                    player.Spacemap.AddObject(new Firework(id, hash, 602, player.Position, player.Spacemap, player));
+                    break;
+                case "ammunition_firework_fwx-l":
+                    id = player.Spacemap.GetNextObjectId();
+                    hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
+                    player.Spacemap.AddObject(new Firework(id, hash, 603, player.Position, player.Spacemap, player));
+                    break;
+                case "ammunition_firework_ignite":
+                    foreach (var entry in player.Spacemap.Objects.Values.Where(x => x is Firework))
+                    {
+                        var firework = entry as Firework;
+                        if (firework.Owner == player)
+                            firework.Detonate();
+                    }
                     break;
             }
         }

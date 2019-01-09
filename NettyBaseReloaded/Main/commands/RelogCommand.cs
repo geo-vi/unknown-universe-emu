@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Chat.objects;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Main.commands
 {
@@ -17,9 +18,15 @@ namespace NettyBaseReloaded.Main.commands
         {
         }
 
-        public override void Execute(ChatSession session, string[] args = null)
+        public override void Execute(ChatSession chatSession, string[] args = null)
         {
-            session.Kick("Relogging...");
+            var gameSession = chatSession.GetEquivilentGameSession();
+            if (gameSession != null)
+            {
+                Packet.Builder.LegacyModule(gameSession, "0|A|STD|Relogging...");
+                Packet.Builder.SendErrorCommand(gameSession, Game.objects.world.SessionErrors.DISCONNECT);
+            }
+            chatSession.Kick("Relogging...");
         }
     }
 }

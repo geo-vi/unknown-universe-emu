@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             Controller = controller;
         }
 
-        public void Tick()
+        public virtual void Tick()
         {
             if (Controller.Npc.CurrentHealth < Controller.Npc.MaxHealth * 0.1)
             {

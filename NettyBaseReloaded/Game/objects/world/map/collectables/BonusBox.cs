@@ -18,7 +18,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         }
 
         private bool Respawning { get; }
-        public BonusBox(int id, string hash, Vector pos, Spacemap map, Vector[] limits, bool respawning = false) : base(id, hash, Types.BONUS_BOX, pos, map, limits)
+        public BonusBox(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning = false) : base(id, hash, type, pos, map, limits)
         {
             Respawning = respawning;
         }

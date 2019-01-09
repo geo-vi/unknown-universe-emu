@@ -8,7 +8,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
 {
     abstract class Tech : PlayerBaseClass
     {
-        public bool Enabled { get; set; }
+        public bool Enabled => !Active && TimeFinish < DateTime.Now;
         public bool Active { get; set; }
 
         public int Count { get; set; }
@@ -17,16 +17,19 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
         protected Tech(Player player) : base(player) { }
 
         public int TimeLeft => Math.Abs((TimeFinish - DateTime.Now).Seconds);
-
+        
         public abstract void Tick();
 
         public abstract void execute();
 
         public virtual void ThreadUpdate() { }
 
+        private Task TechTask;
+
         public void Start()
         {
-            Task.Factory.StartNew(() =>
+            if (TechTask != null && !TechTask.IsCompleted) return;
+            TechTask = Task.Factory.StartNew(() =>
             {
                 while (Active && Player.Controller.Active)
                 {

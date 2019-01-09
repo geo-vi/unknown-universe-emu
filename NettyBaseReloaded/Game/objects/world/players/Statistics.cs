@@ -43,8 +43,27 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public DateTime LAST_TIME_CONNECTED { get; set; }
 
+        public double PacketsPerSec;
+
+        private DateTime ConnectedTime = DateTime.Now;
+
         public Statistics(Player player) : base(player)
         {
+        }
+
+        private async void CalculatePackets()
+        {
+            ConnectedTime = DateTime.Now;
+            while (true)
+            {
+                var session = Player.GetGameSession();
+                if (session != null && session.Active)
+                {
+                    PacketsPerSec = session.Client.SentPackets / (DateTime.Now - ConnectedTime).TotalSeconds;
+                }
+
+                await Task.Delay(1000);
+            }
         }
     }
 }

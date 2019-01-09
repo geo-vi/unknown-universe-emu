@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
         private void execute(GameSession session)
         {
             if (session == null) return;
-            LoginController.Initiate(session);
+            session.Start();
         }
 
         public GameSession SessionBuilder(GameClient client, int userId, string sessionId, bool usingNewClient)

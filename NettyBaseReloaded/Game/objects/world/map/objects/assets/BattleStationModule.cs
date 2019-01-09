@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets.cbs;
@@ -105,7 +106,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
                 FinishInstallation();
         }
 
-        public static BattleStationModule Equip(Player equipper, Module module, Asteroid asteroid, int slotId)
+        public static BattleStationModule Equip(Player equipper, Module module, Asteroid asteroid, int slotId, int installationTime = 45)
         {
             if (module.Equipped || module.Destroyed || slotId == 0 && module.ModuleType != Module.Types.HULL || 
                 slotId == 1 && module.ModuleType != Module.Types.DEFLECTOR || slotId != 0 && module.ModuleType == Module.Types.HULL ||
@@ -123,7 +124,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
                     {
                         InstallationActive = true,
                         InstallationStart = DateTime.Now,
-                        InstallationEnd = DateTime.Now.AddSeconds(45),
+                        InstallationEnd = DateTime.Now.AddSeconds(installationTime),
                         SlotId = slotId,
                         Name = "LTM-LR",
                         Range = 500,
@@ -135,7 +136,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
                     {
                         InstallationActive = true,
                         InstallationStart = DateTime.Now,
-                        InstallationEnd = DateTime.Now.AddSeconds(45),
+                        InstallationEnd = DateTime.Now.AddSeconds(installationTime),
                         SlotId = slotId,
                         Name = "LTM-MR",
                         Range = 700,
@@ -147,7 +148,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
                     {
                         InstallationActive = true,
                         InstallationStart = DateTime.Now,
-                        InstallationEnd = DateTime.Now.AddSeconds(45),
+                        InstallationEnd = DateTime.Now.AddSeconds(installationTime),
                         SlotId = slotId,
                         Name = "LTM-HR",
                         Range = 1000,
@@ -159,7 +160,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
                     {
                         InstallationActive = true,
                         InstallationStart = DateTime.Now,
-                        InstallationEnd = DateTime.Now.AddSeconds(45),
+                        InstallationEnd = DateTime.Now.AddSeconds(installationTime),
                         SlotId = slotId,
                         Clan = equipper.Clan
                     };
@@ -167,6 +168,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
             }
             module.BattleStationModule = battleStationModule;
             return battleStationModule;
+        }
+
+        public static void AddModule(Module module, int battleStationId, int slotId, Clan clan)
+        {//todo ; recode this whole mess up...
         }
 
         public static Vector GetPos(Vector center,int slotId)

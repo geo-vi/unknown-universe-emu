@@ -99,6 +99,8 @@ namespace NettyBaseReloaded.Game.controllers.login
                 
                 Packet.Builder.EventActivationStateCommand(GameSession, 0, true); // Event Christmas 0
                 Packet.Builder.EventActivationStateCommand(GameSession, 1, true); // Event Christmas 1
+                
+                LoadShipEffects(GameSession);
             }
             catch (Exception e)
             {
@@ -151,6 +153,24 @@ namespace NettyBaseReloaded.Game.controllers.login
         private static void CreateAbilities(GameSession session)
         {
             Packet.Builder.AbilityStatusFullCommand(session, session.Player.Abilities);
+        }
+
+        private static void LoadShipEffects(GameSession session)
+        {
+            var player = session.Player;
+            if (player.Visuals.Exists(x => x.Visual == ShipVisuals.RED_GLOW || x.Visual == ShipVisuals.GENERIC_GLOW || x.Visual == ShipVisuals.RED_GLOW)) return;
+            
+            if (player.State.IsOnHomeMap() && player.Hangar.Ship.Id == 3)
+            {
+                var visualEffect = new VisualEffect(player, ShipVisuals.GENERIC_GLOW, DateTime.MaxValue);
+                visualEffect.Start();
+            }
+
+            if (player.RankId == Rank.ADMINISTRATOR)
+            {
+                var visualEffect = new VisualEffect(player, ShipVisuals.RED_GLOW, DateTime.MaxValue);
+                visualEffect.Start();
+            }
         }
     } 
 }

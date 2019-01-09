@@ -65,7 +65,36 @@ namespace NettyBaseReloaded.Game.netty.handlers
                                 case ServerCommands.MINE_ACM:
                                     gameSession.Player.Controller.Miscs.UseItem("ammunition_mine_acm-01");
                                     break;
+                                case ServerCommands.MINE_SAB:
+                                    gameSession.Player.Controller.Miscs.UseItem("ammunition_mine_sabm-01");
+                                    break;
+                                case ServerCommands.MINE_EMP:
+                                    gameSession.Player.Controller.Miscs.UseItem("ammunition_mine_empm-01");
+                                    break;
+                                case ServerCommands.MINE_DDM:
+                                    gameSession.Player.Controller.Miscs.UseItem("ammunition_mine_ddm-01");
+                                    break;
+                                case ServerCommands.MINE_SLM:
+                                    gameSession.Player.Controller.Miscs.UseItem("ammunition_mine_slm-01");
+                                    break;
                             }
+                            break;
+                        case ServerCommands.FIREWORKS:
+                            switch (packet[2])
+                            {
+                                case "1":
+                                    gameSession.Player.Controller.Miscs.UseItem("ammunition_firework_fwx-s");
+                                    break;
+                                case "2":
+                                    gameSession.Player.Controller.Miscs.UseItem("ammunition_firework_fwx-m");
+                                    break;
+                                case "3":
+                                    gameSession.Player.Controller.Miscs.UseItem("ammunition_firework_fwx-l");
+                                    break;
+                            }
+                            break;
+                        case ServerCommands.FIREWORKS_IGNITE:
+                            gameSession.Player.Controller.Miscs.UseItem("ammunition_firework_ignite");
                             break;
                     }
                     break;

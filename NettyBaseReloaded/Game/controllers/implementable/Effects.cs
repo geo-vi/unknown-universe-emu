@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 {
     class Effects : IAbstractCharacter
     {
-        public bool SlowedDown => false;
+        public bool SlowedDown = false;
         
         public Effects(AbstractCharacterController controller) : base(controller)
         {
@@ -49,7 +49,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             cooldown.OnStart(Character);
         }
 
-        public void UpdatePlayerVisibility()
+        public void UpdateCharacterVisibility()
         {
             GameClient.SendPacketSelected(Controller.Character,
                 netty.commands.old_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +

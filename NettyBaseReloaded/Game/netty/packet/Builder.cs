@@ -233,6 +233,18 @@ namespace NettyBaseReloaded.Game.netty.packet
                         .MINE), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
                     new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .MINE_EMP), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .MINE_SAB), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .MINE_DD), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
+                        .MINE_SL), 100));
+                ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
+                    new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
                         .SMARTBOMB), 100));
                 ammo.Add(new netty.commands.old_client.AmmunitionCountModule(
                     new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
@@ -241,6 +253,9 @@ namespace NettyBaseReloaded.Game.netty.packet
                     new netty.commands.old_client.AmmunitionTypeModule(netty.commands.old_client.AmmunitionTypeModule
                         .EMP), 100));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
+                
+                Packet.Builder.LegacyModule(gameSession, "0|A|FWX|FWL|100|100|100");
+
                 player.Settings.Slotbar.GetCategories(player);
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
             }
@@ -505,6 +520,15 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 gameSession.Client.Send(commands.old_client.LegacyModule.write(portal.ToPacket()).Bytes);
             }
+        }
+
+        #endregion
+
+        #region JumpgateRemoveCommand
+
+        public void JumpgateRemoveCommand(GameSession gameSession, Jumpgate portal)
+        {
+            LegacyModule(gameSession, "0|n|p|REM|" + portal.Id);
         }
 
         #endregion
@@ -1074,10 +1098,10 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region MineCreateCommand
 
-        public void MineCreateCommand(GameSession gameSession, string hash, int mineType, Vector pos, bool pulse)
+        public void MineCreateCommand(GameSession gameSession, string hash, int mineType, Vector pos, bool pulse, bool shockWave = false)
         {
             Console.WriteLine(
-                $"0|L|{hash}|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
+                $"0|L|{hash}|{mineType}|{pos.X}|{pos.Y}|{Convert.ToInt32(pulse)}|{Convert.ToInt32(shockWave)}");
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.MineCreateCommand
@@ -1086,7 +1110,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 LegacyModule(gameSession,
-                    $"0|L|{hash}|{mineType}|{gameSession.Player.Position.X}|{gameSession.Player.Position.Y}|{Convert.ToInt32(pulse)}|0");
+                    $"0|L|{hash}|{mineType}|{pos.X}|{pos.Y}|{Convert.ToInt32(pulse)}|{Convert.ToInt32(shockWave)}");
             }
         }
 
@@ -1481,7 +1505,10 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 var formations = new List<int>();
-                for (var i = 0; i <= 13; i++) formations.Add(i);
+                foreach (var droneFormation in gameSession.Player.Equipment.OwnedDroneFormations)
+                {
+                    formations.Add((int)droneFormation);
+                }
                 gameSession.Client.Send(commands.old_client.DroneFormationAvailableFormationsCommand.write(formations)
                     .Bytes);
             }
@@ -2457,6 +2484,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 gameSession.Client.Send(commands.old_client.PetExperiencePointsUpdateCommand.write(exp, maxExp).Bytes);
             }
+        }
+        #endregion
+
+        #region SendErrorCommand
+        public void SendErrorCommand(GameSession gameSession, SessionErrors error)
+        {
+            LegacyModule(gameSession, "ERR|" + (int)error);
         }
         #endregion
     }

@@ -116,7 +116,7 @@ namespace NettyBaseReloaded.Game.controllers
                 if (!Active || StopController) return;
                 if (damage > 0)
                 {
-                    Damage.Area(damage, 200);
+                    Damage.Area(damage, Damage.Types.KAMIKAZE, 200);
                 }
                 Destruction.Kill();
             });

@@ -105,5 +105,5 @@ namespace NettyBaseReloaded.Game.objects.world
             var limit = spacemap.Limits[1];
             return new Vector(limit.X / 2, limit.Y / 2);
         }
-    }
+    }    
 }

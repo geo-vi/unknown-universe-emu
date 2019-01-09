@@ -82,6 +82,7 @@ namespace NettyBaseReloaded.Game.controllers
         {
             try
             {
+                if (Player.Moving) Player.GetGameSession().LastActivityTime = DateTime.Now;
                 foreach (var _class in CheckedClasses.ToList())
                 {
                     _class.Check();

@@ -146,6 +146,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Packet.Builder.AssetRemoveCommand(gameSession, asset);
         }
 
+        public void UnloadPortal(Jumpgate portal)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (LoadedObjects.ContainsKey(portal.Id))
+                LoadedObjects.Remove(portal.Id);
+            Packet.Builder.JumpgateRemoveCommand(gameSession, portal);
+        }
+
         public void Clean()
         {
             LoadedObjects = new Dictionary<int, Object>();
@@ -166,6 +174,22 @@ namespace NettyBaseReloaded.Game.objects.world.players
             if (!LoadedObjects.ContainsKey(mine.Id))
                 LoadedObjects.Add(mine.Id, mine);
             Packet.Builder.MineCreateCommand(gameSession, mine.Hash, mine.MineType, mine.Position, mine.PulseActive);
+        }
+
+        public void LoadFirework(Firework firework)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (!LoadedObjects.ContainsKey(firework.Id))
+                LoadedObjects.Add(firework.Id, firework);
+            Packet.Builder.MineCreateCommand(gameSession, firework.Hash, firework.FireworkType, firework.Position, false);
+        }
+
+        public void UnloadAll()
+        {
+            foreach (var loadedObjects in LoadedObjects.ToList())
+            {
+                Player.UnloadObject(loadedObjects.Value);
+            }
         }
     }
 }

@@ -11,6 +11,8 @@ namespace NettyBaseReloaded.Main.global_storage
 
         public Dictionary<int, ClanDiplomacy> ClanDiplomacys = new Dictionary<int, ClanDiplomacy>();
 
+        public int ServerId => 1; // Global
+
         public Clan GetClan(int id)
         {
             if (Clans.ContainsKey(id))

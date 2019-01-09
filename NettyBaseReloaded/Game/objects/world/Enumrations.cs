@@ -183,5 +183,13 @@ namespace NettyBaseReloaded.Game.objects.world
         HST_01,
         HST_02
     }
+
+    public enum SessionErrors
+    {
+        NONE,
+        DISCONNECT,
+        LOGIN_AGAIN,
+        ALREADY_LOGGED_IN
+    }
     #pragma warning restore 1591
 }

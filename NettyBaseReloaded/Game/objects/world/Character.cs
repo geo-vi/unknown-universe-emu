@@ -247,6 +247,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void UpdateShip()
         {
+            MovementController.Move(this, MovementController.ActualPosition(this));
+
             var sessions =
                 World.StorageManager.GameSessions.Where(
                     x => x.Value.Client != null && InRange(x.Value.Player));
@@ -255,6 +257,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 if (session.Key != Id)
                     Packet.Builder.ShipCreateCommand(session.Value, this);
             }
+
             if (this is Player)
                 Packet.Builder.ShipInitializationCommand(World.StorageManager.GetGameSession(Id));
 

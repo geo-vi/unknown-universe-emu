@@ -8,6 +8,7 @@ using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.map.pois;
+using NettyBaseReloaded.Main;
 using Types = NettyBaseReloaded.Game.objects.world.map.collectables.Types;
 
 namespace NettyBaseReloaded.Game
@@ -27,7 +28,7 @@ namespace NettyBaseReloaded.Game
             Out.WriteLog(DateTime.Now - timeStarted + " : World loaded.");
         }
 
-        private static void InitiateWorld() //todo create ores
+        private static async void InitiateWorld() //todo create ores
         {
             foreach (var map in StorageManager.Spacemaps)
             {
@@ -39,6 +40,7 @@ namespace NettyBaseReloaded.Game
                     case 1: // 1-1
                         map.Value.CreateStation(Faction.MMO, new Vector(1000, 1000));
                         map.Value.CreateQuestGiver(Faction.MMO, new Vector(2500, 2500));
+                        map.Value.CreateOre(OreTypes.PROMETIUM, new Vector(500,500), new Vector[] {new Vector(0,0), new Vector(1000,1000), });
                         break;
                     case 3: // 1-3
                         map.Value.CreateLoW(new Vector(2000, 2000));
@@ -101,11 +103,20 @@ namespace NettyBaseReloaded.Game
                     {
                         map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value), new [] { map.Value.Limits[0], map.Value.Limits[1]});
                     }
+                    for (int i = 0; i <= BonusBox.SPAWN_COUNT; i++)
+                    {
+                        map.Value.CreateBox(Types.WINTER_GIFT_BOX, Vector.Random(map.Value), new[] { map.Value.Limits[0], map.Value.Limits[1] });
+                    }
                 }
             }
             Out.WriteLog("Loaded World");
             StreamMessageToWorld("World fully loaded, have fun playing.");
             DatabaseManager.LoadEvents();
+            while (true)
+            {
+                Global.QueryManager.UpdateOnlinePlayers();
+                await Task.Delay(5000);
+            }
         }
 
         public static void StreamMessageToWorld(string msg)

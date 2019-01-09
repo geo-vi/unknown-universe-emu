@@ -14,6 +14,7 @@ using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Networking;
 using NettyBaseReloaded.Game.objects.world.players.extra.techs;
 using Newtonsoft.Json;
+using NettyBaseReloaded.Game.objects.world.npcs;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -25,25 +26,26 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public ConcurrentDictionary<int, Attacker> Attackers = new ConcurrentDictionary<int, Attacker>();
 
+        public bool Disabled = false;
+
         public Attack(AbstractCharacterController controller) : base(controller)
         {
         }
 
         public override void Tick()
         {
-            if (Attacking)
+            if (Attacking && Character.Selected != null)
+            {
                 LaserAttack();
+                if (Character is Npc npc)
+                {
+                    if (npc is EventNpc)
+                    {
+                        Wizard(npc.SelectedCharacter);
+                    }
+                }
+            }
             RefreshAttackers();
-
-//            if (Character is Player player)
-//            {
-//                var session = player.GetGameSession();
-//                var attackers = GetActiveAttackers();
-//                foreach (var attacker in attackers)
-//                {
-//                    Packet.Builder.LegacyModule(session, "0|A|STD|" + attacker.Name + "\n" + Math.Round(attacker.Position.DistanceTo(player.Position)) + "\n" + attacker.CurrentHealth + "/" + attacker.MaxHealth + "::" + attacker.CurrentShield + "/" + attacker.MaxShield);
-//                }
-//            }
         }
 
         public override void Stop()
@@ -74,7 +76,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void LaserAttack()
         {
             var enemy = Character.Selected;
-            if (!AssembleEnemy(enemy)) return;
+            if (!AssembleEnemy(enemy) || Disabled) return;
 
             var isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
             if (isRsb)
@@ -100,6 +102,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Character is Player)
             {
                 var gameSession = World.StorageManager.GetGameSession(Character.Id);
+                gameSession.LastActivityTime = DateTime.Now;
                 if (gameSession.Player.Equipment.LaserCount() == 0)
                 {
                     Attacking = false; // Will stop attacking if there are no lasers equipped.
@@ -268,7 +271,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void LaunchMissle(string missleId)
         {
             var enemy = Character.Selected;
-            if (!AssembleEnemy(enemy)) return;
+            if (!AssembleEnemy(enemy) && !(missleId == "ammunition_specialammo_pld-8" || missleId == "ammunition_specialammo_dcr-250" || missleId == "ammunition_specialammo_wiz-x")) return;
 
             Player player = Character as Player;
 
@@ -295,12 +298,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     break;
                 case "ammunition_specialammo_pld-8":
                     rocketId = 5;
+                    if (Character.Cooldowns.Any(c => c is PlasmaCooldown)) return;
                     Plasma(enemy as Character);
-                    break;
+                    return;
                 case "ammunition_specialammo_dcr-250":
                     rocketId = 6;
+                    if (Character.Cooldowns.Any(c => c is DecelerationCooldown)) return;
                     Decelerate(enemy as Character);
-                    break;
+                    return;
                 case "ammunition_specialammo_wiz-x":
                     rocketId = 8;
                     if (Character.Cooldowns.Any(c => c is WizardCooldown)) return;
@@ -422,25 +427,25 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             return true;
         }
 
-        private int RandomizeDamage(int baseDmg, double missProbability = 0.25)
+        private int RandomizeDamage(int baseDmg, double hitProbability = 0.90)
         {
             var random = RandomInstance.getInstance(this);
-            double randNums = random.Next(0, 100) / 100;
-            if (missProbability - randNums < 0)
+            double randNums = random.NextDouble();
+            if (hitProbability - randNums < 0)
             {
                 return 0;
             }
+
+            var difference = baseDmg * randNums;
             if (randNums > 0.5)
-                return baseDmg + (int)(baseDmg * randNums);
-            return baseDmg - (int)(baseDmg * randNums);
+                return (int)(baseDmg + difference);
+            return (int)(baseDmg - difference);
         }
 
         public void Wizard(Character target)
         {
-            if (target == null)
-            {
-                return;
-            }
+            if (target == null || Character.Cooldowns.Any(x => x is WizardCooldown)) return;
+
             var wizCooldown = new WizardCooldown();
             if (Character is Player)
                 wizCooldown.Send(World.StorageManager.GetGameSession(Character.Id));
@@ -449,6 +454,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             var wizEffect = new WizardEffect();
             wizEffect.OnStart(target);                
             target.Cooldowns.Add(new WizardEffect());
+
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 8 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 8 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+
         }
 
         public void Decelerate(Character target)
@@ -467,11 +476,30 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             decEffect.OnStart(target);
             target.Cooldowns.Add(new DecelerationEffect());
 
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 7 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 7 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+
         }
 
         public void Plasma(Character target)
         {
-            
+            if (!(target is Player))
+            {
+                return;
+            }
+
+            var cooldown = new PlasmaCooldown();
+            if (Character is Player)
+                cooldown.Send(World.StorageManager.GetGameSession(Character.Id));
+            Character.Cooldowns.Add(new PlasmaCooldown());
+
+            var effect = new PlasmaEffect();
+            effect.OnStart(target);
+            target.Cooldowns.Add(new PlasmaEffect());
+
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 6 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 6 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
+
         }
 
         public void UpdateAttacker(Character target, Player player)
