@@ -28,7 +28,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         }
 
         public override void Stop()
-        {
+        { 
         }
 
         public void Destroy(Character target, DeathType deathType = DeathType.MISC)
