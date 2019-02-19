@@ -16,7 +16,6 @@ namespace NettyBaseReloaded.WebSocks
             wssv.Log.Level = WebSocketSharp.LogLevel.Info;
             wssv.Log.File = Directory.GetCurrentDirectory() + "/wsslog.txt";
             wssv.AddWebSocketService<WebSocketReceiver>("/cmslistener");
-            wssv.AddWebSocketService<WebSocketReceiver>("/external");
             wssv.Start();
         }
     }

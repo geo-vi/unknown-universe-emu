@@ -6,7 +6,19 @@ using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
 {
-    class CitadelDrawFire
+    class CitadelDrawFire : Ability
     {
+        public CitadelDrawFire(Player player) : base(player, Abilities.SHIP_ABILITY_CITADEL_DRAW_FIRE)
+        {
+        }
+
+        public override void Tick()
+        {
+            
+        }
+
+        public override void execute()
+        {
+        }
     }
 }

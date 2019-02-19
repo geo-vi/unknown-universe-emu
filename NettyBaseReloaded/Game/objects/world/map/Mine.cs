@@ -28,6 +28,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public override void Tick()
         {
+            if (Position == null) return;
             var potential = Spacemap.Entities.OrderBy(x => x.Value.Position.DistanceTo(Position));
             var first = potential.FirstOrDefault(x => x.Value.Position.DistanceTo(Position) < 200 && x.Value is Player);
             var player = first.Value as Player;
@@ -47,5 +48,10 @@ namespace NettyBaseReloaded.Game.objects.world.map
         }
 
         public abstract void Effect();
+
+        public void Respawn()
+        {
+            Spacemap.AddObject(this);
+        }
     }
 }

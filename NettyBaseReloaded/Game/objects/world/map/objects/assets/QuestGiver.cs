@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
 
         public void click(Character character)
         {
-            if (character is Player player)
+            if (character is Player player && player.FactionId == Faction)
             {
                 Packet.Builder.QuestGiversAvailableCommand(player.GetGameSession(), this);
             }

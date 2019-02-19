@@ -11,6 +11,7 @@ using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.informations;
 using NettyBaseReloaded.Main.objects;
 
@@ -26,7 +27,7 @@ namespace NettyBaseReloaded.Game.managers
 
         public readonly Dictionary<int, Player> PlayerStorage = new Dictionary<int, Player>();
 
-        public readonly OrePrices OrePrices = new OrePrices(20, 30, 50, 400, 400, 0, 1000, 0, 15);
+        public readonly OrePrices OrePrices = new OrePrices(20, 30, 50, 400, 400, 0, 1000, 0, 5);
         
         public readonly Levels Levels = new Levels();
         
@@ -44,12 +45,18 @@ namespace NettyBaseReloaded.Game.managers
         
         public readonly Dictionary<int, QuestGiver> QuestGivers = new Dictionary<int, QuestGiver>();
 
+        public readonly Dictionary<int, Item> Items = new Dictionary<int, Item>();
+
         #region Catalog
         public readonly Dictionary<int, Ship> ShipReferences = new Dictionary<int, Ship>();
         
         public readonly Dictionary<int, Ship> NpcReferences = new Dictionary<int, Ship>();
         #endregion
 
+        /// <summary>
+        /// Handled purely by TickManager
+        /// </summary>
+        public readonly ConcurrentDictionary<int, Player> TickedPlayers = new ConcurrentDictionary<int, Player>();
 
         public GameSession GetGameSession(int userId)
         {

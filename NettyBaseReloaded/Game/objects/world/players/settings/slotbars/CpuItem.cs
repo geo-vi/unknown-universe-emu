@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NettyBaseReloaded.Game.netty.commands.new_client;
+using Console = System.Console;
 
 namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 {
@@ -12,7 +14,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
         public override void Execute(Player player)
         {
-            player.Extras[ItemId].execute();
+            var cpu = player.Extras.FirstOrDefault(x => x.Value.EquipmentItem.Item.LootId == ItemId).Value;
+            cpu?.execute();
         }
     }
 }

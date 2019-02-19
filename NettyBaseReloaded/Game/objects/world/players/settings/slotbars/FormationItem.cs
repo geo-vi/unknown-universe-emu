@@ -70,7 +70,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
             }
             #endregion Formations Switch
 
-            if (!player.Equipment.OwnedDroneFormations.Contains(formation)) return;
+            if (!player.Equipment.GetDroneFormations().Contains(formation)) return;
 
             player.Formation = formation;
 

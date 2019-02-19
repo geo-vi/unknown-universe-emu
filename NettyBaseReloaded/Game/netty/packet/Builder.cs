@@ -289,7 +289,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Spacemap.Id,
                         (int) player.FactionId,
                         player.Clan.Id, //clan
-                        player.Equipment.LaserCount(), //idk
+                        player.Equipment.GetCurrentConfig().ExpansionStage, //idk
                         player.Information.Premium.Active,
                         player.Information.Experience.Get(),
                         player.Information.Honor.Get(),
@@ -327,7 +327,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         player.Clan.Id,
                         0,
                         0,
-                        player.Equipment.LaserCount(),
+                        player.Equipment.GetCurrentConfig().ExpansionStage,
                         player.Information.Premium.Active,
                         player.Information.Experience.Get(),
                         player.Information.Honor.Get(),
@@ -376,7 +376,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.new_client.ShipCreateCommand.write(pChar.Id,
-                        pChar.Hangar.ShipDesign.ToStringLoot(), pChar.Equipment.LaserCount(), pChar.Clan.Tag,
+                        pChar.Hangar.ShipDesign.ToStringLoot(), pChar.Equipment.GetCurrentConfig().ExpansionStage, pChar.Clan.Tag,
                         pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
                         (int) pChar.FactionId, 0, (int) pChar.RankId, false,
@@ -407,10 +407,10 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     var pChar = (Player) character;
                     bytes = commands.old_client.ShipCreateCommand.write(pChar.Id,
-                            pChar.Hangar.ShipDesign.Id, pChar.Equipment.LaserCount(), pChar.Clan.Tag, pChar.Name,
+                            pChar.Hangar.ShipDesign.Id, pChar.Equipment.GetCurrentConfig().ExpansionStage, pChar.Clan.Tag, pChar.Name,
                             pChar.Position.X,
                             pChar.Position.Y,
-                            (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, false,
+                            (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, pChar.HasWarnBox(),
                             new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)),
                             0,
                             false, false, character.Invisible, 0, 0,
@@ -489,9 +489,9 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (character.Hangar.Drones.Count <= 0) return;
             var command = "0|n|d|" + character.Id + "|" + (int) character.Formation;
 
-            foreach (var d in character.Hangar.Drones)
+            foreach (var d in character.Hangar.Drones.Values)
             {
-                command += "|" + (int) d.DroneType + "|" + d.Level.Id + "|" + d.GetDroneDesign(character);
+                command += "|" + (int) d.DroneType + "|" + d.Level.Id + "|" + d.GetDroneDesign();
             }
 
             if (gameSession.Player.UsingNewClient)
@@ -514,11 +514,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 gameSession.Client.Send(commands.new_client.JumpgateCreateCommand.write(portal.Id, (int) portal.Faction,
                     portal.Gfx, portal.Position.X, portal.Position.Y,
-                    portal.Visible, portal.Working, new List<int>()).Bytes);
+                    portal.GetVisibility(gameSession.Player), portal.Working, new List<int>()).Bytes);
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.LegacyModule.write(portal.ToPacket()).Bytes);
+                gameSession.Client.Send(commands.old_client.LegacyModule.write(portal.ToPacket(gameSession.Player)).Bytes);
             }
         }
 
@@ -1048,7 +1048,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 var ships = new List<commands.new_client.ShipWarpModule>();
 
-                foreach (var hangar in gameSession.Player.Equipment.Hangars)
+                foreach (var hangar in gameSession.Player.Equipment.Hangars.Where(x => !x.Value.Active))
                 {
                     ships.Add(new commands.new_client.ShipWarpModule(hangar.Value.Ship.Id,
                         hangar.Value.Ship.ToStringLoot(), hangar.Value.Ship.Name, 0, 0, hangar.Key,
@@ -1100,8 +1100,6 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void MineCreateCommand(GameSession gameSession, string hash, int mineType, Vector pos, bool pulse, bool shockWave = false)
         {
-            Console.WriteLine(
-                $"0|L|{hash}|{mineType}|{pos.X}|{pos.Y}|{Convert.ToInt32(pulse)}|{Convert.ToInt32(shockWave)}");
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.MineCreateCommand
@@ -1311,15 +1309,97 @@ namespace NettyBaseReloaded.Game.netty.packet
             {
                 var boostList = new List<commands.old_client.BoosterUpdateModule>();
                 if (gameSession.Player.BoostedDamage > 0)
+                {
                     boostList.Add(new commands.old_client.BoosterUpdateModule(
                         new commands.old_client.BoostedAttributeTypeModule((short) Booster.Types.DAMAGE),
                         Convert.ToSingle(gameSession.Player.BoostedDamage * 100),
                         new List<commands.old_client.BoosterTypeModule>()));
-                var pBoosterList = gameSession.Player.Boosters.Concat(gameSession.Player.InheritedBoosters.Values);
+                }
+
+                if (gameSession.Player.BoostedHealth > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.MAXHP),
+                        Convert.ToSingle(gameSession.Player.BoostedHealth * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+
+                }
+
+                if (gameSession.Player.BoostedShield > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.SHIELD),
+                        Convert.ToSingle(gameSession.Player.BoostedShield * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+
+                }
+
+                if (gameSession.Player.BoostedQuestReward > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.QUESTREWARD),
+                        Convert.ToSingle(gameSession.Player.BoostedQuestReward * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+                }
+
+                if (gameSession.Player.BoostedBoxRewards > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.BONUSBOXES),
+                        Convert.ToSingle(gameSession.Player.BoostedBoxRewards * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+                }
+
+                if (gameSession.Player.BoostedRepairSpeed > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.REPAIR),
+                        Convert.ToSingle(gameSession.Player.BoostedRepairSpeed * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+
+                }
+
+                if (gameSession.Player.BoostedHonorReward > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.HONOUR),
+                        Convert.ToSingle(gameSession.Player.BoostedHonorReward * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+
+                }
+
+                if (gameSession.Player.BoostedExpReward > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.EP),
+                        Convert.ToSingle(gameSession.Player.BoostedExpReward * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+
+                }
+
+                if (gameSession.Player.BoostedResources > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.RESOURCE),
+                        Convert.ToSingle(gameSession.Player.BoostedResources * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+
+                }
+
+                if (gameSession.Player.BoostedShieldRegen > 0)
+                {
+                    boostList.Add(new commands.old_client.BoosterUpdateModule(
+                        new commands.old_client.BoostedAttributeTypeModule((short)Booster.Types.SHIELDRECHARGE),
+                        Convert.ToSingle(gameSession.Player.BoostedShieldRegen * 100),
+                        new List<commands.old_client.BoosterTypeModule>()));
+
+                }
+
+                var pBoosterList = gameSession.Player.Boosters.Values.Concat(gameSession.Player.InheritedBoosters.Values);
                 foreach (var booster in pBoosterList)
                 {
-                    boostList.Find(x => x.attributeType.typeValue == (short) booster.Type).boosterTypes
-                        .Add(new commands.old_client.BoosterTypeModule((short) booster.BoosterType));
+                    boostList.Find(x => x.attributeType.typeValue == (short)booster.Type).boosterTypes
+                        .Add(new commands.old_client.BoosterTypeModule((short)booster.BoosterType));
                 }
 
                 gameSession.Client.Send(commands.old_client.AttributeBoosterUpdateCommand.write(boostList).Bytes);
@@ -1372,7 +1452,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                LegacyModule(gameSession, "0|l|" + gameSession.Player.Id);
+                LegacyModule(gameSession, "0|l");
             }
         }
 
@@ -1438,24 +1518,31 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                StringBuilder builder =
-                    new StringBuilder(
-                        $"0|ps|init|grp|{player.Group.Id}|{player.Group.Members.Count + 1}|{Group.DEFAULT_MAX_GROUP_SIZE}|{Convert.ToInt32(player.Group.LeaderInvitesOnly)}|{player.Group.LootMode}");
-                var groupLeader = player.Group.Leader;
-
-                builder.Append(
-                    $"|{Encode.Base64(groupLeader.Name)}|{groupLeader.Id}|{groupLeader.CurrentHealth}|{groupLeader.MaxHealth}|{groupLeader.CurrentNanoHull}|{groupLeader.MaxNanoHull}|{groupLeader.CurrentShield}|{groupLeader.MaxShield}|{groupLeader.Spacemap.Id}|{groupLeader.Position.X}|{groupLeader.Position.Y}|{groupLeader.Information.Level.Id}|0|{Convert.ToInt32(groupLeader.Invisible)}|{Convert.ToInt32(groupLeader.Controller.Attack.Attacking)}|{Convert.ToInt32(groupLeader.FactionId)}|{Convert.ToInt32((groupLeader.Selected as Player)?.Hangar.Ship.Id)}|{groupLeader.Clan.Tag}|{groupLeader.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupLeader.Id) == null)}|");
-
-                foreach (var grpMember in player.Group.Members)
+                if (gameSession.Player.Group != null)
                 {
-                    var groupMember = grpMember.Value;
-                    if (groupMember.Id == player.Group.Leader.Id) continue;
+                    StringBuilder builder =
+                        new StringBuilder(
+                            $"0|ps|init|grp|{player.Group.Id}|{player.Group.Members.Count + 1}|{Group.DEFAULT_MAX_GROUP_SIZE}|{Convert.ToInt32(player.Group.LeaderInvitesOnly)}|{player.Group.LootMode}");
+                    var groupLeader = player.Group.Leader;
 
                     builder.Append(
-                        $"|{Encode.Base64(groupMember.Name)}|{groupMember.Id}|{groupMember.CurrentHealth}|{groupMember.MaxHealth}|{groupMember.CurrentNanoHull}|{groupMember.MaxNanoHull}|{groupMember.CurrentShield}|{groupMember.MaxShield}|{groupMember.Spacemap.Id}|{groupMember.Position.X}|{groupMember.Position.Y}|{groupMember.Information.Level.Id}|0|{Convert.ToInt32(groupMember.Invisible)}|{Convert.ToInt32(groupMember.Controller.Attack.Attacking)}|{Convert.ToInt32(groupMember.FactionId)}|{Convert.ToInt32((groupLeader.Selected as Player)?.Hangar.Ship.Id)}|{groupMember.Clan.Tag}|{groupMember.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupMember.Id) == null)}|");
-                }
+                        $"|{Encode.Base64(groupLeader.Name)}|{groupLeader.Id}|{groupLeader.CurrentHealth}|{groupLeader.MaxHealth}|{groupLeader.CurrentNanoHull}|{groupLeader.MaxNanoHull}|{groupLeader.CurrentShield}|{groupLeader.MaxShield}|{groupLeader.Spacemap.Id}|{groupLeader.Position.X}|{groupLeader.Position.Y}|{groupLeader.Information.Level.Id}|0|{Convert.ToInt32(groupLeader.Invisible)}|{Convert.ToInt32(groupLeader.Controller.Attack.Attacking)}|{Convert.ToInt32(groupLeader.FactionId)}|{Convert.ToInt32((groupLeader.Selected as Player)?.Hangar.Ship.Id)}|{groupLeader.Clan.Tag}|{groupLeader.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupLeader.Id) == null)}|");
 
-                LegacyModule(gameSession, builder.ToString());
+                    foreach (var grpMember in player.Group.Members)
+                    {
+                        var groupMember = grpMember.Value;
+                        if (groupMember.Id == player.Group.Leader.Id) continue;
+
+                        builder.Append(
+                            $"|{Encode.Base64(groupMember.Name)}|{groupMember.Id}|{groupMember.CurrentHealth}|{groupMember.MaxHealth}|{groupMember.CurrentNanoHull}|{groupMember.MaxNanoHull}|{groupMember.CurrentShield}|{groupMember.MaxShield}|{groupMember.Spacemap.Id}|{groupMember.Position.X}|{groupMember.Position.Y}|{groupMember.Information.Level.Id}|0|{Convert.ToInt32(groupMember.Invisible)}|{Convert.ToInt32(groupMember.Controller.Attack.Attacking)}|{Convert.ToInt32(groupMember.FactionId)}|{Convert.ToInt32((groupLeader.Selected as Player)?.Hangar.Ship.Id)}|{groupMember.Clan.Tag}|{groupMember.Hangar.Ship.Id}|{Convert.ToInt32(World.StorageManager.GetGameSession(groupMember.Id) == null)}|");
+                    }
+
+                    LegacyModule(gameSession, builder.ToString());
+                }
+                else
+                {
+                    LegacyModule(gameSession, "0|ps|nüscht");
+                }
             }
         }
 
@@ -1505,7 +1592,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 var formations = new List<int>();
-                foreach (var droneFormation in gameSession.Player.Equipment.OwnedDroneFormations)
+                foreach (var droneFormation in gameSession.Player.Equipment.GetDroneFormations())
                 {
                     formations.Add((int)droneFormation);
                 }
@@ -1709,38 +1796,38 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                List<commands.old_client.StationModuleModule> installedModules = new List<StationModuleModule>();
-                foreach (var moduleEquipped in asteroid.EquippedModules.Values.Where(x =>
-                    x.Clan == gameSession.Player.Clan))
-                {
-                    installedModules.Add(new commands.old_client.StationModuleModule(asteroid.Id, moduleEquipped.Id,
-                        moduleEquipped.SlotId, (short) moduleEquipped.ModuleType, moduleEquipped.Core.CurrentHealth,
-                        moduleEquipped.Core.MaxHealth, moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield,
-                        moduleEquipped.UpgradeLevel, moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(),
-                        moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(),
-                        moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
-                }
+                //List<commands.old_client.StationModuleModule> installedModules = new List<StationModuleModule>();
+                //foreach (var moduleEquipped in asteroid.EquippedModules.Values.Where(x =>
+                //    x.Clan == gameSession.Player.Clan))
+                //{
+                //    installedModules.Add(new commands.old_client.StationModuleModule(asteroid.Id, moduleEquipped.Id,
+                //        moduleEquipped.SlotId, (short) moduleEquipped.ModuleType, moduleEquipped.Core.CurrentHealth,
+                //        moduleEquipped.Core.MaxHealth, moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield,
+                //        moduleEquipped.UpgradeLevel, moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(),
+                //        moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(),
+                //        moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
+                //}
 
-                List<commands.old_client.StationModuleModule> ownedModules = new List<StationModuleModule>();
-                foreach (var ownedModule in gameSession.Player.Equipment.Modules.Values)
-                {
-                    if (!ownedModule.Equipped)
-                        ownedModules.Add(new commands.old_client.StationModuleModule(
-                            ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1,
-                            (short) ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1,
-                            -1, -1, 1));
-                }
+                //List<commands.old_client.StationModuleModule> ownedModules = new List<StationModuleModule>();
+                //foreach (var ownedModule in gameSession.Player.Equipment.Modules.Values)
+                //{
+                //    if (!ownedModule.Equipped)
+                //        ownedModules.Add(new commands.old_client.StationModuleModule(
+                //            ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1,
+                //            (short) ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1,
+                //            -1, -1, 1));
+                //}
 
-                var bestProgresing = asteroid.BestProgressingClan();
-                var bestClan = bestProgresing.Item1 ?? gameSession.Player.Clan;
-                gameSession.Client.Send(commands.old_client.BattleStationBuildingUiInitializationCommand.write(
-                    asteroid.Id, asteroid.AssignedBattleStationId, asteroid.Name,
-                    new commands.old_client.AsteroidProgressCommand(asteroid.AssignedBattleStationId,
-                        asteroid.GetClanProgress(gameSession.Player.Clan), asteroid.GetClanProgress(bestClan),
-                        gameSession.Player.Clan.Name, bestClan.Name,
-                        new commands.old_client.EquippedModulesModule(installedModules),
-                        asteroid.Buildable(gameSession.Player)),
-                    new commands.old_client.AvailableModulesCommand(ownedModules), 0, 120, 1).Bytes);
+                //var bestProgresing = asteroid.BestProgressingClan();
+                //var bestClan = bestProgresing.Item1 ?? gameSession.Player.Clan;
+                //gameSession.Client.Send(commands.old_client.BattleStationBuildingUiInitializationCommand.write(
+                //    asteroid.Id, asteroid.AssignedBattleStationId, asteroid.Name,
+                //    new commands.old_client.AsteroidProgressCommand(asteroid.AssignedBattleStationId,
+                //        asteroid.GetClanProgress(gameSession.Player.Clan), asteroid.GetClanProgress(bestClan),
+                //        gameSession.Player.Clan.Name, bestClan.Name,
+                //        new commands.old_client.EquippedModulesModule(installedModules),
+                //        asteroid.Buildable(gameSession.Player)),
+                //    new commands.old_client.AvailableModulesCommand(ownedModules), 0, 120, 1).Bytes);
             }
         }
 
@@ -1775,42 +1862,42 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                List<commands.old_client.StationModuleModule> equipment = new List<StationModuleModule>();
-                foreach (var moduleEquipped in battleStation.EquippedModules.Values)
-                {
-                    equipment.Add(new commands.old_client.StationModuleModule(battleStation.BattleStationId,
-                        moduleEquipped.Id, moduleEquipped.SlotId, (short) moduleEquipped.ModuleType,
-                        moduleEquipped.Core.CurrentHealth, moduleEquipped.Core.MaxHealth,
-                        moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield, moduleEquipped.UpgradeLevel,
-                        moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(),
-                        moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(),
-                        moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
-                }
+                //List<commands.old_client.StationModuleModule> equipment = new List<StationModuleModule>();
+                //foreach (var moduleEquipped in battleStation.EquippedModules.Values)
+                //{
+                //    equipment.Add(new commands.old_client.StationModuleModule(battleStation.BattleStationId,
+                //        moduleEquipped.Id, moduleEquipped.SlotId, (short) moduleEquipped.ModuleType,
+                //        moduleEquipped.Core.CurrentHealth, moduleEquipped.Core.MaxHealth,
+                //        moduleEquipped.Core.CurrentShield, moduleEquipped.Core.MaxShield, moduleEquipped.UpgradeLevel,
+                //        moduleEquipped.Owner.Name, moduleEquipped.GetInstallationSeconds(),
+                //        moduleEquipped.GetInstallationSecondsLeft(), moduleEquipped.GetEmergencyRepairSecondsLeft(),
+                //        moduleEquipped.GetEmergencyRepairSeconds(), moduleEquipped.EmergencyRepairCost));
+                //}
 
-                List<commands.old_client.StationModuleModule> availableModules = new List<StationModuleModule>();
-                foreach (var ownedModule in gameSession.Player.Equipment.Modules.Values)
-                {
-                    if (!ownedModule.Equipped)
-                        availableModules.Add(new commands.old_client.StationModuleModule(
-                            ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1,
-                            (short) ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1,
-                            -1, -1, 1));
-                }
+                //List<commands.old_client.StationModuleModule> availableModules = new List<StationModuleModule>();
+                //foreach (var ownedModule in gameSession.Player.Equipment.Modules.Values)
+                //{
+                //    if (!ownedModule.Equipped)
+                //        availableModules.Add(new commands.old_client.StationModuleModule(
+                //            ownedModule.EquippedBattleStationId, ownedModule.Item.Id, -1,
+                //            (short) ownedModule.ModuleType, 1000, 1000, 1000, 1000, 16, gameSession.Player.Name, -1, -1,
+                //            -1, -1, 1));
+                //}
 
-                gameSession.Client.Send(commands.old_client.BattleStationManagementUiInitializationCommand.write(
-                    battleStation.Id, battleStation.BattleStationId, battleStation.Name, battleStation.Clan.Name,
-                    new commands.old_client.FactionModule((short) battleStation.Faction),
-                    new commands.old_client.BattleStationStatusCommand(battleStation.Id, battleStation.BattleStationId,
-                        battleStation.Name, battleStation.DeflectorShieldActive,
-                        battleStation.GetDeflectorShieldSeconds(), battleStation.DeflectorShieldSecondsMax(),
-                        battleStation.GetAttackRating(), battleStation.GetDefenceRating(),
-                        battleStation.GetRepairRating(), battleStation.GetHonorBoostRating(),
-                        battleStation.GetExperienceBoostRating(), battleStation.GetDamageBoostRating(),
-                        battleStation.DeflectorShieldRate, battleStation.RepairPrice,
-                        new commands.old_client.EquippedModulesModule(equipment)),
-                    new commands.old_client.AvailableModulesCommand(availableModules), battleStation.DeflectorShieldMin,
-                    battleStation.DeflectorShieldMax, battleStation.DeflectorShieldIncrement,
-                    battleStation.DeflectorDeactivationPossible()).Bytes);
+                //gameSession.Client.Send(commands.old_client.BattleStationManagementUiInitializationCommand.write(
+                //    battleStation.Id, battleStation.BattleStationId, battleStation.Name, battleStation.Clan.Name,
+                //    new commands.old_client.FactionModule((short) battleStation.Faction),
+                //    new commands.old_client.BattleStationStatusCommand(battleStation.Id, battleStation.BattleStationId,
+                //        battleStation.Name, battleStation.DeflectorShieldActive,
+                //        battleStation.GetDeflectorShieldSeconds(), battleStation.DeflectorShieldSecondsMax(),
+                //        battleStation.GetAttackRating(), battleStation.GetDefenceRating(),
+                //        battleStation.GetRepairRating(), battleStation.GetHonorBoostRating(),
+                //        battleStation.GetExperienceBoostRating(), battleStation.GetDamageBoostRating(),
+                //        battleStation.DeflectorShieldRate, battleStation.RepairPrice,
+                //        new commands.old_client.EquippedModulesModule(equipment)),
+                //    new commands.old_client.AvailableModulesCommand(availableModules), battleStation.DeflectorShieldMin,
+                //    battleStation.DeflectorShieldMax, battleStation.DeflectorShieldIncrement,
+                //    battleStation.DeflectorDeactivationPossible()).Bytes);
             }
         }
 
@@ -2124,12 +2211,12 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         #region PetBuffCommand
 
-        public void PetBuffCommand(GameSession gameSession, short effectAction, short effectId, List<int> addingParameters)
+        public void PetBuffCommand(GameSession gameSession, bool add, BuffPattern effectId, List<int> addingParameters)
         {
             if (gameSession.Player.UsingNewClient) { }
             else
             {
-                gameSession.Client.Send(netty.commands.old_client.PetBuffCommand.write(effectAction, effectId, addingParameters).Bytes);
+                gameSession.Client.Send(netty.commands.old_client.PetBuffCommand.write((short)(add ? 0 : 1), (short)effectId, addingParameters).Bytes);
             }
         }
         #endregion
@@ -2245,14 +2332,14 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.AttributeOreCountUpdateCommand.write(Cargo.ParseOld(cargo.Seprom, cargo.Promerium, cargo.Xenomit, cargo.Duranium, cargo.Prometid, cargo.Terbium, cargo.Endurium, cargo.Prometium)).Bytes);
+                gameSession.Client.Send(commands.old_client.AttributeOreCountUpdateCommand.write(Cargo.ParseOld(cargo.Palladium, cargo.Seprom, cargo.Promerium, cargo.Xenomit, cargo.Duranium, cargo.Prometid, cargo.Terbium, cargo.Endurium, cargo.Prometium)).Bytes);
             }
         }
         #endregion
 
         #region LMCollectResourcesCommand
 
-        public void LMCollectResourcesCommand(GameSession gameSession, int seprom, int promerium, int xenomit, int duranium, int prometid, int terbium, int endurium, int prometium)
+        public void LMCollectResourcesCommand(GameSession gameSession,int palla, int seprom, int promerium, int xenomit, int duranium, int prometid, int terbium, int endurium, int prometium)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -2260,7 +2347,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.LMCollectResourcesCommand.write(new LogMessengerPriorityModule(0), Cargo.ParseOld(seprom, promerium, xenomit, duranium, prometid, terbium, endurium, prometium)).Bytes);
+                gameSession.Client.Send(commands.old_client.LMCollectResourcesCommand.write(new LogMessengerPriorityModule(0), Cargo.ParseOld(palla, seprom, promerium, xenomit, duranium, prometid, terbium, endurium, prometium)).Bytes);
             }
         }
         #endregion
@@ -2491,6 +2578,89 @@ namespace NettyBaseReloaded.Game.netty.packet
         public void SendErrorCommand(GameSession gameSession, SessionErrors error)
         {
             LegacyModule(gameSession, "ERR|" + (int)error);
+        }
+        #endregion
+
+        #region MapRemovePOICommand
+
+        public void MapRemovePOICommand(GameSession gameSession, POI poi)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.MapRemovePOICommand.write(poi.Id).Bytes);
+            }
+        }
+        #endregion
+
+        #region CreateBannerAd
+
+        public void CreateBannerAd(GameSession gameSession, string paymentId, string direction = "n")
+        {
+            Packet.Builder.LegacyModule(gameSession, "0|UI|CW|AD|||" + direction + "|" + paymentId);
+        }
+        #endregion
+
+        #region PetGearResetCommand
+
+        public void PetGearResetCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.PetGearResetCommand.write().Bytes);
+            }
+        }
+        #endregion
+
+        #region ShipWarpCanceledCommand
+
+        public void ShipWarpCanceledCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.ShipWarpCanceledCommand.write().Bytes);
+            }
+        }
+        #endregion
+
+        #region ShipWarpCompletedCommand
+
+        public void ShipWarpCompletedCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.ShipWarpCompletedCommand.write().Bytes);
+            }
+        }
+        #endregion
+
+        #region ShipWarpNotAllowedCommand
+
+        public void ShipWarpNotAllowedCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.ShipWarpNotAllowedCommand.write().Bytes);
+            }
         }
         #endregion
     }

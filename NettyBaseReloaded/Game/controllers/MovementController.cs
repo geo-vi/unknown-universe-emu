@@ -58,8 +58,10 @@ namespace NettyBaseReloaded.Game.controllers
 
                 return (int)time;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine("movement");
+                Console.WriteLine(e);
             }
             return -1;
         }

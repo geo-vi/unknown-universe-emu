@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.map.collectables.rewards;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Networking;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.objects.world.map.collectables
 {
     class BonusBox : Collectable
     {
-        public static List<Tuple<string, int>> REWARDS = new List<Tuple<string, int>>();
+        public static List<PotentialReward> REWARDS = new List<PotentialReward>();
         public static int SPAWN_COUNT = 0;
         public static int PVP_SPAWN_COUNT = 0;
 
@@ -18,6 +21,9 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         }
 
         private bool Respawning { get; }
+
+        public override bool PetCanCollect => true;
+
         public BonusBox(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning = false) : base(id, hash, type, pos, map, limits)
         {
             Respawning = respawning;
@@ -32,24 +38,53 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         protected override void Reward(Player player)
         {
-            var random = new System.Random();
-            var randomRewardIndex = random.Next(0, REWARDS.Count - 1);
-            var rewardListIndex = REWARDS[randomRewardIndex];
-            var lootId = rewardListIndex.Item1;
-            var amount = rewardListIndex.Item2;
-            RewardType type;
-            Reward reward;
-            if (RewardType.TryParse(lootId, true, out type))
+            try
             {
-                reward = new Reward(type, amount);
+                var random = RandomInstance.getInstance(this);
+                //todo
+                //var n = random.NextDouble();
+                //foreach (var potentialReward in REWARDS.OrderBy(x => x.Chance))
+                //{
+                //    Reward reward = null;
+                //    RewardType type;
+                //    if (Enum.TryParse(potentialReward.LootId, true, out type))
+                //    {
+                //        reward = new Reward(type, potentialReward.Amount);
+                //    }
+                //    else
+                //    {
+                //        type = RewardType.ITEM;
+                //        if (potentialReward.LootId.StartsWith("ammunition"))
+                //            type = RewardType.AMMO;
+                //        reward = new Reward(type, Item.Find(potentialReward.LootId), potentialReward.Amount);
+                //    }
+                //    reward.ParseRewards(player);
+                //}
+                //TEMP
+                var index = random.Next(0, REWARDS.Count - 1);
+                var potentialReward = REWARDS[index];
+                Reward reward = null;
+                RewardType type;
+                if (Enum.TryParse(potentialReward.LootId, true, out type))
+                {
+                    reward = new Reward(type, potentialReward.Amount);
+                }
+                else
+                {
+                    type = RewardType.ITEM;
+                    if (potentialReward.LootId.StartsWith("ammunition"))
+                        type = RewardType.AMMO;
+                    reward = new Reward(type, Item.Find(potentialReward.LootId), potentialReward.Amount);
+                }
+                if (player.BoostedBoxRewards == 1)
+                    reward.ParseRewards(player, 2);
+                else reward.ParseRewards(player);
             }
-            else
+            catch (Exception e)
             {
-               if (lootId.Contains("ammunition"))
-                    type = RewardType.AMMO;
-               reward = new Reward(type, new Item(-1, lootId, amount), amount);
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
             }
-            reward.ParseRewards(player);
         }
     }
 }

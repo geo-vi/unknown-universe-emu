@@ -47,7 +47,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 if (Character is Pet pet)
                 {
                     var gameSession = pet.GetOwner().GetGameSession();
-                    if (gameSession == null) return;
+                    if (gameSession == null || !pet.Controller.Active) return;
 
                     Packet.Builder.PetHitpointsUpdateCommand(gameSession, pet.CurrentHealth, pet.MaxHealth, false);
 
@@ -69,10 +69,10 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         {
             try
             {
-                if (Character.Controller == null || LastRegeneratedTime.AddSeconds(1) >= DateTime.Now) return;
+                if (Character.Controller == null || !Character.Controller.Active || LastRegeneratedTime.AddSeconds(1) >= DateTime.Now) return;
                 LastRegeneratedTime = DateTime.Now;
 
-                if (Character is Npc && Character.LastCombatTime.AddSeconds(30) < DateTime.Now)
+                if (Character is Npc && Character.LastCombatTime.AddSeconds(5) < DateTime.Now && Character.CurrentHealth < Character.MaxHealth)
                 {
                     Character.Controller.Heal.Execute(Character.MaxHealth / 100);
                 }

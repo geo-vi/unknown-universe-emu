@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.objects;
+using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
@@ -18,9 +19,10 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             var orePrices = World.StorageManager.OrePrices;
 
-            if (gameSession.Player.State.InTradeArea)
+            if (gameSession.Player.State.InTradeArea || gameSession.Player.Extras.Any(x => x.Value is TradeDrone))
             {
-                Packet.Builder.OrePriceCommand(gameSession, orePrices.Prometium, orePrices.Endurium, orePrices.Terbium, orePrices.Prometid, orePrices.Duranium, orePrices.Promerium, 0);
+                var palladiumPrice = gameSession.Player.Spacemap.Id == 92 ? 15 : -1;
+                Packet.Builder.OrePriceCommand(gameSession, orePrices.Prometium, orePrices.Endurium, orePrices.Terbium, orePrices.Prometid, orePrices.Duranium, orePrices.Promerium, palladiumPrice);
                 Packet.Builder.TradeWindowActivationCommand(gameSession);
             }
         }

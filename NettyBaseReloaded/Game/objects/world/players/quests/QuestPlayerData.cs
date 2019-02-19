@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.handlers;
@@ -32,10 +33,20 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
             }
         }
 
+        public int SelectedQuestId = 0;
+
         public QuestPlayerData(Player player) : base(player)
         {
             Conditions = World.DatabaseManager.LoadPlayerQuestData(player);
             LoadCompletedQuests();
+            SelectedQuestId = GetPrimaryQuest();
+        }
+
+        private int GetPrimaryQuest()
+        {
+            var activeCond = ActiveConditions.FirstOrDefault();
+            if (activeCond.Value == null) return 0;
+            return activeCond.Value.QuestId;
         }
 
         private void LoadCompletedQuests()
@@ -62,6 +73,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
 
         public void AddKill(IAttackable attackable)
         {
+            bool added = false;
             foreach (var activeCondition in ActiveConditions.Values)
             {
                 var quest = FindQuestByState(activeCondition);
@@ -79,7 +91,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
                         {
                             npc = (Npc) attackable;
                             var matchId = condition.Matches[0];
-                            if (World.StorageManager.NpcReferences.ContainsKey(matchId) && World.StorageManager.NpcReferences[matchId] == npc.Hangar.Ship)
+                            if (World.StorageManager.NpcReferences.ContainsKey(matchId) && World.StorageManager.NpcReferences[matchId] == npc.Hangar.Ship && !added)
                             {
                                 if (activeCondition.CurrentValue + 1 == condition.TargetValue && condition.Mandatory)
                                 {
@@ -87,6 +99,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
                                     activeCondition.Active = false;
                                 }
                                 activeCondition.CurrentValue++;
+                                Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
+                                World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
+                                added = true;
                             }
                         }
                         break;
@@ -99,7 +114,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
                             for (var i = 1; i < matches.Count; i++)
                             {
                                 var matchId = matches[i];
-                                if (World.StorageManager.NpcReferences.ContainsKey(matchId) && World.StorageManager.NpcReferences[matchId] == npc.Hangar.Ship)
+                                if (World.StorageManager.NpcReferences.ContainsKey(matchId) && World.StorageManager.NpcReferences[matchId] == npc.Hangar.Ship && !added)
                                 {
                                     add = true;
                                 }
@@ -112,6 +127,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
                                     activeCondition.Active = false;
                                 }
                                 activeCondition.CurrentValue++;
+                                Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
+                                World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
+                                added = true;
                             }
                         }
                         break;
@@ -124,9 +142,15 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
                             for (var i = 1; i < matches.Count; i++)
                             {
                                 var matchId = matches[i];
-                                if (World.StorageManager.ShipReferences.ContainsKey(matchId) && World.StorageManager.ShipReferences[matchId] == player.Hangar.Ship)
+                                if (World.StorageManager.ShipReferences.ContainsKey(matchId) && World.StorageManager.ShipReferences[matchId] == player.Hangar.Ship && !added)
                                 {
-                                    add = true;
+                                    if (matches.Count > 2)
+                                    {
+                                        var targetFac = matches[2];
+                                        if (attackable.FactionId == (Faction) targetFac)
+                                            add = true;
+                                    }
+                                    else add = true;
                                 }
                             }
                             if (add)
@@ -138,64 +162,89 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
                                 }
 
                                 activeCondition.CurrentValue++;
+                                Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
+                                World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
+                                added = true;
                             }
                         }
                         break;
                 }
-                Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
                 if (quest.IsComplete(Conditions))
                 {
                     CompleteQuest(quest);
                 }
-                World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
             }
         }
 
         public void AddCollection(Collectable collectable)
         {
-            foreach (var activeCondition in ActiveConditions.Values)
+            try
             {
-                var quest = FindQuestByState(activeCondition);
-                var condition = quest.Root.Elements.Find(x => x.Condition.Id == activeCondition.ConditionId).Condition;
-                if (condition.Type == QuestConditions.COLLECT_BONUS_BOX)
+                bool added = false;
+                foreach (var activeCondition in ActiveConditions.Values)
                 {
-                    if (activeCondition.CurrentValue + 1 == condition.TargetValue)
+                    if (activeCondition.QuestId != SelectedQuestId) continue;
+                    var quest = FindQuestByState(activeCondition);
+                    var condition = quest.Root.Elements.Find(x => x.Condition.Id == activeCondition.ConditionId)
+                        .Condition;
+                    if (condition.Type == QuestConditions.COLLECT_BONUS_BOX && !added)
                     {
-                        activeCondition.Completed = true;
-                        activeCondition.Active = false;
+                        if (activeCondition.CurrentValue + 1 == condition.TargetValue)
+                        {
+                            activeCondition.Completed = true;
+                            activeCondition.Active = false;
+                        }
+
+                        activeCondition.CurrentValue++;
+                        Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
+                        World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
+                        added = true;
                     }
-                    activeCondition.CurrentValue++;
+                    if (quest.IsComplete(Conditions))
+                    {
+                        CompleteQuest(quest);
+                    }
                 }
-                Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
-                if (quest.IsComplete(Conditions))
-                {
-                    CompleteQuest(quest);
-                }
-                World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e + ":Collection\n" + e.Message);
             }
         }
 
         public void AddResourceCollection(Ore ore)
         {
-            foreach (var activeCondition in ActiveConditions.Values)
+            try
             {
-                var quest = FindQuestByState(activeCondition);
-                var condition = quest.Root.Elements.Find(x => x.Condition.Id == activeCondition.ConditionId).Condition;
-                if (condition.Type == QuestConditions.COLLECT)
+                bool added = false;
+                foreach (var activeCondition in ActiveConditions.Values)
                 {
-                    if (activeCondition.CurrentValue + 1 == condition.TargetValue)
+                    if (activeCondition.QuestId != SelectedQuestId) continue;
+                    var quest = FindQuestByState(activeCondition);
+                    var condition = quest.Root.Elements.Find(x => x.Condition.Id == activeCondition.ConditionId)
+                        .Condition;
+                    if (condition.Type == QuestConditions.COLLECT && condition.Matches[0] == (int) ore.Type + 1 && !added)
                     {
-                        activeCondition.Completed = true;
-                        activeCondition.Active = false;
+                        if (activeCondition.CurrentValue + 1 == condition.TargetValue)
+                        {
+                            activeCondition.Completed = true;
+                            activeCondition.Active = false;
+                        }
+
+                        activeCondition.CurrentValue++;
+                        Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
+                        World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
+                        added = true;
                     }
-                    activeCondition.CurrentValue++;
+                    if (quest.IsComplete(Conditions))
+                    {
+                        CompleteQuest(quest);
+                    }
                 }
-                Packet.Builder.QuestConditionUpdateCommand(Player.GetGameSession(), activeCondition);
-                if (quest.IsComplete(Conditions))
-                {
-                    CompleteQuest(quest);
-                }
-                World.DatabaseManager.UpdateQuestCondition(Player, activeCondition);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e + ":Resource Collection\n" + e.Message);
             }
         }
 
@@ -206,6 +255,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
         {
             foreach (var activeCondition in ActiveConditions.Values)
             {
+                if (activeCondition.QuestId != SelectedQuestId) continue;
                 var quest = FindQuestByState(activeCondition);
                 var condition = quest.Root.Elements.Find(x => x.Condition.Id == activeCondition.ConditionId).Condition;
                 switch (condition.Type)
@@ -263,6 +313,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
                 World.DatabaseManager.AddQuestCondition(Player, state);
             }
             Packet.Builder.QuestInitializationCommand(Player.GetGameSession());
+            if (SelectedQuestId == 0) SelectedQuestId = quest.Id;
         }
 
         public List<Quest> GetActiveQuests()
@@ -279,7 +330,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.quests
 
         public void CompleteQuest(Quest quest)
         {
-            quest.Reward.ParseRewards(Player);
+            if (CompletedQuests.ContainsKey(quest.Id)) return;
+            quest.Reward.ParseRewards(Player, (int)(Player.BoostedQuestReward + 1));
             CompletedQuests.Add(quest.Id, quest);
             Packet.Builder.QuestCompletedCommand(Player.GetGameSession(), quest);
         }

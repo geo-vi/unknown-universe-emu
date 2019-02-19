@@ -25,12 +25,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
         }
 
-        public void Slowdown(DateTime slowEnd)
-        {
-            GameClient.SendToSpacemap(Character.Spacemap, netty.commands.new_client.LegacyModule.write("0|n|fx|start|GRAPHIC_FX_SABOTEUR_DEBUFF|" + Character.Id));
-            GameClient.SendToSpacemap(Character.Spacemap, netty.commands.old_client.LegacyModule.write("0|n|fx|start|GRAPHIC_FX_SABOTEUR_DEBUFF|" + Character.Id));
-        }
-
         public void SetInvincible(int time, bool showEffect = false)
         {
             if (Character.Cooldowns.Any(x => x is InvincibilityCooldown)) return;
@@ -63,6 +57,20 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             GameClient.SendRangePacket(Controller.Character,
                 netty.commands.new_client.LegacyModule.write("0|n|INV|" + Controller.Character.Id + "|" +
                                                              Convert.ToInt32(Controller.Character.Invisible)), true);
+        }
+
+        public void Uncloak()
+        {
+            Character.Invisible = false;
+            UpdateCharacterVisibility();
+            if (Character is Player player)
+            {
+                if (player.Pet != null && player.Pet.Controller.Active)
+                {
+                    player.Pet.Invisible = false;
+                    player.Pet.Controller.Effects.UpdateCharacterVisibility();
+                }
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.zones.pallazones
 {
     class PalladiumZone2 : PalladiumZone
     {
-        public PalladiumZone2(int id) : base(id, new Vector(4900, 17700), new Vector(5800, 25400))
+        public PalladiumZone2(int id) : base(id, new Vector(19000, 11000), new Vector(23500, 14600))
         {
         }
     }

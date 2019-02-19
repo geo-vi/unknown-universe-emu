@@ -39,6 +39,17 @@ namespace NettyBaseReloaded.Main
 
             Console.Title = Global.State + " ";
             Console.Title += Program.GetVersion() + " // " + World.StorageManager.GameSessions.Count + " - " + (DateTime.Now - Server.RUNTIME).ToString(@"dd\.hh\:mm\:ss");
+
+            UpdateEvents();
+        }
+
+        private static void UpdateEvents()
+        {
+            ////X3 Event
+            //if (DateTime.Now.Hour == 19)
+            //{
+            //    Properties.Game.REWARD_MULTIPLYER = 5;
+            //}
         }
     }
 }

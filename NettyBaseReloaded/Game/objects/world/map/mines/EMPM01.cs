@@ -19,8 +19,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.mines
             var area = Spacemap.Entities.Where(x => x.Value.Position.DistanceTo(Position) <= 1000 && x.Value is Player);
             foreach (var entry in area)
             {
-                entry.Value.Invisible = false;
-                entry.Value.Controller.Effects.UpdateCharacterVisibility();
+                entry.Value.Controller?.Effects?.Uncloak();
             }
         }
     }

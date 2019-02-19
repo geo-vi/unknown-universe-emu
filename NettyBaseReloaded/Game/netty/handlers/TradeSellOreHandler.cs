@@ -77,14 +77,11 @@ namespace NettyBaseReloaded.Game.netty.handlers
                     cargo.Promerium -= count;
                     value = count * World.StorageManager.OrePrices.Promerium;
                     break;
-                case OreTypes.PALLADIUM:
-                    if (gameSession.Player.Spacemap.Id != 92) return;
-                    Packet.Builder.LegacyModule(gameSession, "0|A|STD|Not implemented yet");
-                    break;
             }
             Packet.Builder.AttributeOreCountUpdateCommand(gameSession, cargo);
             cred.Add(value);
             Packet.Builder.LegacyModule(gameSession, "0|A|STD|Sold " + request.toSell.count + " " + oreType.ToString() + " for " + value + " C.");
+            World.DatabaseManager.SaveCargo(gameSession.Player, cargo);
         }
     }
 }

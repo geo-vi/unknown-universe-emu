@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.pet;
+using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.pets;
 using Packet = NettyBaseReloaded.Game.netty.Packet;
 using PetGearTypeModule = NettyBaseReloaded.Game.netty.commands.old_client.PetGearTypeModule;
@@ -35,8 +36,15 @@ namespace NettyBaseReloaded.Game.controllers
 
         public new void Tick()
         {
-            if (Pet.ActiveGear == null || Pet.Spacemap != Pet.GetOwner().Spacemap)
+            if (ActiveChecker == null || Pet.ActiveGear == null || Pet.Spacemap != Pet.GetOwner().Spacemap)
             {
+                Exit();
+                return;
+            }
+
+            if (Pet.Hangar.Configurations == null || Pet.Hangar.Configurations.Length != 2)
+            {
+                Packet.Builder.LegacyModule(Pet.GetOwner().GetGameSession(), "0|A|STD|Failed launching PET, error in configurations. Please PM an admin on Discord.");
                 Exit();
                 return;
             }
@@ -47,11 +55,23 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Activate()
         {
-            if (Pet.CurrentHealth <= 0) return;
-            
             var owner = Pet.GetOwner();
+
+            if (Pet.Hangar.Configurations == null || Pet.Hangar.Configurations.Length != 2)
+            {
+                Packet.Builder.LegacyModule(owner.GetGameSession(), "0|A|STD|Failed launching PET, error in configurations. Please PM an admin on Discord.");
+                return;
+            }
+
+            if (Pet.CurrentHealth <= 0)
+            {
+                OnPetDestruction();
+                return;
+            }
+
             Pet.Spacemap = owner.Spacemap;
             Pet.SetPosition(owner.Position);
+            Pet.Invisible = owner.Invisible;
 
             Pet.Spacemap.AddEntity(Pet);
             
@@ -65,6 +85,7 @@ namespace NettyBaseReloaded.Game.controllers
             Packet.Builder.PetHeroActivationCommand(ownerSession, Pet);
             Packet.Builder.PetStatusCommand(ownerSession, Pet);
             SendGearsToOwner();
+            SendBuffs();
             var id = -1;
             Global.TickManager.Add(Pet, out id);
             Pet.SetTickId(id);
@@ -79,6 +100,16 @@ namespace NettyBaseReloaded.Game.controllers
             }
             Packet.Builder.PetGearSelectCommand(gameSession, Pet.ActiveGear);
         }
+
+        public void SendBuffs()
+        {
+            var gameSession = Pet.GetOwner().GetGameSession();
+            if (gameSession.Player.Cooldowns.Any(x => x is PetKamikazeCooldown))
+            {
+                var cooldown = gameSession.Player.Cooldowns.Cooldowns.Find(x => x is PetKamikazeCooldown);
+                Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.KAMIKAZE_BUFF, new List<int>{ (int)((cooldown.EndTime - DateTime.Now).TotalSeconds) });
+            }
+        }
         
         public void Deactivate()
         {
@@ -89,8 +120,18 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Repair()
         {
-            Pet.CurrentHealth = 1000;
+            var price = 15 * Pet.Level.Id;
+            Destruction.RevivePet();
             var ownerSession = Pet.GetOwner().GetGameSession();
+            if (ownerSession.Player.Information.Premium.Active)
+            {
+                Packet.Builder.LegacyModule(ownerSession, $"0|A|STD|Repaired P.E.T, repair costs covered by Premium");
+            }
+            else
+            {
+                ownerSession.Player.Information.Uridium.Remove(price);
+                Packet.Builder.LegacyModule(ownerSession, $"0|A|STD|Repaired P.E.T, -{price} U.");
+            }
             Packet.Builder.PetInitializationCommand(ownerSession, Pet);
         }
         
@@ -110,32 +151,59 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Crash(Character character, int damage = 0)
         {
-            PathFollower.Initiate(character, 0);
-            Task.Delay(5000).ContinueWith((t) =>
+            PathFollower.Initiate(character, true);
+            Task.Delay(3000).ContinueWith((t) =>
             {
                 if (!Active || StopController) return;
                 if (damage > 0)
                 {
-                    Damage.Area(damage, Damage.Types.KAMIKAZE, 200);
+                    Damage.Area(damage, Damage.Types.KAMIKAZE, 500);
                 }
                 Destruction.Kill();
+                Exit();
+                OnPetDestruction();
             });
         }
         
         public void Exit()
         {
-            Global.TickManager.Remove(Pet);
-            Destruction.Remove();
+            try
+            {
+                foreach (var gear in Pet.PetGears)
+                {
+                    gear.Value.End();
+                }
+
+                Global.TickManager.Remove(Pet);
+                Pet.BasicSave();
+                Destruction.Remove();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+            }
         }
 
         public void OnPetDestruction()
         {
+            var price = 15 * Pet.Level.Id;
             var ownerSession = World.StorageManager.GetGameSession(Pet.GetOwner().Id);
             if (ownerSession != null)
             {
+                if (ownerSession.Player.Information.Premium.Active)
+                    price = 0;
+
                 Packet.Builder.PetIsDestroyedCommand(ownerSession);
-                Packet.Builder.PetUIRepairButtonCommand(ownerSession, true, 0);
+                Packet.Builder.PetUIRepairButtonCommand(ownerSession, true, price);
             }
+        }
+
+        public void SendResetGear()
+        {
+            var ownerSession = Pet.GetOwner().GetGameSession();
+            Packet.Builder.PetGearResetCommand(ownerSession);
+            SendGearsToOwner();
         }
     }
 }

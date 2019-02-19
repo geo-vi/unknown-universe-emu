@@ -103,7 +103,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 Error(gameSession, ServerCommands.GROUPSYSTEM_GROUP_INVITE_SUB_ERROR_DUPLICATE);
                 return;
             }
-            invited.Player.Storage.GroupInvites.Add(gameSession.Player.Id, gameSession.Player.Group);
+            invited.Player.Storage.GroupInvites.TryAdd(gameSession.Player.Id, gameSession.Player.Group);
             Packet.Builder.GroupInviteCommand(gameSession, invited);
         }
 
@@ -135,7 +135,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
         {
             if (gameSession.Player.Storage.GroupInvites.ContainsKey(inviterSession.Player.Id))
             {
-                gameSession.Player.Storage.GroupInvites.Remove(inviterSession.Player.Id);
+                gameSession.Player.Storage.GroupInvites.TryRemove(inviterSession.Player.Id, out Group output);
                 Packet.Builder.LegacyModule(inviterSession, "0|ps|inv|del|rj|" + gameSession.Player.Id + "|" + inviterSession.Player.Id);
                 Packet.Builder.LegacyModule(gameSession, "0|ps|inv|del|none|" + inviterSession.Player.Id);
                 Error(inviterSession, ServerCommands.GROUPSYSTEM_GROUP_INVITE_SUB_ERROR_CANDIDATE_NOT_AVAILABLE);
@@ -147,7 +147,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (inviterSession == null) return;
             if (inviterSession.Player.Storage.GroupInvites.ContainsKey(gameSession.Player.Id))
             {
-                inviterSession.Player.Storage.GroupInvites.Remove(gameSession.Player.Id);
+                inviterSession.Player.Storage.GroupInvites.TryRemove(gameSession.Player.Id, out Group output);
                 Packet.Builder.LegacyModule(gameSession, "0|ps|inv|del|rv|" + gameSession.Player.Id);
                 Packet.Builder.LegacyModule(gameSession, "0|ps|inv|del|rv|" + gameSession.Player.Id + "|" + inviterSession.Player.Id);
             }

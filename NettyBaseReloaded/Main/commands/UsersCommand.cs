@@ -4,23 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Chat.objects;
+using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.netty;
+using Packet = NettyBaseReloaded.Chat.packet.Packet;
 
 namespace NettyBaseReloaded.Main.commands
 {
     class UsersCommand : Command
     {
-        public UsersCommand(string name, string desc, bool display = true, SubHelp[] subHelps = null) : base(name, desc, display, subHelps)
+        public UsersCommand() : base("users", "")
         {
         }
 
         public override void Execute(string[] args = null)
         {
-            throw new NotImplementedException();
+            
         }
 
         public override void Execute(ChatSession session, string[] args = null)
         {
-            throw new NotImplementedException();
+            var names = World.StorageManager.GameSessions.Values.Select(x => x.Player.Name);
+            Packet.Builder.SystemMessage(session, string.Join(", ", names));
         }
     }
 }

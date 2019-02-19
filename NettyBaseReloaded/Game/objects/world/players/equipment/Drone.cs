@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.characters;
+using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 using NettyBaseReloaded.WebSocks.packets.handlers;
 
 namespace NettyBaseReloaded.Game.objects.world.players.equipment
@@ -14,7 +16,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
          * BASICS *
          **********/
         public int Id { get; }
-        public int AccountId { get; }
+
+        public Player Player;
+
         public DroneType DroneType { get; }
 
         /*********
@@ -31,46 +35,216 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
             set { _damage = (value <= 100) ? value : 100; }
         }
 
-        private int Design1 { get; }
+        public int UpgradeLevel { get; set; }
 
-        private int Design2 { get; }
+        public Dictionary<int, EquipmentItem> EquipmentItems => Player.Equipment.GetDroneEquipment(this);
 
-        public Drone(int id, int accountId, DroneType droneType, Level level, int experience, int damage, int design1, int design2)
+        public Drone(int id, Player player, DroneType droneType, Level level, int experience, int damage,
+            int upgradeLevel)
         {
             Id = id;
-            AccountId = accountId;
+            Player = player;
             DroneType = droneType;
             Level = level;
             Experience = experience;
             Damage = damage;
-            Design1 = design1;
-            Design2 = design2;
+            UpgradeLevel = upgradeLevel;
         }
 
-        public int GetDroneDesign(Character character)
+        public double GetDamageBoost()
         {
-            if (character is Player player)
+            double droneLevelBoost = 1;
+            switch (Level.Id)
             {
-                if (player.CurrentConfig == 1)
-                    return Design2;
+                case 2:
+                    droneLevelBoost = 1.02;
+                    break;
+                case 3:
+                    droneLevelBoost = 1.04;
+                    break;
+                case 4:
+                    droneLevelBoost = 1.06;
+                    break;
+                case 5:
+                    droneLevelBoost = 1.08;
+                    break;
+                case 6:
+                    droneLevelBoost = 1.1;
+                    break;
             }
-            return Design1;
+
+            return droneLevelBoost;
         }
 
-        public void LevelUp(Player player)
+        public double GetShieldBoost()
         {
-            if (!World.StorageManager.Levels.DroneLevels.ContainsKey(Level.Id + 1))
-                return;
+            double droneLevelBoost = 1;
+            switch (Level.Id)
+            {
+                case 2:
+                    droneLevelBoost = 1.04;
+                    break;
+                case 3:
+                    droneLevelBoost = 1.08;
+                    break;
+                case 4:
+                    droneLevelBoost = 1.12;
+                    break;
+                case 5:
+                    droneLevelBoost = 1.16;
+                    break;
+                case 6:
+                    droneLevelBoost = 1.2;
+                    break;
+            }
 
-            Level = World.StorageManager.Levels.DroneLevels[Level.Id + 1];
-            new UserHandler().execute(null,new []{"user", "drones", player.Id.ToString()});
+            return droneLevelBoost;
         }
 
-        private DateTime LastUpdate = new DateTime();
-        public void Update(Player player)
+        public int GetDroneDesign()
         {
-            if (LastUpdate.AddSeconds(4) > DateTime.Now) return;
+            var droneDesigns = EquipmentItems.Where(x =>
+                x.Value.HangarIds.Contains(Player.Equipment.ActiveHangar.Id) && x.Value.Item.TypeId == 50);
+            var currentConfig = Player.CurrentConfig;
+            EquipmentItem design = null;
+            switch (currentConfig)
+            {
+                case 1:
+                    design = droneDesigns.FirstOrDefault(x =>
+                        x.Value.OnDroneId1.DroneIds.Contains(Id) &&
+                        x.Value.OnDroneId1.Hangars.Contains(Player.Equipment.ActiveHangar.Id)).Value;
+                    if (design == null) return 0;
+                    switch (design.Item.Id)
+                    {
+                        case 86:
+                            return 1;
+                        case 95:
+                            return 2;
+                    }
+                    return 0;
+                case 2:
+                    design = droneDesigns.FirstOrDefault(x =>
+                        x.Value.OnDroneId2.DroneIds.Contains(Id) &&
+                        x.Value.OnDroneId2.Hangars.Contains(Player.Equipment.ActiveHangar.Id)).Value;
+                    if (design == null) return 0;
+
+                    switch (design.Item.Id)
+                    {
+                        case 86:
+                            return 1;
+                        case 95:
+                            return 2;
+                    }
+                    return 0;
+                default:
+                    return 0;
+            }
+        }
+
+        public void AddPoint(Ship ship, Ship destroyedTarget)
+        {
+            if (ship == null || destroyedTarget == null)
+            {
+                Experience += 1;
+            }
+            else
+            {
+                //todo: FINISH THE SYSTEM>>>
+                switch (destroyedTarget.Id)
+                {
+                    case 84:
+                        switch (ship.Id)
+                        {
+                            case 1:
+                                Experience += 4;
+                                break;
+                            case 2:
+                                Experience += 3;
+                                break;
+                            case 3:
+                                Experience += 2;
+                                break;
+                            case 4:
+                                Experience += 1;
+                                break;
+                        }
+
+                        break;
+                    case 71:
+                        switch (ship.Id)
+                        {
+                            case 1:
+                                Experience += 6;
+                                break;
+                            case 2:
+                                Experience += 5;
+                                break;
+                            case 3:
+                                Experience += 4;
+                                break;
+                            case 4:
+                                Experience += 3;
+                                break;
+                            case 5:
+                                Experience += 2;
+                                break;
+                            case 6:
+                                Experience += 1;
+                                break;
+                        }
+
+                        break;
+                    default:
+                        Experience += 1;
+                        break;
+                }
+            }
+
+            if (Experience > Level.Experience)
+            {
+                var determined = World.StorageManager.Levels.DetermineDroneLvl(Experience);
+                if (determined != null && Level != determined)
+                {
+                    LevelUp(determined);
+                }
+            }
+
             World.DatabaseManager.UpdateDrone(this);
+        }
+
+        private void LevelUp(Level determined)
+        {
+            Level = determined;
+            foreach (var rangeSession in GameSession.GetRangeSessions(Player))
+            {
+                if (rangeSession.Value != null)
+                {
+                    Packet.Builder.DronesCommand(rangeSession.Value, Player);
+                }
+            }
+        }
+
+        public void DamageDrone()
+        {
+            Damage += 2;
+            var droneCpu = Player.Extras.FirstOrDefault(x => x.Value is DROCpu);
+            if (Damage == 100)
+            {
+                if (droneCpu.Value != null && droneCpu.Value.Amount > 0)
+                {
+                    Damage = 0;
+                    droneCpu.Value.Amount -= 1;
+                }
+                else
+                {
+                    DestroyDrone();  
+                }
+            }
+        }
+
+        public void DestroyDrone()
+        {
+            //TODO
         }
     }
 

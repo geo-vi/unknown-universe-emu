@@ -55,7 +55,6 @@ namespace NettyBaseReloaded.Game.objects.world
         }
 
         public override Faction FactionId { get; set; }
-        public Reward Reward { get; }
 
         public Clan Clan { get; set; }
 
@@ -85,11 +84,19 @@ namespace NettyBaseReloaded.Game.objects.world
         /************
          * POSITION *
          ************/
-        public override Vector Position { get; set; }
+        public override Vector Position
+        {
+            get => Hangar.Position;
+            set => Hangar.Position = value;
+        }
 
         public int VirtualWorldId { get; set; }
 
-        private Spacemap _baseSpacemap;
+        private Spacemap _baseSpacemap
+        {
+            get => Hangar.Spacemap;
+            set => Hangar.Spacemap = value;
+        }
         public override Spacemap Spacemap
         {
             get
@@ -112,15 +119,13 @@ namespace NettyBaseReloaded.Game.objects.world
          *********/
         public override int MaxHealth { get; set; }
 
-        private int _currentHealth;
-
         public override int CurrentHealth
         {
-            get { return _currentHealth; }
+            get { return Hangar.Health; }
             set
             {
-                _currentHealth = (value < MaxHealth) ? value : MaxHealth;
-                if (value < 0) _currentHealth = 0;
+                Hangar.Health = (value < MaxHealth) ? value : MaxHealth;
+                if (value < 0) Hangar.Health = 0;
             }
         }
 
@@ -132,15 +137,13 @@ namespace NettyBaseReloaded.Game.objects.world
         //The max amount of nanohull will be the max ship health
         public override int MaxNanoHull => Hangar.Ship.Health;
 
-        private int _currentNanoHull;
-
         public override int CurrentNanoHull
         {
-            get { return _currentNanoHull; }
+            get { return Hangar.Nanohull; }
             set
             {
-                _currentNanoHull = (value < MaxNanoHull) ? value : MaxNanoHull;
-                if (value < 0) _currentNanoHull = 0;
+                Hangar.Nanohull = (value < MaxNanoHull) ? value : MaxNanoHull;
+                if (value < 0) Hangar.Nanohull = 0;
             }
         }
 
@@ -172,7 +175,7 @@ namespace NettyBaseReloaded.Game.objects.world
         /*********
          * EXTRA *
          *********/
-        public virtual int RenderRange => 2000;
+        public virtual int RenderRange => HasWarnBox() ? -1 : 2000;
         public IAttackable Selected { get; set; }
         public Character SelectedCharacter => Selected as Character;
 
@@ -188,21 +191,20 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Updaters Updaters { get; set; }
 
-        protected Character(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap,
-            Reward rewards, Clan clan = null) : base(id)
+
+        protected Character(int id, string name, Hangar hangar, Faction factionId,
+            Clan clan = null) : base(id)
         {
             Name = name;
-            Hangar = hangar;
+            if (hangar != null)
+                Hangar = hangar;
             FactionId = factionId;
-            Position = position;
-            Spacemap = spacemap;
-            Reward = rewards;
             Clan = clan;
 
             //Default initialization
             Moving = false;
             OldPosition = new Vector(0, 0);
-            Destination = position;
+            Destination = new Vector(0,0);
             Direction = new Vector(0, 0);
             MovementStartTime = new DateTime();
             MovementTime = 0;
@@ -240,9 +242,16 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public virtual void Invalidate()
         {
-            Global.TickManager.Remove(this);
-            Controller.StopController = true;
-            Range.Clean();            
+            try
+            {
+                Global.TickManager.Remove(this);
+                Controller.StopController = true;
+                Range.Clean();
+            }
+            catch (Exception)
+            {
+                Controller.StopAll();
+            }
         }
 
         public void UpdateShip()
@@ -251,10 +260,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
             var sessions =
                 World.StorageManager.GameSessions.Where(
-                    x => x.Value.Client != null && InRange(x.Value.Player));
+                   x => x.Value.Client != null && InRange(x.Value.Player));
             foreach (var session in sessions)
             {
-                if (session.Key != Id)
+                if (session.Key != Id && session.Value != null)
                     Packet.Builder.ShipCreateCommand(session.Value, this);
             }
 
@@ -271,12 +280,6 @@ namespace NettyBaseReloaded.Game.objects.world
             OldPosition = targetPosition;
             Direction = targetPosition;
             Moving = false;
-
-            foreach (var rangePlayers in Range.Entities.Where(x => x.Value is Player))
-            {
-                var rangePlayer = rangePlayers.Value as Player;
-                rangePlayer.Controller.Checkers.RemoveCharacter(this, rangePlayer);
-            }
 
             MovementController.Move(this, MovementController.ActualPosition(this));
         }
@@ -322,6 +325,17 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool HasWarnBox()
         {
+            if (this is Player player)
+            {
+                if (player.State.IsOnHomeMap())
+                    return false;
+
+                if (Spacemap.Id == 9 || Spacemap.Id == 5 || Spacemap.Id == 1)
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
 

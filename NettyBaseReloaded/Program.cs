@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,10 +48,10 @@ namespace NettyBaseReloaded
 
         public static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.FirstChanceException += CurrentDomainOnFirstChanceException;
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-            System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
-
-            Application.ThreadException += ApplicationOnThreadException;
+            Application.ThreadException += new ThreadExceptionEventHandler(ApplicationOnThreadException);
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionTrapper);
             Application.CurrentCulture = new CultureInfo("en-US");
     
             //PrintJSON();
@@ -234,6 +235,7 @@ namespace NettyBaseReloaded
         /// <param name="e"></param>
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
+            Out.QuickLog(e.ExceptionObject as Exception);
             //new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
             //Environment.Exit(0);
             // TODO: Save everything and then fuck up
@@ -242,12 +244,27 @@ namespace NettyBaseReloaded
 
         private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs threadExceptionEventArgs)
         {
+            Out.QuickLog(threadExceptionEventArgs.Exception);
             //new ExceptionLog("thread_exception", $"Unhandled thread exception trapped and logged", threadExceptionEventArgs.Exception);
             //Environment.Exit(0);
         }
 
+        /// <summary>
+        /// logging
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static int BugsRecorded = 0;
+        private static void CurrentDomainOnFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
+        {
+            if (BugsRecorded >= 200) Exit();
+            Out.QuickLog(e.Exception);
+            BugsRecorded++;
+        }
+
         private static void OnProcessExit(object sender, EventArgs e)
         {
+
             Global.Close();
         }
 
@@ -347,9 +364,9 @@ namespace NettyBaseReloaded
         {
             if (!Server.LOGGING) return;
 
-            Utils.SessionDirCreator.InitializeSession();
+            Logger.handlers.LogCreator.Initialize();
             Out.WriteLog("Logger succesfully loaded.");
-            Out.WriteLog("Testing... 1 2 3");
+            Logger.Logger._instance.Enqueue("log", "Testing... 1 2 3");
         }
 
         static void ParseXML()

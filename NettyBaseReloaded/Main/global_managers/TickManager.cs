@@ -8,6 +8,8 @@ using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Main.interfaces;
 using System.Diagnostics;
 using System.Threading;
+using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.objects.world;
 
 namespace NettyBaseReloaded.Main.global_managers
 {
@@ -22,29 +24,12 @@ namespace NettyBaseReloaded.Main.global_managers
 
         private int GetNextTickId()
         {
-            using (var enumerator = Tickables.GetEnumerator())
+            var i = 0;
+            while (true)
             {
-                if (!enumerator.MoveNext())
-                    return 0;
-
-                var nextKeyInSequence = enumerator.Current.Key + 1;
-
-                if (nextKeyInSequence < 1)
-                    throw new InvalidOperationException("The dictionary contains keys less than 0");
-
-                if (nextKeyInSequence != 1)
-                    return 0;
-
-                while (enumerator.MoveNext())
-                {
-                    var key = enumerator.Current.Key;
-                    if (key > nextKeyInSequence)
-                        return nextKeyInSequence;
-
-                    ++nextKeyInSequence;
-                }
-
-                return nextKeyInSequence;
+                if (Tickables.ContainsKey(i))
+                    i++;
+                else return i;
             }
         }
         
@@ -57,6 +42,20 @@ namespace NettyBaseReloaded.Main.global_managers
             }
 
             id = GetNextTickId();
+
+            if (tick is Player tickedPlayer)
+            {
+                Player _player = null;
+                World.StorageManager.TickedPlayers.TryGetValue(tickedPlayer.Id, out _player);
+                if (_player != null)
+                {
+                    Remove(_player); 
+                    if (_player.Controller != null) Remove(_player.Controller);
+                }
+
+                World.StorageManager.TickedPlayers.TryAdd(tickedPlayer.Id, tickedPlayer);
+            }
+
             Tickables.TryAdd(id, tick);
         }
 
@@ -66,6 +65,12 @@ namespace NettyBaseReloaded.Main.global_managers
             if (!Tickables.ContainsKey(tick.GetId()))
             {
                 return;
+            }
+
+            if (tick is Player tickedPlayer)
+            {
+                World.StorageManager.TickedPlayers.TryRemove(tickedPlayer.Id, out tickedPlayer);
+                if (tickedPlayer.Controller != null) Remove(tickedPlayer.Controller);
             }
 
             Tickables.TryRemove(tick.GetId(), out output);

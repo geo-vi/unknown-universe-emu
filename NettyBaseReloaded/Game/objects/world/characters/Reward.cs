@@ -46,7 +46,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public double TotalAddedExp = 0;
         public double TotalAddedHon = 0;
 
-        public void ParseRewards(Player player)
+        public void ParseRewards(Player player, int boost = 1)
         {
             int paramNum = 0;
             RewardType rewardType;
@@ -63,10 +63,10 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                         amount = (int) Rewards[paramNum + 3];
                         RewardPlayer(player, rewardType, item, amount);
                     }
-                    else
+                    else if (Rewards[paramNum + 2] is int)
                     {
                         amount = (int) Rewards[paramNum + 2];
-                        RewardPlayer(player, rewardType, amount);
+                        RewardPlayer(player, rewardType, amount * boost);
                     }
                 }
                 paramNum++;
@@ -90,16 +90,20 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     break;
                 case RewardType.EXPERIENCE:
                     amount = RewardMultiplyer(type, amount, player);
+                    amount += (int)(amount * player.BoostedExpReward);
                     TotalAddedExp = amount;
                     break;
                 case RewardType.HONOR:
                     amount = RewardMultiplyer(type, amount, player);
+                    amount += (int)(amount * player.BoostedHonorReward);
                     TotalAddedHon = amount;
                     break;
                 case RewardType.ORE:
                     break;
                 case RewardType.GALAXY_GATES_ENERGY:
                     amount = RewardMultiplyer(type, amount, player);
+                    Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STM|log_msg_gather_extra-energy_p|%COUNT%|" + amount);
+                    World.DatabaseManager.AddGGEnergy(player, amount);
                     break;
                 case RewardType.BOOSTER:
                     // amount => hours
@@ -160,14 +164,14 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             {
                 case RewardType.AMMO:
                     // BAT / ROK
-                    if (item.LootId.Contains("ammunition_laser"))
+                    if (item.LootId.StartsWith("ammunition_laser"))
                     {
                         amount = RewardMultiplyer(type, amount, player);
                         player.Information.Ammunitions[item.LootId].Add(amount);
                         Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
                             "0|LM|ST|BAT|" + AmmoConverter.GetLootAmmoId(item.LootId) + "|" + amount);
                     }
-                    else if (item.LootId.Contains("ammunition_rocket"))
+                    else if (item.LootId.StartsWith("ammunition_rocket"))
                     {
                         amount = RewardMultiplyer(type, amount, player);
                         player.Information.Ammunitions[item.LootId].Add(amount);
@@ -176,6 +180,17 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     }
                     break;
                 case RewardType.ITEM:
+                    switch (item.Category)
+                    {
+                        //case EquippedItemCategories.BOOSTER:
+                        //    World.DatabaseManager.AddBooster(player, item);
+                        //    Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id), "0|LM|ST|LOT|" + item.LootId + "|" + amount);
+                        //    break;
+                        default:
+                            World.DatabaseManager.AddEquipmentItem(player, item);
+                            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id), "0|LM|ST|LOT|" + item.LootId + "|" + amount);
+                            break;
+                    }
                     break;
             }
         }

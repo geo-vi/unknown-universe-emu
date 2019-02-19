@@ -24,28 +24,28 @@ namespace NettyBaseReloaded.Game.netty.handlers
             cmd.readCommand(bytes);
             if (session.Player.Range.Objects.FirstOrDefault(x => x.Value is Asteroid).Value is Asteroid asteroid)
             {
-                if (!session.Player.Equipment.Modules.ContainsKey(cmd.itemId))
-                {
-                    ThrowError(session);
-                    return;
-                }
-                var module = session.Player.Equipment.Modules[cmd.itemId];
-                if (session.Player.Equipment.ModuleEquipping || module == null)
-                {
-                    ThrowError(session);
-                    return;
-                }
+                //if (!session.Player.Equipment.Modules.ContainsKey(cmd.itemId))
+                //{
+                //    ThrowError(session);
+                //    return;
+                //}
+                //var module = session.Player.Equipment.Modules[cmd.itemId];
+                //if (session.Player.Equipment.ModuleEquipping || module == null)
+                //{
+                //    ThrowError(session);
+                //    return;
+                //}
 
-                var battleStationModule = BattleStationModule.Equip(session.Player, module, asteroid, cmd.slotId);
-                if (battleStationModule == null)
-                {
-                    ThrowError(session);
-                    return;
-                }
-                asteroid.EquippedModules.Add(cmd.itemId, battleStationModule);
-                foreach (var rangeSession in session.Player.Range.Entities.Where(x => x.Value is Player && x.Value.Range.Objects.ContainsKey(asteroid.Id)))
-                    Packet.Builder.BattleStationBuildingUiInitializationCommand(((Player)rangeSession.Value).GetGameSession(), asteroid);
-                Packet.Builder.BattleStationBuildingUiInitializationCommand(session, asteroid);
+                //var battleStationModule = BattleStationModule.Equip(session.Player, module, asteroid, cmd.slotId);
+                //if (battleStationModule == null)
+                //{
+                //    ThrowError(session);
+                //    return;
+                //}
+                //asteroid.EquippedModules.Add(cmd.itemId, battleStationModule);
+                //foreach (var rangeSession in session.Player.Range.Entities.Where(x => x.Value is Player && x.Value.Range.Objects.ContainsKey(asteroid.Id)))
+                //    Packet.Builder.BattleStationBuildingUiInitializationCommand(((Player)rangeSession.Value).GetGameSession(), asteroid);
+                //Packet.Builder.BattleStationBuildingUiInitializationCommand(session, asteroid);
                 //session.Player.Equipment.ModuleEquipping = true;
             }
 

@@ -151,15 +151,21 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
+                _socket.Shutdown(SocketShutdown.Both);
+
                 if (_socket.IsBound && _clientsConnected.Count > 0)
                     foreach (var client in _clientsConnected)
-                        client.Close();
+                        client._socket.Close();
 
-                _socket.Shutdown(SocketShutdown.Both);
-                _socket.Close();
+                //_socket?.Close();
                 OnConnectionClosed();
             }
-            catch { /*ignored*/ }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+                /*ignored*/
+            }
         }
 
         /// <summary>

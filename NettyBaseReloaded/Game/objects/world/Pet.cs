@@ -42,26 +42,20 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             get
             {
-                var value = Hangar.Configurations[CurrentConfig - 1].Damage;
+                var value = Hangar.Configurations[CurrentConfig - 1].TotalDamageCalculated;
                 return value;
             }
         }
 
         public sealed override int CurrentShield
         {
-            get
-            {
-                return Hangar.Configurations[CurrentConfig - 1].CurrentShield;
-            }
-            set
-            {
-                Hangar.Configurations[CurrentConfig - 1].CurrentShield = value;
-            }
+            get => Hangar.Configurations[CurrentConfig - 1].CurrentShieldLeft;
+            set => Hangar.Configurations[CurrentConfig - 1].CurrentShieldLeft = value;
         }
 
-        public override int MaxShield => Hangar.Configurations[CurrentConfig - 1].MaxShield;
+        public override int MaxShield => Hangar.Configurations[CurrentConfig - 1].TotalShieldCalculated;
 
-        public override double ShieldAbsorption => Hangar.Configurations[CurrentConfig - 1].ShieldAbsorbation;
+        public override double ShieldAbsorption => Hangar.Configurations[CurrentConfig - 1].ShieldAbsorb;
 
         public int Fuel { get; set; }
 
@@ -71,7 +65,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Level Level { get; set; }
 
-        public short ExpansionStage => (short)Hangar.Configurations[CurrentConfig - 1].LaserCount;
+        public short ExpansionStage => 0;
 
         public int CurrentConfig => GetOwner().CurrentConfig;
 
@@ -82,8 +76,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public PetGear ActiveGear;
         
         public Pet(int id,Player owner, string name, Hangar hangar, Faction factionId,
-            Level level, double experience, int fuel) : base(id + 2000000, name, hangar, factionId, hangar.Position, hangar.Spacemap,
-            new Reward(0,0))
+            Level level, double experience, int fuel) : base(id + 2000000, name, hangar, factionId)
         {
             DbId = id;
             OwnerId = owner.Id;
@@ -102,7 +95,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var ownerSession = World.StorageManager.GetGameSession(OwnerId);
             if (ownerSession == null)
             {
-                Controller.Exit();
+                Controller?.Exit();
                 return null;
             }
             return ownerSession.Player;
@@ -110,6 +103,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void AssembleTick(object sender, EventArgs eventArgs)
         {
+            GetOwner();
             if (!Controller.Active || EntityState == EntityStates.DEAD) return;
             base.AssembleTick(sender, eventArgs);
             FuelReduction();
@@ -147,7 +141,7 @@ namespace NettyBaseReloaded.Game.objects.world
             if (_lastLevelCheck.AddSeconds(1) > DateTime.Now) return;
 
             var determined = World.StorageManager.Levels.DeterminePetLvl(Experience);
-            if (Level != determined)
+            if (determined != null && Level != determined)
             {
                 LevelUp(determined);
             }
@@ -252,22 +246,19 @@ namespace NettyBaseReloaded.Game.objects.world
             PetGears.Clear();
             PetGears.Add(GearType.PASSIVE, new PetPassiveGear(this));
             PetGears.Add(GearType.GUARD, new PetGuardGear(this));
-            foreach (var item in Hangar.Configurations[CurrentConfig - 1].Consumables)
+            foreach (var item in Hangar.Configurations[CurrentConfig - 1].EquippedItemsOnShip)
             {
-                if (item.Key.StartsWith("pet_gear"))
+                switch (item.Value.Item.LootId)
                 {
-                    switch (item.Key)
-                    {
-                            case "pet_gear_g-kk1": // Kamikaze lvl 1
-                                PetGears.Add(GearType.KAMIKAZE, new PetKamikazeGear(this, 1));
-                                break;
-                    }
-                }
-                else if (item.Key.StartsWith("pet_protocol"))
-                {
-                    
+                    case "pet_gear_g-kk1": // Kamikaze lvl 1
+                        PetGears.Add(GearType.KAMIKAZE, new PetKamikazeGear(this, 1));
+                        break;
+                    case "pet_gear_g-al1": // Auto Loot lvl 1
+                        PetGears.Add(GearType.AUTO_LOOT, new PetCollectorGear(this, 1));
+                        break;
                 }
             }
+
             Controller.SwitchGear(GearType.PASSIVE, 0);
         }
     }

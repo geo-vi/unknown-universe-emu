@@ -21,6 +21,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public Vector[] Limits;
 
+        public virtual bool PetCanCollect => false;
+
         public Collectable(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits) : base(id, pos, map)
         {
             Hash = hash;
@@ -46,7 +48,9 @@ namespace NettyBaseReloaded.Game.objects.world.map
             {
                 player = pet.GetOwner();
             }
+
             if (player == null) return;
+            if (this is CargoLoot && player.Information.Cargo.Full) return;
             player.QuestData.AddCollection(this);
             Dispose();
             Reward(player);
@@ -56,10 +60,19 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public virtual void Dispose()
         {
-            GameClient.SendToSpacemap(Spacemap, netty.commands.new_client.DisposeBoxCommand.write(Hash, true));
-            GameClient.SendToSpacemap(Spacemap, netty.commands.old_client.LegacyModule.write("0|2|" + Hash));
-            Spacemap.RemoveObject(this);
-            Disposed = true;
+            try
+            {
+                GameClient.SendToSpacemap(Spacemap, netty.commands.new_client.DisposeBoxCommand.write(Hash, true));
+                GameClient.SendToSpacemap(Spacemap, netty.commands.old_client.LegacyModule.write("0|2|" + Hash));
+                Spacemap.RemoveObject(this);
+                Disposed = true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
         }
 
         protected void Respawn()

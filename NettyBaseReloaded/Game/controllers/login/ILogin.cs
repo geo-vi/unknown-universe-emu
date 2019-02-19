@@ -63,11 +63,12 @@ namespace NettyBaseReloaded.Game.controllers.login
                 Packet.Builder.LegacyModule(GameSession, "0|A|BKR|" + GameSession.Player.Information.BootyKeys[1]); //red booty
                 Packet.Builder.LegacyModule(GameSession, "0|A|BKB|" + GameSession.Player.Information.BootyKeys[2]); //blue booty
                 Packet.Builder.LegacyModule(GameSession, "0|A|CC|" + GameSession.Player.CurrentConfig); // Config
-                GameSession.Player.LoadExtras();
                
                 Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet); // PET
                 Packet.Builder.HellstormStatusCommand(GameSession); // Rocket launcher
 
+                Packet.Builder.LegacyModule(GameSession, "0|A|ITM|" + GameSession.Player.Equipment.GetConsumablesPacket(), true);
+                GameSession.Player.Controller.CPUs.LoadCpus();
                 //MBA -> MenuButtonAccess
                 //DB -> Disable button
                 //EB -> Enable button
@@ -97,10 +98,12 @@ namespace NettyBaseReloaded.Game.controllers.login
 
                 UpdateClanWindow(GameSession); // Clan Window
                 
-                Packet.Builder.EventActivationStateCommand(GameSession, 0, true); // Event Christmas 0
-                Packet.Builder.EventActivationStateCommand(GameSession, 1, true); // Event Christmas 1
+                //Packet.Builder.EventActivationStateCommand(GameSession, 0, true); // Event Christmas 0
+                //Packet.Builder.EventActivationStateCommand(GameSession, 1, true); // Event Christmas 1
                 
                 LoadShipEffects(GameSession);
+                Packet.Builder.BeaconCommand(GameSession);
+
             }
             catch (Exception e)
             {
@@ -136,11 +139,11 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         private static void CreateTechs(GameSession session)
         {
-            session.Player.Techs.Add(new RocketPrecission(session.Player));
-            session.Player.Techs.Add(new ShieldBuff(session.Player));
-            session.Player.Techs.Add(new BattleRepairRobot(session.Player));
-            session.Player.Techs.Add(new EnergyLeech(session.Player));
-            session.Player.Techs.Add(new ChainImpulse(session.Player));
+            session.Player.Techs.TryAdd(Techs.ROCKET_PRECISSION, new RocketPrecission(session.Player));
+            session.Player.Techs.TryAdd(Techs.SHIELD_BUFF, new ShieldBuff(session.Player));
+            session.Player.Techs.TryAdd(Techs.BATTLE_REPAIR_ROBOT, new BattleRepairRobot(session.Player));
+            session.Player.Techs.TryAdd(Techs.ENERGY_LEECH, new EnergyLeech(session.Player));
+            session.Player.Techs.TryAdd(Techs.CHAIN_IMPULSE, new ChainImpulse(session.Player));
 
             Packet.Builder.TechStatusCommand(session);
         }
@@ -152,13 +155,13 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         private static void CreateAbilities(GameSession session)
         {
-            Packet.Builder.AbilityStatusFullCommand(session, session.Player.Abilities);
+            Packet.Builder.AbilityStatusFullCommand(session, session.Player.Abilities.Values.ToList());
         }
 
         private static void LoadShipEffects(GameSession session)
         {
             var player = session.Player;
-            if (player.Visuals.Exists(x => x.Visual == ShipVisuals.RED_GLOW || x.Visual == ShipVisuals.GENERIC_GLOW || x.Visual == ShipVisuals.RED_GLOW)) return;
+            if (player.Visuals.Any(x => x.Key == ShipVisuals.RED_GLOW || x.Key == ShipVisuals.GENERIC_GLOW || x.Key == ShipVisuals.RED_GLOW)) return;
             
             if (player.State.IsOnHomeMap() && player.Hangar.Ship.Id == 3)
             {

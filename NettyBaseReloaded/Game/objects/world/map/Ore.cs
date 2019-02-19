@@ -68,7 +68,6 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Position = newPos;
             Disposed = false;
             Spacemap.AddObject(this);
-            Console.WriteLine("respawned @" + newPos.ToPacket());
         }
     }
 }

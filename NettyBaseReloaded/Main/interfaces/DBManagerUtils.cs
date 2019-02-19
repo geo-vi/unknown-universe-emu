@@ -9,7 +9,11 @@ namespace NettyBaseReloaded.Main.interfaces
 {
     abstract class DBManagerUtils
     {
-        internal int intConv(object i) => Convert.ToInt32(i);
+        internal int intConv(object i)
+        {
+            if (i == DBNull.Value) return 0;
+            return Convert.ToInt32(i);
+        }
 
         internal double doubleConv(object i) => Convert.ToDouble(i);
 

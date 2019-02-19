@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 
 namespace NettyBaseReloaded.Game.objects.world.map.ores
@@ -26,13 +27,16 @@ namespace NettyBaseReloaded.Game.objects.world.map.ores
             switch (Type)
             {
                 case OreTypes.PROMETIUM:
-                    player.Information.Cargo.TryAdd(0, 1);
+                    player.Information.Cargo.Reward(new DropableRewards(1, 0,0,0,0,0,0,0,0));
                     break;
                 case OreTypes.ENDURIUM:
-                    player.Information.Cargo.TryAdd(1, 1);
+                    player.Information.Cargo.Reward(new DropableRewards(0, 1, 0, 0, 0, 0, 0, 0, 0));
                     break;
                 case OreTypes.TERBIUM:
-                    player.Information.Cargo.TryAdd(2, 1);
+                    player.Information.Cargo.Reward(new DropableRewards(0, 0, 1, 0, 0, 0, 0, 0, 0));
+                    break;
+                case OreTypes.PALLADIUM:
+                    player.Information.Cargo.Reward(new DropableRewards(0, 0, 0, 0, 0, 0, 0, 0, 8));
                     break;
             }
         }

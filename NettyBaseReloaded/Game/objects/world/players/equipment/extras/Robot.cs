@@ -9,31 +9,30 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment.extras
 {
     class Robot : Extra
     {
-        public Robot(Player player, int id, string lootId, int amount) : base(player, id, lootId, amount)
+        public override int Level => GetLevel();
+
+        public Robot(Player player, EquipmentItem equipmentItem) : base(player, equipmentItem)
         {
         }
 
         public int GetLevel()
         {
-            switch (LootId)
+            switch (EquipmentItem.Item.Id)
             {
-                case "equipment_extra_repbot_rep-s":
+                case 55:
                     return 1;
-                case "equipment_extra_repbot_rep-1":
+                case 56:
                     return 2;
-                case "equipment_extra_repbot_rep-2":
+                case 57:
                     return 3;
-                case "equipment_extra_repbot_rep-3":
+                case 58:
                     return 4;
-                case "equipment_extra_repbot_rep-4":
-                    return 5;
             }
             return 0;
         }
 
         public override void execute()
         {
-            base.execute();
             Player.Controller.Repairing = true;
             Player.Controller.CPUs.Activate(CPU.Types.ROBOT);
         }

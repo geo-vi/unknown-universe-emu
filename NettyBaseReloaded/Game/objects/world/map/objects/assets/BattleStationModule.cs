@@ -196,7 +196,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
         private void FinishInstallation()
         {
             InstallationActive = false;
-            Owner.Equipment.ModuleEquipping = false;
+            //Owner.Equipment.ModuleEquipping = false;
         }
 
         public int GetEmergencyRepairSeconds()
@@ -235,12 +235,12 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
 
         public void ReturnToOwner()
         {
-            var module = Owner?.Equipment.Modules.Values.FirstOrDefault(x => x.BattleStationModule == this);
-            if (module != null)
-            {
-                module.EquippedBattleStationId = -1;
-                module.Equipped = false;
-            }
+            //var module = Owner?.Equipment.Modules.Values.FirstOrDefault(x => x.BattleStationModule == this);
+            //if (module != null)
+            //{
+            //    module.EquippedBattleStationId = -1;
+            //    module.Equipped = false;
+            //}
         }
 
         public override void OnDestroyed()

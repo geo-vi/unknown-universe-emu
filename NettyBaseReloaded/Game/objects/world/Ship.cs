@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -227,15 +228,27 @@ namespace NettyBaseReloaded.Game.objects.world
             return Id.ToString();
         }
 
-        public List<Ability> Abilities(Player player)
+        public ConcurrentDictionary<Abilities, Ability> Abilities(Player player)
         {
             List<Ability> abilities = new List<Ability>();
             switch (LootId)
             {
+                case "ship_spearhead":
+                    abilities.Add(new SpearheadDoubleMinimap(player));
+                    abilities.Add(new SpearheadJAMX(player));
+                    abilities.Add(new SpearheadMarkTarget(player));
+                    abilities.Add(new SpearheadUltimateCloak(player));
+                    break;
                 case "ship_aegis":
                     abilities.Add(new AegisHealBeam(player));
                     abilities.Add(new AegisShieldRecharge(player));
                     abilities.Add(new AegisHealPod(player));
+                    break;
+                case "ship_citadel":
+                    abilities.Add(new CitadelDrawFire(player));
+                    abilities.Add(new CitadelFortify(player));
+                    abilities.Add(new CitadelProtection(player));
+                    abilities.Add(new CitadelTravelMode(player));
                     break;
                 case "ship_goliath_design_solace":
                     abilities.Add(new NanoClusterRepairer(player));
@@ -243,9 +256,21 @@ namespace NettyBaseReloaded.Game.objects.world
                 case "ship_goliath_design_sentinel":
                     abilities.Add(new SentinelFortress(player));
                     break;
+                case "ship_goliath_design_venom":
+                    abilities.Add(new VenomSingularity(player));
+                    break;
+                case "ship_goliath_design_diminisher":
+                    abilities.Add(new DiminisherWeakenShields(player));
+                    break;
+                case "ship_goliath_design_spectrum":
+                    abilities.Add(new SpectrumPrismaticShielding(player));
+                    break;
+                case "ship_vengeance_design_lightning":
+                    abilities.Add(new VengeanceLightning(player));
+                    break;
             }
 
-            return abilities;
+            return new ConcurrentDictionary<Abilities, Ability>(abilities.ToDictionary(a => a.AbilityType, b => b));
         }
 
         public int GetAttackRange()
@@ -256,6 +281,18 @@ namespace NettyBaseReloaded.Game.objects.world
                     return 700;
                 default: return 500;
             }
+        }
+
+        public RocketLauncher GetRocketLauncher(Npc npc)
+        {
+            if (Id == 114)
+            {
+                var rl = new RocketLauncher(npc, new RocketLaunchers[] {RocketLaunchers.HST_02});
+                rl.LoadLootId = "ammunition_rocketlauncher_hstrm-01";
+                return rl;
+            }
+
+            return null;
         }
     }
 }

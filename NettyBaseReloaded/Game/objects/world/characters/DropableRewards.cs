@@ -9,10 +9,10 @@ namespace NettyBaseReloaded.Game.objects.world.characters
     class DropableRewards : OreBase
     {
         public DropableRewards(int Prometium, int Endurium,
-            int Terbium, int Prometid, int Duranium, int Xenomit, int Promerium, int Seprom):base(Prometium, Endurium, Terbium, Prometid, Duranium, Xenomit, Promerium, Seprom)
+            int Terbium, int Prometid, int Duranium, int Xenomit, int Promerium, int Seprom, int Palladium):base(Prometium, Endurium, Terbium, Prometid, Duranium, Xenomit, Promerium, Seprom, Palladium)
         {
         }
 
-        public bool Empty => Prometium + Endurium + Terbium + Prometid + Duranium + Promerium + Seprom <= 0;
+        public bool Empty => Prometium + Endurium + Terbium + Prometid + Duranium + Promerium + Seprom + Palladium <= 0;
     }
 }

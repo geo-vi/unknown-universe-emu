@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,7 +50,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool Invisible { get; set; }
 
-        public List<VisualEffect> Visuals = new List<VisualEffect>();
+        public ConcurrentDictionary<ShipVisuals, VisualEffect> Visuals = new ConcurrentDictionary<ShipVisuals, VisualEffect>();
 
         protected IAttackable(int id)
         {
@@ -94,7 +95,10 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void TickVisuals()
         {
-            Parallel.ForEach(Visuals, visual => { visual.Tick(); });
+            foreach (var visual in Visuals.Values)
+            {
+                visual.Tick();
+            }
         }
     }
 }

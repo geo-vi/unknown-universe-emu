@@ -15,7 +15,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public int LoadedRockets;
 
-        public bool ReadyForLaunch => !Loading;
+        public bool ReadyForLaunch => LoadedRockets == MaxLoadableRockets;
 
         private int MaxLoadableRockets
         {
@@ -49,17 +49,18 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             {
                 LoadLootId = player.Settings.CurrentHellstorm.LootId;
             }
+
         }
 
         public void Tick()
         {
-            AddRocket();
             if (Character is Player player)
             {
-                if (!player.Controller.CPUs.Active.Contains(CPU.Types.AUTO_ROCKLAUNCHER)) return;
-                Loading = true;
+                if (player.Controller.CPUs.Active.Contains(CPU.Types.AUTO_ROCKLAUNCHER))
+                    Loading = true;
             }
             else Loading = true;
+            AddRocket();
         }
 
         private DateTime _lastLoadedRocketTime;

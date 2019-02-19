@@ -114,8 +114,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             foreach (var entry in player.Spacemap.Entities)
             {
                 if(entry.Value != null)
-                    if (entry.Value != player)
-                        if (player.Position.DistanceTo(entry.Value.Position) < distance)
+                    if (entry.Value != player && entry.Value != player.Pet)
+                        if (player.Position.DistanceTo(entry.Value.Position) < distance && entry.Value.FactionId != player.FactionId)
                             if (targets.Count < 7)
                                 targets.Add(entry.Value.Id, entry.Value);
             }
@@ -169,8 +169,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             if (Character.Invisible)
             {
-                Character.Invisible = false;
-                Character.Controller.Effects.UpdateCharacterVisibility();
+                Character.Controller.Effects.Uncloak();
             }
 
             target.LastCombatTime = DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
@@ -289,7 +288,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             foreach (var session in AssembleSelectedSessions(target))
             {
-                Packet.Builder.AttackHitCommand(session, attackerId, target, totalDamage + totalAbsDamage,
+                if (session != null)
+                    Packet.Builder.AttackHitCommand(session, attackerId, target, totalDamage + totalAbsDamage,
                     (short) damageType);
             }
 
@@ -311,15 +311,23 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private static GameSession[] AssembleSelectedSessions(IAttackable target)
         {
-            var hits = target.Spacemap.Entities.Where(x => x.Value is Player && x.Value.Selected == target).ToArray();
-            var l = hits.Length;
-            if (target is Player)
-                l += 1;
-            GameSession[] sessions = new GameSession[l];
-            for (var i = 0; i < hits.Length; i++)
-                sessions[i] = ((Player) hits[i].Value).GetGameSession();
-            if (l > hits.Length) sessions[l - 1] = ((Player) target).GetGameSession();
-            return sessions;
+            var hits = target.Spacemap.Entities.Where(x => x.Value is Player && x.Value.Selected == target);
+            var sessions = new List<GameSession>();
+            if (target is Player pTarget)
+            {
+                var tSession = pTarget.GetGameSession();
+                if (tSession != null) sessions.Add(tSession);
+            }
+            foreach (var hit in hits)
+            {
+                if (hit.Value is Player player)
+                {
+                    var session = player.GetGameSession();
+                    if (session == null) continue;
+                    sessions.Add(session);
+                }
+            }
+            return sessions.ToArray();
         }
 
         /// <summary>
@@ -329,12 +337,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             if (distance == 0) distance = Character.AttackRange;
 
+            var pet = Character as Pet;
+
             foreach (var entry in Character.Spacemap.Entities)
             {
                 if (playerOnly && !(entry.Value is Player)) return;
 
                 if (Character.Position.DistanceTo(entry.Value.Position) > distance) continue;
                 if (Character.Id == entry.Value.Id) continue;
+
+                if (pet != null && pet.GetOwner() == entry.Value) continue;
 
                 var damage = 0;
                 switch (damageType)
@@ -358,7 +370,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 
                 if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
                 {
-                    entry.Value.Destroy();
+                    if (pet != null)
+                    {
+                        entry.Value.Destroy(pet.GetOwner());
+                    }
+                    else entry.Value.Destroy(Character);
                 }
                 entry.Value.Updaters.Update();
             }

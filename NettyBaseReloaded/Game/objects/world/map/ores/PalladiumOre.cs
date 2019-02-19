@@ -23,25 +23,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.ores
 
         public void Reward(Player player)
         {
-            if (player == null) return;
-            var random = new System.Random();
-            var randomRewardIndex = random.Next(0, BonusBox.REWARDS.Count - 1);
-            var rewardListIndex = BonusBox.REWARDS[randomRewardIndex];
-            var lootId = rewardListIndex.Item1;
-            var amount = rewardListIndex.Item2;
-            RewardType type;
-            Reward reward;
-            if (RewardType.TryParse(lootId, true, out type))
-            {
-                reward = new Reward(type, amount);
-            }
-            else
-            {
-                if (lootId.Contains("ammunition"))
-                    type = RewardType.AMMO;
-                reward = new Reward(type, new Item(-1, lootId, amount), amount);
-            }
-            reward.ParseRewards(player);
+            
         }
     }
 }

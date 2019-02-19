@@ -17,7 +17,9 @@ namespace NettyBaseReloaded.Game.objects.world
         GALAXY_GATES_ENERGY, 
         BOOSTER,
         AMMO,
-        ORE
+        ORE,
+        DESIGN,
+        SHIP
     }
     
     /// <summary>
@@ -190,6 +192,42 @@ namespace NettyBaseReloaded.Game.objects.world
         DISCONNECT,
         LOGIN_AGAIN,
         ALREADY_LOGGED_IN
+    }
+
+    public enum EquippedItemCategories
+    {
+        LASER,
+        ROCKET_LAUNCHER,
+        SHIELD_GENERATOR,
+        SPEED_GENERATOR,
+        BOOSTER = 6,
+        REP_BOT = 10,
+        DRONE_FORMATION = 17,
+        PET_PROTOCOL = 25,
+        TURBO_ROCKET = 30,
+        ISH,
+        SMB,
+        RLLB,
+        AIM,
+        JCPU,
+        CLOAK = 37,
+        AROL,
+        TURBO_MINE,
+        REPAIR_BOT_AUTO,
+        ADVANCED_JUMP,
+        DRONE_REPAIR,
+        HM7,
+        DRONE_DESIGN = 50,
+        PET_GEAR = 99
+    }
+
+    public enum Techs
+    {
+        BATTLE_REPAIR_ROBOT,
+        CHAIN_IMPULSE,
+        ENERGY_LEECH,
+        ROCKET_PRECISSION,
+        SHIELD_BUFF
     }
     #pragma warning restore 1591
 }

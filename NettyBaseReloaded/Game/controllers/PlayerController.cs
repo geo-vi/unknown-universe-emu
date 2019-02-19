@@ -35,6 +35,12 @@ namespace NettyBaseReloaded.Game.controllers
         public Range Ranges { get; set; }
 
         /// <summary>
+        /// Specials class
+        /// SMB, ISH, EMP is here
+        /// </summary>
+        public Specials Specials { get; set; }
+
+        /// <summary>
         /// Miscs class
         /// All that wasn't listed above is basically here
         /// </summary>
@@ -63,6 +69,8 @@ namespace NettyBaseReloaded.Game.controllers
                 CheckedClasses.Add(Ranges);
                 Miscs = new Misc(this);
                 CheckedClasses.Add(Miscs);
+                Specials = new Specials(this);
+                CheckedClasses.Add(Specials);
             }
             catch (Exception e)
             {
@@ -82,7 +90,18 @@ namespace NettyBaseReloaded.Game.controllers
         {
             try
             {
-                if (Player.Moving) Player.GetGameSession().LastActivityTime = DateTime.Now;
+                if (Player.Moving)
+                {
+                    var session = Player.GetGameSession();
+                    if (session == null)
+                    {
+                        Global.TickManager.Remove(Player);
+                        Exit();
+                        return;
+                    }
+                    session.LastActivityTime = DateTime.Now;
+                }
+
                 foreach (var _class in CheckedClasses.ToList())
                 {
                     _class.Check();

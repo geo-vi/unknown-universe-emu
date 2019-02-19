@@ -6,174 +6,361 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
+using NettyBaseReloaded.Game.objects.world.players.equipment.item;
 using NettyBaseReloaded.Main;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
     class Equipment : PlayerBaseClass
     {
-        #region Hangars
-        public int ActiveHangar = 0;
+        public Dictionary<int, Hangar> Hangars = new Dictionary<int, Hangar>();
 
-        public Dictionary<int, Hangar> Hangars { get; set; }
-        #endregion
+        public Dictionary<int, EquipmentItem> EquipmentItems = new Dictionary<int, EquipmentItem>();
 
-        public Dictionary<int, Module> Modules = new Dictionary<int, Module>();
-
-        public bool ModuleEquipping = false;
-
-        public List<DroneFormation> OwnedDroneFormations = new List<DroneFormation>();
+        public Hangar ActiveHangar => Hangars.FirstOrDefault(x => x.Value.Active).Value;
 
         public Equipment(Player player) : base(player)
         {
-            RefreshHangars();
-            //Modules = World.DatabaseManager.LoadPlayerModules(player);
-            OwnedDroneFormations = World.DatabaseManager.LoadDroneFormations(player);
-            //AddModules();
+            LoadEquipment();
         }
 
-        private void AddModules()
+        public void LoadEquipment()
         {
-            Modules.Add(0, new Module(Module.Types.LASER_HIGH_RANGE, new Item(0, "", 0), false));
-            Modules.Add(1, new Module(Module.Types.DAMAGE_BOOSTER, new Item(1, "", 0), false));
-            Modules.Add(2, new Module(Module.Types.ROCKET_MID_ACCURACY, new Item(2, "", 0), false));
-            Modules.Add(3, new Module(Module.Types.HULL, new Item(3, "", 0), false));
-            Modules.Add(4, new Module(Module.Types.DEFLECTOR, new Item(4, "", 0), false));
-            Modules.Add(5, new Module(Module.Types.DAMAGE_BOOSTER, new Item(5, "", 0), false));
-            Modules.Add(6, new Module(Module.Types.EXPERIENCE_BOOSTER, new Item(6, "", 0), false));
-            Modules.Add(7, new Module(Module.Types.REPAIR, new Item(7, "", 0), false));
-            Modules.Add(8, new Module(Module.Types.ROCKET_LOW_ACCURACY, new Item(8, "", 0), false));
-            Modules.Add(9, new Module(Module.Types.LASER_LOW_RANGE, new Item(9, "", 0), false));
-            Modules.Add(10, new Module(Module.Types.HONOR_BOOSTER, new Item(10, "", 0), true));
-            Modules.Add(12, new Module(Module.Types.ROCKET_MID_ACCURACY, new Item(12, "", 0), false));
-            Modules.Add(11, new Module(Module.Types.ROCKET_LOW_ACCURACY, new Item(11, "", 0), false));
+            CreateHangars();
+            LoadItems();
+            CreateConfigs();
         }
 
-        public void RefreshHangars()
+        private void CreateHangars()
         {
-            Hangars = World.DatabaseManager.LoadHangars(Player);
-            for (int hangarId = 0; hangarId < Hangars.Count; hangarId++)
+            Hangars = World.DatabaseManager.LoadHangar(Player);
+        }
+
+        private void LoadItems()
+        {
+            EquipmentItems = World.DatabaseManager.LoadEquipment(Player);
+        }
+
+        private void CreateConfigs()
+        {
+            foreach (var hangar in Hangars)
             {
-                if (Hangars[hangarId].Active)
+                hangar.Value.Configurations = ConfigParser(hangar.Value);
+            }
+        }
+
+        private Configuration[] ConfigParser(Hangar hangar)
+        {
+            Configuration[] configurations = {new Configuration(1), new Configuration(2)};
+            if (EquipmentItems.Any(x => x.Value.Item.Category == EquippedItemCategories.HM7))
+            {
+                var equippedItem = EquipmentItems.FirstOrDefault(x => x.Value.Item.Category == EquippedItemCategories.HM7);
+                configurations[0].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
+                configurations[1].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
+            }
+            foreach (var equippedItem in EquipmentItems.Where(x => x.Value.HangarIds.Contains(hangar.Id)))
+            {
+                if (equippedItem.Value.OnConfig1.Hangars.Contains(hangar.Id))
                 {
-                    ActiveHangar = hangarId;
-                    break;
+                    configurations[0].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
+                    UpdateItemStats(configurations[0], equippedItem.Value);
+                }
+
+                if (equippedItem.Value.OnConfig2.Hangars.Contains(hangar.Id))
+                {
+                    configurations[1].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
+                    UpdateItemStats(configurations[1], equippedItem.Value);
+                }
+
+                if (equippedItem.Value.OnDroneId1.Hangars.Contains(hangar.Id))
+                {
+                    var indexOf = equippedItem.Value.OnDroneId1.Hangars.IndexOf(hangar.Id);
+                    var droneId = equippedItem.Value.OnDroneId1.DroneIds[indexOf];
+                    var drone = hangar.Drones[droneId];
+                    configurations[0].EquippedItemsOnDrones.Add(equippedItem.Key, new Tuple<Drone, EquipmentItem>(drone, equippedItem.Value));
+                    UpdateItemStats(configurations[0], equippedItem.Value, drone);
+                }
+
+                if (equippedItem.Value.OnDroneId2.Hangars.Contains(hangar.Id))
+                {
+                    var indexOf = equippedItem.Value.OnDroneId2.Hangars.IndexOf(hangar.Id);
+                    var droneId = equippedItem.Value.OnDroneId2.DroneIds[indexOf];
+                    var drone = hangar.Drones[droneId];
+                    configurations[1].EquippedItemsOnDrones.Add(equippedItem.Key, new Tuple<Drone, EquipmentItem>(drone, equippedItem.Value));
+                    UpdateItemStats(configurations[1], equippedItem.Value, drone);
+                }
+
+                hangar.Items.Add(equippedItem.Key, equippedItem.Value);
+            }
+
+            configurations[0].ParseExtras();
+            configurations[1].ParseExtras();
+            return configurations;
+        }
+
+        public Configuration[] PetConfigParser()
+        {
+            Configuration[] configurations = { new Configuration(1), new Configuration(2) };
+            foreach (var equippedItem in EquipmentItems.Where(x => x.Value.HangarIds.Contains(ActiveHangar.Id)))
+            {
+                if (equippedItem.Value.OnPet1.Hangars.Contains(ActiveHangar.Id))
+                {
+                    configurations[0].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
+                    UpdateItemStats(configurations[0], equippedItem.Value);
+                }
+
+                if (equippedItem.Value.OnPet2.Hangars.Contains(ActiveHangar.Id))
+                {
+                    configurations[1].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
+                    UpdateItemStats(configurations[1], equippedItem.Value);
                 }
             }
+
+            return configurations;
+        }
+
+        public void UpdateItemStats(Configuration config, EquipmentItem item, Drone drone = null)
+        {
+            switch (item.Item.Category) 
+            {
+                case EquippedItemCategories.LASER:
+                    var damage = 0;
+                    switch (item.Item.Id)
+                    {
+                        case 0: // lf3
+                            damage = UpgradeDamage(150, item.Level);
+                            break;
+                        case 1: // lf4
+                            damage = UpgradeDamage(200, item.Level);
+                            break;
+                        case 22: // lf2
+                            damage = UpgradeDamage(100, item.Level);
+                            break;
+                        case 23: // mp1
+                            damage = UpgradeDamage(60, item.Level, "c");
+                            break;
+                        case 24: // lf1
+                            damage = UpgradeDamage(40, item.Level, "c");
+                            break;
+
+                    }
+
+                    if (drone != null)
+                    {
+                        damage = (int) (damage * drone.GetDamageBoost());
+                    }
+
+                    config.TotalDamageCalculated += damage;
+                    break;
+                case EquippedItemCategories.SHIELD_GENERATOR:
+                    var shield = 0;
+                    switch (item.Item.Id)
+                    {
+                        case 5: // A01
+                            shield = UpgradeShield(1000, item.Level);
+                            break;
+                        case 7: // AO2
+                            shield = UpgradeShield(2000, item.Level);
+                            break;
+                        case 8: // AO3
+                            shield = UpgradeShield(5000, item.Level);
+                            break;
+                        case 9: // BO1
+                            shield = UpgradeShield(4000, item.Level);
+                            break;
+                        case 6: // BO2
+                            shield = UpgradeShield(10000, item.Level);
+                            break;
+                    }
+
+                    if (drone != null)
+                    {
+                        shield = (int) (shield * drone.GetShieldBoost());
+                    }
+
+                    config.TotalShieldCalculated += shield;
+                    config.ShieldGens.Add(item.Id, item); 
+                    break;
+                case EquippedItemCategories.SPEED_GENERATOR:
+                    var speed = 0;
+                    switch (item.Item.Id)
+                    {
+                        case 16:
+                            speed = 2;
+                            break;
+                        case 17:
+                            speed = 3;
+                            break;
+                        case 18:
+                            speed = 4;
+                            break;
+                        case 19:
+                            speed = 5;
+                            break;
+                        case 20:
+                            speed = 7;
+                            break;
+                        case 21:
+                            speed = 10;
+                            break;
+                    }
+                    config.TotalSpeedCalculated += speed;
+                    break;
+            }
+        }
+
+        private int UpgradeDamage(int actualDamage, int upgradeLevel, string currency = "u")
+        {
+            if (upgradeLevel == 1) return actualDamage;
+            switch (currency)
+            {
+                case "c":
+                    return 0;
+                case "u":
+                    return 1;
+            }
+
+            return -1;
+        }
+
+        private int UpgradeShield(int actualShield, int upgradeLevel, string currency = "u")
+        {
+            if (upgradeLevel == 1) return actualShield;
+            switch (currency)
+            {
+                case "c":
+                    return 0;
+                case "u":
+                    return 1;
+            }
+
+            return -1;
+        }
+
+        public DroneFormation[] GetDroneFormations()
+        {
+            var droneFormations = new List<DroneFormation>();
+            droneFormations.Add(DroneFormation.STANDARD);
+            foreach (var item in EquipmentItems.Values.Where(x =>
+                x.Item.Category == EquippedItemCategories.DRONE_FORMATION))
+            {
+                switch (item.Item.Id)
+                {
+                    case 40:
+                        droneFormations.Add(DroneFormation.TURTLE);
+                        break;
+                    case 41:
+                        droneFormations.Add(DroneFormation.ARROW);
+                        break;
+                    case 42:
+                        droneFormations.Add(DroneFormation.LANCE);
+                        break;
+                    case 43:
+                        droneFormations.Add(DroneFormation.STAR);
+                        break;
+                    case 44:
+                        droneFormations.Add(DroneFormation.PINCER);
+                        break;
+                    case 45:
+                        droneFormations.Add(DroneFormation.DOUBLE_ARROW);
+                        break;
+                    case 46:
+                        droneFormations.Add(DroneFormation.DIAMOND);
+                        break;
+                    case 47:
+                        droneFormations.Add(DroneFormation.CHEVRON);
+                        break;
+                    case 48:
+                        droneFormations.Add(DroneFormation.MOTH);
+                        break;
+                    case 49:
+                        droneFormations.Add(DroneFormation.CRAB);
+                        break;
+                    case 50:
+                        droneFormations.Add(DroneFormation.HEART);
+                        break;
+                    case 51:
+                        droneFormations.Add(DroneFormation.BARRAGE);
+                        break;
+                    case 52:
+                        droneFormations.Add(DroneFormation.BAT);
+                        break;
+                }
+            }
+            return droneFormations.ToArray();
+        }
+
+        public int LaserCount()
+        {
+            return ActiveHangar.Configurations[Player.CurrentConfig - 1].EquippedItemsOnShip
+                .Count(x => x.Value.Item.Category == EquippedItemCategories.LASER);
+        }
+
+        public int LaserTypes()
+        {
+            var config = ActiveHangar.Configurations[Player.CurrentConfig - 1];
+            var lasers = config.EquippedItemsOnShip.Where(x => x.Value.Item.Category == EquippedItemCategories.LASER);
+            if (lasers.All(x => x.Value.Item.Id == 1))
+                return 3;
+            return 0;
+        }
+
+        public string GetRobot()
+        {
+            var robot = Player.Extras.FirstOrDefault(x => x.Value is Robot);
+            return robot.Value.EquipmentItem.Item.LootId;
+        }
+
+        public Dictionary<int, EquipmentItem> GetDroneEquipment(Drone drone)
+        {
+            var config = ActiveHangar.Configurations[Player.CurrentConfig - 1];
+            var items = config.EquippedItemsOnDrones.Where(x => x.Value.Item1 == drone);
+            return items.ToDictionary(x => x.Key, y => y.Value.Item2);
         }
 
         public string GetConsumablesPacket()
         {
-            bool rep = false;
-            bool droneRep = false;
+            int? rep = Player.Extras.FirstOrDefault(x => x.Value is Robot).Value?.Level;
+            int? droneRep = Player.Extras.FirstOrDefault(x => x.Value is DROCpu).Value?.Level;
             bool ammoBuy = false;
-            bool cloak = false;
-            bool tradeDrone = false;
-            bool smb = false;
-            bool ish = false;
-            bool aim = false;
-            bool autoRocket = false;
-            bool autoRocketLauncer = false;
+            int? cloak = Player.Extras.FirstOrDefault(x => x.Value is Cloak).Value?.Level;
+            int? tradeDrone = Player.Extras.FirstOrDefault(x => x.Value is TradeDrone).Value?.Level;
+            int? smb = Player.Extras.FirstOrDefault(x => x.Value is SmartbombCpu).Value?.Level;
+            int? ish = Player.Extras.FirstOrDefault(x => x.Value is ISHCpu).Value?.Level;
+            int? aim = Player.Extras.FirstOrDefault(x => x.Value is AimCpu).Value?.Level;
+            int? autoRocket = Player.Extras.FirstOrDefault(x => x.Value is AutoRocket).Value?.Level;
+            int? autoRocketLauncer = Player.Extras.FirstOrDefault(x => x.Value is AutoRocketLauncher).Value?.Level;
             bool rocketBuy = false;
-            bool jump = false;
+            int? jump = Player.Extras.FirstOrDefault(x => x.Value is AdvancedJumpCpu).Value?.Level;
             bool petRefuel = false;
-            bool jumpToBase = false;
-            bool rokTurbo = false;
+            int? jumpToBase = Player.Extras.FirstOrDefault(x => x.Value is JumpCpu).Value?.Level;
+            int? rokTurbo = Player.Extras.FirstOrDefault(x => x.Value is RocketTurbo).Value?.Level;
+            bool radar = false;
+            int? mineTurbo = Player.Extras.FirstOrDefault(x => x.Value is MineTurbo).Value?.Level;
 
-            var currConfig = Player.Hangar.Configurations[Player.CurrentConfig - 1];
-            if (currConfig.Consumables != null &&
-                currConfig.Consumables.Count > 0)
-            {
-                foreach (var item in currConfig.Consumables)
-                {
-                    var slotbarItem = Player.Settings.Slotbar._items[item.Value.LootId];
-                    if (slotbarItem != null)
-                    {
-                        slotbarItem.CounterValue = item.Value.Amount;
-                        slotbarItem.Visible = true;
-                        if (Player.UsingNewClient)
-                        {
-                            World.StorageManager.GetGameSession(Player.Id)?.Client.Send(slotbarItem.ChangeStatus());
-                        }
-                    }
-
-                    switch (item.Key)
-                    {
-                        case "equipment_extra_cpu_ajp-01":
-                            jump = true;
-                            break;
-                        case "equipment_extra_repbot_rep-s":
-                        case "equipment_extra_repbot_rep-1":
-                        case "equipment_extra_repbot_rep-2":
-                        case "equipment_extra_repbot_rep-3":
-                        case "equipment_extra_repbot_rep-4":
-                            rep = true;
-                            break;
-                        case "equipment_extra_cpu_smb-01":
-                            smb = true;
-                            break;
-                        case "equipment_extra_cpu_ish-01":
-                            ish = true;
-                            break;
-                        case "equipment_extra_cpu_aim-01":
-                        case "equipment_extra_cpu_aim-02":
-                            aim = true;
-                            break;
-                        case "equipment_extra_cpu_jp-01":
-                        case "equipment_extra_cpu_jp-02":
-                            jumpToBase = true;
-                            break;
-                        case "equipment_extra_cpu_cl04k-xl":
-                        case "equipment_extra_cpu_cl04k-m":
-                        case "equipment_extra_cpu_cl04k-xs":
-                            cloak = true;
-                            break;
-                        case "equipment_extra_cpu_arol-x":
-                            autoRocket = true;
-                            break;
-                        case "equipment_extra_cpu_rllb-x":
-                            autoRocketLauncer = true;
-                            break;
-                        case "equipment_extra_cpu_dr-01":
-                        case "equipment_extra_cpu_dr-02":
-                            droneRep = true;
-                            break;
-                        case "equipment_extra_cpu_rok-t01":
-                            rokTurbo = true;
-                            break;
-                    }
-                }
-            }
-
-            return Convert.ToInt32(droneRep) + "|1|" + Convert.ToInt32(jumpToBase) + "|" +
+            return Convert.ToInt32(droneRep) + "|" + Convert.ToInt32(radar) + "|" + Convert.ToInt32(jumpToBase) + "|" +
                    Convert.ToInt32(ammoBuy) + "|" + Convert.ToInt32(rep) + "|" + Convert.ToInt32(tradeDrone) +
-                   "|1|" + Convert.ToInt32(smb) + "|" + Convert.ToInt32(ish) + "|1|" + Convert.ToInt32(aim) + "|" +
+                   "|0|" + Convert.ToInt32(smb) + "|" + Convert.ToInt32(ish) + "|" + Convert.ToInt32(mineTurbo) + "|" + Convert.ToInt32(aim) + "|" +
                    Convert.ToInt32(autoRocket) + "|" + Convert.ToInt32(cloak) + "|" +
                    Convert.ToInt32(autoRocketLauncer) + "|" + Convert.ToInt32(rocketBuy) + "|" +
                    Convert.ToInt32(jump) + "|" + Convert.ToInt32(petRefuel);
 
         }
 
-        public string GetRobot()
+        public Configuration GetCurrentConfig()
         {
-            if (Player.Extras.Any(x => x.Value is Robot))
-                return Player.Extras.FirstOrDefault(x => x.Value is Robot).Key;
-            return "";
+            var config = ActiveHangar.Configurations[Player.CurrentConfig - 1];
+            return config;
         }
 
-        public int GetRobotLevel()
+        public void ChangeHangar(Hangar targetHangar)
         {
-            return 4;
-        }
-
-        public int LaserCount()
-        {
-            return Player.Hangar.Configurations[Player.CurrentConfig - 1].LaserCount;
-        }
-
-        public int LaserTypes()
-        {
-            return Player.Hangar.Configurations[Player.CurrentConfig - 1].LaserTypes;
+            var activeHangar = ActiveHangar;
+            targetHangar.Active = true;
+            ActiveHangar.Active = false;
+            Player.Refresh();
+            World.DatabaseManager.SavePlayerHangar(Player, activeHangar);
+            World.DatabaseManager.SavePlayerHangar(Player, targetHangar);
         }
     }
 }

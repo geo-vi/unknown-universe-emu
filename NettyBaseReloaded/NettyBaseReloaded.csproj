@@ -80,6 +80,12 @@
     <Compile Include="AdministratePlayers.Designer.cs">
       <DependentUpon>AdministratePlayers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Cachet\Cachet.cs" />
+    <Compile Include="Cachet\handlers\CachetAuth.cs" />
+    <Compile Include="Cachet\objects\metrics\Point.cs" />
+    <Compile Include="Cachet\responses\IResponse.cs" />
+    <Compile Include="Cachet\responses\MetricPointsResponse.cs" />
+    <Compile Include="Cachet\responses\PingResponse.cs" />
     <Compile Include="Chat\Chat.cs" />
     <Compile Include="Chat\controllers\AbstractCharacterController.cs" />
     <Compile Include="Chat\controllers\BotController.cs" />
@@ -139,13 +145,12 @@
     <Compile Include="Game\controllers\npc\HitacMothership.cs" />
     <Compile Include="Game\controllers\npc\INpc.cs" />
     <Compile Include="Game\controllers\npc\Basic.cs" />
+    <Compile Include="Game\controllers\npc\Kamikaze.cs" />
     <Compile Include="Game\controllers\npc\Mothership.cs" />
     <Compile Include="Game\controllers\npc\Slave.cs" />
     <Compile Include="Game\controllers\npc\SpaceballAI.cs" />
     <Compile Include="Game\controllers\PetController.cs" />
-    <Compile Include="Game\controllers\pet\CollectableFinder.cs" />
     <Compile Include="Game\controllers\pet\PathFollower.cs" />
-    <Compile Include="Game\controllers\pet\ResourceFinder.cs" />
     <Compile Include="Game\controllers\PlayerController.cs" />
     <Compile Include="Game\controllers\EventController.cs" />
     <Compile Include="Game\controllers\player\CPU.cs" />
@@ -153,6 +158,7 @@
     <Compile Include="Game\controllers\player\Misc.cs" />
     <Compile Include="Game\controllers\player\Quests.cs" />
     <Compile Include="Game\controllers\player\Range.cs" />
+    <Compile Include="Game\controllers\player\Specials.cs" />
     <Compile Include="Game\controllers\player\structs\PlayerBeacon.cs" />
     <Compile Include="Game\managers\PortalSystemManager.cs" />
     <Compile Include="Game\netty\commands\new_client\ActivatePortalCommand.cs" />
@@ -320,6 +326,7 @@
     <Compile Include="Game\netty\commands\old_client\LootModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MapAddPOICommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MapEventOreCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\MapRemovePOICommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MessageLocalizedWildcardCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\MessageWildcardReplacementModule.cs" />
     <Compile Include="Game\netty\commands\old_client\MoveCommand.cs" />
@@ -333,6 +340,7 @@
     <Compile Include="Game\netty\commands\old_client\PetExperiencePointsUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetFuelUpdateCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearAddCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\PetGearResetCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearSelectCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\PetGearTypeModule.cs" />
     <Compile Include="Game\netty\commands\old_client\PetHeroActivationCommand.cs" />
@@ -367,11 +375,15 @@
     <Compile Include="Game\netty\commands\old_client\QuestListCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestPrivilegeCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ClanMemberInvitationRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\ShipWarpRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\TradeSellOreRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipWarpCanceledCommand.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipWarpCompletedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\SpaceBallInitializeScoreCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\SpaceBallUpdateScoreCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\SpaceBallUpdateSpeedCommand.cs" />
     <Compile Include="Game\netty\handlers\ClanMemberInvitationHandler.cs" />
+    <Compile Include="Game\netty\handlers\ExchangePalladiumHandler.cs" />
     <Compile Include="Game\netty\handlers\JumpCPUHandler.cs" />
     <Compile Include="Game\netty\handlers\QuestPrivilegeHandler.cs" />
     <Compile Include="Game\netty\commands\old_client\QuestRequirementModule.cs" />
@@ -472,6 +484,7 @@
     <Compile Include="Game\netty\handlers\QuestListHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSelectionHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipSettingsHandler.cs" />
+    <Compile Include="Game\netty\handlers\ShipWarpHandler.cs" />
     <Compile Include="Game\netty\handlers\ShipWarpWindowHandler.cs" />
     <Compile Include="Game\netty\handlers\TradeHandler.cs" />
     <Compile Include="Game\netty\handlers\TradeSellOreHandler.cs" />
@@ -488,6 +501,9 @@
     <Compile Include="Game\netty\commands\Command.cs" />
     <Compile Include="Game\netty\commands\ServerCommands.cs" />
     <Compile Include="Game\objects\world\characters\CooldownsAssembly.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\PetKamikazeCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\SlowdownAttackCooldown.cs" />
+    <Compile Include="Game\objects\world\characters\cooldowns\VengeanceLightningCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\AegisHealBeamCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\AegisHealPodCooldown.cs" />
     <Compile Include="Game\objects\world\characters\cooldowns\AegisShieldRechargeCooldown.cs" />
@@ -530,11 +546,14 @@
     <Compile Include="Game\objects\world\events\SpaceballGameEvent.cs" />
     <Compile Include="Game\objects\world\events\BinaryBotGameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
+    <Compile Include="Game\objects\world\map\collectables\EventBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\LootBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\PirateBooty.cs" />
+    <Compile Include="Game\objects\world\map\collectables\rewards\PotentialReward.cs" />
     <Compile Include="Game\objects\world\map\Firework.cs" />
     <Compile Include="Game\objects\world\map\mines\DDM01.cs" />
     <Compile Include="Game\objects\world\map\mines\EMPM01.cs" />
+    <Compile Include="Game\objects\world\map\mines\PM00.cs" />
     <Compile Include="Game\objects\world\map\mines\SABM01.cs" />
     <Compile Include="Game\objects\world\map\mines\SLM01.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\cbs\BoosterStationModule.cs" />
@@ -560,6 +579,7 @@
     <Compile Include="Game\objects\world\map\objects\Billboard.cs" />
     <Compile Include="Game\objects\world\map\objects\IClickable.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\LowPortal.cs" />
+    <Compile Include="Game\objects\world\map\objects\jumpgates\PirateGate.cs" />
     <Compile Include="Game\objects\world\map\objects\stations\HealthStation.cs" />
     <Compile Include="Game\objects\world\map\objects\stations\PirateStation.cs" />
     <Compile Include="Game\objects\world\map\objects\stations\ReadyRelayStation.cs" />
@@ -574,6 +594,7 @@
     <Compile Include="Game\objects\world\map\Wave.cs" />
     <Compile Include="Game\objects\world\map\Zone.cs" />
     <Compile Include="Game\objects\world\map\zones\DemiZone.cs" />
+    <Compile Include="Game\objects\world\map\zones\MineZone.cs" />
     <Compile Include="Game\objects\world\map\zones\NpcZone.cs" />
     <Compile Include="Game\controllers\implementable\attack\Attacker.cs" />
     <Compile Include="Game\objects\world\map\zones\PalladiumZone.cs" />
@@ -583,11 +604,14 @@
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone4.cs" />
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone5.cs" />
     <Compile Include="Game\objects\world\map\zones\pallazones\PalladiumZone6.cs" />
+    <Compile Include="Game\objects\world\npcs\Barracuda.cs" />
     <Compile Include="Game\objects\world\npcs\Cubikon.cs" />
     <Compile Include="Game\objects\world\npcs\Hitac.cs" />
     <Compile Include="Game\objects\world\npcs\EventNpc.cs" />
     <Compile Include="Game\objects\world\npcs\Spaceball.cs" />
     <Compile Include="Game\objects\world\OreBase.cs" />
+    <Compile Include="Game\objects\world\pets\BuffPattern.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetCollectorGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetGuardGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetKamikazeGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetPassiveGear.cs" />
@@ -595,21 +619,32 @@
     <Compile Include="Game\objects\world\pets\PetGear.cs" />
     <Compile Include="Game\objects\world\players\ammo\AmmoConverter.cs" />
     <Compile Include="Game\objects\world\players\Ammunition.cs" />
+    <Compile Include="Game\objects\world\players\Announcements.cs" />
     <Compile Include="Game\objects\world\players\Equipment.cs" />
     <Compile Include="Game\objects\world\map\objects\assets\BattleStationModule.cs" />
     <Compile Include="Game\objects\world\players\equipment\Configuration.cs" />
     <Compile Include="Game\objects\world\players\equipment\Drone.cs" />
+    <Compile Include="Game\objects\world\players\equipment\EquipmentItem.cs" />
     <Compile Include="Game\objects\world\players\equipment\Extra.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AdvancedJumpCpu.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\AimCpu.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\AutoRepair.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\CargoXtender.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\DROCpu.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\ISHCpu.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\JumpCpu.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\MineTurbo.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\SmartbombCpu.cs" />
-    <Compile Include="Game\objects\world\players\equipment\extras\Turbo.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\RocketTurbo.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AutoRocketLauncher.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\AutoRocket.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\Cloak.cs" />
     <Compile Include="Game\objects\world\players\equipment\extras\Robot.cs" />
+    <Compile Include="Game\objects\world\players\equipment\extras\TradeDrone.cs" />
     <Compile Include="Game\objects\world\players\equipment\Item.cs" />
     <Compile Include="Game\objects\world\events\EventTypes.cs" />
+    <Compile Include="Game\objects\world\players\equipment\item\EquippedItem.cs" />
+    <Compile Include="Game\objects\world\players\equipment\item\UpgradeLevels.cs" />
     <Compile Include="Game\objects\world\players\equipment\Module.cs" />
     <Compile Include="Game\objects\world\players\events\BinaryBotEvent.cs" />
     <Compile Include="Game\objects\world\players\events\ScoreMageddon.cs" />
@@ -620,8 +655,10 @@
     <Compile Include="Game\objects\world\players\extra\abilities\AegisHealPod.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\AegisShieldRecharge.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\CitadelDrawFire.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\CitadelFortify.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\CitadelProtection.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\CitadelTravelMode.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\DiminisherWeakenShields.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\NanoClusterRepairer.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\NpcStickyBomb.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\SentinelFortress.cs" />
@@ -629,7 +666,26 @@
     <Compile Include="Game\objects\world\players\extra\abilities\SpearheadJAMX.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\SpearheadMarkTarget.cs" />
     <Compile Include="Game\objects\world\players\extra\abilities\SpearheadUltimateCloak.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\SpectrumPrismaticShielding.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\VengeanceLightning.cs" />
+    <Compile Include="Game\objects\world\players\extra\abilities\VenomSingularity.cs" />
     <Compile Include="Game\objects\world\players\extra\Ability.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\BB01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\EPB01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\EP50.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\EPB02.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\HON50.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\HONB01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\HONB02.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\HPB01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\HPB02.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\QR01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\REPB01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\REPB02.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\RESB01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\RESB02.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\SHDB01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\SHDB02.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\EnergyLeech.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\RocketPrecission.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\ChainImpulse.cs" />
@@ -638,8 +694,8 @@
     <Compile Include="Game\objects\world\players\killscreen\DeathType.cs" />
     <Compile Include="Game\objects\world\players\PlayerEvent.cs" />
     <Compile Include="Game\objects\world\players\extra\Booster.cs" />
-    <Compile Include="Game\objects\world\players\extra\boosters\DMGBO1.cs" />
-    <Compile Include="Game\objects\world\players\extra\boosters\DMGBO2.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\DMGB01.cs" />
+    <Compile Include="Game\objects\world\players\extra\boosters\DMGB02.cs" />
     <Compile Include="Game\objects\world\characters\Skilltree.cs" />
     <Compile Include="Game\objects\world\players\extra\Tech.cs" />
     <Compile Include="Game\objects\world\players\extra\techs\BattleRepairRobot.cs" />
@@ -691,6 +747,9 @@
     <Compile Include="Game\objects\world\players\Statistics.cs" />
     <Compile Include="Game\objects\world\players\statistics\DeathStat.cs" />
     <Compile Include="Game\objects\world\VisualEffect.cs" />
+    <Compile Include="Logger\handlers\LogCreator.cs" />
+    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Logger\objects\LogFile.cs" />
     <Compile Include="Main\ChatCommands.cs" />
     <Compile Include="Main\commands\CleanCommand.cs" />
     <Compile Include="Main\commands\CloseCommand.cs" />
@@ -782,10 +841,7 @@
     <Compile Include="ServerEditor.Designer.cs">
       <DependentUpon>ServerEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unused_Codes\Looping_through_constants.cs" />
-    <Compile Include="Unused_Codes\Old_Destroy_Function.unused" />
     <Compile Include="Utils\Decode.cs" />
-    <Compile Include="Utils\FileEssentials.cs" />
     <Compile Include="Utils\form\MapDrawing.cs" />
     <Compile Include="Utils\form\TextboxPopup.cs">
       <SubType>Form</SubType>
@@ -794,7 +850,6 @@
       <DependentUpon>TextboxPopup.cs</DependentUpon>
     </Compile>
     <Compile Include="Utils\Random.cs" />
-    <Compile Include="Utils\SessionDirCreator.cs" />
     <Compile Include="WebSocks\objects\Payload.cs" />
     <Compile Include="WebSocks\objects\Server.cs" />
     <Compile Include="WebSocks\objects\User.cs" />
@@ -805,12 +860,9 @@
     <Compile Include="WebSocks\WebSocketReceiver.cs" />
     <Compile Include="WebSocks\WebSocketListener.cs" />
     <None Include="packages.config" />
-    <None Include="Unused_Codes\LoginController.cs.unused" />
-    <None Include="Unused_Codes\SpawnOnMap.cs.unused" />
     <Compile Include="Utils\Bytes.cs" />
     <Compile Include="Utils\Draw.cs" />
     <Compile Include="Utils\Encode.cs" />
-    <Compile Include="Utils\ExecutableReader.cs" />
     <Compile Include="Utils\Out.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -828,6 +880,9 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp, Version=106.6.7.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.6.7\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -840,6 +895,10 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -848,11 +907,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="docs\MySqlConnection.xml" />
-    <Content Include="docs\MySqlTransaction.xml" />
     <None Include="Resources\univ3rse_logo.png" />
     <None Include="Resources\gray_diagonal_stripes_seamless_background_pattern.jpg" />
-    <Content Include="Unused_Codes\Old_Program_cs.unused" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

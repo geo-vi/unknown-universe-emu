@@ -10,7 +10,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
     class CargoLoot : Collectable
     {
         private Character Killer { get; }
+
         private DropableRewards Rewards { get; }
+
+        public override bool PetCanCollect => true;
+
         public CargoLoot(int id, string hash, Vector pos, DropableRewards dropableRewards, Character killer) : base(id,hash,Types.SHIP_LOOT, pos, killer.Spacemap, null)
         {
             Rewards = dropableRewards;

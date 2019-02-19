@@ -18,6 +18,8 @@ namespace NettyBaseReloaded.Game.controllers
 
         private INpc CurrentNpc { get; set; }
 
+        private DateTime RespawnTimer;
+
         public NpcController(Character character) : base(character)
         {
             Npc = (Npc) character;
@@ -35,6 +37,11 @@ namespace NettyBaseReloaded.Game.controllers
             {
                 case AILevels.PASSIVE:
                 case AILevels.AGGRESSIVE:
+                    //if (Npc is Barracuda)
+                    //{
+                    //    CurrentNpc = new Kamikaze(this);
+                    //}
+                    //else CurrentNpc = new Basic(this);
                     CurrentNpc = new Basic(this);
                     break;
                 case AILevels.GALAXY_GATES:
@@ -52,6 +59,7 @@ namespace NettyBaseReloaded.Game.controllers
                     break;
             }
             base.Initiate();
+            MovementController.Move(Npc, MovementController.ActualPosition(Npc));
             Checkers.Start();
             if (Npc is EventNpc eventNpc) eventNpc.Announce();
         }
@@ -64,6 +72,8 @@ namespace NettyBaseReloaded.Game.controllers
         private bool Restarting = false;
         public void DelayedRestart()
         {
+            var tickId = 0;
+            TickId = tickId;
             Restarting = true;
             Task.Factory.StartNew(() =>
             {
@@ -85,6 +95,8 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Restart()
         {
+            Restarting = false;
+            StopController = false;
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
             Initiate();

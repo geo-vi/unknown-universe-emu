@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
 
         public Dictionary<int, BattleStationModule> EquippedModules;
 
-        public ClanBattleStation(int id, int battleStationId, string name, Faction faction, Vector position, Spacemap map, Player creator, Dictionary<int,BattleStationModule> modules) : base(id, name, AssetTypes.BATTLESTATION, faction, creator.Clan, 2, 0, position, map, false, false, false, 1000, 1000, 1000, 1000, 0,0,0,0)
+        public ClanBattleStation(int id, int battleStationId, string name, Faction faction, Vector position, Spacemap map, Player creator, Dictionary<int,BattleStationModule> modules) : base(id, name, AssetTypes.BATTLESTATION, faction, creator.Clan, 65538, 0, position, map, false, false, false, 1000, 1000, 1000, 1000, 0,0,0,0)
         {
             BattleStationId = battleStationId;
             EquippedModules = modules;

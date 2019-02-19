@@ -204,18 +204,27 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                 case "ammunition_rocket_plt-3030":
                     return 4;
                 case "ammunition_laser_sab-50":
-                case "ammunition_rocket_bdr-1211":
+                case "ammunition_specialammo_pld-8":
                     return 5;
                 case "ammunition_laser_rsb-75":
+                case "ammunition_specialammo_wiz-x":
                     return 6;
                 case "ammunition_laser_cbo-100":
-                case "ammunition_specialammo_pld-8":
+                case "ammunition_rocketlauncher_hstrm-01":
                     return 7;
-                case "ammunition_specialammo_dcr-250":
+                case "ammunition_rocketlauncher_ubr-100":
                     return 8;
                 case "ammunition_laser_job-100":
-                case "ammunition_specialammo_wiz-x":
+                case "ammunition_rocketlauncher_eco-10":
                     return 9;
+                case "ammunition_specialammo_dcr-250":
+                    return 10;
+                case "ammunition_rocket_bdr-1211":
+                    return 11;
+                case "ammunition_rocketlauncher_sar-01":
+                    return 12;
+                case "ammunition_rocketlauncher_sar-02":
+                    return 13;
                 default:
                     throw new NotImplementedException();
             }

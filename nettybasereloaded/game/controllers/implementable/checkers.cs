@@ -11,6 +11,7 @@ using NettyBaseReloaded.Game.objects.world.map.zones;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
+using Object = System.Object;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -25,6 +26,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             VisibilityRange = 2000;//900
             Character.Spacemap.EntityAdded += AddedToSpacemap;
             Character.Spacemap.EntityRemoved += RemovedFromSpacemap;
+            Character.Spacemap.RemovedObject += SpacemapOnRemovedObject;
         }
 
         public void Start()
@@ -35,25 +37,32 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             if (Controller.Character is Player player)
             {
-                if (!player.IsLoaded) return;
+                Console.WriteLine("ticked");
+                if (!player.IsLoaded)
+                {
+                    Console.WriteLine("isnt loaded");
+                    return;
+                }
             }
             SpacemapChecker();
             RangeChecker();
             ZoneChecker();
             ObjectChecker();
+            POIChecker();
         }
 
         public override void Stop()
         {
-            Character.Spacemap.EntityAdded -= AddedToSpacemap;
-            Character.Spacemap.EntityRemoved -= RemovedFromSpacemap;
+            //Character.Spacemap.EntityAdded -= AddedToSpacemap;
+            //Character.Spacemap.EntityRemoved -= RemovedFromSpacemap;
         }
-
+        
         #region Character related
         private void AddedToSpacemap(object sender, CharacterArgs args)
         {
             if (args.Character == Controller.Character) return;
-            AddCharacter(Character, args.Character);
+            if (args.Character.InRange(Character))
+                AddCharacter(Character, args.Character);
         }
 
         private void RemovedFromSpacemap(object sender, CharacterArgs args)
@@ -69,7 +78,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (entity.Id != main.Id && main.Range.AddEntity(entity))
                 {
                     if (!(main is Player) || entity is Pet) return;
-                    var gameSession = World.StorageManager.GameSessions[main.Id];
+                    var gameSession = World.StorageManager.GetGameSession(main.Id);
+                    if (gameSession == null) return;
 
                     //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
                     //Draws the entity ship for character
@@ -83,9 +93,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     TitleCheck(gameSession.Player, entity);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine("addcharacter");
+                Console.WriteLine(e);
             }
         }
 
@@ -94,10 +105,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             //if (!entity.Controller.Active) return;
             try
             {
-                if (entity.Id != main.Id && entity.Range.RemoveEntity(main))
+                if (entity != null && main != null && entity.Id != main.Id && entity.Range.RemoveEntity(main))
                 {
                     if (!(entity is Player)) return;
-                    var gameSession = World.StorageManager.GameSessions[entity.Id];
+                    var gameSession = World.StorageManager.GetGameSession(entity.Id);
+                    if (gameSession == null) return;
 
                     //Packet.Builder.LegacyModule(gameSession, "0|A|STD|RemoveCharacter");
                     Packet.Builder.ShipRemoveCommand(gameSession, main);
@@ -108,7 +120,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                 }
             }
-            catch(Exception) { }
+            catch (Exception e)
+            {
+                Console.WriteLine("removecharacter");
+                Console.WriteLine(e);
+            }
         }
 
         public void SpacemapChecker()
@@ -131,8 +147,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void EntityCheck(Character entity)
         {
-            if (entity == Character)
+            if (entity == Character || entity == null)
                 return;
+
+            if (entity is Player playerEntity)
+            {
+                if (playerEntity.GetGameSession() == null)
+                {
+                    RemoveCharacter(entity, Character);
+                    return;
+                }
+            }
 
             if (entity.Controller == null || (entity.Spacemap != Character.Spacemap || !Character.Spacemap.Entities.ContainsKey(entity.Id) || entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
             {
@@ -153,6 +178,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 {
                     if (!pet.Controller.Active)
                         RemoveCharacter(entity, Character);
+                    return;
                 }
             }
             //if (GetForSelection(entity)) return;
@@ -198,6 +224,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
+        public void RemoveEntity(Character target)
+        {
+            RemoveCharacter(target, Character);
+        }
+
         #endregion
         #region Zone related
         private void ZoneChecker()
@@ -213,6 +244,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         {
                             Character.Range.Zones.Add(zone.Id, zone);
                         }
+
+                        if (zone is PalladiumZone)
+                        {
+                            Character.Invisible = false;
+                            Controller.Effects.UpdateCharacterVisibility();
+                        }
                     }
                     else
                     {
@@ -220,20 +257,42 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine("error");
             }
         }
         #endregion
         #region Object related
         private void ObjectChecker()
         {
-            if (!(Character is Player)) return;
+            if (!(Character is Player || Character is Pet)) return;
             try
             {
+                if (Character is Player player)
+                {
+                    var dicOne = player.Storage.LoadedObjects.ToList();
+                    var dicTwo = player.Spacemap.Objects.Where(x => x.Value != null);
+
+                    var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
+
+                    foreach (var objDiff in diff)
+                    {
+                        if (!player.Storage.LoadedObjects.ContainsKey(objDiff.Key) &&
+                            Character.Spacemap.Objects.ContainsKey(objDiff.Key))
+                        {
+                            player.LoadObject(objDiff.Value);
+                        }
+                        else if (player.Storage.LoadedObjects.ContainsKey(objDiff.Key) &&
+                                 !Character.Spacemap.Objects.ContainsKey(objDiff.Key))
+                        {
+                            player.UnloadObject(objDiff.Value);
+                        }
+                    }
+                }
                 foreach (var obj in Character.Spacemap.Objects.Values)
                 {
-                    if (obj == null) continue;
+                    if (obj == null || obj.Position == null) continue;
                     if (Vector.IsInRange(obj.Position, Character.Position, obj.Range))
                     {
                         if (!Character.Range.Objects.ContainsKey(obj.Id))
@@ -252,28 +311,55 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         }
                     }
                 }
-                if (Character.Range.Objects.Count != Character.Spacemap.Objects.Count)
-                {
-                    var diff = Character.Range.Objects.Except(Character.Spacemap.Objects).Concat(Character.Spacemap.Objects.Except(Character.Range.Objects));
-                    foreach (var objDiff in diff)
-                    {
-                        if (objDiff.Value == null) continue;
-                        if (objDiff.Value.Position == null)
-                        {
-                            Character.Range.RemoveObject(objDiff.Value);
-                            (Character as Player)?.ClickableCheck(objDiff.Value);
-                        }
-                    }
-                }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 if (Character?.Position == null || Character?.Spacemap == null) return;
+                Console.WriteLine("object error");
+                Console.WriteLine(e);
                 //new ExceptionLog("checkers", "Object Checker", e);
                 //Error in checkers->Disconnecting player
                // World.StorageManager.GetGameSession(Character.Id)?.Disconnect(GameSession.DisconnectionType.ERROR);
             }
         }
+
+        private void SpacemapOnRemovedObject(object sender, objects.world.map.Object e)
+        {
+            if (Character is Player player)
+            {
+                player.UnloadObject(e);
+            }
+        }
+
+        #endregion
+
+        #region POI related
+
+        public void POIChecker()
+        {
+            if (Character is Player player)
+            {
+                var dicOne = player.Storage.LoadedPOI.ToList();
+                var dicTwo = player.Spacemap.POIs.Where(x => x.Value != null);
+
+                var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
+
+                foreach (var poiDiff in diff)
+                {
+                    if (!player.Storage.LoadedPOI.ContainsKey(poiDiff.Key) &&
+                        Character.Spacemap.POIs.ContainsKey(poiDiff.Key))
+                    {
+                        player.Storage.LoadPOI(poiDiff.Value);
+                    }
+                    else if (player.Storage.LoadedPOI.ContainsKey(poiDiff.Key) &&
+                             !Character.Spacemap.POIs.ContainsKey(poiDiff.Key))
+                    {
+                        player.Storage.UnloadPOI(poiDiff.Value);
+                    }
+                }
+            }
+        }
+
         #endregion
     }
 }

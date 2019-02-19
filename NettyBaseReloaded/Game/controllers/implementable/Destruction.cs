@@ -73,10 +73,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 {
                                     if (target.Hangar.Ship.Id == 80 || mainAttacker.Group != null)
                                     {
-                                        foreach (var _attacker in attackers)
+                                        foreach (var attacker in attackers)
                                         {
                                             if (target.Hangar.Ship.Id != 80)
-                                                if (_attacker.Value.Player.Group != mainAttacker.Group)
+                                                if (attacker.Value.Player.Group != mainAttacker.Group)
                                                     continue; // TODO: Add proper mothership/ cubi                                          
 
                                             Reward reward = new Reward(new Dictionary<RewardType, int>());
@@ -86,20 +86,20 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                             {
                                                 //TODO: Group reward modes & stuff
                                                 var percentageTotalDmgGiven =
-                                                    (double)_attacker.Value.TotalDamage /
-                                                    (double)(target.MaxHealth + target.MaxShield);
+                                                    (double)attacker.Value.TotalDamage /
+                                                    (target.MaxHealth + target.MaxShield);
 
-                                                if (target.Hangar.Ship.Id != 80 && _attacker.Value.Player == mainAttacker)
+                                                if (target.Hangar.Ship.Id != 80 && attacker.Value.Player == mainAttacker)
                                                     percentageTotalDmgGiven = 1;
 
-                                                if (rewardValue is int)
+                                                if (rewardValue is int value)
                                                 {
                                                     reward.Rewards.Add(Convert.ToInt32(
-                                                        (int)rewardValue * percentageTotalDmgGiven));
+                                                        value * percentageTotalDmgGiven));
                                                 }
                                                 else reward.Rewards.Add(rewardValue);
                                             }
-                                            reward.ParseRewards(_attacker.Value.Player);
+                                            reward.ParseRewards(attacker.Value.Player);
                                         }
                                     }
                                     else 
@@ -110,7 +110,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                     target.Hangar.Ship.Reward.ParseRewards(player);
                                 }
                             }
-                            Character.Hangar.AddDronePoints(target.Hangar.Ship.Id);
+                            Character.Hangar.AddDronePoint(target.Hangar.Ship);
                             foreach (var eventP in player.EventsPraticipating)
                                 eventP.Value.DestroyAttackable(target);
                             player.QuestData.AddKill(target);
@@ -158,6 +158,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 break;
                         }
                     }
+                    else if (target is Pet pet)
+                    {
+                        pet.Controller?.OnPetDestruction();
+                    }
                 }
             }
             catch (Exception e)
@@ -177,6 +181,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Kill()
         {
+            Controller.StopAll();
+
             GameClient.SendToPlayerView(Character, ShipDestroyedCommand.write(Character.Id, 1), true);
             GameClient.SendToPlayerView(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 1),
                 true);
@@ -200,9 +206,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Remove()
         {
-            Character.Selected = null;
             Character.Controller.StopAll();
             Deselect(Character);
+            Character.Selected = null;
             Character.Spacemap.RemoveEntity(Character);
             if (Character is Player player)
             {
@@ -230,7 +236,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     if (entity.Value is Player)
                     {
                         Packet.Builder.ShipSelectionCommand(World.StorageManager.GetGameSession(entity.Value.Id), null);
-                        //World.StorageManager.GetGameSession(entity.Value.Id).Client.Send(Builder.ShipDeselectionCommand());
                     }
 
                     entity.Value.Selected = null;
@@ -250,12 +255,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 player.Controller = new PlayerController(Character);
             }
-            var closestStation = player.GetClosestStation();
-            var newPos = closestStation.Item1;
+            var (newPos, spacemap) = player.GetClosestStation();
 
             player.VirtualWorldId = 0;
 
-            player.Spacemap = closestStation.Item2;
+            player.Spacemap = spacemap;
 
             Character.SetPosition(newPos);
 
@@ -268,7 +272,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             player.Controller.Initiate();
             player.Save();
         }
-
 
         private void RespawnAlien()
         {
@@ -293,6 +296,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 npc.SetPosition(newPos);
             }
             npc.Controller.DelayedRestart();
+        }
+
+        public void RevivePet()
+        {
+            Character.EntityState = EntityStates.ALIVE;
+            Character.CurrentHealth = 1000;
         }
     }
 }

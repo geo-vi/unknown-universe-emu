@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
+using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 
@@ -42,8 +43,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public List<netty.commands.old_client.LootModule> GetOldLootModule()
         {
             List<LootModule> rewardsList = new List<LootModule>();
-            RewardType typeOfReward = RewardType.HONOR;
-            string lootId = "";
+            RewardType typeOfReward = RewardType.CREDITS;
+            Item item = null;
             int amount = 0;
             foreach (var reward in Reward.Rewards)
             {
@@ -51,9 +52,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 {
                     typeOfReward = _typeOfReward;
                 }
-                else if (reward is string _lootId)
+                else if (reward is Item _item)
                 {
-                    lootId = _lootId;
+                    item = _item;
                 }
                 else if (reward is int _amount)
                 {
@@ -72,6 +73,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
                             break;
                         case RewardType.HONOR:
                             rewardsList.Add(new LootModule("currency_honour", amount));
+                            break;
+                        case RewardType.ITEM:
+                            rewardsList.Add(new LootModule(item.LootId, amount));
                             break;
                     }
                 }

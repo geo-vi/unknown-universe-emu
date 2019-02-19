@@ -21,15 +21,15 @@ namespace NettyBaseReloaded.Game.objects.world.players
 {
     class Storage : PlayerBaseClass
     {
-        public Dictionary<int, Object> LoadedObjects = new Dictionary<int, Object>();
+        public ConcurrentDictionary<int, Object> LoadedObjects = new ConcurrentDictionary<int, Object>();
 
-        public Dictionary<string, POI> LoadedPOI = new Dictionary<string, POI>();
+        public ConcurrentDictionary<string, POI> LoadedPOI = new ConcurrentDictionary<string, POI>();
 
         public ConcurrentDictionary<int, LogMessage> LogMessages = new ConcurrentDictionary<int, LogMessage>();
 
         public double DistancePassed = 0;
 
-        public Dictionary<int, Group> GroupInvites = new Dictionary<int, Group>();
+        public ConcurrentDictionary<int, Group> GroupInvites = new ConcurrentDictionary<int, Group>();
 
         public bool BlockedGroupInvites { get; set; }
 
@@ -49,7 +49,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         private void Ticked(object sender, EventArgs eventArgs)
         {
             if (DistancePassed > 1000)
-                World.DatabaseManager.SavePlayerHangar(Player);
+                World.DatabaseManager.SavePlayerHangar(Player, Player.Hangar);
             CleanInvites();
         }
 
@@ -63,7 +63,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
                     if (World.StorageManager.GetGameSession(invite.Key) == null ||
                         invite.Value == null)
                     {
-                        GroupInvites.Remove(invite.Key);
+                        GroupInvites.TryRemove(invite.Key, out Group group);
                         var gHandler = new GroupSystemHandler();
                         gHandler.Error(Player.GetGameSession(), ServerCommands.GROUPSYSTEM_GROUP_INVITE_SUB_ERROR_CANDIDATE_NOT_AVAILABLE);
                         gHandler.DeleteInvitation(World.StorageManager.GetGameSession(invite.Key)?.Player, Player);
@@ -77,7 +77,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedPOI.ContainsKey(poi.Id))
-                LoadedPOI.Add(poi.Id, poi);
+                LoadedPOI.TryAdd(poi.Id, poi);
             Packet.Builder.MapAddPOICommand(gameSession, poi);
         }
 
@@ -85,7 +85,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(station.Id))
-                LoadedObjects.Add(station.Id, station);
+                LoadedObjects.TryAdd(station.Id, station);
             Packet.Builder.StationCreateCommand(gameSession, station);
         }
 
@@ -94,9 +94,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
 
             if (!LoadedObjects.ContainsKey(portal.Id))
-                LoadedObjects.Add(portal.Id, portal);
+                LoadedObjects.TryAdd(portal.Id, portal);
 
             if (portal.Owner != null && portal.Owner != Player) return;
+            
             Packet.Builder.JumpgateCreateCommand(gameSession, portal);
         }
 
@@ -110,7 +111,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(asset.Id))
-                LoadedObjects.Add(asset.Id, asset);
+                LoadedObjects.TryAdd(asset.Id, asset);
             Packet.Builder.AssetCreateCommand(gameSession, asset);
         }
 
@@ -118,7 +119,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(collectable.Id))
-                LoadedObjects.Add(collectable.Id, collectable);
+                LoadedObjects.TryAdd(collectable.Id, collectable);
             Packet.Builder.CreateBoxCommand(gameSession, collectable);
         }
 
@@ -126,7 +127,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (LoadedObjects.ContainsKey(collectable.Id))
-                LoadedObjects.Remove(collectable.Id);
+                LoadedObjects.TryRemove(collectable.Id, out Object output);
             Packet.Builder.DisposeBoxCommand(gameSession, collectable);
         }
 
@@ -134,37 +135,16 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(ore.Id))
-                LoadedObjects.Add(ore.Id, ore);
+                LoadedObjects.TryAdd(ore.Id, ore);
             Packet.Builder.AddOreCommand(gameSession, ore);
         }
 
-        public void UnloadAsset(Asset asset)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Player.Id);
-            if (LoadedObjects.ContainsKey(asset.Id))
-                LoadedObjects.Remove(asset.Id);
-            Packet.Builder.AssetRemoveCommand(gameSession, asset);
-        }
-
-        public void UnloadPortal(Jumpgate portal)
-        {
-            var gameSession = World.StorageManager.GetGameSession(Player.Id);
-            if (LoadedObjects.ContainsKey(portal.Id))
-                LoadedObjects.Remove(portal.Id);
-            Packet.Builder.JumpgateRemoveCommand(gameSession, portal);
-        }
-
-        public void Clean()
-        {
-            LoadedObjects = new Dictionary<int, Object>();
-            LoadedPOI = new Dictionary<string, POI>();
-        }
 
         public void LoadBillboard(Billboard billboard)
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(billboard.Id))
-                LoadedObjects.Add(billboard.Id, billboard);
+                LoadedObjects.TryAdd(billboard.Id, billboard);
             Packet.Builder.MapAssetAddBillboardCommand(gameSession, billboard);
         }
 
@@ -172,7 +152,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(mine.Id))
-                LoadedObjects.Add(mine.Id, mine);
+                LoadedObjects.TryAdd(mine.Id, mine);
             Packet.Builder.MineCreateCommand(gameSession, mine.Hash, mine.MineType, mine.Position, mine.PulseActive);
         }
 
@@ -180,8 +160,38 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             var gameSession = World.StorageManager.GetGameSession(Player.Id);
             if (!LoadedObjects.ContainsKey(firework.Id))
-                LoadedObjects.Add(firework.Id, firework);
+                LoadedObjects.TryAdd(firework.Id, firework);
             Packet.Builder.MineCreateCommand(gameSession, firework.Hash, firework.FireworkType, firework.Position, false);
+        }
+
+        public void UnloadAsset(Asset asset)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (LoadedObjects.ContainsKey(asset.Id))
+                LoadedObjects.TryRemove(asset.Id, out Object output);
+            Packet.Builder.AssetRemoveCommand(gameSession, asset);
+        }
+
+        public void UnloadPortal(Jumpgate portal)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (LoadedObjects.ContainsKey(portal.Id))
+                LoadedObjects.TryRemove(portal.Id, out Object output);
+            Packet.Builder.JumpgateRemoveCommand(gameSession, portal);
+        }
+
+        public void UnloadPOI(POI poi)
+        {
+            var gameSession = World.StorageManager.GetGameSession(Player.Id);
+            if (LoadedPOI.ContainsKey(poi.Id))
+                LoadedPOI.TryRemove(poi.Id, out POI output);
+            Packet.Builder.MapRemovePOICommand(gameSession, poi);
+        }
+
+        public void Clean()
+        {
+            LoadedObjects.Clear();
+            LoadedPOI.Clear();
         }
 
         public void UnloadAll()

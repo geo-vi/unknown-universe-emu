@@ -29,6 +29,8 @@ namespace NettyBaseReloaded.Main
             Commands.Add("relog", new RelogCommand());
             Commands.Add("unbug", new UnbugCommand());
             Commands.Add("equipment", new EquipmentCommand());
+            Commands.Add("say", new SayCommand());
+            Commands.Add("users", new UsersCommand());
         }
 
         public static void Handle(ChatSession session, string txt)
@@ -39,7 +41,7 @@ namespace NettyBaseReloaded.Main
             {
                 var splitted = packet.Split(' ');
                 if (Commands.ContainsKey(splitted[0]))
-                {
+                { 
                     Commands[splitted[0]].Execute(session, splitted);
                     Console.WriteLine($"Command {splitted[0]} found. Executing...");
                 }

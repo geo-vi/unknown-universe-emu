@@ -154,13 +154,15 @@ namespace NettyBaseReloaded.Networking
                     var entity = entry.Value as Player;
                     if (entity != null && (entity.Spacemap != null || entity.Position != null))
                     {
+                        var session = World.StorageManager.GetGameSession(entity.Id);
+                        if (session == null || !session.Active) return;
                         if (entity.UsingNewClient && command.IsNewClient)
                         {
-                            World.StorageManager.GameSessions[entity.Id]?.Client.Send(command.Bytes);
+                            session?.Client.Send(command.Bytes);
                         }
                         if (!entity.UsingNewClient && !command.IsNewClient)
                         {
-                            World.StorageManager.GameSessions[entity.Id]?.Client.Send(command.Bytes);
+                            session?.Client.Send(command.Bytes);
                         }
                     }
                 }
@@ -178,7 +180,10 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                XSocket.Close();
+                if (Connected)
+                {
+                    XSocket.Close();
+                }
             }
             catch (Exception)
             {

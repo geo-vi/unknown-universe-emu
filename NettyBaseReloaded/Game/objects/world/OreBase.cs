@@ -16,9 +16,10 @@ namespace NettyBaseReloaded.Game.objects.world
         public int Xenomit { get; set; }
         public int Promerium { get; set; }
         public int Seprom { get; set; }
+        public int Palladium { get; set; }
 
         public OreBase(int Prometium, int Endurium,
-                        int Terbium, int Prometid, int Duranium, int Xenomit, int Promerium, int Seprom)
+                        int Terbium, int Prometid, int Duranium, int Xenomit, int Promerium, int Seprom, int Palladium)
         {
             this.Prometium = Prometium;
             this.Endurium = Endurium;
@@ -28,6 +29,7 @@ namespace NettyBaseReloaded.Game.objects.world
             this.Xenomit = Xenomit;
             this.Promerium = Promerium;
             this.Seprom = Seprom;
+            this.Palladium = Palladium;
         }
     }
 }

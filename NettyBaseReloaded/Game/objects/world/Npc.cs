@@ -56,9 +56,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override int AttackRange => Hangar.Ship.GetAttackRange();
 
-        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, Reward rewards,
+        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull,
             int maxShield, int damage, int respawnTime = 0, bool respawning = true, Npc motherShip = null)
-            : base(id, name, hangar, factionId, position, spacemap, rewards)
+            : base(id, name, hangar, factionId)
         {
             CurrentHealth = currentHealth;
             CurrentNanoHull = currentNanoHull;
@@ -70,11 +70,7 @@ namespace NettyBaseReloaded.Game.objects.world
             RespawnTime = respawnTime;
             Respawning = respawning;
         }
-
-        public new void Tick()
-        {
-            //Controller.Tick();
-        }
+        
 
         public override void Destroy(Character destroyer)
         {

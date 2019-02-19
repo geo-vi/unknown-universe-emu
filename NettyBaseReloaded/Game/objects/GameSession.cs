@@ -28,7 +28,11 @@ namespace NettyBaseReloaded.Game.objects
         {
             get
             {
-                if (Client != null && Client.Connected) return true;
+                if (Client != null && Client.Connected)
+                {
+                    LastActivityTime = DateTime.Now;
+                    return true;
+                }
                 return false;
             }
         }
@@ -50,7 +54,7 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Tick()
         {
-            if (LastActivityTime.AddMinutes(8) < DateTime.Now)
+            if (LastActivityTime.AddSeconds(25) < DateTime.Now && !Active  /*Player.LastCombatTime.AddMinutes(3) > LastActivityTime && Player.MovementStartTime.AddMinutes(3) > LastActivityTime*/ )
             {
                 Kick();
             }
@@ -113,6 +117,7 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Kick()
         {
+            Player.Save();
             Disconnect();
         }
 
@@ -132,6 +137,11 @@ namespace NettyBaseReloaded.Game.objects
             Global.TickManager.Remove(this);
             if (World.StorageManager.GameSessions.ContainsKey(Player.Id))
                 World.StorageManager.GameSessions.TryRemove(Player.Id, out removedSession);
+            if (World.StorageManager.TickedPlayers.ContainsKey(Player.Id))
+            {
+                Global.TickManager.Remove(Player);
+            }
+            Player?.Controller?.Exit();
         }
     }
 }

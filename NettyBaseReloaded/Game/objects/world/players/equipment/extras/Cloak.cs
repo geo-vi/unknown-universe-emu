@@ -9,8 +9,23 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment.extras
 {
     class Cloak : Extra
     {
-        public Cloak(Player player, int itemId, string lootId, int amount) : base(player, itemId, lootId, amount)
+        public override int Level => GetLevel();
+
+        public Cloak(Player player, EquipmentItem equipmentItem) : base(player, equipmentItem)
         {
+        }
+
+        public int GetLevel()
+        {
+            switch (EquipmentItem.Item.Id)
+            {
+                case 73:
+                    return 2;
+                case 74:
+                    return 1;
+            }
+
+            return 0;
         }
 
         public override void execute()

@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.player;
+using NettyBaseReloaded.Game.objects.world.players.equipment.item;
 
 namespace NettyBaseReloaded.Game.objects.world.players.equipment.extras
 {
     class AutoRocket : Extra
     {
-        public AutoRocket(Player player, int itemId, string lootId, int amount) : base(player, itemId, lootId, amount)
+        public AutoRocket(Player player, EquipmentItem equipmentItem) : base(player, equipmentItem)
         {
         }
 
         public override void execute()
         {
-            base.execute();
             Player.Controller.CPUs.Activate(CPU.Types.AUTO_ROK);
         }
     }

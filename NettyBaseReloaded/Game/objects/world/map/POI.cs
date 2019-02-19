@@ -45,6 +45,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Type = type;
             Design = design;
             Shape = shape;
+            if (shapeCords.Count == 2)
+            {
+                shapeCords.Add(new Vector(shapeCords[0].X, shapeCords[1].Y));
+                shapeCords.Add(new Vector(shapeCords[1].X, shapeCords[0].Y));
+            }
             ShapeCords = shapeCords;
             Inverted = inverted;
             TypeSpecification = poiTypeSpecification;

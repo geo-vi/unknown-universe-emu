@@ -159,8 +159,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
             foreach (var joined in JoinedPlayers.Values)
             {
                 var currencyReward = new Reward(new Dictionary<RewardType, int> { { RewardType.CREDITS, 2500000 }, { RewardType.URIDIUM, 25000 } });
-                var ammoReward = new Reward(RewardType.AMMO, new Item(-1, "ammunition_laser_ucb-100", 25000), 25000);
-                var specialReward = new characters.Reward(RewardType.ITEM, new Item(-1, "equipment_weapon_laser_lf-4", 1), 1);
+                var ammoReward = new Reward(RewardType.AMMO, Item.Find("ammunition_laser_ucb-100"), 25000);
+                var specialReward = new characters.Reward(RewardType.ITEM, Item.Find("equipment_weapon_laser_lf-4"), 1);
                 if (joined?.GetGameSession() == null) continue;
                 var joinedSession = joined.GetGameSession();
                 if (hit == 15)

@@ -17,7 +17,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
             character.Invincible = true;
             if (ShowEffect)
             {
-                character.Visuals.Add(new VisualEffect(character, ShipVisuals.INVINCIBILITY, EndTime));
+                character.Visuals.TryAdd(ShipVisuals.INVINCIBILITY, new VisualEffect(character, ShipVisuals.INVINCIBILITY, EndTime));
             }
         }
 

@@ -9,13 +9,12 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment.extras
 {
     class AutoRocketLauncher : Extra
     {
-        public AutoRocketLauncher(Player player, int itemId, string lootId, int amount) : base(player, itemId, lootId, amount)
+        public AutoRocketLauncher(Player player, EquipmentItem equipment) : base(player, equipment)
         {
         }
 
         public override void execute()
         {
-            base.execute();
             Player.Controller.CPUs.Activate(CPU.Types.AUTO_ROCKLAUNCHER);
         }
     }

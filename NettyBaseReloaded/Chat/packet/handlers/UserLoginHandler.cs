@@ -23,7 +23,10 @@ namespace NettyBaseReloaded.Chat.packet.handlers
 
             client.UserId = id;
             var player = Chat.DatabaseManager.LoadPlayer(id);
+            //var mod = Chat.DatabaseManager.LoadModerator(id);
+            //if (mod != null) player = mod;
             if (player == null) return;
+
             if (!ValidateSession(player, sessionId))
             {
                 //send msg

@@ -15,6 +15,7 @@ using NettyBaseReloaded.Networking;
 using NettyBaseReloaded.Game.objects.world.players.extra.techs;
 using Newtonsoft.Json;
 using NettyBaseReloaded.Game.objects.world.npcs;
+using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -42,6 +43,16 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     if (npc is EventNpc)
                     {
                         Wizard(npc.SelectedCharacter);
+                    }
+
+                    if (npc.RocketLauncher != null && npc.RocketLauncher.ReadyForLaunch)
+                    {
+                        LaunchRocketLauncher();
+                    }
+
+                    if (npc.Hangar.Ship.Id == 113) // saboteur
+                    {
+                        SlowdownAttack();
                     }
                 }
             }
@@ -73,6 +84,17 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private DateTime RSBCooldownEnd = new DateTime();
 
+        public bool Select(IAttackable target)
+        {
+            if (target != null && target.Targetable && target.EntityState != EntityStates.DEAD)
+            {
+                Controller.Character.Selected = target;
+                return true;
+            }
+
+            return false;
+        }
+
         public void LaserAttack()
         {
             var enemy = Character.Selected;
@@ -102,13 +124,14 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Character is Player)
             {
                 var gameSession = World.StorageManager.GetGameSession(Character.Id);
-                gameSession.LastActivityTime = DateTime.Now;
                 if (gameSession.Player.Equipment.LaserCount() == 0)
                 {
                     Attacking = false; // Will stop attacking if there are no lasers equipped.
                     Packet.Builder.LegacyModule(gameSession, "0|A|STM|no_lasers_on_board");
                     return;
                 }
+
+                Packet.Builder.LegacyModule(gameSession, "0|A|STD|Attack1");
 
                 if (gameSession.Player.Settings.CurrentAmmo.Shoot() == 0)
                 {
@@ -126,10 +149,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     gameSession.Player.Settings.OldClientShipSettingsCommand.selectedLaser = index;
                     Packet.Builder.SendSlotbars(gameSession);
                 }
+                Packet.Builder.LegacyModule(gameSession, "0|A|STD|Attack2");
 
                 var laserTypes = gameSession.Player.Equipment.LaserTypes();
                 switch (gameSession.Player.Settings.CurrentAmmo.LootId)
                 {
+                    case "ammunition_laser_lcb-10":
+                        if (laserTypes == 3)
+                            laserColor = 1;
+                        break;
                     case "ammunition_laser_mcb-25":
                         damage *= 2;
                         if (laserTypes == 3)
@@ -166,6 +194,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 if (enemy is Character)
                     UpdateAttacker(enemy as Character, gameSession.Player);
+
+                Packet.Builder.LegacyModule(gameSession, "0|A|STD|Attack3");
             }
             else if (Character is Pet)
             {
@@ -194,6 +224,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 var laserTypes = gameSession.Player.Equipment.LaserTypes();
                 switch (gameSession.Player.Settings.CurrentAmmo.LootId)
                 {
+                    case "ammunition_laser_lcb-10":
+                        break;
                     case "ammunition_laser_mcb-25":
                         damage *= 2;
                         if (laserTypes == 3)
@@ -239,6 +271,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
                     Character.Skills.HasFatLasers()), true);
 
+            Console.WriteLine(Character.Id + " : Attacked successfully");
             Controller.Damage?.Laser(enemy, damage, false);
             Controller.Damage?.Laser(enemy, absDamage, true);
 
@@ -246,13 +279,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 var player = (Player)Character;
                 if (player.Settings.CurrentAmmo.LootId != "ammunition_laser_sab-50") {
-                    foreach (var tech in player.Techs)
+                    if (player.Techs.ContainsKey(Techs.ENERGY_LEECH))
                     {
-                        if (tech is EnergyLeech)
-                        {
-                            var energyLeech = (EnergyLeech)tech;
-                            energyLeech.ExecuteHeal(damage);
-                        }
+                        var energyLeech = player.Techs[Techs.ENERGY_LEECH] as EnergyLeech;
+                        energyLeech?.ExecuteHeal(damage);
                     }
                 }
 
@@ -324,7 +354,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
 
             double cooldown_time = 2;
-            if (player != null && (player.Extras.ContainsKey("equipment_extra_cpu_rok-t01") || player.Information.Premium.Active))
+            if (player != null && (player.Extras.Any(x => x.Value is RocketTurbo) || player.Information.Premium.Active))
                 cooldown_time *= 0.5;
 
             var cooldown = new RocketCooldown(cooldown_time);
@@ -436,7 +466,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return 0;
             }
 
-            var difference = baseDmg * randNums;
+            var difference = (baseDmg * randNums) * 0.15;
             if (randNums > 0.5)
                 return (int)(baseDmg + difference);
             return (int)(baseDmg - difference);
@@ -449,11 +479,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             var wizCooldown = new WizardCooldown();
             if (Character is Player)
                 wizCooldown.Send(World.StorageManager.GetGameSession(Character.Id));
-            Character.Cooldowns.Add(new WizardCooldown());
+            Character.Cooldowns.Add(wizCooldown);
 
             var wizEffect = new WizardEffect();
             wizEffect.OnStart(target);                
-            target.Cooldowns.Add(new WizardEffect());
+            target.Cooldowns.Add(wizEffect);
 
             GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 8 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
             GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 8 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
@@ -470,11 +500,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             var decCooldown = new DecelerationCooldown();
             if (Character is Player)
                 decCooldown.Send(World.StorageManager.GetGameSession(Character.Id));
-            Character.Cooldowns.Add(new DecelerationCooldown());
+            Character.Cooldowns.Add(decCooldown);
 
             var decEffect = new DecelerationEffect();
             decEffect.OnStart(target);
-            target.Cooldowns.Add(new DecelerationEffect());
+            target.Cooldowns.Add(decEffect);
 
             GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 7 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
             GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + target.Id + "|H|" + 7 + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
@@ -554,6 +584,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     MainAttacker = null;
                 }
             }
+        }
+
+        public void SlowdownAttack()
+        {
+            var enemy = Character.SelectedCharacter;
+            if (!AssembleEnemy(enemy) || Character.Cooldowns.Any(x => x is SlowdownAttackCooldown)) return;
+
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|n|SAB_SHOT|" + Character.Id + "|" + enemy.Id), true);
+            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|n|SAB_SHOT|" + Character.Id + "|" + enemy.Id), true);
+
+            Character.Cooldowns.Add(new SlowdownAttackCooldown());
+
+            var decEffect = new DecelerationEffect();
+            decEffect.OnStart(enemy);
+            enemy.Cooldowns.Add(decEffect);
         }
     }
 }

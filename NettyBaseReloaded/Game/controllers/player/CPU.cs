@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
-using NettyBaseReloaded.Networking;
 
 namespace NettyBaseReloaded.Game.controllers.player
 {
@@ -17,9 +14,14 @@ namespace NettyBaseReloaded.Game.controllers.player
         {
             ROBOT,
             CLOAK,
+            JCPU,
             ADVANCED_JCPU,
             AUTO_ROK,
-            AUTO_ROCKLAUNCHER
+            AUTO_ROCKLAUNCHER,
+            AIM_CPU,
+            AUTO_REPAIR,
+            DRO_CPU,
+            TRADE_DRONE
         }
 
         public List<Types> Active = new List<Types>();
@@ -35,12 +37,12 @@ namespace NettyBaseReloaded.Game.controllers.player
         {
             foreach (var extra in baseController.Player.Extras)
             {
-                if (extra.Key == "equipment_extra_cpu_arol-x" && extra.Value.Active)
+                if (extra.Value is AutoRocket && extra.Value.Active)
                 {
                     Active.Add(Types.AUTO_ROK);
                     Update(Types.AUTO_ROK);
                 }
-                else if (extra.Key == "equipment_extra_cpu_rllb-x" && extra.Value.Active)
+                else if (extra.Value is AutoRocketLauncher && extra.Value.Active)
                 {
                     Active.Add(Types.AUTO_ROCKLAUNCHER);
                     Update(Types.AUTO_ROCKLAUNCHER);
@@ -49,6 +51,23 @@ namespace NettyBaseReloaded.Game.controllers.player
                 {
                     Update(Types.CLOAK);
                 }
+                else if (extra.Value is AimCpu)
+                {
+                    Update(Types.AIM_CPU);
+                }
+                else if (extra.Value is DROCpu)
+                {
+                    Update(Types.DRO_CPU);
+                }
+                else if (extra.Value is TradeDrone)
+                {
+                    Update(Types.TRADE_DRONE);
+                }
+                else if (extra.Value is JumpCpu)
+                {
+                    Update(Types.JCPU);
+                }
+                extra.Value.initiate();
             }
         }
 
@@ -59,19 +78,9 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (LastTimeCheckedCpus.AddSeconds(1) > DateTime.Now) return;
             LastTimeCheckedCpus = DateTime.Now;
 
+            if (baseController.Player.Extras.Any(x => x.Value is AutoRepair)) baseController.Repairing = true;
             if (baseController.Repairing) Robot();
             if (JumpSequenceActive) AdvancedJCPU();
-
-            foreach (var activeCpu in Active)
-            {
-                switch (activeCpu)
-                {
-                    case Types.AUTO_ROK:
-                        break;
-                    case Types.AUTO_ROCKLAUNCHER:
-                        break;
-                }
-            }
         }
 
         public void Update(Types type)
@@ -99,6 +108,34 @@ namespace NettyBaseReloaded.Game.controllers.player
                     if (arlExtra != null)
                     {
                         Packet.Builder.LegacyModule(gameSession, "0|A|CPU|Y|" + Convert.ToInt32(arlExtra.Active));
+                    }
+                    break;
+                case Types.TRADE_DRONE:
+                    var tradeDrone = baseController.Player.Extras.Values.FirstOrDefault(x => x is TradeDrone);
+                    if (tradeDrone != null)
+                    {
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|T|" + tradeDrone.Amount);
+                    }
+                    break;
+                case Types.AIM_CPU:
+                    var aimExtra = baseController.Player.Extras.Values.FirstOrDefault(x => x is AimCpu);
+                    if (aimExtra != null)
+                    {
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|A|" + aimExtra.Amount + "|" + Convert.ToInt32(aimExtra.Active));
+                    }
+                    break;
+                case Types.JCPU:
+                    var jumpCpu = baseController.Player.Extras.Values.FirstOrDefault(x => x is JumpCpu);
+                    if (jumpCpu != null)
+                    {
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|J|0|0|" + jumpCpu.Amount);
+                    }
+                    break;
+                case Types.DRO_CPU:
+                    var droCpu = baseController.Player.Extras.Values.FirstOrDefault(x => x is DROCpu);
+                    if (droCpu != null)
+                    {
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|D|" + droCpu.Amount);
                     }
                     break;
             }
@@ -159,6 +196,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (baseController.Character.Moving || !baseController.Repairing ||
                 baseController.Character.LastCombatTime.AddSeconds(3) > DateTime.Now)
             {
+                Console.WriteLine(baseController.Character.Moving + " " + !baseController.Repairing + " " + (baseController.Character.LastCombatTime.AddSeconds(3) > DateTime.Now));
                 baseController.Repairing = false;
                 return;
             }
@@ -166,12 +204,17 @@ namespace NettyBaseReloaded.Game.controllers.player
             var player = (Player)baseController.Character;
             if (player.CurrentHealth == player.MaxHealth)
             {
+                Console.WriteLine("health = max health");
                 baseController.Repairing = false;
                 return;
             }
 
             var robot = player.Extras.Values.FirstOrDefault(x => x is Robot) as Robot;
-            if (robot == null) return;
+            if (robot == null)
+            {
+                Console.WriteLine("robot = null");
+                return;
+            }
 
             var repAmount = (player.MaxHealth / 100) * robot.GetLevel();
 
@@ -184,7 +227,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (cloakExtra.Value != null && cloakExtra.Value.Amount > 0)
             {
                 baseController.Character.Invisible = true;
-                if (baseController.Player.Pet != null)
+                if (baseController.Player.Pet != null && baseController.Player.Pet.Controller.Active)
                 {
                     baseController.Player.Pet.Invisible = true;
                     baseController.Player.Pet.Controller.Effects.UpdateCharacterVisibility();

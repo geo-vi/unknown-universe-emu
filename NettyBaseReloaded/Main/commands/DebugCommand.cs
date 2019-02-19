@@ -42,6 +42,7 @@ namespace NettyBaseReloaded.Main.commands
                 Console.WriteLine("Access Denied!");
             }
 
+            Player player = null;
             var playerId = 0;
             if (args.Length > 2)
                 playerId = int.Parse(args[2]);
@@ -103,6 +104,40 @@ namespace NettyBaseReloaded.Main.commands
                 case "listen":
                     var session = World.StorageManager.GetGameSession(playerId);
                     session.Client.Listening = !session.Client.Listening;
+                    break;
+                case "near":
+                    player = World.StorageManager.GetGameSession(playerId).Player;
+                    var entities =
+                        player.Spacemap.Entities.Where(x => x.Value.Position.DistanceTo(player.Position) <= 2000);
+                    foreach (var entry in entities)
+                    {
+                        Console.WriteLine(entry.Value.Name + " " + entry.Value.FactionId + " " + entry.Value.Position.ToPacket() + " sel me" + (entry.Value.SelectedCharacter == player) + " ");
+                    }
+                    break;
+                case "state":
+                    player = World.StorageManager.GetGameSession(playerId).Player;
+                    Console.WriteLine(player.EntityState + ":Controller Active: " + player.Controller.Active + ", StopController: " + player.Controller.StopController + ", Checked Classes: " + player.Controller.CheckedClasses.Count);
+                    Console.WriteLine("Attacking: " + player.Controller.Attack.Attacking + ", Position: " + player.Position.ToPacket() + " Range: E:" + player.Range.Entities.Count + " O: " + player.Range.Objects.Count + " C: " + player.Range.Collectables.Count + " Z: " + player.Range.Zones.Count);
+                    Console.WriteLine("tickers: player: " + Global.TickManager.Exists(player) + " ; controller: " + Global.TickManager.Exists(player.Controller));
+                    break;
+                case "activeattackers":
+                    player = World.StorageManager.GetGameSession(playerId).Player;
+                    foreach (var activeAttacker in player.Controller.Attack.GetActiveAttackers())
+                    {
+                        Console.WriteLine(activeAttacker.Name + " : " + activeAttacker.Spacemap.Name + " " + activeAttacker.Position.ToPacket() + " distance: " + activeAttacker.Position.DistanceTo(player.Position) + " state: " + activeAttacker.EntityState + " controller: " + activeAttacker.Controller.Active);
+                    }
+                    break;
+                case "allselected":
+                    player = World.StorageManager.GetGameSession(playerId).Player;
+
+                    foreach (var spacemap in World.StorageManager.Spacemaps.Where(x =>
+                        x.Value.Entities.Any(y => y.Value.SelectedCharacter == player)))
+                    {
+                        foreach (var entity in spacemap.Value.Entities.Values.Where(x => x.SelectedCharacter == player))
+                        {
+                            Console.WriteLine(entity.Name + " : " + entity.Spacemap.Name + " " + entity.Position.ToPacket() + " distance: " + entity.Position.DistanceTo(player.Position) + " controller: " + entity.Controller.Active);
+                        }
+                    }
                     break;
             }
         }

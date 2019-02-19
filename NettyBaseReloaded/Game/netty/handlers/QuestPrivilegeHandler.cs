@@ -17,6 +17,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             var cmd = new QuestPrivilegeRequest();
             cmd.readCommand(bytes);
             var qId = cmd.questId;
+            gameSession.Player.QuestData.SelectedQuestId = qId;
             Packet.Builder.QuestPrivilegeCommand(gameSession, qId);
         }
     }

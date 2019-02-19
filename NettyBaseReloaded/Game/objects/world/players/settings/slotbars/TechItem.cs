@@ -16,42 +16,29 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
         public override void Execute(Player player)
         {
             var gameSession = World.StorageManager.GameSessions[player.Id];
-
-            foreach (var tech in gameSession.Player.Techs)
+            var techs = gameSession.Player.Techs;
+            switch (ItemId)
             {
-                switch (ItemId)
-                {
-                    case "tech_battle-repair-bot":
-                        if (tech is BattleRepairRobot)
-                        {
-                            tech.execute();
-                        }
-                        break;
-                    case "tech_backup-shields":
-                        if (tech is ShieldBuff)
-                        {
-                            tech.execute();
-                        }
-                        break;
-                    case "tech_precision-targeter":
-                        if (tech is RocketPrecission)
-                        {
-                            tech.execute();
-                        }
-                        break;
-                    case "tech_energy-leech":
-                        if (tech is EnergyLeech)
-                        {
-                            tech.execute();
-                        }
-                        break;
-                    case "tech_chain-impulse":
-                        if (tech is ChainImpulse)
-                        {
-                            tech.execute();
-                        }
-                        break;
-                }
+                case "tech_battle-repair-bot":
+                    if (techs.ContainsKey(Techs.BATTLE_REPAIR_ROBOT))
+                        techs[Techs.BATTLE_REPAIR_ROBOT].execute();
+                    break;
+                case "tech_backup-shields":
+                    if (techs.ContainsKey(Techs.SHIELD_BUFF))
+                        techs[Techs.SHIELD_BUFF].execute();
+                    break;
+                case "tech_precision-targeter":
+                    if (techs.ContainsKey(Techs.ROCKET_PRECISSION))
+                        techs[Techs.ROCKET_PRECISSION].execute();
+                    break;
+                case "tech_energy-leech":
+                    if (techs.ContainsKey(Techs.ENERGY_LEECH))
+                        techs[Techs.ENERGY_LEECH].execute();
+                    break;
+                case "tech_chain-impulse":
+                    if (techs.ContainsKey(Techs.CHAIN_IMPULSE))
+                        techs[Techs.CHAIN_IMPULSE].execute();
+                    break;
             }
         }
     }

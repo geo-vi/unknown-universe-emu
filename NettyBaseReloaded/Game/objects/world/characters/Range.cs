@@ -31,7 +31,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public bool RemoveEntity(Character entity)
         {
-            var success = Entities.TryRemove(entity.Id, out entity);
+            Character output;
+            var success = Entities.TryRemove(entity.Id, out output);
             return success;
         }
 

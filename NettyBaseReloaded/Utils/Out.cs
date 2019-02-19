@@ -29,33 +29,23 @@ namespace NettyBaseReloaded
             return className + "->" + methodName;
         }
 
-        public static async void Worker()
+        public static void QuickLog(string content, string key = "log")
         {
-            while (true)
-            {
-                foreach (var buffedText in Buffer)
-                {
-                    var location = buffedText.Key.Split('%')[0];
+            Logger.Logger._instance.Enqueue(key, content);
+        }
 
-                    switch (location)
-                    {
-                        case "log":
-                            await LogWriter.WriteLineAsync("#" + buffedText.Key.Split('%')[1] + "->" + buffedText.Value);
-                            break;
-                    }
-
-                    Buffer.TryRemove(buffedText.Key, out location);
-                }
-            }
+        public static void QuickLog(Exception exception)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(GetCaller(4));
+            builder.AppendLine(exception.Source + "::" + exception);
+            builder.AppendLine("msg: " + exception.Message);
+            builder.AppendLine("trace: " + exception.StackTrace);
+            builder.AppendLine("end error @ " + DateTime.Now);
+            QuickLog(builder.ToString());
         }
 
         #region Writer methods
-        private static ConcurrentDictionary<string, string> Buffer = new ConcurrentDictionary<string, string>();
-
-        private static StreamWriter LogWriter = new StreamWriter(SessionDirCreator.PATH_LOG);
-        private static StreamWriter DbLogWriter = new StreamWriter(SessionDirCreator.PATH_DBLOG);
-        private static StreamWriter PlayerActionWriter = new StreamWriter(SessionDirCreator.PATH_PACT);
-
         /// <summary>
         /// That should replace the Console.WriteLine with a little more ordered version.
         /// </summary>
@@ -77,7 +67,7 @@ namespace NettyBaseReloaded
 
             //var md5Key = "log%" + Encode.MD5(message + DateTime.Now);
              
-            Debug.WriteLine("LOG: " + builder.ToString());
+            //Debug.WriteLine("LOG: " + builder.ToString());
         }
 
         public static void WriteDbLog(string request)
@@ -89,7 +79,7 @@ namespace NettyBaseReloaded
 
 
             Debug.WriteLine("DBLOG: " + builder.ToString());
-
+            //QuickLog(builder.ToString(), "dblog");
         }
 
         public static void WritePlayerAction(string action)

@@ -40,8 +40,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Inactive()
         {
-            if (Controller.Npc.MotherShip == null)
+            if (Controller.Npc.LastCombatTime.AddSeconds(30) < DateTime.Now || Controller.Npc.MotherShip == null)
             {
+                Exit();
                 return;
             }
 
@@ -52,7 +53,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 attacker = rangePlayers.FirstOrDefault().Value;
             }
 
-            Controller.Npc.Selected = attacker;
+            Controller.Attack.Select(attacker);
         }
 
         public void PositionChecker()
@@ -68,9 +69,10 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Exit()
         {
+            Controller.Npc.Invalidate();
+            Controller.StopAll();
             if (Controller.Npc.Spacemap.RemoveEntity(Controller.Npc))
             {
-                Controller.StopAll();
                 var cube = Controller.Npc.MotherShip as Cubikon;
                 Npc removed;
                 cube?.Children.TryRemove(Controller.Npc.Id, out removed);

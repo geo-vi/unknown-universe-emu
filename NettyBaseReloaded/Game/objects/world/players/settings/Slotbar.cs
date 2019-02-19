@@ -226,7 +226,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     null,
                     1,
                     false,
-                    false
+                    true
                 );
 
                 item.Create();

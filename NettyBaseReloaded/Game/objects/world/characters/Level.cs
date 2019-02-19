@@ -18,6 +18,12 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             return levelsForCurrentExp;
         }
 
+        public Level DetermineDroneLvl(double get)
+        {
+            var levelsForCurrentExp = DroneLevels.FirstOrDefault(x => x.Value.Experience >= get).Value;
+            return levelsForCurrentExp;
+        }
+
         public Level DeterminePetLvl(double get)
         {
             var levelsForCurrentExp = PetLevels.FirstOrDefault(x => x.Value.Experience >= get).Value;

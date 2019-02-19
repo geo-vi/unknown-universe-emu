@@ -34,12 +34,11 @@ namespace NettyBaseReloaded.Game.objects.world
         public void Start()
         {
             Active = true;
-            if (Entity.Visuals.Exists(x => x.Visual == Visual))
+            if (Entity.Visuals.ContainsKey(Visual))
             {
-                var indx = Entity.Visuals.FindIndex(x => x.Visual == Visual);
-                Entity.Visuals[indx] = this;
+                Entity.Visuals[Visual] = this;
             }
-            else Entity.Visuals.Add(this);
+            else Entity.Visuals.TryAdd(Visual, this);
 
             foreach (var rangeSession in GameSession.GetRangeSessions(Entity).Values)
             {
@@ -51,7 +50,8 @@ namespace NettyBaseReloaded.Game.objects.world
         public void Cancel()
         {
             Active = false;
-            Entity.Visuals.Remove(this);
+            VisualEffect output;
+            Entity.Visuals.TryRemove(Visual, out output);
             foreach (var rangeSession in GameSession.GetRangeSessions(Entity).Values)
             {
                 if (rangeSession != null)
@@ -68,7 +68,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public static List<VisualModifierCommand> ToOldModifierCommand(IAttackable entity)
         {
             var visuals = new List<VisualModifierCommand>();
-            foreach (var visual in entity.Visuals)
+            foreach (var visual in entity.Visuals.Values)
             {
                 visuals.Add(new VisualModifierCommand(entity.Id, (short)visual.Visual, visual.Attribute, visual.Active));
             }
@@ -79,7 +79,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public static List<netty.commands.new_client.VisualModifierCommand> ToNewModifierCommand(Player player)
         {
             var visuals = new List<netty.commands.new_client.VisualModifierCommand>();
-            foreach (var visual in player.Visuals)
+            foreach (var visual in player.Visuals.Values)
             {
                 visuals.Add(new netty.commands.new_client.VisualModifierCommand(player.Id, (short)visual.Visual, visual.Attribute, visual.Active, "", 1));
             }

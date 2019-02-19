@@ -31,7 +31,6 @@ namespace NettyBaseReloaded.Chat.objects
             var id = Player.Id;
             var sessionId = Player.SessionId;
             var worldSession = World.StorageManager.GetGameSession(id);
-
             if (worldSession != null && worldSession.Player.Id == id && worldSession.Player.SessionId == sessionId)
             {
                 return worldSession;

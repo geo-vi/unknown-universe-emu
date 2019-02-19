@@ -30,7 +30,11 @@ using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
+using NettyBaseReloaded.Game.objects.world.map.collectables.rewards;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Game.objects.world.players.equipment.item;
+using NettyBaseReloaded.Game.objects.world.players.extra;
+using NettyBaseReloaded.Game.objects.world.players.extra.boosters;
 using DroneFormation = NettyBaseReloaded.Game.objects.world.DroneFormation;
 
 namespace NettyBaseReloaded.Game.managers
@@ -44,6 +48,7 @@ namespace NettyBaseReloaded.Game.managers
             LoadSpacemaps();
             LoadLevels();
             LoadCollectableRewards();
+            LoadItems();
             LoadTitles();
             LoadQuests();
             //LoadClanBattleStations();
@@ -336,15 +341,19 @@ namespace NettyBaseReloaded.Game.managers
                         {
                             var id = intConv(row["ID"]);
                             var rewards =
-                                JsonConvert.DeserializeObject<List<Tuple<string, int>>>(row["REWARDS"].ToString());
+                                JsonConvert.DeserializeObject<List<PotentialReward>>(row["REWARDS"].ToString());
                             var spawn_count = intConv(row["SPAWN_COUNT"]);
                             var pvp_spawn_count = intConv(row["PVP_SPAWN_COUNT"]);
                             switch (id)
                             {
                                 case 2:
+                                    //bonusbox
                                     BonusBox.REWARDS = rewards;
                                     BonusBox.SPAWN_COUNT = spawn_count;
                                     BonusBox.PVP_SPAWN_COUNT = pvp_spawn_count;
+                                    break;
+                                case 20:
+                                    //pirate booty
                                     break;
                             }
                         }
@@ -494,26 +503,66 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        //"SELECT * FROM player_hangar WHERE PLAYER_ID=" + player.Id + " AND ACTIVE=1"
-        public Hangar LoadHangar(Player player)
+        public void LoadItems()
         {
-            Hangar hangar = null;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM server_items");
+                    if (queryTable != null)
+                    {
+                        foreach (DataRow reader in queryTable.Rows)
+                        {
+                            var id = intConv(reader["ID"]);
+                            var typeId = intConv(reader["TYPE"]);
+                            var lootId = reader["LOOT_ID"].ToString();
+                            var amount = 0;
+                            if (!reader.IsNull("USES"))
+                            {
+                                amount = intConv(reader["USES"]);
+                            }
+                            World.StorageManager.Items.Add(id, new Item(id, typeId, lootId, amount));
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        public Dictionary<int, Hangar> LoadHangar(Player player)
+        {
+            var drones = LoadDrones(player);
+            Dictionary<int, Hangar> hangars = new Dictionary<int, Hangar>();
             try
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow =
-                        mySqlClient.ExecuteQueryRow("SELECT * FROM player_hangar WHERE PLAYER_ID=" + player.Id +
-                                                    " AND ACTIVE=1");
+                    var queryTable =
+                        mySqlClient.ExecuteQueryTable("SELECT * FROM player_hangar WHERE PLAYER_ID=" + player.Id);
 
-                    var ship = World.StorageManager.Ships[intConv(queryRow["SHIP_DESIGN"])];
-                    var pos = new Vector(intConv(queryRow["SHIP_X"]), intConv(queryRow["SHIP_Y"]));
-                    var mapId = intConv(queryRow["SHIP_MAP_ID"]);
-                    var hp = intConv(queryRow["SHIP_HP"]);
-                    var nano = intConv(queryRow["SHIP_NANO"]);
+                    foreach (DataRow queryRow in queryTable.Rows)
+                    {
+                        var id = intConv(queryRow["ID"]);
+                        var ship = World.StorageManager.Ships[intConv(queryRow["SHIP_DESIGN"])];
+                        var pos = new Vector(intConv(queryRow["SHIP_X"]), intConv(queryRow["SHIP_Y"]));
+                        var mapId = intConv(queryRow["SHIP_MAP_ID"]);
+                        var hp = intConv(queryRow["SHIP_HP"]);
+                        var nano = intConv(queryRow["SHIP_NANO"]);
+                        Spacemap map;
+                        if (World.StorageManager.Spacemaps.ContainsKey(mapId))
+                            map = World.StorageManager.Spacemaps[mapId];
+                        else map = World.StorageManager.Spacemaps[255];
 
-                    hangar = new Hangar(ship, null, pos, World.StorageManager.Spacemaps[mapId], hp, nano,
-                        new Dictionary<string, Item>());
+                        var active = Convert.ToBoolean(intConv(queryRow["ACTIVE"]));
+
+                        var hangar = new Hangar(id, ship, drones, pos, map, hp, nano, active);
+                        hangars.Add(id, hangar);
+                    }
 
                 }
             }
@@ -521,91 +570,53 @@ namespace NettyBaseReloaded.Game.managers
             {
                 Debug.WriteLine("Error loading hangar, " + e.Message);
             }
-
-            return hangar;
+            return hangars;
         }
 
-        //"SELECT * FROM player_ship_config WHERE PLAYER_ID=" + player.Id
-        public Configuration[] LoadConfig(Player player)
+        public Dictionary<int, EquipmentItem> LoadEquipment(Player player)
         {
-            Configuration[] builder = null;
+            var items = new Dictionary<int, EquipmentItem>();
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow =
-                        mySqlClient.ExecuteQueryRow("SELECT * FROM player_ship_config WHERE PLAYER_ID=" + player.Id);
-
-                    int dmg1 = intConv(queryRow["CONFIG_1_DMG"]);
-                    int velocity1 = intConv(queryRow["CONFIG_1_SPEED"]);
-                    string extras1 = queryRow["CONFIG_1_EXTRAS"].ToString();
-                    int shield1 = intConv(queryRow["CONFIG_1_SHIELD"]);
-                    int shieldLeft1 = intConv(queryRow["CONFIG_1_SHIELD_LEFT"]);
-                    int absorb1 = intConv(queryRow["CONFIG_1_SHIELDABSORB"]);
-                    int lcount1 = intConv(queryRow["CONFIG_1_LASERCOUNT"]);
-                    int ltypes1 = intConv(queryRow["CONFIG_1_LASER_TYPES"]);
-                    string rlTypes1 = queryRow["CONFIG_1_HEAVY"].ToString();
-
-                    if (rlTypes1 == "") rlTypes1 = "[]";
-                    if (extras1 == "") extras1 = "[]";
-
-                    var extras1List = JsonConvert.DeserializeObject<List<Item>>(extras1);
-                    Dictionary<string, Item> extra1Dictionary = new Dictionary<string, Item>();
-                    if (extras1List != null && extras1List.Count > 0)
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM player_equipment WHERE PLAYER_ID=" + player.Id);
+                    foreach (DataRow row in queryTable.Rows)
                     {
-                        extra1Dictionary = extras1List.ToDictionary(x => x.LootId);
+                        var id = intConv(row["ID"]);
+                        var itemId = intConv(row["ITEM_ID"]);
+                        var itemType = intConv(row["ITEM_TYPE"]);
+                        var itemLvl = intConv(row["ITEM_LVL"]);
+                        var onConfig1JSON = row["ON_CONFIG_1"].ToString();
+                        var onConfig1 = JsonConvert.DeserializeObject<EquippedItem>(onConfig1JSON);
+                        var onConfig2JSON = row["ON_CONFIG_2"].ToString();
+                        var onConfig2 = JsonConvert.DeserializeObject<EquippedItem>(onConfig2JSON);
+                        var onDrone1JSON = row["ON_DRONE_ID_1"].ToString();
+                        var onDrone1 = JsonConvert.DeserializeObject<EquippedItem>(onDrone1JSON);
+                        var onDrone2JSON = row["ON_DRONE_ID_2"].ToString();
+                        var onDrone2 = JsonConvert.DeserializeObject<EquippedItem>(onDrone2JSON);
+                        var onPet1JSON = row["ON_PET_1"].ToString();
+                        var onPet1 = JsonConvert.DeserializeObject<EquippedItem>(onPet1JSON);
+                        var onPet2JSON = row["ON_PET_2"].ToString();
+                        var onPet2 = JsonConvert.DeserializeObject<EquippedItem>(onPet2JSON);
+                        var itemAmount = intConv(row["ITEM_AMOUNT"]);
+                        var item = new EquipmentItem(id, player, Item.Find(itemId), itemLvl, onConfig1, onConfig2,
+                            onDrone1, onDrone2, onPet1, onPet2, itemAmount);
+                        items.Add(id, item);
                     }
-
-                    if (velocity1 == 0) velocity1 = player.Hangar.Ship.Speed;
-                    var config1 = new Configuration(player, 1, dmg1, velocity1, shield1, shieldLeft1, absorb1, lcount1,
-                        ltypes1, JsonConvert.DeserializeObject<int[]>(rlTypes1), extra1Dictionary
-                        );
-
-                    int dmg2 = intConv(queryRow["CONFIG_2_DMG"]);
-                    int velocity2 = intConv(queryRow["CONFIG_2_SPEED"]);
-                    string extras2 = queryRow["CONFIG_2_EXTRAS"].ToString();
-                    int shield2 = intConv(queryRow["CONFIG_2_SHIELD"]);
-                    int shieldLeft2 = intConv(queryRow["CONFIG_2_SHIELD_LEFT"]);
-                    int absorb2 = intConv(queryRow["CONFIG_2_SHIELDABSORB"]);
-                    int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
-                    int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
-                    string rlTypes2 = queryRow["CONFIG_2_HEAVY"].ToString();
-
-                    if (velocity2 == 0) velocity2 = player.Hangar.Ship.Speed;
-                    if (rlTypes2 == "") rlTypes2 = "[]";
-                    if (extras2 == "") extras2 = "[]";
-
-                    var extras2List = JsonConvert.DeserializeObject<List<Item>>(extras2);
-                    Dictionary<string, Item> extra2Dictionary = new Dictionary<string, Item>();
-                    if (extras2List != null && extras2List.Count > 0)
-                    {
-                        extra2Dictionary = extras2List.ToDictionary(x => x.LootId);
-                    }
-
-
-                    var config2 = new Configuration(player, 2, dmg2, velocity2, shield2, shieldLeft2, absorb2, lcount2,
-                        ltypes2, JsonConvert.DeserializeObject<int[]>(rlTypes2),
-                        extra2Dictionary);
-
-                    builder = new Configuration[2]
-                    {
-                        config1,
-                        config2
-                    };
-
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Debug.WriteLine("Error loading config, " + e.Message);
             }
-            return builder;
+
+            return items;
         }
 
         //SELECT * FROM player_drones WHERE PLAYER_ID=" + player.Id
-        public List<Drone> LoadDrones(Player player)
+        public Dictionary<int, Drone> LoadDrones(Player player)
         {
-            List<Drone> drones = new List<Drone>();
+            Dictionary<int, Drone> drones = new Dictionary<int, Drone>();
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
@@ -621,11 +632,10 @@ namespace NettyBaseReloaded.Game.managers
                             int type = intConv(reader["DRONE_TYPE"]);
                             int level = intConv(reader["LEVEL"]);
                             int exp = intConv(reader["EXPERIENCE"]);
-                            int design1 = intConv(reader["DESIGN_1"]);
-                            int design2 = intConv(reader["DESIGN_2"]);
+                            var upgLevel = intConv(reader["UPGRADE_LVL"]);
 
-                            drones.Add(new Drone(droneId, player.Id, (DroneType) (type + 1),
-                                World.StorageManager.Levels.DroneLevels[level], exp, 0, design1, design2));
+                            drones.Add(droneId, new Drone(droneId, player, (DroneType) (type + 1),
+                                World.StorageManager.Levels.DroneLevels[level], exp, 0, upgLevel));
                         }
                     }
 
@@ -699,10 +709,10 @@ namespace NettyBaseReloaded.Game.managers
 
                             if (World.StorageManager.Asteroids.ContainsKey(cbsId))
                             {
-                                var asteroid = World.StorageManager.Asteroids[cbsId];
-                                var module = new Module(type, new Item(moduleId, "", 1), true);
-                                var bModule = BattleStationModule.Equip(null, module, asteroid, position, 0);
-                                asteroid.EquippedModules.Add(moduleId, bModule);
+                                //var asteroid = World.StorageManager.Asteroids[cbsId];
+                                //var module = new Module(type, new Item(moduleId, "", 1), true);
+                                //var bModule = BattleStationModule.Equip(null, module, asteroid, position, 0);
+                                //asteroid.EquippedModules.Add(moduleId, bModule);
                             }
                         }
                     }
@@ -724,39 +734,24 @@ namespace NettyBaseReloaded.Game.managers
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     string sql =
-                        "SELECT * FROM player_data, player_extra_data, player_hangar WHERE player_hangar.PLAYER_ID = player_data.PLAYER_ID AND player_extra_data.PLAYER_ID = player_data.PLAYER_ID AND player_hangar.ACTIVE=1 AND player_data.PLAYER_ID = " +
+                        "SELECT * FROM player_data WHERE PLAYER_ID = " +
                         playerId;
                     var querySet = mySqlClient.ExecuteQueryRow(sql);
 
+                    var globalId = intConv(querySet["USER_ID"]);
                     var name = stringConv(querySet["PLAYER_NAME"]);
-                    var shipId = intConv(querySet["SHIP_DESIGN"]);
-                    var ship = World.StorageManager.Ships[shipId];
-                    var position = new Vector(intConv(querySet["SHIP_X"]), intConv(querySet["SHIP_Y"]));
-                    var mapId = intConv(querySet["SHIP_MAP_ID"]);
-
-                    if (!World.StorageManager.Spacemaps.ContainsKey(mapId))
-                    {
-                        Console.WriteLine("PROBLEM -> MAPID " + mapId + " DOESN'T EXIST!");
-                        return null;
-                    }
-
-                    var spacemap = World.StorageManager.Spacemaps[mapId];
-                    var currentHealth = intConv(querySet["SHIP_HP"]);
-                    var currentNanohull = intConv(querySet["SHIP_NANO"]);
-                    var hangar = new Hangar(ship, new List<Drone>(), position, spacemap, currentHealth,
-                        currentNanohull, new Dictionary<string, Item>());
                     var factionId = (Faction) intConv(querySet["FACTION_ID"]);
                     var rank = (Rank) (intConv(querySet["RANK"]));
                     var sessionId = stringConv(querySet["SESSION_ID"]);
-                    var clan = Global.StorageManager.Clans[(intConv(querySet["CLAN_ID"]))];
-                    player = new Player(playerId, name, clan, hangar, currentHealth, currentNanohull, factionId,
-                        position, spacemap, null, sessionId, rank, false);
+                    var clan = Global.StorageManager.Clans[intConv(querySet["CLAN_ID"])];
+                    player = new Player(playerId, globalId, name, clan, factionId,
+                         sessionId, rank, false);
                 }
 
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error loading account, " + e.Message);
+                Console.WriteLine("Error loading account, " + e.Message + " " + e.StackTrace);
             }
             return player;
         }
@@ -828,46 +823,6 @@ namespace NettyBaseReloaded.Game.managers
                 Debug.WriteLine("Error loading ammo, " + e.Message);
             }
             return ammoDictionary;
-        }
-
-        public Dictionary<int, Hangar> LoadHangars(Player player)
-        {
-            Dictionary<int, Hangar> hangars = new Dictionary<int, Hangar>();
-            try
-            {
-                using (var mySqlClient = SqlDatabaseManager.GetClient())
-                {
-                    var queryTable =
-                        mySqlClient.ExecuteQueryTable("SELECT * FROM player_hangar WHERE PLAYER_ID=" + player.Id);
-
-                    if (queryTable != null)
-                    {
-                        foreach (DataRow reader in queryTable.Rows)
-                        {
-                            var id = intConv(reader["HANGAR_COUNT"]);
-                            int shipId = Convert.ToInt32(reader["SHIP_DESIGN"]);
-                            int x = Convert.ToInt32(reader["SHIP_X"]);
-                            int y = Convert.ToInt32(reader["SHIP_Y"]);
-                            int hp = Convert.ToInt32(reader["SHIP_HP"]);
-                            int nano = Convert.ToInt32(reader["SHIP_NANO"]);
-                            bool active = Convert.ToBoolean(reader["ACTIVE"]);
-                            int mapId = Convert.ToInt32(reader["SHIP_MAP_ID"]);
-
-                            hangars.Add(id, new Hangar(World.StorageManager.Ships[shipId], player.Drones,
-                                new Vector(x, y),
-                                World.StorageManager.Spacemaps[mapId], hp, nano, new Dictionary<string, Item>(),
-                                active));
-                        }
-
-                    }
-                }
-                return hangars;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Error loading Hangars, " + e.Message);
-            }
-            return hangars;
         }
 
         public Statistics LoadStatistics(Player player)
@@ -1023,7 +978,6 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-
         public int UpdateAmmo(Ammunition ammunition, int ammo_change)
         {
             try
@@ -1075,6 +1029,7 @@ namespace NettyBaseReloaded.Game.managers
             {
                 Debug.WriteLine("Error refreshing user infos, " + e.Message);
             }
+            LoadExtraData(info.Player, info);
         }
 
         public bool CheckWhitelist(int id)
@@ -1199,7 +1154,7 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public void SavePlayerHangar(Player player)
+        public void SavePlayerHangar(Player player,Hangar hangar)
         {
             try
             {
@@ -1208,7 +1163,7 @@ namespace NettyBaseReloaded.Game.managers
                     using (var mySqlClient = SqlDatabaseManager.GetClient())
                     {
                         mySqlClient.ExecuteNonQuery(
-                            $"UPDATE player_hangar SET SHIP_MAP_ID={player.Spacemap.Id}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y} WHERE PLAYER_ID={player.Id} AND ACTIVE=1");
+                            $"UPDATE player_hangar SET SHIP_MAP_ID={player.Spacemap.Id}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y},ACTIVE={Convert.ToInt32(hangar.Active)} WHERE PLAYER_ID={player.Id} AND ID={hangar.Id}");
                         player.Storage.DistancePassed = 0;
                     }
                 }
@@ -1304,9 +1259,8 @@ namespace NettyBaseReloaded.Game.managers
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    //CONFIG_1_EXTRAS={JsonConvert.SerializeObject(Extra.ToItems(player.Hangar.Configurations[0].Extras))}, CONFIG_2_EXTRAS={JsonConvert.SerializeObject(Extra.ToItems(player.Hangar.Configurations[1].Extras))}
                     mySqlClient.ExecuteNonQuery(
-                        $"UPDATE player_ship_config SET CONFIG_1_SHIELD_LEFT={player.Hangar.Configurations[0].CurrentShield}, CONFIG_2_SHIELD_LEFT={player.Hangar.Configurations[1].CurrentShield} " +
+                        $"UPDATE player_ship_config SET CONFIG_1_SHIELD_LEFT={player.Hangar.Configurations[0].CurrentShieldLeft}, CONFIG_2_SHIELD_LEFT={player.Hangar.Configurations[1].CurrentShieldLeft} " +
                         $"WHERE PLAYER_ID={player.Id}");
 
                 }
@@ -1488,58 +1442,7 @@ namespace NettyBaseReloaded.Game.managers
         {
             try
             {
-                using (var mySqlClient = SqlDatabaseManager.GetClient())
-                {
-                    var queryRow = mySqlClient.ExecuteQueryRow(
-                        $"SELECT * FROM player_hangar, player_ship_config WHERE player_hangar.PLAYER_ID={player.Id} AND ACTIVE=1 AND player_ship_config.PLAYER_ID={player.Id}");
-
-                    int shieldLeft1 = player.Hangar.Configurations[0].CurrentShield;
-                    int shieldLeft2 = player.Hangar.Configurations[1].CurrentShield;
-                    var hangarId = intConv(queryRow["HANGAR_COUNT"]);
-                    if (player.Equipment.ActiveHangar != hangarId && player.Equipment.Hangars.ContainsKey(hangarId))
-                        player.Equipment.ActiveHangar = hangarId;
-                    else
-                    {
-                        player.Equipment.Hangars = LoadHangars(player);
-                        player.Equipment.ActiveHangar = hangarId;
-                    } 
-
-                    int dmg1 = intConv(queryRow["CONFIG_1_DMG"]);
-                    int velocity1 = intConv(queryRow["CONFIG_1_SPEED"]);
-                    string extras1 = queryRow["CONFIG_1_EXTRAS"].ToString();
-                    int shield1 = intConv(queryRow["CONFIG_1_SHIELD"]);
-                    int absorb1 = intConv(queryRow["CONFIG_1_SHIELDABSORB"]);
-                    int lcount1 = intConv(queryRow["CONFIG_1_LASERCOUNT"]);
-                    int ltypes1 = intConv(queryRow["CONFIG_1_LASER_TYPES"]);
-                    string rlTypes1 = queryRow["CONFIG_1_HEAVY"].ToString();
-
-                    if (rlTypes1 == "") rlTypes1 = "[]";
-                    if (extras1 == "") extras1 = "[]";
-                    if (velocity1 == 0) velocity1 = player.Hangar.Ship.Speed;
-                    var config1 = new Configuration(player, 1, dmg1, velocity1, shield1, shieldLeft1, absorb1,
-                        lcount1,
-                        ltypes1, JsonConvert.DeserializeObject<int[]>(rlTypes1),
-                        JsonConvert.DeserializeObject<List<Item>>(extras1).ToDictionary(x => x.LootId));
-
-                    int dmg2 = intConv(queryRow["CONFIG_2_DMG"]);
-                    int velocity2 = intConv(queryRow["CONFIG_2_SPEED"]);
-                    string extras2 = queryRow["CONFIG_2_EXTRAS"].ToString();
-                    int shield2 = intConv(queryRow["CONFIG_2_SHIELD"]);
-                    int absorb2 = intConv(queryRow["CONFIG_2_SHIELDABSORB"]);
-                    int lcount2 = intConv(queryRow["CONFIG_2_LASERCOUNT"]);
-                    int ltypes2 = intConv(queryRow["CONFIG_2_LASER_TYPES"]);
-                    string rlTypes2 = queryRow["CONFIG_2_HEAVY"].ToString();
-                    if (velocity2 == 0) velocity2 = player.Hangar.Ship.Speed;
-                    if (rlTypes2 == "") rlTypes2 = "[]";
-                    if (extras2 == "") extras2 = "[]";
-                    var config2 = new Configuration(player, 2, dmg2, velocity2, shield2, shieldLeft2, absorb2,
-                        lcount2,
-                        ltypes2, JsonConvert.DeserializeObject<int[]>(rlTypes2),
-                        JsonConvert.DeserializeObject<List<Item>>(extras2).ToDictionary(x => x.LootId));
-                    player.Hangar.Configurations = new[] {config1, config2};
-                    player.Hangar.Drones = LoadDrones(player);
-                    player.Hangar.RefineNewData(player);
-                }
+                throw new NotImplementedException();
             }
             catch (Exception e)
             {
@@ -1627,7 +1530,7 @@ namespace NettyBaseReloaded.Game.managers
                     {
                         cargo.Player = player;
                     }
-                    else return new Cargo(player, 0, 0, 0, 0, 0, 0, 0, 0);
+                    else return new Cargo(player, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
                     return cargo;
                 }
@@ -1703,34 +1606,7 @@ namespace NettyBaseReloaded.Game.managers
 
                         var petShip = Pet.GetShipByLevel(level);
 
-                        var damageC1 = intConv(reader["CONFIG_1_DMG_PET"]);
-                        var maxShieldC1 = intConv(reader["CONFIG_1_SHIELD_PET"]);
-                        var shieldAbsC1 = maxShieldC1;
-                        var gearsC1 = reader["CONFIG_1_GEARS"].ToString();
-                        
-                        var gears1List = JsonConvert.DeserializeObject<List<Item>>(gearsC1);
-                        Dictionary<string, Item> gearsC1Dictionary = new Dictionary<string, Item>();
-                        if (gears1List != null && gears1List.Count > 0)
-                        {
-                            gearsC1Dictionary = gears1List.ToDictionary(x => x.LootId);
-                        }
-
-                        
-                        var damageC2 = intConv(reader["CONFIG_2_DMG_PET"]);
-                        var maxShieldC2 = intConv(reader["CONFIG_2_SHIELD_PET"]);
-                        var shieldAbsC2 = maxShieldC2;
-                        var gearsC2 = reader["CONFIG_2_GEARS"].ToString();
-                        
-                        var gears2List = JsonConvert.DeserializeObject<List<Item>>(gearsC2);
-                        Dictionary<string, Item> gearsC2Dictionary = new Dictionary<string, Item>();
-                        if (gears2List != null && gears2List.Count > 0)
-                        {
-                            gearsC2Dictionary = gears2List.ToDictionary(x => x.LootId);
-                        }
-                        
-                        //TODO: Protocols
-                        pet = new Pet(id, player, name, new Hangar(petShip, new List<Drone>(), player.Position, player.Spacemap, hp, 0, new Dictionary<string, Item>(), true, new Configuration[] { new Configuration(1, damageC1, maxShieldC1, maxShieldC1, shieldAbsC1, gearsC1Dictionary), new Configuration(2, damageC2, maxShieldC2, maxShieldC2, shieldAbsC2, gearsC2Dictionary) }), player.FactionId,
-                             World.StorageManager.Levels.PetLevels[level], exp, fuel);
+                        pet = new Pet(id , player, name, new Hangar(0, petShip, new Dictionary<int, Drone>(), player.Position, player.Spacemap, hp, 0, true) { Configurations = player.Equipment.PetConfigParser()}, player.FactionId, World.StorageManager.Levels.PetLevels[level], exp, fuel);
                     }
                 }
             }
@@ -1791,7 +1667,6 @@ namespace NettyBaseReloaded.Game.managers
         public void LoadExtraData(Player player, Information information)
         {
             information.Vouchers = 0;
-            information.GGSpins = 0;
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
@@ -1802,6 +1677,8 @@ namespace NettyBaseReloaded.Game.managers
                     if (bkJson == "") bkJson = "[0,0,0]";
                     int[] bks = JsonConvert.DeserializeObject<int[]>(bkJson);
                     information.BootyKeys = bks;
+                    var ggSpins = intConv(row["GG_ENERGY"]);
+                    information.GGSpins = ggSpins;
                 }
             }
             catch (Exception e)
@@ -1914,8 +1791,8 @@ namespace NettyBaseReloaded.Game.managers
 
                             if (!equipped)
                             {
-                                var module = new Module((Module.Types)typeId, new Item(id, "", 1), false);
-                                modules.Add(id, module);
+                                //var module = new Module((Module.Types)typeId, new Item(id, "", 1), false);
+                                //modules.Add(id, module);
                             }
                             else
                             {
@@ -1963,7 +1840,9 @@ namespace NettyBaseReloaded.Game.managers
                     var queryRow =
                         mySqlClient.ExecuteQueryRow("SELECT DRONE_FORMATIONS FROM player_extra_data WHERE PLAYER_ID=" +
                                                     player.Id);
-                    var droneFormationsJson = queryRow["DRONE_FORMATIONS"].ToString().Replace("{\"ID\":", "").Replace("}", "");
+                    var droneFormationsJson = queryRow["DRONE_FORMATIONS"].ToString();
+                    if (droneFormationsJson == "") return droneFormationsList;
+                    droneFormationsJson = droneFormationsJson.Replace("{\"ID\":", "").Replace("}", "");
                     var formations = JsonConvert.DeserializeObject<int[]>(droneFormationsJson);
                     foreach (var formation in formations)
                     {
@@ -2017,6 +1896,158 @@ namespace NettyBaseReloaded.Game.managers
                 Console.WriteLine(e.Message);
             }
             return droneFormationsList;
+        }
+
+        public ConcurrentDictionary<int, Booster> LoadBoosters(Player player)
+        {
+            var boosters = new ConcurrentDictionary<int, Booster>();
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow =
+                        mySqlClient.ExecuteQueryTable("SELECT * FROM player_boosters WHERE PLAYER_ID=" +
+                                                    player.Id);
+                    foreach (DataRow reader in queryRow.Rows)
+                    {
+                        var id = intConv(reader["ID"]);
+                        var boosterId = intConv(reader["BOOSTER_ID"]);
+                        var endTime = DateTime.Parse(reader["END_TIME"].ToString());
+                        
+                        switch (boosterId)
+                        {
+                            case 33:
+                                boosters.TryAdd(id, new DMGB01(id, player, endTime));
+                                break;
+                            case 34:
+                                boosters.TryAdd(id, new EPB01(id, player, endTime));
+                                break;
+                            case 35:
+                                boosters.TryAdd(id, new HONB01(id, player, endTime));
+                                break;
+                            case 36:
+                                boosters.TryAdd(id, new HPB01(id, player, endTime));
+                                break;
+                            case 37:
+                                boosters.TryAdd(id, new REPB01(id, player, endTime));
+                                break;
+                            case 38:
+                                boosters.TryAdd(id, new RESB01(id, player, endTime));
+                                break;
+                            case 39:
+                                boosters.TryAdd(id, new SHDB01(id, player, endTime));
+                                break;
+                            case 102:
+                                boosters.TryAdd(id, new QR01(id, player, endTime));
+                                break;
+                            case 103:
+                                boosters.TryAdd(id, new BB01(id, player, endTime));
+                                break;
+                            case 104:
+                                boosters.TryAdd(id, new HON50(id, player, endTime));
+                                break;
+                            case 105:
+                                boosters.TryAdd(id, new EP50(id, player, endTime));
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return boosters;
+        }
+
+        public EquipmentItem AddEquipmentItem(Player player, Item item)
+        {
+            EquipmentItem eqItem = null;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var reader = mySqlClient.ExecuteQueryReader("INSERT INTO player_equipment (USER_ID, PLAYER_ID, ITEM_ID, ITEM_TYPE, ITEM_LVL, ON_CONFIG_1, ON_CONFIG_2, ON_DRONE_ID_1, ON_DRONE_ID_2, ON_PET_1, ON_PET_2, ITEM_AMOUNT) VALUES ('" + player.GlobalId + "', '" + player.Id + "', '" + item.Id + "', '" + item.TypeId + "', '1', '{ \"hangars\" : [] }', '{ \"hangars\" : [] }', '{ \"hangars\" : [],\"droneID\":[] }', '{ \"hangars\" : [],\"droneID\":[] }', '{ \"hangars\" : [] }', '{ \"hangars\" : [] }', '0')");
+                    while (reader.Read())
+                    {
+                        var id = intConv(reader["ID"]);
+                        eqItem = new EquipmentItem(id, player, item, 1, new EquippedItem(), new EquippedItem(),
+                            new EquippedItem(), new EquippedItem(), new EquippedItem(), new EquippedItem(), 1);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+            }
+            if (eqItem != null) player.Equipment.EquipmentItems.Add(eqItem.Id, eqItem);
+            return eqItem;
+        }
+
+        public void UpdateEquipmentItem(EquipmentItem equipmentItem)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery($"UPDATE player_equipment SET ITEM_LVL='{equipmentItem.Level}', ITEM_AMOUNT='{equipmentItem.ItemAmount}' WHERE ID=" + equipmentItem.Id);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        public void DeleteEquipmentItem(EquipmentItem equipmentItem)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery("DELETE FROM player_equipment WHERE ID=" + equipmentItem.Id);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        public void AddGGEnergy(Player player, int amount)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery("UPDATE player_extra_data SET GG_ENERGY=GG_ENERGY+" + amount +
+                                                " WHERE PLAYER_ID=" + player.Id);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+            }
+        }
+
+        public void UpdateBootyKeys(Player player)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery("UPDATE player_extra_data SET BOOTY_KEYS='" + JsonConvert.SerializeObject(player.Information.BootyKeys) + "' WHERE PLAYER_ID=" + player.Id);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+            }
         }
     }
 }

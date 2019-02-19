@@ -73,13 +73,17 @@ namespace NettyBaseReloaded.Main.commands
                             RconSession.Player.MoveToMap(map, map.Limits[0], 0);
                         }
                         break;
+                    case "moveboost":
+                        var targetMoveSpeedBoost = int.Parse(args[2]);
+                        RconSession.Player.BoostSpeed(targetMoveSpeedBoost);
+                        break;
                     case "h":
                     case "heal":
                         RconSession.Player.Controller.Heal.Execute(RconSession.Player.Hangar.Ship.Health);
                         break;
                     case "boost":
-                        RconSession.Player.Boosters.Add(new DMGBO1(RconSession.Player, DateTime.MaxValue));
-                        RconSession.Player.Boosters.Add(new DMGBO2(RconSession.Player, DateTime.MaxValue));
+                        //RconSession.Player.Boosters.Add(new DMGBO1(RconSession.Player, DateTime.MaxValue));
+                        //RconSession.Player.Boosters.Add(new DMGBO2(RconSession.Player, DateTime.MaxValue));
                         break;
                     case "kick":
                         RconSession.Kick();
@@ -106,7 +110,7 @@ namespace NettyBaseReloaded.Main.commands
                         break;
                     case "dmg":
                         var p = RconSession.Player;
-                        p.Hangar.Configurations[p.CurrentConfig - 1].Damage = int.Parse(args[2]);
+                        p.Hangar.Configurations[p.CurrentConfig - 1].TotalDamageCalculated = int.Parse(args[2]);
                         msg = "Damage set to: " + args[2];
                         Packet.Builder.LegacyModule(RconSession, "0|A|STD|" + msg);
                         Console.WriteLine(msg);
@@ -216,6 +220,23 @@ namespace NettyBaseReloaded.Main.commands
                         var visual = new VisualEffect(target, (ShipVisuals)visualId, DateTime.Now.AddSeconds(t));
                         visual.Start();
                         break;
+                    case "shield":
+                        var isOn = RconSession.Player.Invincible;
+                        var player = RconSession.Player;
+                        VisualEffect _vis;
+                        if (isOn)
+                        {
+                            _vis = player.Visuals[ShipVisuals.INVINCIBILITY];
+                            _vis.Cancel();
+                            player.Invincible = false;
+                        }
+                        else
+                        {
+                            _vis = new VisualEffect(player, ShipVisuals.INVINCIBILITY, DateTime.MaxValue);
+                            _vis.Start();
+                            player.Invincible = true;
+                        }
+                        break;
                 }
             }
             catch (Exception)
@@ -259,7 +280,6 @@ namespace NettyBaseReloaded.Main.commands
                 vsEffect.Start();
                 RconSession.Player.RankId = Rank.ADMINISTRATOR;
                 RconSession.Player.Invincible = true;
-                RconSession.Player.Refresh();
                 RconSession.Player.RefreshPlayersView();
                 RconSession.Player.Controller.Heal.Execute(RconSession.Player.Hangar.Ship.Health);
             }

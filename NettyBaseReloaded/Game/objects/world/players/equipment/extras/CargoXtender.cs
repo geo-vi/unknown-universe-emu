@@ -8,7 +8,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment.extras
 {
     class CargoXtender : Extra
     {
-        public CargoXtender(Player player, int itemId, string lootId, int amount) : base(player, itemId, lootId, amount)
+        public CargoXtender(Player player, EquipmentItem equipmentItem) : base(player, equipmentItem)
+        {
+        }
+
+        public override void execute()
         {
         }
     }

@@ -89,7 +89,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             Limits = new Vector[]{null, null};
             Limits[0] = new Vector(0, 0);
-            if (Id == 16 || Id == 29)
+            if (Id == 16 || Id == 29 || Id == 91 || Id == 93)
                 Limits[1] = new Vector(41800, 26000);
             else Limits[1] = new Vector(20800, 12800);
         }
@@ -128,11 +128,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool InNonPlayArea(Vector position)
         {
-            if (Id == 16 || Id == 29)
-            {
-                return position.X < 0 || position.X > 41800 || position.Y < 0 || position.Y > 26000;
-            }
-            return position.X < 0 || position.X > 20800 || position.Y < 0 || position.Y > 12800;
+            return position.X < Limits[0].X || position.X > Limits[1].X || position.Y < Limits[0].Y || position.Y > Limits[1].Y;
         }
 
         private DateTime LastTimeTickedPlayers = new DateTime();
@@ -209,7 +205,8 @@ namespace NettyBaseReloaded.Game.objects.world
         public event EventHandler<CharacterArgs> EntityRemoved;
         public bool RemoveEntity(Character character)
         {
-            var success = Entities.TryRemove(character.Id, out character);
+            Character output;
+            var success = Entities.TryRemove(character.Id, out output);
             if (success) EntityRemoved?.Invoke(this, new CharacterArgs(character));
             return success;
         }
@@ -224,8 +221,10 @@ namespace NettyBaseReloaded.Game.objects.world
             return Objects.TryAdd(id, null);
         }
 
+        public event EventHandler<Object> RemovedObject;
         public bool RemoveObject(Object obj)
         {
+            RemovedObject?.Invoke(this, obj);
             obj.Position = null;
             return Objects.TryRemove(obj.Id, out obj);
         }
@@ -295,11 +294,22 @@ namespace NettyBaseReloaded.Game.objects.world
                 if (zone != null)
                     position = Vector.Random(this, zone.TopLeft, zone.BottomRight);
                 else position = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
-                CreateNpc(new Npc(id, ship.Name,
-                    new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
-                        new Dictionary<string, Item>()),
-                    0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
-                    ship.Damage, 5));
+                Npc npc = null;
+                if (ship.Id == 112)
+                {
+                    npc = new Barracuda(id, ship.Name,
+                        new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
+                        0, position, this, ship.Health, ship.Nanohull, ship.Shield,
+                        ship.Damage, 5);
+                }
+                else
+                {
+                    npc = new Npc(id, ship.Name,
+                        new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
+                        0, position, this, ship.Health, ship.Nanohull, ship.Shield,
+                        ship.Damage, 5);
+                }
+                CreateNpc(npc);
             }
         }
 
@@ -308,9 +318,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var id = GetNextAvailableId();
             var position = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
             CreateNpc(new Npc(id, ship.Name,
-                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
-                    new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
+                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
                 ship.Damage, 5));
         }
 
@@ -322,9 +331,8 @@ namespace NettyBaseReloaded.Game.objects.world
                 pos = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
             else pos = Vector.GetPosOnCircle(pos, 100);
             CreateNpc(new Npc(id, ship.Name,
-                new Hangar(ship, new List<Drone>(), pos, this, ship.Health, ship.Nanohull,
-                    new Dictionary<string, Item>()),
-                0, pos, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                new Hangar(0, ship, new Dictionary<int, Drone>(), pos, this, ship.Health, ship.Nanohull),
+                0, pos, this, ship.Health, ship.Nanohull, ship.Shield,
                 ship.Damage, respawnTime, respawning){VirtualWorldId = vwId});
         }
 
@@ -334,9 +342,8 @@ namespace NettyBaseReloaded.Game.objects.world
             ship.AI = (int) ai;
             var position = motherShip.Position;
             CreateNpc(new Npc(id, ship.Name,
-                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
-                    new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
+                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
                 ship.Damage, 0, false, motherShip));
             return id;
         }
@@ -354,12 +361,10 @@ namespace NettyBaseReloaded.Game.objects.world
             AddEntity(npc);
 
             var tickId = -1;
-            if (!Global.TickManager.Exists(npc))
-            {
-                Global.TickManager.Add(npc, out tickId);
-                npc.SetTickId(tickId);
-            }
+            Global.TickManager.Add(npc, out tickId);
+            npc.SetTickId(tickId);
 
+            npc.RocketLauncher = npc.Hangar.Ship.GetRocketLauncher(npc);
             npc.Controller = new NpcController(npc);
             npc.Controller.Initiate();
             Out.WriteLog("Created NPC [" + npc.Id + ", " + npc.Hangar.Ship.ToStringLoot() + "] on mapId " + Id);
@@ -371,10 +376,9 @@ namespace NettyBaseReloaded.Game.objects.world
             var tickId = -1;
             var ship = World.StorageManager.Ships[80];
             var npc = new Cubikon(id, ship.Name,
-                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
-                    new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
-                ship.Damage, 90);
+                new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
+                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
+                ship.Damage, 25);
 
             if (Entities.ContainsKey(npc.Id))
             {
@@ -400,9 +404,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var id = GetNextAvailableId();
             var ship = World.StorageManager.Ships[designId];
             var npc = new Spaceball(id, ship.Name,
-                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
-                    new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
+                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
                 ship.Damage, 90);
 
             if (Entities.ContainsKey(npc.Id))
@@ -432,9 +435,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var tickId = -1;
             var ship = World.StorageManager.Ships[104];
             var npc = new EventNpc(id, ship.Name,
-                new Hangar(ship, new List<Drone>(), position, this, ship.Health, ship.Nanohull,
-                    new Dictionary<string, Item>()),
-                0, position, this, ship.Health, ship.Nanohull, ship.Reward, ship.Shield,
+                new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
+                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
                 ship.Damage, 90);
             if (santa)
             {
@@ -524,13 +526,13 @@ namespace NettyBaseReloaded.Game.objects.world
             AddObject(new LowPortal(id, pos, this, 0) { Working = false, DisabledMessage = "Reworking..." });
 
             var zoneId = GetNextZoneId();
-                Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500),Faction.NONE));
+            Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500),Faction.NONE));
         }
 
-        public void CreateHiddenPortal(int map, int x, int y, int newX, int newY, int vwId = 0)
+        public void CreateHiddenPortal(int map, Vector pos, Vector newPos, int vwId = 0)
         {
             var id = GetNextObjectId();
-            AddObject(new Jumpgate(id, 0, new Vector(x, y), this, new Vector(newX, newY), map, false, 0, 0, 0));
+            AddObject(new Jumpgate(id, 0, pos, this, newPos, map, false, 0, 0, 0));
             Out.WriteLog("Created Portal on mapId " + Id);
         }
 
@@ -564,6 +566,10 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             AddObject(new PirateStation(id, vector, this));
+
+            var zoneId = GetNextZoneId();
+            Zones.Add(zoneId, new DemiZone(zoneId, new Vector(vector.X - 3000, vector.Y + 3000), new Vector(vector.X + 3000, vector.Y - 3000), Faction.NONE));
+
             Out.WriteLog("Created Pirate Station on mapId " + Id);
         }
 
@@ -611,6 +617,22 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             AddObject(new Billboard(id, pos, this, advertiser));
+        }
+
+        public void CreatePirateGate(Faction faction, Vector pos, int destinationMapId, Vector destination, bool isBroken, bool nocopy = false)
+        {
+            var id = GetNextObjectId();
+            PirateGate gate = new PirateGate(id, faction, pos, this, destinationMapId, destination, isBroken);
+
+            AddObject(gate);
+            if (!isBroken && !nocopy)
+            {
+                var destinationMap = World.StorageManager.Spacemaps[destinationMapId];
+                destinationMap.CreatePirateGate(faction, destination, Id, pos, true);
+            }
+
+            var zoneId = GetNextZoneId();
+            Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500), Faction.NONE));
         }
 
         #endregion
@@ -661,6 +683,26 @@ namespace NettyBaseReloaded.Game.objects.world
                 Out.WriteLog("Created LootBox [" + type + "] on mapId " + Id);
         }
 
+        public void CreatePirateBooty(Types type, Vector pos, Vector[] limits)
+        {
+            var id = GetNextObjectId();
+            var hash = HashedObjects.Keys.ToList()[id];
+            var box = new PirateBooty(id, hash, type, pos, this, limits, true);
+            HashedObjects[hash] = box;
+            if (AddObject(box))
+                Out.WriteLog("Created Pirate Booty [" + type + "] on mapId " + Id);
+        }
+
+        public void CreateEventBox(Types type, Vector pos, Vector[] limits)
+        {
+            var id = GetNextObjectId();
+            var hash = HashedObjects.Keys.ToList()[id];
+            var box = new EventBox(id, hash, type, pos, this, limits, true);
+            HashedObjects[hash] = box;
+            if (AddObject(box))
+                Out.WriteLog("Created Event Box[" + type + "] on mapId " + Id);
+        }
+
         #endregion
 
         #region POI
@@ -680,43 +722,64 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void CreatePalladiumField()
         {
-            if (Id != 16)
-                return;
-
-            var zoneId = GetNextZoneId();
-            PalladiumZone zone = new PalladiumZone1(zoneId);
-            Zones.Add(zoneId, zone);
-            CreatePOI(new POI("smoke_01", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(0, 16200), new Vector(5000, 25500), new Vector(0, 25500), new Vector(5000, 16200) }));
-
-            zoneId = GetNextZoneId();
-            zone = new PalladiumZone2(zoneId);
-            Zones.Add(zoneId, zone);
-            CreatePOI(new POI("smoke_02", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(4900, 17700), new Vector(5800, 25400), new Vector(4900, 25400), new Vector(5800, 17700) }));
-
-            zoneId = GetNextZoneId();
-            zone = new PalladiumZone3(zoneId);
-            Zones.Add(zoneId, zone);
-            CreatePOI(new POI("smoke_03", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(5700, 18800), new Vector(7700, 25500), new Vector(5700, 25500), new Vector(7700, 18800) }));
-
-            zoneId = GetNextZoneId();
-            zone = new PalladiumZone4(zoneId);
-            Zones.Add(zoneId, zone);
-            CreatePOI(new POI("smoke_04", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(7600, 21100), new Vector(24700, 25500), new Vector(7600, 25500), new Vector(24700, 21100) }));
-
-            zoneId = GetNextZoneId();
-            zone = new PalladiumZone5(zoneId);
-            Zones.Add(zoneId, zone);
-            CreatePOI(new POI("smoke_05", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(14600, 20600), new Vector(24700, 21100), new Vector(14600, 21100), new Vector(24700, 20600) }));
-
-            zoneId = GetNextZoneId();
-            zone = new PalladiumZone6(zoneId);
-            Zones.Add(zoneId, zone);
-            CreatePOI(new POI("smoke_06", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE, new List<Vector> { new Vector(7600, 20700), new Vector(12300, 21500), new Vector(7600, 21500), new Vector(12300, 20700) }));
-
-            foreach (var _zone in Zones.Where(x => x.Value is PalladiumZone))
+            if (Id == 93)
             {
-                for (var i = 0; i < 60; i++)
-                    CreateOre(OreTypes.PALLADIUM, Vector.Random(this, _zone.Value.TopLeft, _zone.Value.BottomRight), new Vector[] { _zone.Value.TopLeft, _zone.Value.BottomRight });
+                var zoneId = GetNextZoneId();
+                PalladiumZone zone = new PalladiumZone1(zoneId);
+                Zones.Add(zoneId, zone);
+                CreatePOI(new POI("Field_03", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE,
+                    new List<Vector>
+                    {
+                        new Vector(12000, 17500), new Vector(31000, 25000)
+                    }));
+                for (var i = 0; i < 250; i++)
+                    CreateOre(OreTypes.PALLADIUM, Vector.Random(this, zone.TopLeft, zone.BottomRight), new Vector[] { zone.TopLeft, zone.BottomRight });
+
+            }
+
+            if (Id == 91)
+            {
+                var zoneId = GetNextZoneId();
+                PalladiumZone zone = new PalladiumZone2(zoneId);
+                Zones.Add(zoneId, zone);
+                CreatePOI(new POI("Field_01", objects.world.map.pois.Types.GENERIC, Designs.NEBULA, Shapes.RECTANGLE,
+                    new List<Vector>
+                    {
+                        new Vector(19000, 11000), new Vector(23500, 14600)
+                    }));
+                for (var i = 0; i < 50; i++)
+                    CreateOre(OreTypes.PALLADIUM, Vector.Random(this, zone.TopLeft, zone.BottomRight), new Vector[] { zone.TopLeft, zone.BottomRight });
+
+            }
+        }
+
+        public void CreateMineField()
+        {
+            if (Id == 91)
+            {
+                var zoneId = GetNextZoneId();
+                var mineZone = new MineZone(zoneId, new Vector(15000, -1), new Vector(28500, 6500),
+                    this);
+                mineZone.Spawn();
+                Zones.Add(zoneId, mineZone);
+                zoneId = GetNextZoneId();
+                mineZone = new MineZone(zoneId, new Vector(14500, 20000), new Vector(27000, 26000),
+                    this);
+                mineZone.Spawn();
+                Zones.Add(zoneId, mineZone);
+            }
+            else if (Id == 93)
+            {
+                var zoneId = GetNextZoneId();
+                var mineZone = new MineZone(zoneId, new Vector(700, 20500), new Vector(10700, 25700),
+                    this);
+                mineZone.Spawn();
+                Zones.Add(zoneId, mineZone);
+                zoneId = GetNextZoneId();
+                mineZone = new MineZone(zoneId, new Vector(5000, 5500), new Vector(10000, 20400),
+                    this);
+                mineZone.Spawn();
+                Zones.Add(zoneId, mineZone);
             }
         }
 

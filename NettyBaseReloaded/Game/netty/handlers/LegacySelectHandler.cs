@@ -48,13 +48,24 @@ namespace NettyBaseReloaded.Game.netty.handlers
                             gameSession.Player.Controller.Miscs.UseItem(gameSession.Player.Equipment.GetRobot());
                             break;
                         case ClientCommands.SELECT_CLOAK:
-                            gameSession.Player.Controller.Miscs.UseItem(gameSession.Player.Extras.FirstOrDefault(x => x.Value is Cloak).Key);
+                            gameSession.Player.Controller.Miscs.UseItem(gameSession.Player.Extras.FirstOrDefault(x => x.Value is Cloak).Value.EquipmentItem.Item.LootId);
                             break;
                         case ClientCommands.AROL:
                             gameSession.Player.Controller.Miscs.UseItem("equipment_extra_cpu_arol-x");
                             break;
                         case ClientCommands.RLLB:
                             gameSession.Player.Controller.Miscs.UseItem("equipment_extra_cpu_rllb-x");
+                            break;
+                        case ServerCommands.JUMP_CPU:
+                            switch (packet[2])
+                            {
+                                case "1":
+                                    gameSession.Player.Controller.Miscs.UseItem("equipment_extra_cpu_jp-01");
+                                    break;
+                                case "2":
+                                    gameSession.Player.Controller.Miscs.UseItem("equipment_extra_cpu_jp-02");
+                                    break;
+                            }
                             break;
                         case ClientCommands.CONFIGURATION:
                             gameSession.Player.Controller.Miscs.ChangeConfig();

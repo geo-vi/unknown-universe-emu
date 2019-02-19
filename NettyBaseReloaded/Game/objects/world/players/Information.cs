@@ -44,7 +44,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Honor = new Honor(player);
             Credits = new Credits(player);
             Uridium = new Uridium(player);
-            Premium = new Premium();
+            Premium = World.DatabaseManager.LoadPremium(player);
             Ammunitions = World.DatabaseManager.LoadAmmunition(Player);
             Cargo = World.DatabaseManager.LoadCargo(player);
 

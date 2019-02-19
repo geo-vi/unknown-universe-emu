@@ -23,20 +23,11 @@ namespace NettyBaseReloaded.Game.controllers
         private LoginController(GameSession gameSession)
         {
             _gameSession = gameSession;
-            LoadConfigs();
             CheckPos();
             LoadControllers();
             GetLoginType();
             LoadTicks();
-        }
-
-        private void LoadConfigs()
-        {
-            var player = _gameSession.Player;
-
-            player.Hangar = World.DatabaseManager.LoadHangar(player);
-            player.Hangar.Configurations = World.DatabaseManager.LoadConfig(player); 
-            player.Hangar.Drones = World.DatabaseManager.LoadDrones(player);
+            gameSession.Player.MoveToMap(gameSession.Player.Spacemap, gameSession.Player.Position, gameSession.Player.VirtualWorldId);
         }
 
         private void CheckPos()
@@ -59,6 +50,7 @@ namespace NettyBaseReloaded.Game.controllers
             }
             if (player.Pet != null && player.Pet.Controller == null)
                 player.Pet.Controller = new PetController(player.Pet);
+
             player.Controller.Setup();
         }
 
@@ -79,6 +71,14 @@ namespace NettyBaseReloaded.Game.controllers
             Global.TickManager.Add(_gameSession.Player, out tickId);
             _gameSession.Player.SetTickId(tickId);
             _gameSession.Player.Controller.Initiate();
+        }
+
+        private void UnloadPlayer()
+        {
+            var player = _gameSession.Player;
+            player.Storage.Clean();
+            player.Range.Clean();
+            player.Controller.StopAll();
         }
     }
 }

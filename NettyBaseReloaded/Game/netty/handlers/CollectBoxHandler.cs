@@ -29,7 +29,11 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 cmd.readCommand(bytes);
                 hash = cmd.itemHash;
             }
-            (player.Spacemap.HashedObjects[hash] as Collectable)?.Collect(player);
+
+            if (player.Spacemap.HashedObjects.ContainsKey(hash))
+            {
+                (player.Spacemap.HashedObjects[hash] as Collectable)?.Collect(player);
+            }
         }
     }
 }

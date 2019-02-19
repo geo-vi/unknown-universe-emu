@@ -13,7 +13,9 @@ namespace NettyBaseReloaded.Game.controllers.pet
         private Character Destination;
         
         private int RadiusOfDestination;
-        
+
+        private bool CrashingIn;
+
         public PathFollower(PetController controller)
         {
             Controller = controller;
@@ -24,6 +26,12 @@ namespace NettyBaseReloaded.Game.controllers.pet
             FollowingActive = true;
             Destination = destination;
             RadiusOfDestination = radius;
+        }
+
+        public void Initiate(Character destination, bool crashingIn)
+        {
+            Destination = destination;
+            CrashingIn = crashingIn;
         }
         
         public void Check()
@@ -43,16 +51,32 @@ namespace NettyBaseReloaded.Game.controllers.pet
             var pet = Controller.Pet;
             var petLastMovement = pet.MovementStartTime;
             var petPos = pet.Position;
-            if (petLastMovement.AddSeconds(1) > DateTime.Now && Destination.Position.DistanceTo(petPos) < 500 ||
-                !Destination.Moving &&
-                Vector.IsPositionInCircle(petPos, MovementController.ActualPosition(Destination), 350)) return;
-
-            MovementController.Move(pet, Vector.GetPosOnCircle(Destination.Position, 350));
+            if (!CrashingIn)
+            {
+                if (Destination.Moving && pet.InRange(Destination, RadiusOfDestination))
+                {
+                    MovementController.Move(pet, Vector.GetPosOnCircle(Destination.Destination, RadiusOfDestination));
+                    return;
+                }
+                if (pet.InRange(Destination, RadiusOfDestination) || pet.Destination.DistanceTo(Destination.Position) <= RadiusOfDestination)
+                {
+                    return;
+                }
+                MovementController.Move(pet, Vector.GetPosOnCircle(Destination.Position, RadiusOfDestination));
+            }
+            else
+            {
+                if (petLastMovement.AddSeconds(1) < DateTime.Now && Destination.InRange(pet))
+                {
+                    MovementController.Move(pet, Destination.Position);
+                }
+            }
         }
 
         public void Stop()
         {
             FollowingActive = false;
+            CrashingIn = false;
         }
     }
 }

@@ -5,18 +5,39 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
+using NettyBaseReloaded.Game.objects.world.players.equipment.item;
 
 namespace NettyBaseReloaded.Game.objects.world.players.equipment
 {
-    abstract class Extra : Item
+    abstract class Extra
     {
+        /// <summary>
+        /// Player
+        /// </summary>
         protected Player Player { get; set; }
 
+        /// <summary>
+        /// Equipped Item behind Extra
+        /// </summary>
+        public EquipmentItem EquipmentItem { get; set; }
+
+        /// <summary>
+        /// Extra active
+        /// </summary>
         public bool Active = false;
 
-        protected Extra(Player player, int itemId, string lootId, int amount) : base(itemId, lootId, amount)
+        public virtual int Amount
+        {
+            get => EquipmentItem.ItemAmount;
+            set => SetAmount(value);
+        }
+
+        public virtual int Level => 1;
+
+        protected Extra(Player player, EquipmentItem equipmentItem)
         {
             Player = player;
+            EquipmentItem = equipmentItem;
         }
 
         public virtual void initiate()
@@ -26,100 +47,20 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment
 
         public virtual void execute()
         {
-            var cpus = Player.Settings.OldClientShipSettingsCommand.activeCpus;
-            if (cpus != null)
+            if (Amount == 0)
             {
-                if (!cpus.Contains(LootId))
-                {
-                    cpus.Add(LootId);
-                }
-                else
-                {
-                    cpus.Remove(LootId);
-                }
+                Player.Extras.Remove(EquipmentItem.Id);
+                Player.UpdateConfig();
             }
         }
 
-        public static Dictionary<string, Extra> LoadExtras(Player player, Dictionary<string, Item> consumables)
+        public virtual void SetAmount(int newValue)
         {
-            var extras = new Dictionary<string, Extra>();
-            foreach (var consumable in consumables)
+            if (newValue <= 0)
             {
-                switch (consumable.Key)
-                {
-                    case "equipment_extra_cpu_ajp-01":
-                        extras.Add(consumable.Key, new AdvancedJumpCpu(player, consumable.Value.Id, consumable.Value.LootId,
-                            consumable.Value.Amount));
-                        break;
-                    case "equipment_extra_cpu_rok-t01":
-                        extras.Add(consumable.Key,
-                            new Turbo(player, consumable.Value.Id, consumable.Value.LootId,
-                                consumable.Value.Amount));
-                        break;
-                    case "equipment_extra_repbot_rep-s":
-                    case "equipment_extra_repbot_rep-1":
-                    case "equipment_extra_repbot_rep-2":
-                    case "equipment_extra_repbot_rep-3":
-                    case "equipment_extra_repbot_rep-4":
-                        extras.Add(consumable.Key,
-                            new Robot(player, consumable.Value.Id, consumable.Value.LootId,
-                                consumable.Value.Amount));
-                        break;
-                    case "equipment_extra_cpu_smb-01":
-                        extras.Add(consumable.Key, new SmartbombCpu(player, consumable.Value.Id, consumable.Value.LootId,
-                            consumable.Value.Amount));
-                        break;
-                    case "equipment_extra_cpu_ish-01":
-                        // TODO: Add ISH
-                        break;
-                    case "equipment_extra_cpu_aim-01":
-                    case "equipment_extra_cpu_aim-02":
-                        // TODO: Add aim cpu
-                        break;
-                    case "equipment_extra_cpu_jp-01":
-                    case "equipment_extra_cpu_jp-02":
-                        // TODO: Add jump2base
-                        break;
-                    case "equipment_extra_cpu_cl04k-xl":
-                    case "equipment_extra_cpu_cl04k-m":
-                    case "equipment_extra_cpu_cl04k-xs":
-                        extras.Add(consumable.Key,
-                            new Cloak(player, consumable.Value.Id, consumable.Value.LootId,
-                                consumable.Value.Amount));
-                        break;
-                    case "equipment_extra_cpu_arol-x":
-                        extras.Add(consumable.Key, new AutoRocket(player, consumable.Value.Id, consumable.Value.LootId,
-                            consumable.Value.Amount));
-                        break;
-                    case "equipment_extra_cpu_rllb-x":
-                        extras.Add(consumable.Key, new AutoRocketLauncher(player, consumable.Value.Id,
-                            consumable.Value.LootId,
-                            consumable.Value.Amount));
-                        break;
-                    case "equipment_extra_cpu_dr-01":
-                    case "equipment_extra_cpu_dr-02":
-                        // TODO: add drone rep
-                        break;
-                    case "equipment_extra_cpu_g3x-crgo-x":
-                        extras.Add("equipment_extra_cpu_g3x-crgo-x", new CargoXtender(player, consumable.Value.Id,
-                            consumable.Value.LootId,
-                            consumable.Value.Amount));
-                        break;
-                }
+                EquipmentItem.Remove();
             }
-
-
-            return extras;
-        }
-
-        public static Dictionary<string, Item> ToItems(Dictionary<string, Extra> extras)
-        {
-            Dictionary<string,Item> items = new Dictionary<string, Item>();
-            foreach (var extra in extras)
-            {
-                items.Add(extra.Key, new Item(extra.Value.Id, extra.Value.LootId, extra.Value.Amount));
-            }
-            return items;
+            EquipmentItem.SetItemAmount(newValue);
         }
     }
 }

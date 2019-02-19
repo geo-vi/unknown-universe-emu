@@ -6,7 +6,19 @@ using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.objects.world.players.extra.abilities
 {
-    class SpearheadUltimateCloak
+    class SpearheadUltimateCloak : Ability
     {
+        public SpearheadUltimateCloak(Player player) : base(player, Abilities.SHIP_ABILITY_SPEARHEAD_ULTIMATE_CLOAKING)
+        {
+        }
+
+        public override void Tick()
+        {
+            
+        }
+
+        public override void execute()
+        {
+        }
     }
 }

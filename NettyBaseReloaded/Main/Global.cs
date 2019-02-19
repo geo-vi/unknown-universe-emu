@@ -23,6 +23,7 @@ namespace NettyBaseReloaded.Main
 
         public static void Start()
         {
+            InitiateStatusUpdater();
             InitiateGlobalQueries();
             InitiatePolicy();
             InitiateChat();
@@ -34,6 +35,11 @@ namespace NettyBaseReloaded.Main
             State = State.READY;
             var task = new Task(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
             task.Start();
+        }
+
+        private static void InitiateStatusUpdater()
+        {
+            Cachet.handlers.CachetAuth.InitiateAuth();
         }
 
         static void InitiateGlobalQueries()

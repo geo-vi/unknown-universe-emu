@@ -19,7 +19,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             request.readCommand(bytes);
 
             var quest = World.StorageManager.Quests[request.questId];
-            if (gameSession.Player.QuestData.CompletedQuests.ContainsKey(request.questId) || gameSession.Player.QuestData.IsQuestActive(request.questId))
+            if (gameSession.Player.QuestData.GetActiveQuests().Count > 4 || gameSession.Player.QuestData.CompletedQuests.ContainsKey(request.questId) || gameSession.Player.QuestData.IsQuestActive(request.questId))
             {
                 return;
             }

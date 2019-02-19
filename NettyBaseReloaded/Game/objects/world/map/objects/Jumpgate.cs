@@ -1,5 +1,6 @@
 ﻿using System;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects.world.map.objects.jumpgates;
 using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects
@@ -85,9 +86,19 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
             return JsonConvert.SerializeObject(this);
         }
 
-        public string ToPacket()
+        public bool GetVisibility(Player player)
         {
-            return "0|p|" + Id + "|" + (int)Faction + "|" + Gfx + "|" + Position.X + "|" + Position.Y + "|" + Convert.ToInt32(Visible) + "|" + FactionScrap;
+            if (this is PirateGate gate)
+            {
+                if (player.FactionId == Faction && !gate.Broken) return true;
+                return false;
+            }
+            return Visible;
+        }
+
+        public string ToPacket(Player player)
+        {//1,1 - last param
+            return "0|p|" + Id + "|" + (int)Faction + "|" + Gfx + "|" + Position.X + "|" + Position.Y + "|" + Convert.ToInt32(GetVisibility(player)) + "|" + "0";
         }
 
         public void Disable(string disabledMsg = "")

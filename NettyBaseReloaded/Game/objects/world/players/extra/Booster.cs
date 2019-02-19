@@ -56,16 +56,17 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
             QUESTREWARD = 10
         }
 
+        public int Id { get; set; }
+
         public Boosters BoosterType { get; set; }
 
         public Types Type { get; set; }
 
         public DateTime FinishTime { get; set; }
 
-        protected List<Booster> Stacked = new List<Booster>();
-
-        protected Booster(Player player, DateTime finishTime, Boosters boosterType, Types type) : base(player)
+        protected Booster(int id, Player player, DateTime finishTime, Boosters boosterType, Types type) : base(player)
         {
+            Id = id;
             FinishTime = finishTime;
             BoosterType = boosterType;
             Type = type;
@@ -86,18 +87,117 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
                 return;
 
             double addedDamage = 0;
-            foreach (var booster in player.Boosters.Where(x => x.Type == Types.DAMAGE))
+            double addedShd = 0;
+            double addedHp = 0;
+            double addedQuestReward = 0;
+            double addedBoxReward = 0;
+            double addedRepairBoost = 0;
+            double addedResourceBoost = 0;
+            double addedEpBoost = 0;
+            double addedHonBoost = 0;
+            foreach (var booster in player.Boosters)
             {
-                addedDamage += booster.GetBoost();
+                switch (booster.Value.Type)
+                {
+                    case Types.DAMAGE:
+                        addedDamage += booster.Value.GetBoost();
+                        break;
+                    case Types.SHIELD:
+                        addedShd += booster.Value.GetBoost();
+                        break;
+                    case Types.MAXHP:
+                        addedHp += booster.Value.GetBoost();
+                        break;
+                    case Types.QUESTREWARD:
+                        addedQuestReward += booster.Value.GetBoost();
+                        break;
+                    case Types.BONUSBOXES:
+                        addedBoxReward += booster.Value.GetBoost();
+                        break;
+                    case Types.REPAIR:
+                        addedRepairBoost += booster.Value.GetBoost();
+                        break;
+                    case Types.RESOURCE:
+                        addedResourceBoost += booster.Value.GetBoost();
+                        break;
+                    case Types.EP:
+                        addedEpBoost += booster.Value.GetBoost();
+                        break;
+                    case Types.HONOUR:
+                        addedHonBoost += booster.Value.GetBoost();
+                        break;
+                }
             }
-            foreach (var booster in player.InheritedBoosters.Where(x => x.Value.Type == Types.DAMAGE))
+            foreach (var booster in player.InheritedBoosters)
             {
-                addedDamage += booster.Value.GetSharedBoost();
+                switch (booster.Value.Type)
+                {
+                    case Types.DAMAGE:
+                        addedDamage += booster.Value.GetSharedBoost();
+                        break;
+                    case Types.SHIELD:
+                        addedShd += booster.Value.GetSharedBoost();
+                        break;
+                    case Types.MAXHP:
+                        addedHp += booster.Value.GetSharedBoost();
+                        break;
+                    case Types.QUESTREWARD:
+                        break;
+                    case Types.BONUSBOXES:
+                        break;
+                    case Types.REPAIR:
+                        addedRepairBoost += booster.Value.GetSharedBoost();
+                        break;
+                    case Types.RESOURCE:
+                        addedResourceBoost += booster.Value.GetSharedBoost();
+                        break;
+                    case Types.EP:
+                        addedEpBoost += booster.Value.GetSharedBoost();
+                        break;
+                    case Types.HONOUR:
+                        addedHonBoost += booster.Value.GetSharedBoost();
+                        break;
+                }
             }
+
+            if (player.BoostedDamage == addedDamage && player.BoostedShield == addedShd && player.BoostedHealth == addedHp
+                && player.BoostedQuestReward == addedQuestReward && player.BoostedBoxRewards == addedBoxReward && 
+                player.BoostedRepairSpeed == addedRepairBoost && player.BoostedResources == addedResourceBoost &&
+                player.BoostedExpReward == addedEpBoost && player.BoostedHonorReward == addedHonBoost)
+            {
+                return;
+            }
+
             player.BoostedDamage = 0;
             player.BoostDamage(addedDamage);
-            if (addedDamage > 0)
-                Packet.Builder.AttributeBoosterUpdateCommand(World.StorageManager.GetGameSession(player.Id));
+
+            player.BoostedHealth = 0;
+            player.BoostHealth(addedHp);
+
+            player.BoostedShield = 0;
+            player.BoostShield(addedShd);
+
+            player.BoostedQuestReward = 0;
+            player.BoostQuestRewards(addedQuestReward);
+
+            player.BoostedBoxRewards = 0;
+            player.BoostBoxRewards(addedBoxReward);
+
+            player.BoostedRepairSpeed = 0;
+            player.BoostRepairSpeeds(addedRepairBoost);
+
+            player.BoostedResources = 0;
+            player.BoostResourceCollection(addedResourceBoost);
+
+            player.BoostedExpReward = 0;
+            player.BoostExpReward(addedEpBoost);
+
+            player.BoostedHonorReward = 0;
+            player.BoostHonReward(addedHonBoost);
+
+            player.Updaters.Update();
+
+            Packet.Builder.AttributeBoosterUpdateCommand(World.StorageManager.GetGameSession(player.Id));
         }
 
         public void AddTime(int timeInMs)
@@ -114,7 +214,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
         {
             if (FinishTime < DateTime.Now)
             {
-                //TODO: Remove booster from Player
+                Booster booster;
+                Player.Boosters.TryRemove(Id, out booster);
             }
         }
     }

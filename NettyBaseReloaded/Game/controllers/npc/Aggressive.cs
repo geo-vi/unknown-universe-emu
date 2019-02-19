@@ -34,9 +34,9 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 if (Controller.Attack.GetActiveAttackers().Count == 0)
                 {
                     var firstOrDefalt = npc.Spacemap.Entities.Values.FirstOrDefault(x => x is Player);
-                    npc.Selected = firstOrDefalt;
+                    Controller.Attack.Select(firstOrDefalt);
                 }
-                else npc.Selected = Controller.Attack.MainAttacker;
+                else Controller.Attack.Select(Controller.Attack.MainAttacker);
             }
             else
             {

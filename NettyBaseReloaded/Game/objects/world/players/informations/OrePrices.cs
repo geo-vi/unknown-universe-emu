@@ -8,11 +8,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 {
     class OrePrices : OreBase
     {
-        public int Palladium;
-
-        public OrePrices(int Prometium, int Endurium, int Terbium, int Prometid, int Duranium, int Xenomit, int Promerium, int Seprom, int Palladium) : base(Prometium, Endurium, Terbium, Prometid, Duranium, Xenomit, Promerium, Seprom)
+        public OrePrices(int Prometium, int Endurium, int Terbium, int Prometid, int Duranium, int Xenomit, int Promerium, int Seprom, int Palladium) : base(Prometium, Endurium, Terbium, Prometid, Duranium, Xenomit, Promerium, Seprom, Palladium)
         {
-            this.Palladium = Palladium;
         }
     }
 }

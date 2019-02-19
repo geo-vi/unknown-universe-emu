@@ -47,14 +47,13 @@ namespace NettyBaseReloaded.Game.controllers.player
                 return;
             }
 
-            if (gameSession.Player.Information.Premium.Active && LogoutStartTime.AddSeconds(5) < DateTime.Now
-            || LogoutStartTime.AddSeconds(20) < DateTime.Now)
+            if ((gameSession.Player.Information.Premium.Active || gameSession.Player.RankId == Rank.ADMINISTRATOR) && LogoutStartTime.AddSeconds(5) < DateTime.Now 
+                || LogoutStartTime.AddSeconds(20) < DateTime.Now)
             {
                 Packet.Builder.LogoutCommand(gameSession);
                 gameSession.Disconnect();
                 LoggingOut = false;
             }
-
         }
 
         public void AbortLogout()
@@ -91,29 +90,31 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         public void BeaconSync()
         {
-            var gameSession = baseController.Player.GetGameSession();
-            if (!baseController.Active || gameSession == null) return;
-            if (_beacon.InEquipmentArea != baseController.Player.State.InEquipmentArea)
-            {
-                Packet.Builder.EquipReadyCommand(gameSession, baseController.Player.State.InEquipmentArea);
-                _beacon.InEquipmentArea = baseController.Player.State.InEquipmentArea;
-            }
-            if (_beacon.InDemiZone != baseController.Player.State.InDemiZone|| _beacon.InPortalArea != baseController.Player.State.InPortalArea || _beacon.InRadiationArea != baseController.Player.State.InRadiationArea || _beacon.InTradeArea != baseController.Player.State.InTradeArea)
-            {
-                Packet.Builder.BeaconCommand(gameSession);
-                _beacon.InDemiZone = baseController.Player.State.InDemiZone;
-                _beacon.InPortalArea = baseController.Player.State.InPortalArea;
-                _beacon.InRadiationArea = baseController.Player.State.InRadiationArea;
-                _beacon.InTradeArea = baseController.Player.State.InTradeArea;
-            }
+            //todo: fix the beacon
+            //var gameSession = baseController.Player.GetGameSession();
+            //if (!baseController.Active || gameSession == null) return;
+            //if (_beacon.InEquipmentArea != baseController.Player.State.InEquipmentArea)
+            //{
+            //    Packet.Builder.EquipReadyCommand(gameSession, baseController.Player.State.InEquipmentArea);
+            //    _beacon.InEquipmentArea = baseController.Player.State.InEquipmentArea;
+            //}
+            //if (_beacon.InDemiZone != baseController.Player.State.InDemiZone|| _beacon.InPortalArea != baseController.Player.State.InPortalArea || _beacon.InRadiationArea != baseController.Player.State.InRadiationArea || _beacon.InTradeArea != baseController.Player.State.InTradeArea)
+            //{
+            //    Console.WriteLine("set beacon");
+            //    Packet.Builder.BeaconCommand(gameSession);
+            //    _beacon.InDemiZone = baseController.Player.State.InDemiZone;
+            //    _beacon.InPortalArea = baseController.Player.State.InPortalArea;
+            //    _beacon.InRadiationArea = baseController.Player.State.InRadiationArea;
+            //    _beacon.InTradeArea = baseController.Player.State.InTradeArea;
+            //}
 
-            if (_beacon.Repairing != baseController.Repairing)
-            {
-                Packet.Builder.LegacyModule(gameSession, "0|A" +
-                                            "|RS|" +
-                                            "S|" + Convert.ToInt32(baseController.Repairing), true);
-                _beacon.Repairing = baseController.Repairing;
-            }
+            //if (_beacon.Repairing != baseController.Repairing)
+            //{
+            //    Packet.Builder.LegacyModule(gameSession, "0|A" +
+            //                                "|RS|" +
+            //                                "S|" + Convert.ToInt32(baseController.Repairing), true);
+            //    _beacon.Repairing = baseController.Repairing;
+            //}
         }
 
         /// <summary>
@@ -141,6 +142,7 @@ namespace NettyBaseReloaded.Game.controllers.player
 
             if (baseController.Character.Cooldowns.Any(x => x is ConfigCooldown))
             {
+                Console.WriteLine("config cooldown for " + baseController.Player.Id);
                 Packet.Builder.LegacyModule(gameSession
                 , "0|A|STM|config_change_failed_time");
                 return;
@@ -155,20 +157,19 @@ namespace NettyBaseReloaded.Game.controllers.player
             Packet.Builder.LegacyModule(gameSession
                 , "0|A|CC|" + baseController.Player.CurrentConfig);
 
-            baseController.Player.UpdateExtras();
+            baseController.Player.UpdateConfig();
 
-            foreach (var playerEntity in baseController.Player.Spacemap.Entities.Values.Where(x => x is Player))
+            foreach (var rangeSession in GameSession.GetRangeSessions(baseController.Player))
             {
-                var player = playerEntity as Player;
-                var entitySession = player.GetGameSession();
-                if (gameSession != null)
-                    Packet.Builder.DronesCommand(entitySession, baseController.Player);
+                if (rangeSession.Value != null)
+                    Packet.Builder.DronesCommand(rangeSession.Value, baseController.Player);
             }
 
             if (baseController.Player.Moving)
                 MovementController.Move(baseController.Player, baseController.Player.Destination);
             
             baseController.Player.Pet?.RefreshConfig();
+            baseController.Player.Pet?.Controller.SendResetGear();
         }
 
         private class jClass
@@ -195,7 +196,6 @@ namespace NettyBaseReloaded.Game.controllers.player
             /// <param name="portalId"></param>
             public void Initiate(int targetVW, int targetMapId, Vector targetPos, int portalId = -1)
             {
-                Console.WriteLine(targetMapId.ToString() + " - targetMapID " + targetPos.ToPacket());
                 if (_baseController.Character.EntityState == EntityStates.DEAD || _baseController.StopController || _baseController.Jumping) return;
 
                 TargetVirtualWorldId = targetVW;
@@ -236,7 +236,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                     return;
                 }
 
-                if (DateTime.Now > _jumpEndTime)
+                if (DateTime.Now > _jumpEndTime && TargetMap != null && TargetPosition != null)
                 {
                     _baseController.Miscs.ForceChangeMap(TargetMap, TargetPosition, TargetVirtualWorldId);
                     Reset();
