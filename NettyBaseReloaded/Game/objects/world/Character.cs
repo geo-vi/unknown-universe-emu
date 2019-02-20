@@ -242,7 +242,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public virtual void Invalidate()
         {
-            Console.WriteLine(Out.GetCaller());
             try
             {
                 Global.TickManager.Remove(this);

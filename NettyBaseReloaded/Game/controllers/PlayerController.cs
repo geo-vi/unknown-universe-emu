@@ -103,8 +103,6 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Exit()
         {
-            Console.WriteLine(Out.GetCaller());
-            Console.WriteLine("playerControl");
             StopAll();
             CheckedClasses.Clear();
         }

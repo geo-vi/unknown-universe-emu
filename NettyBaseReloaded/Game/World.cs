@@ -37,7 +37,7 @@ namespace NettyBaseReloaded.Game
         {
             foreach (var map in StorageManager.Spacemaps)
             {
-                //map.Value.SpawnNpcs();
+                map.Value.SpawnNpcs();
                 map.Value.LoadObjects();
                 CreateHashes(map.Value);
 

@@ -28,8 +28,8 @@ namespace NettyStatusBot.core.network
 
         public ServerConnection()
         {
-            _instance = this;
-            Task.Factory.StartNew(Read);
+            //_instance = this;
+            //Task.Factory.StartNew(Read);
         }
 
         private async Task Read()

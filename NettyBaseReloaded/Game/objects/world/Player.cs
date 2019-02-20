@@ -352,6 +352,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Pet = World.DatabaseManager.LoadPet(this);
             QuestData = new QuestPlayerData(this);
             Announcements = new Announcements(this);
+            World.DatabaseManager.SavePlayerHangar(this, Hangar);
         }
 
         public override void AssembleTick(object sender, EventArgs eventArgs)
@@ -381,7 +382,6 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Invalidate()
         {
-            Console.WriteLine(Out.GetCaller());
             Unloaded = true;
             base.Invalidate();
             Controller.Exit();

@@ -25,7 +25,6 @@ namespace NettyStatusBot.core
             _services = new ServiceCollection().AddSingleton(_client).AddSingleton(_commands).BuildServiceProvider();
 
             new ServerConnection();
-            new DiscordStatusUpdater(_client);
             
             await RegisterCommands();
             await _client.LoginAsync(TokenType.Bot, BotConfiguration.TOKEN);
@@ -36,17 +35,10 @@ namespace NettyStatusBot.core
         private async Task RegisterCommands()
         {
             _client.MessageReceived += HandleCommandAsync;
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            await _commands.AddModuleAsync<PublicMessageModule>(_services);
+            await _commands.AddModuleAsync<VoteRestart>(_services);
 
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _commands.AddModuleAsync<PingModule>();
-            await _commands.AddModuleAsync<MaintenanceModule>();
-            await _commands.AddModuleAsync<RefreshModule>();
-            await _commands.AddModuleAsync<DonateModule>();
-            await _commands.AddModuleAsync<PlayerModule>();
-            await _commands.AddModuleAsync<InvitationModule>();
-            await _commands.AddModuleAsync<HelpModule>();
-            await _commands.AddModuleAsync<LinkModule>();
-            await _commands.AddModuleAsync<AdministratorModule>();
         }
 
         private async Task HandleCommandAsync(SocketMessage arg)
@@ -55,7 +47,7 @@ namespace NettyStatusBot.core
             {
                 int argPos = 0;
                 var context = new SocketCommandContext(_client, msg);
-                if (context.IsPrivate && arg.Author != _client.CurrentUser)
+                if (arg.Author != _client.CurrentUser && !context.IsPrivate)
                 {
                     var result = await _commands.ExecuteAsync(context, argPos, _services);
                     if (!result.IsSuccess)
