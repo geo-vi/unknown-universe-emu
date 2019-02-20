@@ -84,7 +84,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private DateTime RSBCooldownEnd = new DateTime();
 
-        public bool Select(IAttackable target)
+        public bool TrySelect(IAttackable target)
         {
             if (target != null && target.Targetable && target.EntityState != EntityStates.DEAD)
             {

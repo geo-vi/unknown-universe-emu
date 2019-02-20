@@ -46,14 +46,18 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 return;
             }
 
-            var attacker = Controller.Npc.MotherShip.Controller.Attack.GetActiveAttackers().OrderBy(x => x.Damage).FirstOrDefault();
+            var attacker = Controller.Npc.MotherShip.Controller.Attack.GetActiveAttackers().Where(x => x is Player).OrderBy(x => x.Damage).FirstOrDefault();
             if (attacker == null)
             {
                 var rangePlayers = Controller.Npc.Range.Entities.Where(x => x.Value is Player);
                 attacker = rangePlayers.FirstOrDefault().Value;
             }
 
-            Controller.Attack.Select(attacker);
+            if (!Controller.Attack.TrySelect(attacker))
+            {
+                Controller.Attack.TrySelect(Controller.Npc.Range.Entities.FirstOrDefault(x =>
+                    x.Value is Player && x.Value.Position.DistanceTo(Controller.Npc.Position) < 700).Value);
+            }
         }
 
         public void PositionChecker()

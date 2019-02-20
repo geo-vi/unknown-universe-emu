@@ -41,7 +41,7 @@ namespace NettyBaseReloaded.Main.commands
         /// <param name="args"></param>
         public override void Execute(ChatSession session, string[] args = null)
         {
-            if (args?.Length < 2)
+            if (args == null || args?.Length < 2)
             {
                 Chat.packet.Packet.Builder.SystemMessage(session,"Possible unbugs: [map/ui/npcs]");
                 return;
