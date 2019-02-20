@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void Send(GameSession gameSession)
         {
-            Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.SHIP_REPAIR_BUFF, new List<int>{ 30 });
+            Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.SHIP_REPAIR_BUFF, new List<int>{ TimeLeft.Seconds });
         }
     }
 }

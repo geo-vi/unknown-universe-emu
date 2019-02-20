@@ -9,7 +9,9 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         public DateTime EndTime = new DateTime();
 
-        public int TotalTime => (int)(EndTime - StartTime).TotalSeconds;
+        public TimeSpan TotalTime => (EndTime - StartTime);
+
+        public TimeSpan TimeLeft => (EndTime - DateTime.Now);
 
         public Cooldown(DateTime startTime, DateTime endTime)
         {

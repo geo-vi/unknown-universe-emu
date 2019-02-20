@@ -19,7 +19,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void Send(GameSession gameSession)
         {
-            Packet.Builder.LegacyModule(gameSession, "0|A|CLD|DRF|3", true);
+            Packet.Builder.LegacyModule(gameSession, "0|A|CLD|DRF|" + TimeLeft.Seconds, true);
             //foreach (var item in player.SlotbarItems) // TODO NEW CLIENT
             //{
             //    var key = item.Key;

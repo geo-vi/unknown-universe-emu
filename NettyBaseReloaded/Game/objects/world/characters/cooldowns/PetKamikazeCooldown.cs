@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void Send(GameSession gameSession)
         {
-            Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.KAMIKAZE_BUFF, new List<int>{60});
+            Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.KAMIKAZE_BUFF, new List<int>{TimeLeft.Seconds});
         }
     }
 }

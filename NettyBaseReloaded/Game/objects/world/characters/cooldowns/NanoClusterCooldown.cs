@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void Send(GameSession gameSession)
         {
-            Packet.Builder.LegacyModule(gameSession, "0|A|CLD|IH|" + TotalTime);
+            Packet.Builder.LegacyModule(gameSession, "0|A|CLD|IH|" + TimeLeft.Seconds);
         }
     }
 }
