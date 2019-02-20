@@ -119,6 +119,7 @@ namespace NettyBaseReloaded.Main.commands
                     Console.WriteLine(player.EntityState + ":Controller Active: " + player.Controller.Active + ", StopController: " + player.Controller.StopController + ", Checked Classes: " + player.Controller.CheckedClasses.Count);
                     Console.WriteLine("Attacking: " + player.Controller.Attack.Attacking + ", Position: " + player.Position.ToPacket() + " Range: E:" + player.Range.Entities.Count + " O: " + player.Range.Objects.Count + " C: " + player.Range.Collectables.Count + " Z: " + player.Range.Zones.Count);
                     Console.WriteLine("tickers: player: " + Global.TickManager.Exists(player) + " ; controller: " + Global.TickManager.Exists(player.Controller));
+                    Console.WriteLine("cooldowns: " + player.Cooldowns.Cooldowns.Count);
                     break;
                 case "activeattackers":
                     player = World.StorageManager.GetGameSession(playerId).Player;

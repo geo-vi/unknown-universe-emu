@@ -12,7 +12,6 @@ namespace NettyBaseReloaded.Game.controllers
         // TODO: Send local movement sent with MoveHero Command in order to *remove* lag
         public static void Move(Character character, Vector destination)
         {
-
             //Gets the movement time
             character.MovementTime = GetTime(character, destination);
 
@@ -20,19 +19,12 @@ namespace NettyBaseReloaded.Game.controllers
             character.MovementStartTime = DateTime.Now;
             character.Moving = true;
 
-            //sends the movement to the rest of the players in range if both are on the same map
-            //GameClient.SendToSpacemap(character.Spacemap,
-            //    netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y,
-            //        character.MovementTime));
-            //GameClient.SendToSpacemap(character.Spacemap, netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
             GameClient.SendRangePacket(character,
                 netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y,
                     character.MovementTime));
             GameClient.SendRangePacket(character,
                 netty.commands.new_client.MoveCommand.write(character.Id, destination.X, destination.Y,
                     character.MovementTime));
-
-            //GameClient.SendToSpacemap(character.Spacemap, netty.commands.old_client.MoveCommand.write(character.Id, destination.X, destination.Y, character.MovementTime)); REPLACED
 
         }
 
@@ -103,20 +95,11 @@ namespace NettyBaseReloaded.Game.controllers
             //updates the actual position into the character
             character.Position = actualPosition;
 
+
+            /*
+             *  TODO: FIXING A BUG WHERE IT VISUALLY TELEPORTS PLAYER / PLAYER BECOMES INVSIBILE
+             */
             return actualPosition;
-        }
-
-        public static void Follow(Character character, Character target, bool predictNextMove = false)
-        {
-            if (predictNextMove)
-            {
-                if (character.Destination == character.Position) return;
-
-            }
-            else
-            {
-
-            }
         }
     }
 }

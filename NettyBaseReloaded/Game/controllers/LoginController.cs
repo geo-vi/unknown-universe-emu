@@ -67,8 +67,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         private void LoadTicks()
         {
-            var tickId = 0;
-            Global.TickManager.Add(_gameSession.Player, out tickId);
+            Global.TickManager.Add(_gameSession.Player, out var tickId);
             _gameSession.Player.SetTickId(tickId);
             _gameSession.Player.Controller.Initiate();
         }

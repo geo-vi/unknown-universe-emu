@@ -131,8 +131,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     return;
                 }
 
-                Packet.Builder.LegacyModule(gameSession, "0|A|STD|Attack1");
-
                 if (gameSession.Player.Settings.CurrentAmmo.Shoot() == 0)
                 {
                     // NOTHING TO SHOOT
@@ -149,7 +147,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     gameSession.Player.Settings.OldClientShipSettingsCommand.selectedLaser = index;
                     Packet.Builder.SendSlotbars(gameSession);
                 }
-                Packet.Builder.LegacyModule(gameSession, "0|A|STD|Attack2");
 
                 var laserTypes = gameSession.Player.Equipment.LaserTypes();
                 switch (gameSession.Player.Settings.CurrentAmmo.LootId)
@@ -194,8 +191,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 if (enemy is Character)
                     UpdateAttacker(enemy as Character, gameSession.Player);
-
-                Packet.Builder.LegacyModule(gameSession, "0|A|STD|Attack3");
             }
             else if (Character is Pet)
             {
@@ -271,7 +266,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
                     Character.Skills.HasFatLasers()), true);
 
-            Console.WriteLine(Character.Id + " : Attacked successfully");
             Controller.Damage?.Laser(enemy, damage, false);
             Controller.Damage?.Laser(enemy, absDamage, true);
 

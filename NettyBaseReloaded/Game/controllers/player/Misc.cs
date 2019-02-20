@@ -87,34 +87,38 @@ namespace NettyBaseReloaded.Game.controllers.player
         }
 
         private PlayerBeacon _beacon;
-
+        private DateTime LastBeaconReset;
         public void BeaconSync()
         {
+            if (LastBeaconReset.AddSeconds(3) < DateTime.Now)
+            {
+                _beacon = new PlayerBeacon();
+                LastBeaconReset = DateTime.Now;
+            }
             //todo: fix the beacon
-            //var gameSession = baseController.Player.GetGameSession();
-            //if (!baseController.Active || gameSession == null) return;
-            //if (_beacon.InEquipmentArea != baseController.Player.State.InEquipmentArea)
-            //{
-            //    Packet.Builder.EquipReadyCommand(gameSession, baseController.Player.State.InEquipmentArea);
-            //    _beacon.InEquipmentArea = baseController.Player.State.InEquipmentArea;
-            //}
-            //if (_beacon.InDemiZone != baseController.Player.State.InDemiZone|| _beacon.InPortalArea != baseController.Player.State.InPortalArea || _beacon.InRadiationArea != baseController.Player.State.InRadiationArea || _beacon.InTradeArea != baseController.Player.State.InTradeArea)
-            //{
-            //    Console.WriteLine("set beacon");
-            //    Packet.Builder.BeaconCommand(gameSession);
-            //    _beacon.InDemiZone = baseController.Player.State.InDemiZone;
-            //    _beacon.InPortalArea = baseController.Player.State.InPortalArea;
-            //    _beacon.InRadiationArea = baseController.Player.State.InRadiationArea;
-            //    _beacon.InTradeArea = baseController.Player.State.InTradeArea;
-            //}
+            var gameSession = baseController.Player.GetGameSession();
+            if (!baseController.Active || gameSession == null) return;
+            if (_beacon.InEquipmentArea != baseController.Player.State.InEquipmentArea)
+            {
+                Packet.Builder.EquipReadyCommand(gameSession, baseController.Player.State.InEquipmentArea);
+                _beacon.InEquipmentArea = baseController.Player.State.InEquipmentArea;
+            }
+            if (_beacon.InDemiZone != baseController.Player.State.InDemiZone || _beacon.InPortalArea != baseController.Player.State.InPortalArea || _beacon.InRadiationArea != baseController.Player.State.InRadiationArea || _beacon.InTradeArea != baseController.Player.State.InTradeArea)
+            {
+                Packet.Builder.BeaconCommand(gameSession);
+                _beacon.InDemiZone = baseController.Player.State.InDemiZone;
+                _beacon.InPortalArea = baseController.Player.State.InPortalArea;
+                _beacon.InRadiationArea = baseController.Player.State.InRadiationArea;
+                _beacon.InTradeArea = baseController.Player.State.InTradeArea;
+            }
 
-            //if (_beacon.Repairing != baseController.Repairing)
-            //{
-            //    Packet.Builder.LegacyModule(gameSession, "0|A" +
-            //                                "|RS|" +
-            //                                "S|" + Convert.ToInt32(baseController.Repairing), true);
-            //    _beacon.Repairing = baseController.Repairing;
-            //}
+            if (_beacon.Repairing != baseController.Repairing)
+            {
+                Packet.Builder.LegacyModule(gameSession, "0|A" +
+                                            "|RS|" +
+                                            "S|" + Convert.ToInt32(baseController.Repairing), true);
+                _beacon.Repairing = baseController.Repairing;
+            }
         }
 
         /// <summary>

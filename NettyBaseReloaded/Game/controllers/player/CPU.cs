@@ -196,7 +196,6 @@ namespace NettyBaseReloaded.Game.controllers.player
             if (baseController.Character.Moving || !baseController.Repairing ||
                 baseController.Character.LastCombatTime.AddSeconds(3) > DateTime.Now)
             {
-                Console.WriteLine(baseController.Character.Moving + " " + !baseController.Repairing + " " + (baseController.Character.LastCombatTime.AddSeconds(3) > DateTime.Now));
                 baseController.Repairing = false;
                 return;
             }
@@ -204,7 +203,6 @@ namespace NettyBaseReloaded.Game.controllers.player
             var player = (Player)baseController.Character;
             if (player.CurrentHealth == player.MaxHealth)
             {
-                Console.WriteLine("health = max health");
                 baseController.Repairing = false;
                 return;
             }
@@ -212,7 +210,6 @@ namespace NettyBaseReloaded.Game.controllers.player
             var robot = player.Extras.Values.FirstOrDefault(x => x is Robot) as Robot;
             if (robot == null)
             {
-                Console.WriteLine("robot = null");
                 return;
             }
 

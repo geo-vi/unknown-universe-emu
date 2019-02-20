@@ -75,6 +75,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void UpdateAll()
         {
             World.DatabaseManager.PerformFullRefresh(this);
+            LastUpd = DateTime.Now;
         }
 
         /* THIS IS NOT A INFO SETTER !!!!!!! */

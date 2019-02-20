@@ -488,6 +488,7 @@ namespace NettyBaseReloaded.Game.objects.world
             UpdateShip();
             ILogin.SendLegacy(gameSession);
             Updaters.Update();
+            Cooldowns.SendAll();
         }
 
         public override void SetPosition(Vector targetPosition)
@@ -760,10 +761,9 @@ namespace NettyBaseReloaded.Game.objects.world
             VirtualWorldId = vwid;
             Spacemap = map;
             Position = pos;
+            ChangePosition(Position);
             Spacemap.Entities.TryAdd(Id, this);
-            SetPosition(pos);
             Refresh();
-            Global.TickManager.Add(Controller, out _);
         }
 
         public void ResetPlayer()
@@ -822,6 +822,16 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 Packet.Builder.ShipRemoveCommand(session, rangeCharacter);
                 Packet.Builder.ShipCreateCommand(session, rangeCharacter);
+            }
+        }
+
+        public void Setup()
+        {
+            if (!Global.TickManager.Exists(this))
+            {
+                var id = 0;
+                Global.TickManager.Add(this, out id);
+                SetTickId(id);
             }
         }
     }

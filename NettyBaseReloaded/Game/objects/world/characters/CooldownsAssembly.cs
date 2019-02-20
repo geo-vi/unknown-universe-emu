@@ -46,12 +46,18 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         }
 
         private DateTime LastTick = new DateTime();
+        private bool _sendAll = false;
         public void Tick()
         {
             if (LastTick.AddMilliseconds(100) > DateTime.Now) return;
             Sync();
             foreach (var cooldown in Cooldowns)
             {
+                if (_sendAll && Character is Player player)
+                {
+                    var session = player.GetGameSession();
+                    if (session != null) cooldown.Send(session);
+                }
                 if (cooldown.EndTime < DateTime.Now)
                 {
                     cooldown.OnFinish(Character);
@@ -66,6 +72,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         {
             if (PendingToBeRemoved.Count == 0 && PendingToBeAdded.Count == 0) return Cooldowns.Exists(source);
             return (PendingToBeAdded.Exists(source) || Cooldowns.Exists(source));
-        } 
+        }
+
+        public void SendAll()
+        {
+            _sendAll = true;
+        }
     }
 }

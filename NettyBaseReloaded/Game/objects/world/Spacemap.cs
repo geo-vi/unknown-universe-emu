@@ -363,7 +363,6 @@ namespace NettyBaseReloaded.Game.objects.world
             var tickId = -1;
             Global.TickManager.Add(npc, out tickId);
             npc.SetTickId(tickId);
-
             npc.RocketLauncher = npc.Hangar.Ship.GetRocketLauncher(npc);
             npc.Controller = new NpcController(npc);
             npc.Controller.Initiate();

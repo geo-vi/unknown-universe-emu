@@ -14,6 +14,7 @@ using NettyBaseReloaded.Game.controllers.implementable.attack;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.statistics;
 using System.Diagnostics;
+using NettyBaseReloaded.Main;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -188,6 +189,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 true);
             Remove();
 
+            Character.Invalidate();
+
             Character.EntityState = EntityStates.DEAD;
             Character.CurrentHealth = 0;
             Character.CurrentNanoHull = 0;
@@ -259,17 +262,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             player.VirtualWorldId = 0;
 
-            player.Spacemap = spacemap;
-
-            Character.SetPosition(newPos);
+            player.MoveToMap(spacemap, newPos, 0);
 
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
 
-            player.Refresh();
-
+            player.Setup();
             player.Controller.Setup();
             player.Controller.Initiate();
+            player.Refresh();
             player.Save();
         }
 

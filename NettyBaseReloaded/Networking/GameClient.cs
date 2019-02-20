@@ -89,7 +89,7 @@ namespace NettyBaseReloaded.Networking
                     var entity = entry.Value as Player;
                     if (entity == null) continue;
 
-                    if (character.InRange(entity) && entity != character)
+                    if (entity.InRange(character, character.RenderRange) && entity != character)
                     {
                         if (entity.UsingNewClient && command.IsNewClient)
                         {
