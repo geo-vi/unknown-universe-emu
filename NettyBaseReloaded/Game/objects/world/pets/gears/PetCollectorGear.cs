@@ -40,7 +40,18 @@ namespace NettyBaseReloaded.Game.objects.world.pets.gears
 
             var owner = Pet.GetOwner();
 
-            if (collectable != null && owner.Position.DistanceTo(collectable.Position) < 2000)
+            var autoLooterRange = 700;
+            switch (Level)
+            {
+                case 2:
+                    autoLooterRange = 1500;
+                    break;
+                case 3:
+                    autoLooterRange = 3000;
+                    break;
+            }
+
+            if (collectable != null && owner.Position.DistanceTo(collectable.Position) < autoLooterRange)
             {
                 LockedCollectable = collectable;
                 Pet.Controller.PathFollower.Stop();

@@ -246,15 +246,19 @@ namespace NettyBaseReloaded.Game.objects.world
             PetGears.Clear();
             PetGears.Add(GearType.PASSIVE, new PetPassiveGear(this));
             PetGears.Add(GearType.GUARD, new PetGuardGear(this));
+            var tempGearLevel = 1;
+            if (Level.Id >= 13) tempGearLevel = 3;
+            else if (Level.Id >= 7) tempGearLevel = 2;
+            
             foreach (var item in Hangar.Configurations[CurrentConfig - 1].EquippedItemsOnShip)
             {
                 switch (item.Value.Item.LootId)
                 {
                     case "pet_gear_g-kk1": // Kamikaze lvl 1
-                        PetGears.Add(GearType.KAMIKAZE, new PetKamikazeGear(this, 1));
+                        PetGears.Add(GearType.KAMIKAZE, new PetKamikazeGear(this, tempGearLevel));
                         break;
                     case "pet_gear_g-al1": // Auto Loot lvl 1
-                        PetGears.Add(GearType.AUTO_LOOT, new PetCollectorGear(this, 1));
+                        PetGears.Add(GearType.AUTO_LOOT, new PetCollectorGear(this, tempGearLevel));
                         break;
                 }
             }

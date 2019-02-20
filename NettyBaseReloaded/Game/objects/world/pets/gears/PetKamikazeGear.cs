@@ -57,7 +57,9 @@ namespace NettyBaseReloaded.Game.objects.world.pets.gears
                 Pet.Invalidate();
                 return;
             }
-            Pet.Controller.PathFollower.Initiate(owner, 350);
+
+            var radius = 250 + (100 * Level-1);
+            Pet.Controller.PathFollower.Initiate(owner, radius);
         }
 
         public override void End()
