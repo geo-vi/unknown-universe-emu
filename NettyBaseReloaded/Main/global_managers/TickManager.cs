@@ -43,19 +43,6 @@ namespace NettyBaseReloaded.Main.global_managers
 
             id = GetNextTickId();
 
-            if (tick is Player tickedPlayer)
-            {
-                Player _player = null;
-                World.StorageManager.TickedPlayers.TryGetValue(tickedPlayer.Id, out _player);
-                if (_player != null)
-                {
-                    Remove(_player); 
-                    if (_player.Controller != null) Remove(_player.Controller);
-                }
-
-                World.StorageManager.TickedPlayers.TryAdd(tickedPlayer.Id, tickedPlayer);
-            }
-
             Tickables.TryAdd(id, tick);
         }
 
@@ -66,13 +53,6 @@ namespace NettyBaseReloaded.Main.global_managers
             {
                 return;
             }
-
-            if (tick is Player tickedPlayer)
-            {
-                World.StorageManager.TickedPlayers.TryRemove(tickedPlayer.Id, out tickedPlayer);
-                if (tickedPlayer.Controller != null) Remove(tickedPlayer.Controller);
-            }
-
             Tickables.TryRemove(tick.GetId(), out output);
         }
 

@@ -1163,6 +1163,8 @@ namespace NettyBaseReloaded.Game.managers
                     using (var mySqlClient = SqlDatabaseManager.GetClient())
                     {
                         mySqlClient.ExecuteNonQuery(
+                            $"UPDATE player_hangar SET ACTIVE={Convert.ToInt32(hangar.Active)} WHERE PLAYER_ID={player.Id}");
+                        mySqlClient.ExecuteNonQuery(
                             $"UPDATE player_hangar SET SHIP_MAP_ID={player.Spacemap.Id}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y},ACTIVE={Convert.ToInt32(hangar.Active)} WHERE PLAYER_ID={player.Id} AND ID={hangar.Id}");
                         player.Storage.DistancePassed = 0;
                     }

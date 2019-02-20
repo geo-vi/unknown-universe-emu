@@ -377,6 +377,7 @@
     <Compile Include="Game\netty\commands\old_client\requests\ClanMemberInvitationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipWarpRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\TradeSellOreRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\ShipDeselectionCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpCanceledCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipWarpCompletedCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\SpaceBallInitializeScoreCommand.cs" />
@@ -761,6 +762,8 @@
     <Compile Include="Main\commands\DestroyCommand.cs" />
     <Compile Include="Main\commands\EquipmentCommand.cs" />
     <Compile Include="Main\commands\InfoCommand.cs" />
+    <Compile Include="Main\commands\KickCommand.cs" />
+    <Compile Include="Main\commands\KillCommand.cs" />
     <Compile Include="Main\commands\NpcCommand.cs" />
     <Compile Include="Main\commands\RconCommand.cs" />
     <Compile Include="Main\commands\RelogCommand.cs" />

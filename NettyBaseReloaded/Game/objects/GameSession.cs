@@ -93,6 +93,7 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Reset(GameClient client)
         {
+            Console.WriteLine(Out.GetCaller());
             if (Client.Connected)
             {
                 Client.Disconnect();

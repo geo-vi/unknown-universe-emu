@@ -76,6 +76,9 @@ namespace NettyBaseReloaded.Chat.managers
         private void LoadRooms()
         {
             Chat.StorageManager.Rooms.Add(0, new Global(0));
+            Chat.StorageManager.Rooms.Add(1, new Room(1, "FR", 1, Types.NORMAL_ROOM, 250, false, "fr"));
+            Chat.StorageManager.Rooms.Add(2, new Room(2, "TR", 2, Types.NORMAL_ROOM, 250, false, "tr"));
+            Chat.StorageManager.Rooms.Add(3, new Room(3, "FIN", 3, Types.NORMAL_ROOM, 250, false, "fin"));
         }
 
         private void LoadGlobalBans()

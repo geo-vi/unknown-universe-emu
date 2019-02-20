@@ -91,11 +91,6 @@ namespace NettyBaseReloaded.Chat.objects.chat
             if (!ConnectedRooms.ContainsKey(roomId))
                 ConnectedRooms.Add(roomId, room);
             else ConnectedRooms[roomId] = room;
-
-            if (this is Player player)
-            {
-                Packet.Builder.SendRooms(player.GetSession());
-            }
         }
     }
 }

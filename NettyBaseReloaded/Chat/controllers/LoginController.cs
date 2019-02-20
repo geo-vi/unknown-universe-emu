@@ -36,7 +36,10 @@ namespace NettyBaseReloaded.Chat.controllers
         {
             var player = ChatSession.Player;
 
-            player.ConnectToRoom(0);
+            foreach (var room in Chat.StorageManager.Rooms)
+                player.ConnectToRoom(room.Key);
+
+            Packet.Builder.SendRooms(player.GetSession());
 
             Packet.Builder.Legacy(ChatSession, "bv%" + player.Id);
 

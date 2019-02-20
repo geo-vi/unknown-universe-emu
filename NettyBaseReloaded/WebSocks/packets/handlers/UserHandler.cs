@@ -21,7 +21,6 @@ namespace NettyBaseReloaded.WebSocks.packets.handlers
             var gameSession = World.StorageManager.GetGameSession(userId);
             var player = gameSession?.Player;
             if (player == null) return;
-            Console.WriteLine(packet[1]);
             switch (packet[1])
             {
                 case "eq":

@@ -611,8 +611,11 @@ namespace NettyBaseReloaded.Game.netty.packet
             else
             {
                 if (character == null)
-                    gameSession.Client.Send(commands.old_client.ShipSelectionCommand
-                        .write(0, 0, 0, 0, 0, 0, 0, 0, false).Bytes);
+                {
+                    ShipDeselectionCommand(gameSession);
+                    //gameSession.Client.Send(commands.old_client.ShipSelectionCommand
+                    //    .write(0, 0, 0, 0, 0, 0, 0, 0, false).Bytes);
+                }
                 else
                     gameSession.Client.Send(commands.old_client.ShipSelectionCommand.write(character.Id,
                         character.Hangar.ShipDesign.Id, character.CurrentShield, character.MaxShield,
@@ -622,6 +625,22 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
+        #region ShipDeselectionCommand
+
+        public void ShipDeselectionCommand(GameSession gameSession)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.ShipDeselectionCommand.write().Bytes);
+            }
+        }
+        #endregion
+
 
         #region AssetCreateCommand
 

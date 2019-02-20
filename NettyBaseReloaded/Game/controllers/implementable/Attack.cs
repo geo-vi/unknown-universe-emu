@@ -98,7 +98,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void LaserAttack()
         {
             var enemy = Character.Selected;
-            if (!AssembleEnemy(enemy) || Disabled) return;
+            if (!AssembleEnemy(enemy)) return;
 
             var isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
             if (isRsb)
@@ -118,7 +118,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             var damage = Character.Damage;
             var absDamage = 0; //This variable will be used for ammo that absobrs shield too
-
             var laserColor = 0;
 
             if (Character is Player)

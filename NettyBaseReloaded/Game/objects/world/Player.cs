@@ -381,6 +381,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Invalidate()
         {
+            Console.WriteLine(Out.GetCaller());
             Unloaded = true;
             base.Invalidate();
             Controller.Exit();
@@ -415,7 +416,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void ClickableCheck(Object obj)
         {
-            if (obj is IClickable)
+            if (obj is IClickable && obj.Position != null)
             {
                 var active = Vector.IsInRange(Position, obj.Position, obj.Range);
                 Packet.Builder.MapAssetActionAvailableCommand(World.StorageManager.GetGameSession(Id), obj, active);
@@ -493,7 +494,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void SetPosition(Vector targetPosition)
         {
-            if (Pet != null) Pet.Controller.Deactivate();
+            Pet?.Controller.Deactivate();
             ChangePosition(targetPosition);
             Packet.Builder.MoveCommand(GetGameSession(), this, 0);
         }
@@ -716,15 +717,15 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void BoostExpReward(double value)
         {
-            if (value + BoostedExpReward > 1)
-                BoostedExpReward = 1;
+            if (value + BoostedExpReward > 0.5)
+                BoostedExpReward = 0.5;
             else BoostedExpReward += value;
         }
 
         public void BoostHonReward(double value)
         {
-            if (value + BoostedHonorReward > 1)
-                BoostedHonorReward = 1;
+            if (value + BoostedHonorReward > 0.5)
+                BoostedHonorReward = 0.5;
             else BoostedHonorReward += value;
         }
         

@@ -90,18 +90,6 @@ namespace NettyBaseReloaded.Game.controllers
         {
             try
             {
-                if (Player.Moving)
-                {
-                    var session = Player.GetGameSession();
-                    if (session == null)
-                    {
-                        Global.TickManager.Remove(Player);
-                        Exit();
-                        return;
-                    }
-                    session.LastActivityTime = DateTime.Now;
-                }
-
                 foreach (var _class in CheckedClasses.ToList())
                 {
                     _class.Check();
@@ -115,6 +103,8 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Exit()
         {
+            Console.WriteLine(Out.GetCaller());
+            Console.WriteLine("playerControl");
             StopAll();
             CheckedClasses.Clear();
         }

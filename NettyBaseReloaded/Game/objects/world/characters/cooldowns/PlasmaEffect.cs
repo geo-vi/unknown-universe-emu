@@ -30,7 +30,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
             if (player != null)
             {
                 player.Controller.Attack.Disabled = false;
-                player.UpdateSpeed();
             }
         }
 

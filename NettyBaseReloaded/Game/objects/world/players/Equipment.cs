@@ -58,6 +58,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 configurations[0].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
                 configurations[1].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
             }
+
             foreach (var equippedItem in EquipmentItems.Where(x => x.Value.HangarIds.Contains(hangar.Id)))
             {
                 if (equippedItem.Value.OnConfig1.Hangars.Contains(hangar.Id))
@@ -127,10 +128,10 @@ namespace NettyBaseReloaded.Game.objects.world.players
                     var damage = 0;
                     switch (item.Item.Id)
                     {
-                        case 0: // lf3
+                        case 1: // lf3
                             damage = UpgradeDamage(150, item.Level);
                             break;
-                        case 1: // lf4
+                        case 2: // lf4
                             damage = UpgradeDamage(200, item.Level);
                             break;
                         case 22: // lf2
@@ -149,7 +150,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
                     {
                         damage = (int) (damage * drone.GetDamageBoost());
                     }
-
                     config.TotalDamageCalculated += damage;
                     break;
                 case EquippedItemCategories.SHIELD_GENERATOR:

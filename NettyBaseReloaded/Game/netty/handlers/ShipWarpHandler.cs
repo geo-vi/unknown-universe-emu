@@ -20,6 +20,9 @@ namespace NettyBaseReloaded.Game.netty.handlers
         {
             if (gameSession.Player.UsingNewClient) return;
 
+            Packet.Builder.ShipWarpNotAllowedCommand(gameSession);
+            return;
+
             var request = new ShipWarpRequest();
             request.readCommand(bytes);
 

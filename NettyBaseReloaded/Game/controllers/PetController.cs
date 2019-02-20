@@ -113,6 +113,7 @@ namespace NettyBaseReloaded.Game.controllers
         
         public void Deactivate()
         {
+            if (!Active) return;
             Exit();
             var ownerSession = Pet.GetOwner().GetGameSession();
             Packet.Builder.PetDeactivationCommand(ownerSession, Pet);

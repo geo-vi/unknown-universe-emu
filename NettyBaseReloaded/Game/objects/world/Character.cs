@@ -242,15 +242,15 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public virtual void Invalidate()
         {
+            Console.WriteLine(Out.GetCaller());
             try
             {
                 Global.TickManager.Remove(this);
-                Controller.StopController = true;
+                Controller.StopAll();
                 Range.Clean();
             }
             catch (Exception)
             {
-                Controller.StopAll();
             }
         }
 
