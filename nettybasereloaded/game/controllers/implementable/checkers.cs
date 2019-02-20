@@ -37,10 +37,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             if (Controller.Character is Player player)
             {
-                Console.WriteLine("ticked");
                 if (!player.IsLoaded)
                 {
-                    Console.WriteLine("isnt loaded");
                     return;
                 }
             }
@@ -165,12 +163,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
-            //if (entity.Spacemap != Character.Spacemap || entity.Controller.StopController || !Character.Range.Entities.ContainsKey(entity.Id))
-            //{
-            //    RemoveCharacter(entity, Character);
-            //    return;
-            //}
-
             if (entity is Pet)
             {
                 var pet = entity as Pet;
@@ -186,7 +178,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Character.InRange(entity, entity.RenderRange))
             {
                 if (!Character.Range.Entities.ContainsKey(entity.Id))
+                {
                     AddCharacter(Character, entity);
+                }
             }
             else
             {
