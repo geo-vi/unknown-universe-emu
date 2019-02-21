@@ -1,20 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using NettyStatusBot.core.network.packets;
+using Discord;
+using Discord.WebSocket;
+using NettyStatusBot.core;
+using NettyStatusBot.network.packets;
 
-namespace NettyStatusBot.core.network
+namespace NettyStatusBot.network
 {
     class ServerConnection
     {
         public static ServerConnection _instance = null;
 
         private TcpClient _client;
+
+        private DiscordSocketClient _discordClient;
 
         public bool IsConnected
         {
@@ -26,10 +28,11 @@ namespace NettyStatusBot.core.network
             }
         }
 
-        public ServerConnection()
+        public ServerConnection(DiscordSocketClient client)
         {
-            //_instance = this;
-            //Task.Factory.StartNew(Read);
+            _instance = this;
+            _discordClient = client;
+            Task.Factory.StartNew(Read);
         }
 
         private async Task Read()
@@ -38,27 +41,31 @@ namespace NettyStatusBot.core.network
             {
                 if (!IsConnected)
                 {
+                    await _discordClient.SetStatusAsync(UserStatus.DoNotDisturb);
                     TryConnection();
                 }
                 else
                 {
+                    await _discordClient.SetStatusAsync(UserStatus.Online);
                     await ReadPacket();
                 }
-
-                Program.ServerStatus.Online = IsConnected;
             }
         }
 
-        private void TryConnection()
+        private async void TryConnection()
         {
             try
             {
-                _client = new TcpClient("server1.univ3rse.com", 7778) { NoDelay = true, ReceiveBufferSize = 1024 };
+                _client = new TcpClient { NoDelay = true, ReceiveBufferSize = 1024 };
+                _client.Connect("127.0.0.1", 7778);
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
             }
+
+            if (IsConnected)
+                await Write("sini|" + _discordClient.CurrentUser.Id + "|" + _discordClient.CurrentUser.Username + "#"+ _discordClient.CurrentUser.DiscriminatorValue);
         }
 
         private async Task ReadPacket()

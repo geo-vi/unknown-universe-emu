@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace NettyStatusBot.core.network.packets
+namespace NettyStatusBot.network.packets
 {
     class ModuleLookup
     {

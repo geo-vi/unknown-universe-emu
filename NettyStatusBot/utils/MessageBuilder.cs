@@ -22,10 +22,10 @@ namespace NettyStatusBot.utils
         public static EmbedBuilder GetOnlineMsg()
         {
             var builder = new EmbedBuilder();
-            builder.Title = "Current server status";
-            builder.Description = $"Server is ONLINE, Running for ~{Program.ServerStatus.Runtime:g}.";
-            builder.Color = Color.Green;
-            builder.AddField("Currently online players", Program.ServerStatus.PlayersOnline.ToString(), true);
+            //builder.Title = "Current server status";
+            //builder.Description = $"Server is ONLINE, Running for ~{Program.ServerStatus.Runtime:g}.";
+            //builder.Color = Color.Green;
+            //builder.AddField("Currently online players", Program.ServerStatus.PlayersOnline.ToString(), true);
             return builder;
         }
 

@@ -36,10 +36,15 @@ namespace NettyBaseReloaded.Helper
         /// </summary>
         public string DiscordName { get; set; }
 
+        public HelperBrain(DiscordClient client)
+        {
+            Client = client;
+        }
+
         public static void SendCommand(ICommand command)
         {
             var helper = _instance;
-            if(_instance != null)
+            if(helper != null)
                 helper.Client.Write(command.Packet);
             else Console.WriteLine("Instance not initialized::HelperBrain");
         }

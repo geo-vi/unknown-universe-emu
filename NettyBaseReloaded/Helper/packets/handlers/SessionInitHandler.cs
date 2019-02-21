@@ -17,7 +17,7 @@ namespace NettyBaseReloaded.Helper.packets.handlers
         {
             var sessionRequest = new SessionInitRequest();
             sessionRequest.Read(packet);
-            var brain = new HelperBrain
+            var brain = new HelperBrain(client)
                 {DiscordId = sessionRequest.DiscordId, DiscordName = sessionRequest.DiscordName};
             HelperBrain._instance = brain;
             var connectedSessions = World.StorageManager.GameSessions;
@@ -26,6 +26,7 @@ namespace NettyBaseReloaded.Helper.packets.handlers
             {
                 playersConnected.Add(new ConnectedPlayer(session.Value.Player.Id, session.Value.Player.GlobalId, session.Value.Player.Name));
             }
+
             HelperBrain.SendCommand(new InitializeSessionCommand(playersConnected));
             Console.WriteLine("BOT [Helper] successfully connected");
         }

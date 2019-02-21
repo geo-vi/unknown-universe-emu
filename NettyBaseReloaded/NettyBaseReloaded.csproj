@@ -755,9 +755,11 @@
     <Compile Include="Helper\packets\commands\PongCommand.cs" />
     <Compile Include="Helper\packets\Handler.cs" />
     <Compile Include="Helper\packets\handlers\IHandler.cs" />
+    <Compile Include="Helper\packets\handlers\KillHandler.cs" />
     <Compile Include="Helper\packets\handlers\PingHandler.cs" />
     <Compile Include="Helper\packets\handlers\SessionInitHandler.cs" />
     <Compile Include="Helper\packets\requests\IRequest.cs" />
+    <Compile Include="Helper\packets\requests\KillRequest.cs" />
     <Compile Include="Helper\packets\requests\PingRequest.cs" />
     <Compile Include="Helper\packets\requests\SessionInitRequest.cs" />
     <Compile Include="Logger\handlers\LogCreator.cs" />
@@ -837,7 +839,6 @@
     <Compile Include="Networking\GameClient.cs" />
     <Compile Include="Networking\PolicyClient.cs" />
     <Compile Include="Networking\Server.cs" />
-    <Compile Include="Networking\SocketClient.cs" />
     <Compile Include="Networking\XSocket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

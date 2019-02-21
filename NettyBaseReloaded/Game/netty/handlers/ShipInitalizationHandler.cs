@@ -41,6 +41,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (World.StorageManager.GameSessions.ContainsKey(userId))
             {
                 var gameSession = World.StorageManager.GameSessions[userId];
+                gameSession.Player.Invalidate();
                 return gameSession;
             }
             return new GameSession(account) { Client = client };

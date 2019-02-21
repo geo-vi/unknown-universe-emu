@@ -21,10 +21,12 @@ namespace NettyBaseReloaded.Helper.packets
         public void LoadCommands()
         {
             HandledCommands.Add(PingRequest.Prefix, new PingHandler());
+            HandledCommands.Add(KillRequest.Prefix, new KillHandler());
         }
 
         public void Handle(DiscordClient client, string packet)
         {
+            Console.WriteLine(packet);
             string prefix;
             string[] arrayOfPacket;
             if (packet.Contains("|"))
