@@ -13,7 +13,7 @@ namespace NettyStatusBot.modules
         [Command("ping")]
         public async Task PingServer()
         {
-//todo;
-}
+            //todo;
+        }
     }
 }
