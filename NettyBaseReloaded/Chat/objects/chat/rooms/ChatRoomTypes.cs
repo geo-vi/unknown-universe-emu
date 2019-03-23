@@ -1,6 +1,6 @@
 ﻿namespace NettyBaseReloaded.Chat.objects.chat.rooms
 {
-    enum Types
+    enum ChatRoomTypes
     {
         NORMAL_ROOM,
         PRIVATE_ROOM,

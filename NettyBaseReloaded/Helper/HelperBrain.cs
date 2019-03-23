@@ -46,7 +46,6 @@ namespace NettyBaseReloaded.Helper
             var helper = _instance;
             if(helper != null)
                 helper.Client.Write(command.Packet);
-            else Console.WriteLine("Instance not initialized::HelperBrain");
         }
     }
 }

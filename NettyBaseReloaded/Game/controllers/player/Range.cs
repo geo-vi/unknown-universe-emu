@@ -70,24 +70,18 @@ namespace NettyBaseReloaded.Game.controllers.player
                     var session = baseController.Player.GetGameSession();
                     if (session != null)
                     {
-                        baseController.Player.State.InTradeArea = true;
-                        baseController.Player.State.InEquipmentArea = true;
-                        //Packet.Builder.EquipReadyCommand(session, true);
-                        //World.DatabaseManager.Refresh(baseController.Player);
-                        //baseController.Player.Equipment.Hangars =
-                        //    World.DatabaseManager.LoadHangars(baseController.Player);
-                        //baseController.Player.Hangar.Drones = World.DatabaseManager.LoadDrones(baseController.Player);
-                        //baseController.Player.Hangar.Configurations =
-                        //    World.DatabaseManager.LoadConfig(baseController.Player);
+                        if (!baseController.Player.State.InTradeArea)
+                            baseController.Player.State.InTradeArea = true;
+                        if (!baseController.Player.State.InEquipmentArea)
+                            baseController.Player.State.InEquipmentArea = true;
                     }
                 }
                 else
                 {
-                    //var session = baseController.Player.GetGameSession();
-                    //if (session != null)
-                    //    Packet.Builder.EquipReadyCommand(session, false);
-                    baseController.Player.State.InEquipmentArea = false;
-                    baseController.Player.State.InTradeArea = false;
+                    if (baseController.Player.State.InEquipmentArea)
+                        baseController.Player.State.InEquipmentArea = false;
+                    if (baseController.Player.State.InTradeArea)
+                        baseController.Player.State.InTradeArea = false;
                 }
             }
             catch (Exception e)

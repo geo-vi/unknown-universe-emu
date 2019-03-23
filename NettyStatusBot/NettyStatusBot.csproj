@@ -164,24 +164,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="core\DiscordLogin.cs" />
-    <Compile Include="core\Global.cs" />
-    <Compile Include="core\objects\ConnectedPlayer.cs" />
-    <Compile Include="modules\Ping.cs" />
-    <Compile Include="modules\RestartServer.cs" />
-    <Compile Include="network\packets\InitPacket.cs" />
-    <Compile Include="network\packets\ModuleLookup.cs" />
-    <Compile Include="network\packets\PacketBase.cs" />
-    <Compile Include="network\packets\PongPacket.cs" />
-    <Compile Include="network\ServerConnection.cs" />
-    <Compile Include="modules\PublicMessageModule.cs" />
-    <Compile Include="modules\VoteRestart.cs" />
+    <Compile Include="Core\DiscordLogin.cs" />
+    <Compile Include="Core\Global.cs" />
+    <Compile Include="Core\objects\ConnectedPlayer.cs" />
+    <Compile Include="Modules\Ping.cs" />
+    <Compile Include="Modules\RestartServer.cs" />
+    <Compile Include="Networking\HandlerFinder.cs" />
+    <Compile Include="Networking\handlers\ChatLogHandler.cs" />
+    <Compile Include="Networking\handlers\IHandler.cs" />
+    <Compile Include="Networking\packets\ChatLogPacket.cs" />
+    <Compile Include="Networking\packets\InitPacket.cs" />
+    <Compile Include="Networking\packets\PacketBase.cs" />
+    <Compile Include="Networking\packets\PongPacket.cs" />
+    <Compile Include="Networking\ServerConnection.cs" />
+    <Compile Include="Modules\PublicMessageModule.cs" />
+    <Compile Include="Modules\VoteRestart.cs" />
+    <Compile Include="Networking\XSocket.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\BotConfiguration.cs" />
-    <Compile Include="storage\BotData.cs" />
-    <Compile Include="storage\Donations.cs" />
-    <Compile Include="utils\MessageBuilder.cs" />
+    <Compile Include="Storage\BotData.cs" />
+    <Compile Include="Storage\Donations.cs" />
+    <Compile Include="Utils\Decode.cs" />
+    <Compile Include="Utils\MessageBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -190,7 +195,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="mysql\" />
+    <Folder Include="MySql\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

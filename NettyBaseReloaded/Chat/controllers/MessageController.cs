@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Chat.objects.chat;
 using NettyBaseReloaded.Chat.packet;
+using NettyBaseReloaded.Helper.packets.commands;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Networking;
 
@@ -29,23 +31,31 @@ namespace NettyBaseReloaded.Chat.controllers
                 var room = Chat.StorageManager.Rooms[roomId];
                 if (room == null) return;
 
-                if (character is Moderator)
-                    ChatClient.SendToRoom(character,
-                        "j%" + roomId + "@" + character.Name + "@" + message + "@" +
-                        (int) ((Moderator) character).AdminLevel + "#", room);
-                if (character is Bot)
-                    throw new NotImplementedException();
-                if (character is Player)
+                if (character is Moderator mod)
                 {
+                    ChatClient.SendToRoom("j%" + roomId + "@" + character.Name + "@" + message + "@" +
+                        (int)mod.AdminLevel + "#", room);
+                }
+                else if (character is Player player)
+                {
+                    if (player.IsMute)
+                    {
+                        return;
+                    }
+                    Task.Factory.StartNew(() => room.LanguageCheck(character, message));
+
                     var packet = "a%" + roomId + "@" + character.Name + "@" + message + "#";
                     if (character.Clan.Id != 0)
                     {
                         packet = packet.Replace("#", "@" + character.Clan.Tag + "#");
                     }
 
-                    ChatClient.SendToRoom(character,
-                        packet, room);
+                    ChatClient.SendToRoom(packet, room);
                 }
+                if (character is Bot)
+                    throw new NotImplementedException();
+
+                Helper.HelperBrain.SendCommand(new ChatLogCommand(character, roomId, message));
                 Chat.DatabaseManager.InsertChatLog(character, roomId, message, MessageType.CHAT);
             }
             catch (Exception e)

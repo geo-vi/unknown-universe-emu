@@ -352,6 +352,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Pet = World.DatabaseManager.LoadPet(this);
             QuestData = new QuestPlayerData(this);
             Announcements = new Announcements(this);
+            Gates = new PlayerGates(this);
             World.DatabaseManager.SavePlayerHangar(this, Hangar);
         }
 
@@ -360,7 +361,6 @@ namespace NettyBaseReloaded.Game.objects.world
             if (GetGameSession() == null)
             {
                 Invalidate();
-                Global.TickManager.Remove(this);
                 return;
             }
             if (!Controller.Active || EntityState == EntityStates.DEAD)
@@ -373,12 +373,12 @@ namespace NettyBaseReloaded.Game.objects.world
             AssembleEnemyWarn();
             TickEvents();
             TickTechs();
-            //TickGates();
             TickAbilities();
             TickQuests();
             TickAnnouncements();
             Skylab.Tick();
         }
+        
 
         public override void Invalidate()
         {
@@ -434,13 +434,16 @@ namespace NettyBaseReloaded.Game.objects.world
             else if (obj is Jumpgate) Storage.LoadPortal(obj as Jumpgate);
             else if (obj is Asteroid) Storage.LoadAsteroid(obj as Asteroid);
             else if (obj is Asset) Storage.LoadAsset(obj as Asset);
-            else if (obj is Collectable) Storage.LoadCollectable(obj as Collectable);
-            else if (obj is Ore) Storage.LoadResource(obj as Ore);
             else if (obj is Billboard) Storage.LoadBillboard(obj as Billboard);
-            else if (obj is Mine) Storage.LoadMine(obj as Mine);
-            else if (obj is Firework) Storage.LoadFirework(obj as Firework);
             else
             {
+                //if (obj.Position.DistanceTo(Position) < 2000)
+                //{
+                    if (obj is Collectable) Storage.LoadCollectable(obj as Collectable);
+                    else if (obj is Ore) Storage.LoadResource(obj as Ore);
+                    else if (obj is Mine) Storage.LoadMine(obj as Mine);
+                    else if (obj is Firework) Storage.LoadFirework(obj as Firework);
+                //}
                 if (!Storage.LoadedObjects.ContainsKey(obj.Id))
                     Storage.LoadedObjects.TryAdd(obj.Id, obj);
             }
@@ -759,11 +762,11 @@ namespace NettyBaseReloaded.Game.objects.world
             Pet?.Controller.Deactivate();
             Spacemap.RemoveEntity(this);
             ResetPlayer();
-            VirtualWorldId = vwid;
             Spacemap = map;
             Position = pos;
+            VirtualWorldId = vwid;
             ChangePosition(Position);
-            Spacemap.Entities.TryAdd(Id, this);
+            Controller.AddToMap();
             Refresh();
         }
 
@@ -834,6 +837,14 @@ namespace NettyBaseReloaded.Game.objects.world
                 Global.TickManager.Add(this, out id);
                 SetTickId(id);
             }
+        }
+
+        public void RestartSessions()
+        {
+            Global.TickManager.Remove(this);
+            Global.TickManager.Remove(Controller);
+            Setup();
+            Controller.Setup();
         }
     }
 }

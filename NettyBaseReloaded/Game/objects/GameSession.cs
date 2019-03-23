@@ -28,7 +28,7 @@ namespace NettyBaseReloaded.Game.objects
         {
             get
             {
-                if (Client != null && Client.Connected)
+                if (Client != null && Client.Connected && (Player.LastCombatTime.AddMinutes(10) > DateTime.Now || Player.MovementStartTime.AddMinutes(10) > DateTime.Now))
                 {
                     LastActivityTime = DateTime.Now;
                     return true;

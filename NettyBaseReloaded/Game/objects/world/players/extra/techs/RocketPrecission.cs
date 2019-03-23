@@ -27,12 +27,13 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 
         public override void execute()
         {
-            if (Active || Player.Cooldowns.Any(x => x is PrecisionTargeterCooldown)) return;
-            Active = true;
-            Player.Storage.PrecisionTargeterActivated = true;
-            Packet.Builder.TechStatusCommand(Player.GetGameSession());
-            TimeFinish = DateTime.Now.AddSeconds(900);
-            Player.Cooldowns.Add(cld);
+            Packet.Builder.LegacyModule(Player.GetGameSession(), "0|A|STD|Temporarily disabled");
+            //if (Active || Player.Cooldowns.CooldownDictionary.Any(c => c.Value is PrecisionTargeterCooldown)) return;
+            //Active = true;
+            //Player.Storage.PrecisionTargeterActivated = true;
+            //Packet.Builder.TechStatusCommand(Player.GetGameSession());
+            //TimeFinish = DateTime.Now.AddSeconds(900);
+            //Player.Cooldowns.Add(cld);
         }
 
         private void Disable()

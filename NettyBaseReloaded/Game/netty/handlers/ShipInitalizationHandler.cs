@@ -32,6 +32,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
         public GameSession SessionBuilder(GameClient client, int userId, string sessionId, bool usingNewClient)
         {
             var account = World.DatabaseManager.GetAccount(userId);
+            account.UsingNewClient = usingNewClient;
 
             if (sessionId != account.SessionId)
             {
@@ -43,6 +44,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 var gameSession = World.StorageManager.GameSessions[userId];
                 gameSession.Client?.Disconnect();
                 gameSession.Client = client;
+                gameSession.Player.UsingNewClient = usingNewClient;
                 return gameSession;
             }
             return new GameSession(account) { Client = client };

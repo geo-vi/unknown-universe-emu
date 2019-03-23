@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Main;
 
 namespace NettyBaseReloaded.Helper.packets.handlers
 {
@@ -10,7 +11,7 @@ namespace NettyBaseReloaded.Helper.packets.handlers
     {
         public void Execute(HelperBrain brain, string[] packet)
         {
-            Program.Exit();
+            Global.Close();
         }
     }
 }

@@ -35,16 +35,16 @@ namespace NettyBaseReloaded.Game.objects.world.pets.gears
 
         private void SearchCollectable()
         {
-            var collectable = Pet.Range.Collectables.Values.Where(x => x.Position != null && x.PetCanCollect).OrderBy(x => x.Position.DistanceTo(Pet.Position))
+            var collectable = Pet.Range.Collectables.Values.Where(x => x.Position != null && x.PetCanCollect(Pet.GetOwner())).OrderBy(x => x.Position.DistanceTo(Pet.Position))
                 .FirstOrDefault();
 
             var owner = Pet.GetOwner();
 
-            var autoLooterRange = 700;
+            var autoLooterRange = 1500;
             switch (Level)
             {
                 case 2:
-                    autoLooterRange = 1500;
+                    autoLooterRange = 1700;
                     break;
                 case 3:
                     autoLooterRange = 3000;

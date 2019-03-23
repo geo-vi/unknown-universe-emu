@@ -1,4 +1,4 @@
-﻿namespace NettyStatusBot.network.packets
+﻿namespace NettyStatusBot.Networking.packets
 {
     class PongPacket : PacketBase
     {

@@ -246,6 +246,7 @@ namespace NettyBaseReloaded.Game.objects.world
             PetGears.Clear();
             PetGears.Add(GearType.PASSIVE, new PetPassiveGear(this));
             PetGears.Add(GearType.GUARD, new PetGuardGear(this));
+            PetGears.Add(GearType.AUTO_RESOURCE_COLLECTION, new PetResourceCollectorGear(this, 3));
             var tempGearLevel = 1;
             if (Level.Id >= 13) tempGearLevel = 3;
             else if (Level.Id >= 7) tempGearLevel = 2;

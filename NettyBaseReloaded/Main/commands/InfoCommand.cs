@@ -8,6 +8,8 @@ using MySql.Data.MySqlClient;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.map;
+using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Main.global_managers;
 using NettyBaseReloaded.Main.objects;
 
@@ -45,6 +47,12 @@ namespace NettyBaseReloaded.Main.commands
                     Console.WriteLine($"State: InDemiZone->{player.State.InDemiZone}, InPortalArea->{player.State.InPortalArea}," +
                                       $" Jumping->{player.State.Jumping}, Home->{player.State.IsOnHomeMap()}, InRadiation->{player.State.InRadiationArea}, " +
                                       $"GroupInit-> {player.State.GroupInitialized}");
+                    break;
+                case "map":
+                    var mapId = int.Parse(args[2]);
+                    var map = World.StorageManager.Spacemaps[mapId];
+                    Console.WriteLine(map.Name + "'s Statistics ::");
+                    Console.WriteLine($@"Entities: {map.Entities.Count} (Npcs: {map.Entities.Count(x => x.Value is Npc)}, Players: {map.Entities.Count(x => x.Value is Player)}), Objects: {map.Objects.Count} (Collectables: {map.Objects.Count(x => x.Value is Collectable)}, Portals: {map.Objects.Count(x => x.Value is Jumpgate)})");
                     break;
             }
         }

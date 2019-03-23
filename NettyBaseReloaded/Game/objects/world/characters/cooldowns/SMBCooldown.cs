@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
             }
             else
             {
-                Packet.Builder.LegacyModule(gameSession, "0|A|CLD|SMB|" + TimeLeft.Seconds);
+                Packet.Builder.LegacyModule(gameSession, "0|A|CLD|SMB|" + TimeLeft.Seconds, true);
             }
         }
     }

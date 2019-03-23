@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.old_client
@@ -46,6 +47,26 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client
             this.keyCodes = keyCodes;
             this.parameter = parameter;
             this.charCode = charCode;
+        }
+
+        public UserKeyBindingsModule()
+        {
+
+        }
+
+        public void readCommand(ByteParser parser)
+        {
+            parser.readShort();
+            actionType = parser.readShort();
+            var codesLength = parser.readInt();
+            keyCodes = new List<int>();
+            for (int i = 0; i < codesLength; i++)
+            {
+                keyCodes.Add(parser.readInt());
+            }
+
+            parameter = parser.readInt();
+            charCode = parser.readShort();
         }
 
         public byte[] write()

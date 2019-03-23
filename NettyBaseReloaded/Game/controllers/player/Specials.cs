@@ -30,7 +30,7 @@ namespace NettyBaseReloaded.Game.controllers.player
             try
             {
                 var player = Controller.Player;
-                if (player.Cooldowns.Any(x => x is EMPCooldown)) return;
+                if (player.Cooldowns.CooldownDictionary.Any(c => c.Value is EMPCooldown)) return;
                 if (player.State.InDemiZone) return;
 
                 GameClient.SendToPlayerView(player,
@@ -38,30 +38,10 @@ namespace NettyBaseReloaded.Game.controllers.player
                 GameClient.SendToPlayerView(player,
                     netty.commands.new_client.LegacyModule.write("0|n|EMP|" + player.Id), true);
 
-                //GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write("0|UI|MM|NOISE|1|1"));
-                //GameClient.SendToPlayerView(player, netty.commands.new_client.LegacyModule.write("0|UI|MM|NOISE|1|1"));
-
-                //I can't use GameHandler.SendSelectedPacket because i need to set Selected to null
+                player.Controller.DeselectFromShip();
                 foreach (var entry in player.Spacemap.Entities)
                 {
                     var entity = entry.Value;
-
-                    if (entity.Selected != null && entity.SelectedCharacter == player)
-                    {
-                        if (entity is Player playerEntity)
-                        {
-                            var entitySession = playerEntity.GetGameSession();
-                            if (entitySession != null)
-                            {
-                                Packet.Builder.LegacyModule(entitySession, "0|A|STM|msg_own_targeting_harmed");
-                                Packet.Builder.ShipSelectionCommand(entitySession, null);
-                            }
-                        }
-
-                        entity.Controller.Attack.Attacking = false;
-                        entity.Selected = null;
-                    }
-
                     if (entity != player && entity.Position.DistanceTo(player.Position) > 400 && entity.Invisible)
                     {
                         entity.Controller.Effects.Uncloak();
@@ -86,7 +66,7 @@ namespace NettyBaseReloaded.Game.controllers.player
         public void Smartbomb()
         {
             var player = Controller.Player;
-            if (player.Cooldowns.Any(x => x is SMBCooldown)) return;
+            if (player.Cooldowns.CooldownDictionary.Any(c => c.Value is SMBCooldown)) return;
             if (player.State.InDemiZone) return;
 
             GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write("0|n|SMB|" + player.Id), true);
@@ -101,7 +81,7 @@ namespace NettyBaseReloaded.Game.controllers.player
         public void InstantShield()
         {
             var player = Controller.Player;
-            if (player.Cooldowns.Any(x => x is ISHCooldown)) return;
+            if (player.Cooldowns.CooldownDictionary.Any(c => c.Value is ISHCooldown)) return;
 
             GameClient.SendToPlayerView(player, netty.commands.old_client.LegacyModule.write("0|n|ISH|" + player.Id), true);
             GameClient.SendToPlayerView(player, netty.commands.new_client.LegacyModule.write("0|n|ISH|" + player.Id), true);

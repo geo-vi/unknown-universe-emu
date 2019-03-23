@@ -148,6 +148,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.killscreen
         public Tuple<short,int> CalculatePrice(int option)
         {
             if (KilledPlayer == null) return new Tuple<short, int>(PriceModule.URIDIUM, 0);
+            if (KilledPlayer.Information.Premium.Active) return new Tuple<short, int>(PriceModule.URIDIUM, 0);
             switch (KilledPlayer.Spacemap.Id)
             {
                 case 1:

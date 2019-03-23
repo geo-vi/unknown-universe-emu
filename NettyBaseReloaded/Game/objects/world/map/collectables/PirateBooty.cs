@@ -18,11 +18,17 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         private bool Respawning { get; }
 
-        private const int COLLECTION_TIME = 1; // default 5 
+        private const int COLLECTION_TIME = 3; // default 5 
 
         public PirateBooty(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning) : base(id, hash, type, pos, map, limits)
         {
             Respawning = respawning;
+        }
+
+        public override void Tick()
+        {
+            base.Tick();
+            CheckCollection();
         }
 
         public void RandomiseReward()
@@ -91,37 +97,43 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 Respawn();
         }
 
+        private Character Collector;
+
+        private DateTime CollectionTimeStart;
+
         public override void Collect(Character character)
         {
-            if (Collector != null) return;
+            if (Collector != null || CollectionTimeStart.AddSeconds(4) > DateTime.Now) return;
             if (character is Player player)
             {
-                if (player.Information.BootyKeys[0] == 0)
+                if (player.Information.BootyKeys[0] <= 0)
                 {
                     //locked
+                    Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Buy a key");
                     return;
                 }
 
+                CollectionTimeStart = DateTime.Now;
                 Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|SLA|0|" + player.Id + "|" + COLLECTION_TIME);
                 Collector = character;
             }
-
-            Task.Factory.StartNew(CollectionThread);
         }
 
-        private Character Collector;
+        private DateTime LastCollectionCheck = new DateTime();
 
-        private async void CollectionThread()
+        private void CheckCollection()
         {
-            var player = Collector as Player;
-            if (player == null) return;
-            var startCollection = DateTime.Now;
-            while (startCollection.AddSeconds(COLLECTION_TIME) > DateTime.Now)
+            lock (this)
             {
+                if (Collector == null || LastCollectionCheck.AddMilliseconds(500) > DateTime.Now) return;
+                var player = Collector as Player;
+
                 MovementController.ActualPosition(Collector);
-                if (Collector == null || Collector.Moving || Collector.EntityState != EntityStates.ALIVE)
+                if (player == null || Collector.Moving || Collector.EntityState != EntityStates.ALIVE ||
+                    player.Information.BootyKeys[0] < 0 ||
+                    (player.Position.Y - 50 == player.Position.Y && player.Position.X == Position.X))
                 {
-                    var session = player.GetGameSession();
+                    var session = player?.GetGameSession();
                     if (session != null)
                         Packet.Builder.LegacyModule(session, "0|A|SLC|0|" + player.Id);
 
@@ -129,15 +141,17 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                     return;
                 }
 
-                await Task.Delay(500);
+                if (CollectionTimeStart.AddSeconds(COLLECTION_TIME) > DateTime.Now || Disposed) return;
+                player.Information.UpdateBootyKeys();
+                player.Information.BootyKeys[0] -= 1;
+                World.DatabaseManager.UpdateBootyKeys(player);
+                RandomiseReward();
+                BoxReward.ParseRewards(player);
+                Dispose();
+                Collector = null;
             }
 
-            player.Information.BootyKeys[0] -= 1;
-            World.DatabaseManager.UpdateBootyKeys(player);
-            Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|BK|" + player.Information.BootyKeys[0]);
-            RandomiseReward();
-            BoxReward.ParseRewards(player);
-            Dispose();
+            LastCollectionCheck = DateTime.Now;
         }
 
         protected override void Reward(Player player)

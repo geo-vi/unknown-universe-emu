@@ -41,13 +41,14 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public void SendLegacy()
         {
+            GameSession.Player.UpdateConfig();
             SendLegacy(GameSession);
             SendCooldowns(GameSession);
         }
 
         private void SendCooldowns(GameSession gameSession)
         {
-            foreach (var cooldown in gameSession.Player.Cooldowns.Cooldowns)
+            foreach (var cooldown in gameSession.Player.Cooldowns.CooldownDictionary.Values)
             {
                 cooldown.Send(gameSession);
             }
@@ -75,7 +76,7 @@ namespace NettyBaseReloaded.Game.controllers.login
                 //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
                 //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
                 //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
-                Packet.Builder.LegacyModule(GameSession, "0|UI|MV|HM|4");
+                Packet.Builder.LegacyModule(GameSession, "0|UI|MV|HM|4", true);
                 //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
 
                 if (GameSession.Player.Group != null)
@@ -102,8 +103,8 @@ namespace NettyBaseReloaded.Game.controllers.login
                 //Packet.Builder.EventActivationStateCommand(GameSession, 1, true); // Event Christmas 1
                 
                 LoadShipEffects(GameSession);
-                Packet.Builder.BeaconCommand(GameSession);
 
+                GameSession.Player.Spacemap.CreateGalaxyGates(GameSession.Player);
             }
             catch (Exception e)
             {

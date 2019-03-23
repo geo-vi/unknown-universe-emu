@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Commands;
-using NettyStatusBot.Properties;
 
-namespace NettyStatusBot.modules
+namespace NettyStatusBot.Modules
 {
     class PublicMessageModule : ModuleBase<SocketCommandContext>
     {
@@ -43,11 +37,11 @@ namespace NettyStatusBot.modules
                              "worked together for days until Yuuki one day said... I got bored... End of an era.");
         }
 
-        [Command("story:heisenberg")]
+        [Command("heisenberg")]
         public async Task Story3()
         {
             var user = await Context.Channel.GetUserAsync(177418323359694848);
-            await ReplyAsync("is that dude even alive? wtf? " + user.Mention + "???");
+            await ReplyAsync("he ded bro");
             await Context.Channel.SendFileAsync(Directory.GetCurrentDirectory() + "/gifs/coma.jpg");
         }
 
@@ -79,6 +73,37 @@ namespace NettyStatusBot.modules
         public async Task Connection()
         {
             await Context.Channel.SendFileAsync(Directory.GetCurrentDirectory() + "/gifs/connectionlost.png");
+        }
+
+        [Command("cyborg")]
+        public async Task Cyborg()
+        {
+            await ReplyAsync("another retarded DO ship");
+            await Context.Channel.SendFileAsync(Directory.GetCurrentDirectory() + "/gifs/cyborg.png");
+        }
+
+        [Command("GG?")]
+        public async Task GGChoice()
+        {
+            await Context.Channel.SendFileAsync(Directory.GetCurrentDirectory() + "/gifs/shockdecision.png");
+        }
+
+        [Command("MMO")]
+        public async Task WeWantU()
+        {
+            await Context.Channel.SendFileAsync(Directory.GetCurrentDirectory() + "/gifs/wewantu.jpg");
+        }
+
+        [Command("problem")]
+        public async Task Problem()
+        {
+            await Context.Channel.SendFileAsync(Directory.GetCurrentDirectory() + "/gifs/problem.png");
+        }
+
+        [Command("shock")]
+        public async Task Shock()
+        {
+            await Context.Channel.SendFileAsync(Directory.GetCurrentDirectory() + "/gifs/shock.jpg");
         }
     }
 }

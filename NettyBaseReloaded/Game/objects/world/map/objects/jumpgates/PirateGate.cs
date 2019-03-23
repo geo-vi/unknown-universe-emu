@@ -11,10 +11,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
     class PirateGate : Jumpgate
     {
         public bool Broken;
-        public PirateGate(int id, Faction faction, Vector pos, Spacemap map, int destinationMapId, Vector destinationPos, bool isBroken) : base(id, faction, pos, map, destinationPos, destinationMapId, true, 1, 0, 51)
+        public PirateGate(int id, Faction faction, Vector pos, Spacemap map, int destinationMapId, Vector destinationPos, bool isBroken) : base(id, faction, pos, map, destinationPos, destinationMapId, true, 1, 0, PortalGraphics.PIRATE_GATE)
         {
             Broken = isBroken;
-            if (isBroken) Gfx = 52;
+            if (isBroken) Gfx = PortalGraphics.PIRATE_GATE_BROKEN;
         }
 
         public override void click(Character character)

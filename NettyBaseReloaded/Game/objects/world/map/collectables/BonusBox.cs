@@ -22,8 +22,6 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         private bool Respawning { get; }
 
-        public override bool PetCanCollect => true;
-
         public BonusBox(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning = false) : base(id, hash, type, pos, map, limits)
         {
             Respawning = respawning;
@@ -85,6 +83,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 Console.WriteLine(e);
                 Console.WriteLine(e.StackTrace);
             }
+        }
+
+        public override bool PetCanCollect(Player owner)
+        {
+            return true;
         }
     }
 }

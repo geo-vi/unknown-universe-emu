@@ -5,6 +5,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 {
     abstract class Cooldown
     {
+        public int Id { get; set; }
+
         public DateTime StartTime = new DateTime();
 
         public DateTime EndTime = new DateTime();
@@ -18,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             StartTime = startTime;
             EndTime = endTime;
         }
-
+        
         public virtual void OnStart(Character character)
         {
         }

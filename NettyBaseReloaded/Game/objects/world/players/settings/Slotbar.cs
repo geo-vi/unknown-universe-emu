@@ -30,7 +30,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
 
             public static string[] RocketLauncherIds =
             {
-                "equipment_weapon_rocketlauncher_hst-2", "ammunition_rocketlauncher_hstrm-01",
+                "equipment_weapon_rocketlauncher_not_present","ammunition_rocketlauncher_hstrm-01",
                 "ammunition_rocketlauncher_ubr-100",
                 "ammunition_rocketlauncher_eco-10", "ammunition_rocketlauncher_sar-01",
                 "ammunition_rocketlauncher_sar-02"
@@ -38,7 +38,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
 
             public static string[] SpecialItemsIds =
             {
-                "equipment_extra_cpu_smb-01", "equipment_extra_cpu_ish-01", "ammunition_specialammo_emp-01",
+                "ammunition_mine_smb-01", "equipment_extra_cpu_ish-01", "ammunition_specialammo_emp-01",
                 "ammunition_firework_fwx-s", "ammunition_firework_fwx-m", "ammunition_firework_fwx-l", "ammunition_firework_ignite"
             };
 
@@ -62,8 +62,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                 "equipment_extra_cpu_sle-01", "equipment_extra_cpu_sle-02", "equipment_extra_cpu_sle-03",
                 "equipment_extra_cpu_sle-04", "equipment_extra_hmd-07", "equipment_extra_repbot_rep-1",
                 "equipment_extra_repbot_rep-2", "equipment_extra_repbot_rep-3", "equipment_extra_repbot_rep-4",
-                "equipment_extra_repbot_rep-s", "equipment_weapon_rocketlauncher_hst-1",
-                "equipment_weapon_rocketlauncher_hst-2", "equipment_weapon_rocketlauncher_not_present", "equipment_extra_cpu_nc-rrb-x",
+                "equipment_extra_repbot_rep-s", "equipment_extra_cpu_nc-rrb-x",
                 "equipment_extra_cpu_g3x-crgo-x"
             };
 
@@ -122,7 +121,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             var maxCounter = 1000;
             foreach (var itemId in Items.LaserIds)
             {
-                if (!player.Information.Ammunitions.ContainsKey(itemId)) continue;
+                if (!player.Information.Ammunitions.ContainsKey(itemId) || itemId == "ammunition_laser_cbo-100" || itemId == "ammunition_laser_job-100") continue;
                 var ammo = player.Information.Ammunitions[itemId];
 
                 var item = new LaserItem(
@@ -164,8 +163,13 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             //ROCKET LAUNCHER
             items = new List<SlotbarCategoryItemModule>();
             maxCounter = 200;
+
             foreach (var itemId in Items.RocketLauncherIds)
             {
+                if (!player.Information.Ammunitions.ContainsKey(itemId)) continue;
+                var ammo = player.Information.Ammunitions[itemId];
+                counterValue = ammo.Get();
+
                 var item = new RocketLauncherItem(
                     itemId,
                     counterValue,
@@ -224,7 +228,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
                     counterValue,
                     maxCounter,
                     null,
-                    1,
+                    0,
                     false,
                     true
                 );

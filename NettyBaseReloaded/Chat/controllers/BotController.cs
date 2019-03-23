@@ -7,7 +7,7 @@ namespace NettyBaseReloaded.Chat.controllers
     {
         public BotController(Character character) : base(character)
         {
-
+            
         }
 
         public void Tick()

@@ -4,7 +4,6 @@ using NettyBaseReloaded.Chat.objects;
 namespace NettyBaseReloaded.Chat.packet.handlers
 {
     class UserMessageHandler : IHandler
-
     {
         public void execute(ChatSession chatSession, string[] param)
         {

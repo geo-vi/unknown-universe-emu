@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.jumpgates;
@@ -48,6 +49,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         protected Player Owner { get; private set; }
 
+        private Task GGTask;
+
         protected GalaxyGate(Spacemap coreMap, int wave)
         {
             Spacemap = coreMap;
@@ -67,6 +70,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             try
             {
+                if (VirtualMap.Entities.Count == 0) return;
+
                 if (Finished && Rewarded)
                 {
                     foreach (var joined in JoinedPlayers)
@@ -172,7 +177,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
         #region Abstracts
         public virtual void Initiate()
         {
-            Task.Factory.StartNew(RunThread);
+            GGTask = Task.Factory.StartNew(RunThread);
         }
 
         public abstract void Start();
@@ -189,6 +194,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             //Override if needed
             Rewarded = true;
+            Finished = true;
+            GGTask.Dispose();
         }
 
         #region Core
@@ -326,6 +333,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             if (player?.GetGameSession() == null) return;            
             var tuple = player.GetClosestStation(true);
+            MovementController.Move(player, MovementController.ActualPosition(player));
+            player.VirtualWorldId = 0;
             player.MoveToMap(tuple.Item2, tuple.Item1, 0);
         }
 

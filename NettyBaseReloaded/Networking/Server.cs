@@ -42,5 +42,10 @@ namespace NettyBaseReloaded.Networking
                     break;
             }
         }
+
+        public void Stop()
+        {
+            serverSocket.Close();
+        }
     }
 }

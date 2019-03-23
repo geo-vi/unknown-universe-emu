@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects.world.players.settings;
 
 namespace NettyBaseReloaded.Game.objects.world.players
@@ -14,13 +16,13 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         #region JSON Loaded Stuff
 
-        public netty.commands.new_client.UserSettingsCommand NewClientUserSettingsCommand { get; set; }
+        //public netty.commands.new_client.UserSettingsCommand NewClientUserSettingsCommand { get; set; }
         public netty.commands.old_client.UserSettingsCommand OldClientUserSettingsCommand { get; set; }
 
         public netty.commands.old_client.ShipSettingsCommand OldClientShipSettingsCommand { get; set; }
         //public netty.commands.new_client.ShipSettingsCommand NewShipSettingsCommand { get; set; }
 
-        public List<Hotkey> Hotkeys { get; set; }
+        public netty.commands.old_client.UserKeyBindingsUpdate OldClientKeyBindingsCommand { get; set; }
 
         #endregion
 
@@ -51,7 +53,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
             }
             else
             {
-                OldClientUserSettingsCommand = World.DatabaseManager.GetPlayerGameplaySettings(Player) as netty.commands.old_client.UserSettingsCommand;
+                OldClientUserSettingsCommand =
+                    World.DatabaseManager.GetPlayerGameplaySettings(Player) as
+                        netty.commands.old_client.UserSettingsCommand;
                 if (OldClientUserSettingsCommand == null)
                 {
                     var qs = new netty.commands.old_client.QualitySettingsModule(false, 3, 3, 3, true, 3, 3, 3, 3, 3,
@@ -71,13 +75,56 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 }
 
                 OldClientShipSettingsCommand =
-                        World.DatabaseManager.GetPlayerShipSettings(Player) as
-                            netty.commands.old_client.ShipSettingsCommand;
-                    if (OldClientShipSettingsCommand == null)
-                        OldClientShipSettingsCommand = new netty.commands.old_client.ShipSettingsCommand("", "", 0, 0, 0);
-                    SaveSettings();
+                    World.DatabaseManager.GetPlayerShipSettings(Player) as
+                        netty.commands.old_client.ShipSettingsCommand;
+                if (OldClientShipSettingsCommand == null)
+                    OldClientShipSettingsCommand = new netty.commands.old_client.ShipSettingsCommand("", "", 0, 0, 0);
 
-                ASSET_VERSION = World.DatabaseManager.GetPlayerAssetsVersion(Player);
+                OldClientKeyBindingsCommand =
+                    World.DatabaseManager.GetPlayerKeySettings(Player) as netty.commands.old_client.UserKeyBindingsUpdate;
+                if (OldClientKeyBindingsCommand == null)
+                {
+                    var hotkeys = new List<Hotkey>
+                    {
+                        new Hotkey(Hotkey.ACTIVATE_LASER, (int) Keys.ControlKey, false),
+                        new Hotkey(Hotkey.CHANGE_CONFIG, (int) Keys.C, false),
+                        new Hotkey(Hotkey.JUMP, (int) Keys.J, false),
+                        new Hotkey(Hotkey.LAUNCH_ROCKET, (int) Keys.Space, false),
+                        new Hotkey(Hotkey.PERFORMANCE_MONITORING, (int) Keys.F, false),
+                        new Hotkey(Hotkey.PET_ACTIVATE, (int) Keys.E, false),
+                        new Hotkey(Hotkey.PET_GUARD_MODE, (int) Keys.R, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D1, 0, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D2, 1, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D3, 2, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D4, 3, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D5, 4, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D6, 5, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D7, 6, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D8, 7, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D9, 8, false),
+                        new Hotkey(Hotkey.QUICKSLOT, (int) Keys.D0, 9, false),
+                        new Hotkey(Hotkey.TOGGLE_WINDOWS, (int) Keys.H, false),
+                        new Hotkey(Hotkey.LOGOUT, (int) Keys.L, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F1, 0, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F2, 1, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F3, 2, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F4, 3, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F5, 4, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F6, 5, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F7, 6, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F8, 7, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F9, 8, false),
+                        new Hotkey(Hotkey.QUICKSLOT_PREMIUM, (int) Keys.F10, 9, false),
+                        new Hotkey(Hotkey.ZOOM_IN, (int) Keys.Oemplus, false),
+                        new Hotkey(Hotkey.ZOOM_OUT, (int) Keys.OemMinus, false),
+                    };
+
+                    var keys = hotkeys.Select(hotkey => hotkey.Object).ToList();
+                    OldClientKeyBindingsCommand = new netty.commands.old_client.UserKeyBindingsUpdate(keys.ConvertAll(x => x as netty.commands.old_client.UserKeyBindingsModule), false);
+                }
+
+                SaveSettings();
+                //ASSET_VERSION = World.DatabaseManager.GetPlayerAssetsVersion(Player);
             }
         }
 
@@ -85,7 +132,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             World.DatabaseManager.SavePlayerGameplaySettings(this);
             World.DatabaseManager.SavePlayerShipSettings(this);
-            World.DatabaseManager.SetPlayerAssetsVersion(this);
+            //World.DatabaseManager.SetPlayerAssetsVersion(this);
+            World.DatabaseManager.SavePlayerKeySettings(this);
         }
 
         private Ammunition GetLaserLoot()

@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Main.commands
         {
             if (args?.Length < 3)
             {
-                Console.WriteLine("Correct syntax: unbug [playerID] [unbugType]");
+                Console.WriteLine("Correct syntax: unbug [playerID] [player/map/ui/range]");
                 return;
             }
 
@@ -41,15 +41,19 @@ namespace NettyBaseReloaded.Main.commands
         /// <param name="args"></param>
         public override void Execute(ChatSession session, string[] args = null)
         {
-            if (args == null || args?.Length < 2)
+            try
             {
-                Chat.packet.Packet.Builder.SystemMessage(session,"Possible unbugs: [map/ui/npcs]");
-                return;
-            }
+                if (args == null || args?.Length < 2)
+                {
+                    Chat.packet.Packet.Builder.SystemMessage(session, "Possible unbugs: [player/map/ui/range]");
+                    return;
+                }
 
-            var gameSession = session.GetEquivilentGameSession();
-            if (gameSession == null) return;
-            Unbug(gameSession, args[1]);
+                var gameSession = session.GetEquivilentGameSession();
+                if (gameSession == null) return;
+                Unbug(gameSession, args[1]);
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -61,6 +65,9 @@ namespace NettyBaseReloaded.Main.commands
         {
             switch (unbugType)
             {
+                case "player":
+                    gameSession.Player.RestartSessions();
+                    break;
                 case "map":
                     gameSession.Player.MoveToMap(gameSession.Player.Spacemap, gameSession.Player.Position, 0);
                     break;
@@ -89,6 +96,9 @@ namespace NettyBaseReloaded.Main.commands
                     break;
                 case "range":
                     gameSession.Player.Range.Clean();
+                    break;
+                default:
+                    Packet.Builder.LegacyModule(gameSession, "0|A|STD|Failed to unbug; Possible sequences - /unbug [player/map/ui/range]");
                     break;
             }
         }

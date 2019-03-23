@@ -28,7 +28,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
             }
         }
 
-        public bool Full => TotalSpace == UsedSpace;
+        public bool Full => TotalSpace <= UsedSpace;
 
         public Cargo(Player player, int prometium, int endurium,
                         int terbium, int prometid, int duranium, int xenomit, int promerium, int seprom, int palla) : base(prometium, endurium, terbium, prometid, duranium, xenomit, promerium, seprom, palla)
@@ -58,6 +58,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
         public int TryAdd(int ore, int count)
         {
             int addedOre = count;
+            if (UsedSpace > TotalSpace) return 0;
             if (UsedSpace + count > TotalSpace)
             {
                 addedOre = TotalSpace - UsedSpace;
@@ -127,6 +128,21 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
             }
             Packet.Builder.AttributeOreCountUpdateCommand(Player.GetGameSession(), this);
             World.DatabaseManager.SaveCargo(Player, this);
+        }
+
+        public int[] GetOreArray()
+        {
+            List<int> ores = new List<int>();
+            ores.Add(Prometium);
+            ores.Add(Endurium);
+            ores.Add(Terbium);
+            ores.Add(Prometid);
+            ores.Add(Duranium);
+            ores.Add(Xenomit);
+            ores.Add(Promerium);
+            ores.Add(Seprom);
+            ores.Add(Palladium);
+            return ores.ToArray();
         }
     }
 }

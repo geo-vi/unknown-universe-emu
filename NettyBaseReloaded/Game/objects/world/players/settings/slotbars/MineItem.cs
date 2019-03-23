@@ -19,7 +19,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
             int id = 0;
             string hash = "";
 
-            if (player.Cooldowns.Any(x => x is MineCooldown)) return;
+            if (player.Cooldowns.CooldownDictionary.Any(c => c.Value is MineCooldown)) return;
             var mineCld = new MineCooldown();
             mineCld.Send(player.GetGameSession());
             player.Cooldowns.Add(mineCld);

@@ -7,6 +7,7 @@ using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Main.global_managers;
 
 namespace NettyBaseReloaded.Main.commands
 {
@@ -119,7 +120,7 @@ namespace NettyBaseReloaded.Main.commands
                     Console.WriteLine(player.EntityState + ":Controller Active: " + player.Controller.Active + ", StopController: " + player.Controller.StopController + ", Checked Classes: " + player.Controller.CheckedClasses.Count);
                     Console.WriteLine("Attacking: " + player.Controller.Attack.Attacking + ", Position: " + player.Position.ToPacket() + " Range: E:" + player.Range.Entities.Count + " O: " + player.Range.Objects.Count + " C: " + player.Range.Collectables.Count + " Z: " + player.Range.Zones.Count);
                     Console.WriteLine("tickers: player: " + Global.TickManager.Exists(player) + " ; controller: " + Global.TickManager.Exists(player.Controller));
-                    Console.WriteLine("cooldowns: " + player.Cooldowns.Cooldowns.Count);
+                    Console.WriteLine("cooldowns: " + player.Cooldowns.CooldownDictionary.Count);
                     Console.WriteLine("session: " + player.GetGameSession() + ", active:" + player.GetGameSession().Active + ", " + World.StorageManager.GetGameSession(playerId));
                     break;
                 case "activeattackers":
@@ -139,6 +140,15 @@ namespace NettyBaseReloaded.Main.commands
                         {
                             Console.WriteLine(entity.Name + " : " + entity.Spacemap.Name + " " + entity.Position.ToPacket() + " distance: " + entity.Position.DistanceTo(player.Position) + " controller: " + entity.Controller.Active);
                         }
+                    }
+                    break;
+                case "mapinfo":
+                    player = World.StorageManager.GetGameSession(playerId).Player;
+                    Console.WriteLine(player.Spacemap.Id + ":" + player.Spacemap.Name + " - Info");
+                    Console.WriteLine("Entities: " + player.Spacemap.Entities.Count + ", Objects: " + player.Spacemap.Objects.Count);
+                    foreach (var entity in player.Spacemap.Entities.Values)
+                    {
+                        Console.WriteLine("ID: " + entity.Id + ";"+entity.Name + ";tick: (character)" + Global.TickManager.Exists(entity) +",(controller)" + Global.TickManager.Exists(entity.Controller));
                     }
                     break;
             }

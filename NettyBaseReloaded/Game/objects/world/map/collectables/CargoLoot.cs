@@ -13,8 +13,6 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         private DropableRewards Rewards { get; }
 
-        public override bool PetCanCollect => true;
-
         public CargoLoot(int id, string hash, Vector pos, DropableRewards dropableRewards, Character killer) : base(id,hash,Types.SHIP_LOOT, pos, killer.Spacemap, null)
         {
             Rewards = dropableRewards;
@@ -25,7 +23,6 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         protected override void Reward(Player player)
         {
-            Console.WriteLine("(CargoLoot) Rewarding player: " + player.Id);
             player.Information.Cargo.Reward(Rewards);
         }
 
@@ -33,6 +30,13 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         {
             if (Killer == character) return (int)Types.SHIP_LOOT;
             else return (int)Types.SHIP_LOOT_GRAY;
+        }
+
+        public override bool PetCanCollect(Player owner)
+        {
+            if (owner != null)
+                return !owner.Information.Cargo.Full;
+            return false;
         }
     }
 }

@@ -92,14 +92,14 @@ namespace NettyBaseReloaded.Game.controllers.player
                     var cloak = baseController.Player.Extras.Values.FirstOrDefault(x => x is Cloak);
                     if (cloak != null)
                     {
-                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|C|" + cloak.Amount);
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|C|" + cloak.Amount, true);
                     }
                     break;
                 case Types.AUTO_ROK:
                     var arExtra = baseController.Player.Extras.Values.FirstOrDefault(x => x is AutoRocket);
                     if (arExtra != null)
                     {
-                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|R|" + Convert.ToInt32(arExtra.Active));
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|R|" + Convert.ToInt32(arExtra.Active), true);
                     }
                     break;
 
@@ -107,35 +107,35 @@ namespace NettyBaseReloaded.Game.controllers.player
                     var arlExtra = baseController.Player.Extras.Values.FirstOrDefault(x => x is AutoRocketLauncher);
                     if (arlExtra != null)
                     {
-                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|Y|" + Convert.ToInt32(arlExtra.Active));
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|Y|" + Convert.ToInt32(arlExtra.Active), true);
                     }
                     break;
                 case Types.TRADE_DRONE:
                     var tradeDrone = baseController.Player.Extras.Values.FirstOrDefault(x => x is TradeDrone);
                     if (tradeDrone != null)
                     {
-                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|T|" + tradeDrone.Amount);
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|T|" + tradeDrone.Amount, true);
                     }
                     break;
                 case Types.AIM_CPU:
                     var aimExtra = baseController.Player.Extras.Values.FirstOrDefault(x => x is AimCpu);
                     if (aimExtra != null)
                     {
-                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|A|" + aimExtra.Amount + "|" + Convert.ToInt32(aimExtra.Active));
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|A|" + aimExtra.Amount + "|" + Convert.ToInt32(aimExtra.Active), true);
                     }
                     break;
                 case Types.JCPU:
                     var jumpCpu = baseController.Player.Extras.Values.FirstOrDefault(x => x is JumpCpu);
                     if (jumpCpu != null)
                     {
-                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|J|0|0|" + jumpCpu.Amount);
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|J|0|0|" + jumpCpu.Amount, true);
                     }
                     break;
                 case Types.DRO_CPU:
                     var droCpu = baseController.Player.Extras.Values.FirstOrDefault(x => x is DROCpu);
                     if (droCpu != null)
                     {
-                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|D|" + droCpu.Amount);
+                        Packet.Builder.LegacyModule(gameSession, "0|A|CPU|D|" + droCpu.Amount, true);
                     }
                     break;
             }

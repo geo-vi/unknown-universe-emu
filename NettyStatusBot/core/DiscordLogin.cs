@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using NettyStatusBot.modules;
-using NettyStatusBot.network;
+using NettyStatusBot.Modules;
+using NettyStatusBot.Networking;
+using NettyStatusBot.Networking.packets;
 using NettyStatusBot.Properties;
 
 namespace NettyStatusBot.core
@@ -22,7 +24,7 @@ namespace NettyStatusBot.core
             _client = new DiscordSocketClient();
             _client.Ready += () =>
             {
-                return Task.Factory.StartNew(() => new ServerConnection(_client));
+                return Task.Factory.StartNew(() => new ServerConnection(_client, 7778));
             };
             _commands = new CommandService();
 
@@ -41,7 +43,7 @@ namespace NettyStatusBot.core
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
             await _commands.AddModuleAsync<PublicMessageModule>(_services);
             await _commands.AddModuleAsync<VoteRestart>(_services);
-            await _commands.AddModuleAsync<RestartServer>(_services);
+            await _commands.AddModuleAsync<RestartServer>(_services);            
         }
 
         private async Task HandleCommandAsync(SocketMessage arg)
@@ -50,12 +52,19 @@ namespace NettyStatusBot.core
             {
                 int argPos = 0;
                 var context = new SocketCommandContext(_client, msg);
-                if (arg.Author != _client.CurrentUser)
+                if (arg.Author != _client.CurrentUser && !arg.Author.IsBot)
                 {
-                    var result = await _commands.ExecuteAsync(context, argPos, _services);
-                    if (!result.IsSuccess)
+                    if (arg.Channel.Id == 557483130580107265)
                     {
-                        Console.WriteLine("Error ocurred \n" + result.Error + "\n" + result.ErrorReason);
+                        ServerConnection._instance?.Send("dcm|" + arg.Author.Username + "#" +
+                                                         arg.Author.DiscriminatorValue + "|" + arg.Content);
+                    }
+                    else
+                    {
+                        var result = await _commands.ExecuteAsync(context, argPos, _services);
+                        if (!result.IsSuccess)
+                        {
+                        }
                     }
                 }
             }

@@ -28,7 +28,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             }
             catch (Exception e)
             {
-                Console.WriteLine("PET ACTIVATE" + e.Message);
+                Console.WriteLine("Error:" + e.StackTrace);
             }
         }
     }

@@ -19,13 +19,13 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
             if (character is Player player)
             {
                 var gameSession = player.GetGameSession();
-                Packet.Builder.PetBuffCommand(gameSession, false, BuffPattern.KAMIKAZE_BUFF, new List<int>());
+                //Packet.Builder.PetBuffCommand(gameSession, false, BuffPattern.KAMIKAZE_BUFF, new List<int>());
             }
         }
 
         public override void Send(GameSession gameSession)
         {
-            Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.KAMIKAZE_BUFF, new List<int>{TimeLeft.Seconds});
+            //Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.KAMIKAZE_BUFF, new List<int>{TimeLeft.Seconds});
         }
     }
 }

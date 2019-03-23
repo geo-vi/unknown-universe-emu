@@ -24,8 +24,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public Checkers(AbstractCharacterController controller) : base(controller)
         {
             VisibilityRange = 2000;//900
-            Character.Spacemap.EntityAdded += AddedToSpacemap;
-            Character.Spacemap.EntityRemoved += RemovedFromSpacemap;
+            //Character.Spacemap.EntityAdded += AddedToSpacemap;
+            //Character.Spacemap.EntityRemoved += RemovedFromSpacemap;
             Character.Spacemap.RemovedObject += SpacemapOnRemovedObject;
         }
 
@@ -56,34 +56,19 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         }
         
         #region Character related
-        private void AddedToSpacemap(object sender, CharacterArgs args)
-        {
-            if (args.Character == Controller.Character) return;
-            if (args.Character.InRange(Character))
-                AddCharacter(Character, args.Character);
-        }
-
-        private void RemovedFromSpacemap(object sender, CharacterArgs args)
-        {
-            if (args.Character == Controller.Character) return;
-            RemoveCharacter(args.Character, Character);
-        }
-
         private void AddCharacter(Character main, Character entity)
         {
             try
             {
                 if (entity.Id != main.Id && main.Range.AddEntity(entity))
                 {
-                    if (!(main is Player) || entity is Pet) return;
+                    if (!(main is Player)) return;
                     var gameSession = World.StorageManager.GetGameSession(main.Id);
-                    if (gameSession == null) return;
-
+                    if (gameSession == null || gameSession.Player.Pet == entity) return;
                     //Packet.Builder.LegacyModule(gameSession, $"0|A|STD|AddCharacter {entity.Position}");
                     //Draws the entity ship for character
                     Packet.Builder.ShipCreateCommand(gameSession, entity);
                     Packet.Builder.DronesCommand(gameSession, entity);
-
                     //Send movement
                     var timeElapsed = (DateTime.Now - entity.MovementStartTime).TotalMilliseconds;
                     Packet.Builder.MoveCommand(gameSession, entity, (int) (entity.MovementTime - timeElapsed));
@@ -162,18 +147,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 RemoveCharacter(entity, Character);
                 return;
             }
-
-            if (entity is Pet)
-            {
-                var pet = entity as Pet;
-                if (pet.GetOwner() == Character)
-                {
-                    if (!pet.Controller.Active)
-                        RemoveCharacter(entity, Character);
-                    return;
-                }
-            }
-            //if (GetForSelection(entity)) return;
 
             if (Character.InRange(entity, entity.RenderRange))
             {

@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 
         public override void execute()
         {
-            if (Player.Cooldowns.Any(x => x is ShieldBuffCooldown)) return;
+            if (Player.Cooldowns.CooldownDictionary.Any(c => c.Value is ShieldBuffCooldown)) return;
             GameClient.SendToPlayerView(Player, netty.commands.old_client.LegacyModule.write("0|TX|A|S|SBU|" + Player.Id), true);
             GameClient.SendToPlayerView(Player, netty.commands.new_client.LegacyModule.write("0|TX|A|S|SBU|" + Player.Id), true);
             ExecuteShield();

@@ -67,7 +67,7 @@ namespace NettyBaseReloaded.Networking
             }
         }
 
-        public static void SendToRoom(Character character, string packet, Room targetRoom)
+        public static void SendToRoom(string packet, Room targetRoom)
         {
             foreach (var user in targetRoom.ConnectedUsers.Values)
             {

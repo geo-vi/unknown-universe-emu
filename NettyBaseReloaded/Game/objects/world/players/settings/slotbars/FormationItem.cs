@@ -16,7 +16,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
 
         public override void Execute(Player player)
         {
-            if (player.Cooldowns.Any(x => x is DroneFormationCooldown)) return;
+            if (player.Cooldowns.CooldownDictionary.Any(c => c.Value is DroneFormationCooldown)) return;
             
             var gameSession = World.StorageManager.GameSessions[player.Id];
             var formationName = ItemId.Split('_')[2];

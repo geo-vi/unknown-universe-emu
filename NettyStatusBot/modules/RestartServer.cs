@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Discord;
+﻿using System.Threading.Tasks;
 using Discord.Commands;
-using Discord.WebSocket;
-using NettyStatusBot.core;
-using NettyStatusBot.network;
+using NettyStatusBot.Networking;
 
-namespace NettyStatusBot.modules
+namespace NettyStatusBot.Modules
 {
     class RestartServer : ModuleBase<SocketCommandContext>
     {
@@ -23,7 +16,7 @@ namespace NettyStatusBot.modules
             }
 
             await ReplyAsync("Restarting server...");
-            await ServerConnection._instance.Write("kill");
+            ServerConnection._instance.Send("kill");
         }
     }
 }

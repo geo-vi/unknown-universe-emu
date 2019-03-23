@@ -183,7 +183,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.ammo
                 case "ammunition_specialammo_emp-01":
                     return new AmmunitionTypeModule(AmmunitionTypeModule.EMP);
                 default:
-                    throw new NotImplementedException();
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.ROCKET);
             }
         }
 

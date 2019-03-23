@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NettyBaseReloaded.Helper.objects;
 using NettyStatusBot.core;
 using Newtonsoft.Json;
 
-namespace NettyStatusBot.network.packets
+namespace NettyStatusBot.Networking.packets
 {
     class InitPacket : PacketBase
     {

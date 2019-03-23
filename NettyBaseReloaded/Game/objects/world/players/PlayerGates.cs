@@ -14,17 +14,35 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public bool GammaReady { get; set; }
 
-        //TODO: Add the rest
+        public bool DeltaReady { get; set; }
 
-        public bool AlphaComplete { get; set; }
+        public bool EpsilonReady { get; set; }
 
-        public bool BetaComplete { get; set; }
+        public bool ZetaReady { get; set; }
 
-        public bool GammaComplete { get; set; }
+        public bool KappaReady { get; set; }
+
+        public bool KronosReady { get; set; }
+
+        public int AlphaComplete { get; set; }
+
+        public int BetaComplete { get; set; }
+
+        public int GammaComplete { get; set; }
+
+        public int DeltaComplete { get; set; }
+
+        public int EpsilonComplete { get; set; }
+
+        public int ZetaComplete { get; set; }
+
+        public int KappaComplete { get; set; }
+
+        public int KronosComplete { get; set; }
 
         public PlayerGates(Player player) : base(player)
         {
-            RefreshGates();
+           RefreshGates();
         }
 
         public void Tick()
@@ -41,7 +59,15 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public int CalculateRings()
         {
-            return 0;
+            var i = 0;
+            if (AlphaComplete > 0) i += (int)Math.Pow(2, 0);
+            if (BetaComplete > 0) i += (int)Math.Pow(2, 1);
+            if (GammaComplete > 0) i += (int)Math.Pow(2, 2);
+            if (DeltaComplete > 0) i += (int)Math.Pow(2, 3);
+            if (EpsilonComplete > 0) i += (int)Math.Pow(2, 4);
+            if (ZetaComplete > 0) i += (int)Math.Pow(2, 5);
+            if (KronosComplete > 0) i += (int)Math.Pow(2, 0);
+            return i;
         }
     }
 }

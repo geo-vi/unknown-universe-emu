@@ -24,7 +24,7 @@ namespace NettyBaseReloaded.Game.objects.world.pets.gears
         private void SearchTarget()
         {
             var owner = Pet.GetOwner();
-            if (owner.Cooldowns.Any(x => x is PetKamikazeCooldown)) return;
+            if (owner.Cooldowns.CooldownDictionary.Any(c => c.Value is PetKamikazeCooldown)) return;
 
             var attackers = owner.Controller.Attack.GetActiveAttackers();
             Character lockedCharacter = null;

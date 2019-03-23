@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 
         public override void execute()
         {
-            if (Player.Cooldowns.Any(x => x is ChainImpulseCooldown) || Player.State.InDemiZone) return;
+            if (Player.Cooldowns.CooldownDictionary.Any(c => c.Value is ChainImpulseCooldown) || Player.State.InDemiZone) return;
             Player.Controller.Damage?.ECI();
             Disable();
         }

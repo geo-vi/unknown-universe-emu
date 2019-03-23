@@ -83,7 +83,12 @@ namespace NettyBaseReloaded.Game.controllers
             StopController = false;
             Active = true;
             if (CheckedClasses.Count == 0)
-                AddClasses();    
+                AddClasses();
+            if (!Global.TickManager.Exists(this))
+            {
+                Global.TickManager.Add(this, out var tickId);
+                TickId = tickId;
+            }
         }
 
         public new void Tick()

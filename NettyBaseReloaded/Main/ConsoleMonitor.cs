@@ -45,6 +45,10 @@ namespace NettyBaseReloaded.Main
 
         private static void UpdateEvents()
         {
+            //if ((DateTime.Now - Server.RUNTIME).TotalHours >= 2)
+            //{
+            //    Program.Exit();
+            //}
             ////X3 Event
             //if (DateTime.Now.Hour == 19)
             //{

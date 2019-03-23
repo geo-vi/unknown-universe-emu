@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 
-namespace NettyStatusBot.utils
+namespace NettyStatusBot.Utils
 {
     static class MessageBuilder
     {

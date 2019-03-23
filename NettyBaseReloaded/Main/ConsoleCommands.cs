@@ -25,6 +25,7 @@ namespace NettyBaseReloaded.Main
             Commands.Add("close", new CloseCommand());
             Commands.Add("say", new SayCommand());
             Commands.Add("kill", new KillCommand());
+            Commands.Add("kick", new KickCommand());
             ChatCommands.Add();
         }
 

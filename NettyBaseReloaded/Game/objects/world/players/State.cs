@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
@@ -12,31 +13,76 @@ namespace NettyBaseReloaded.Game.objects.world.players
         /// If player is in equipment area
         /// Usually near a station / CBS
         /// </summary>
-        public bool InEquipmentArea { get; set; }
+        private bool inEquipmentArea = false;
+        public bool InEquipmentArea
+        {
+            get => inEquipmentArea;
+            set
+            {
+                inEquipmentArea = value;
+                UpdateEquipmentArea();
+            }
+        }
 
         /// <summary>
         /// If player is in a trading area
         /// Usually near a station
         /// </summary>
-        public bool InTradeArea { get; set; }
+        private bool inTradeArea;
+        public bool InTradeArea
+        {
+            get => inTradeArea;
+            set
+            {
+                inTradeArea = value;
+                UpdateBeacon();
+            }
+        }
 
         /// <summary>
         /// If player is in demi / non attack zone
         /// Usually near portal / station
         /// </summary>
-        public bool InDemiZone { get; set; }
+        private bool inDemiZone;
+        public bool InDemiZone
+        {
+            get => inDemiZone;
+            set
+            {
+                inDemiZone = value;
+                UpdateBeacon();
+            }
+        }
 
         /// <summary>
         /// If player is in radiation area
         /// Out of map bounderies
         /// </summary>
-        public bool InRadiationArea { get; set; }
+        private bool inRadiationArea;
+        public bool InRadiationArea
+        {
+            get => inRadiationArea;
+            set
+            {
+                inRadiationArea = value;
+                UpdateBeacon();
+            }
+        }
         public DateTime RadiationEntryTime = new DateTime();
 
         /// <summary>
         /// If player is in portal area
         /// </summary>
-        public bool InPortalArea { get; set; }
+        private bool inPortalArea;
+        public bool InPortalArea
+        {
+            get => inPortalArea;
+            set
+            {
+                inPortalArea = value;
+                UpdateBeacon();
+            }
+        }
 
         /// <summary>
         /// If player is in instant repair zone
@@ -50,6 +96,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public bool GroupInitialized { get; set; }
 
         public bool Jumping;
+
+        public bool WaitingForEquipmentRefresh;
 
         public State(Player player) : base(player)
         {
@@ -69,11 +117,11 @@ namespace NettyBaseReloaded.Game.objects.world.players
             {
                 RadiationEntryTime = DateTime.Now;
             }
-            InRadiationArea = inPlayArea;
+            if (InRadiationArea != inPlayArea)
+                InRadiationArea = inPlayArea;
         }
 
         private Dictionary<int, Faction> HomeMapIds = new Dictionary<int, Faction>();
-
         private void AddHomeMaps()
         {
             HomeMapIds.Add(0, Faction.NONE);
@@ -110,6 +158,24 @@ namespace NettyBaseReloaded.Game.objects.world.players
             InInstaRepairZone = false;
             InPortalArea = false;
             RadiationEntryTime = DateTime.Now;
+        }
+
+        public void UpdateBeacon()
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.BeaconCommand(session);
+            }
+        }
+
+        public void UpdateEquipmentArea()
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.EquipReadyCommand(session, InEquipmentArea);
+            }
         }
     }
 }

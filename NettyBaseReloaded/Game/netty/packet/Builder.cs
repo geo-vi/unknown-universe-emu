@@ -254,7 +254,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         .EMP), 100));
                 gameSession.Client.Send(netty.commands.old_client.AmmunitionCountUpdateCommand.write(ammo).Bytes);
                 
-                Packet.Builder.LegacyModule(gameSession, "0|A|FWX|FWL|100|100|100");
+                Packet.Builder.LegacyModule(gameSession, "0|A|FWX|FWL|100|100|100", true);
 
                 player.Settings.Slotbar.GetCategories(player);
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
@@ -299,7 +299,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         0, //Jackpot
                         (int) player.RankId,
                         player.Clan.Tag, //clanTag
-                        0, // player GG rings
+                        player.Gates.CalculateRings(), // player GG rings
                         true,
                         player.Invisible, //cloaked
                         true,
@@ -337,7 +337,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                         0,
                         (int) player.RankId,
                         player.Clan.Tag,
-                        0,
+                        player.Gates.CalculateRings(),
                         true,
                         player.Invisible,
                         VisualEffect.ToOldModifierCommand(player)).Bytes);
@@ -380,13 +380,14 @@ namespace NettyBaseReloaded.Game.netty.packet
                         pChar.Name, pChar.Position.X,
                         pChar.Position.Y,
                         (int) pChar.FactionId, 0, (int) pChar.RankId, false,
-                        new commands.new_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), 0,
+                        new commands.new_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)), pChar.Gates.CalculateRings(),
                         false, false, pChar.Invisible, 0, 0, new List<commands.new_client.VisualModifierCommand>(),
                         new commands.new_client.commandK13(commands.new_client.commandK13.DEFAULT)).Bytes;
                 }
                 else if (character is Pet)
                 {
                     PetActivationCommand(gameSession, character as Pet);
+                    return;
                 }
                 else
                 {
@@ -412,7 +413,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                             pChar.Position.Y,
                             (int) pChar.FactionId, pChar.Clan.Id, (int) pChar.RankId, pChar.HasWarnBox(),
                             new commands.old_client.ClanRelationModule(pChar.Clan.GetRelation(gameSession.Player.Clan)),
-                            0,
+                            pChar.Gates.CalculateRings(),
                             false, false, character.Invisible, 0, 0,
                             VisualEffect.ToOldModifierCommand(pChar))
                         .Bytes;
@@ -420,6 +421,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 else if (character is Pet)
                 {
                     PetActivationCommand(gameSession, character as Pet);
+                    return;
                 }
                 else if (character is Npc npc)
                 {
@@ -513,7 +515,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (gameSession.Player.UsingNewClient)
             {
                 gameSession.Client.Send(commands.new_client.JumpgateCreateCommand.write(portal.Id, (int) portal.Faction,
-                    portal.Gfx, portal.Position.X, portal.Position.Y,
+                    (int)portal.Gfx, portal.Position.X, portal.Position.Y,
                     portal.GetVisibility(gameSession.Player), portal.Working, new List<int>()).Bytes);
             }
             else
@@ -528,7 +530,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void JumpgateRemoveCommand(GameSession gameSession, Jumpgate portal)
         {
-            LegacyModule(gameSession, "0|n|p|REM|" + portal.Id);
+            LegacyModule(gameSession, "0|n|p|REM|" + portal.Id, true);
         }
 
         #endregion
@@ -576,8 +578,9 @@ namespace NettyBaseReloaded.Game.netty.packet
         {
             try
             {
-                if (gameSession.Player.UsingNewClient && !toOldClientOnly)
+                if (gameSession.Player.UsingNewClient)
                 {
+                    if (toOldClientOnly) return;
                     gameSession.Client.Send(commands.new_client.LegacyModule.write(message).Bytes);
                 }
                 else
@@ -868,11 +871,12 @@ namespace NettyBaseReloaded.Game.netty.packet
                 }
                 else
                 {
-                    gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id, pet.Id,
-                        (short)pet.Hangar.Ship.Id, pet.ExpansionStage, pet.Name,
-                        (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
-                        new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
-                        pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible).Bytes);
+                    gameSession.Client.Send(commands.old_client.PetActivationCommand.write(pet.GetOwner().Id,
+                            pet.Id,
+                            (short) pet.Hangar.Ship.Id, pet.ExpansionStage, pet.Name,
+                            (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
+                            new commands.old_client.ClanRelationModule(pet.Clan.GetRelation(gameSession.Player.Clan)),
+                            pet.Position.X, pet.Position.Y, pet.Speed, false, !pet.GetOwner().Invisible).Bytes);
                 }
             }
         }
@@ -889,8 +893,10 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
             else
             {
-                gameSession.Client.Send(commands.old_client.PetHeroActivationCommand.write(pet.GetOwner().Id, pet.Id,
-                    (short)pet.Hangar.Ship.Id, pet.ExpansionStage, pet.Name, (short) pet.FactionId, pet.Clan.Id, (short) pet.Level.Id, pet.Clan.Tag,
+                gameSession.Client.Send(commands.old_client.PetHeroActivationCommand.write(pet.GetOwner().Id,
+                    pet.Id,
+                    (short) pet.Hangar.Ship.Id, pet.ExpansionStage, pet.Name, (short) pet.FactionId, pet.Clan.Id,
+                    (short) pet.Level.Id, pet.Clan.Tag,
                     pet.Position.X, pet.Position.Y, pet.Speed).Bytes);
             }
         }
@@ -1011,7 +1017,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
             if (newClient)
                 gameSession.Client.Send(commands.new_client.UserKeyBindingsUpdate.write(keys, false));
-            else gameSession.Client.Send(commands.old_client.UserKeyBindingsUpdate.write(keys, false));
+            else gameSession.Client.Send(gameSession.Player.Settings.OldClientKeyBindingsCommand.write());
         }
 
         #endregion
@@ -1106,7 +1112,6 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (player.UsingNewClient)
             {
                 short toShort = (short) (clickable ? 0 : 1);
-                Console.WriteLine(toShort.ToString());
                 gameSession.Client.Send(commands.new_client.MapAssetActionAvailableCommand.write(obj.Id, toShort, true,
                     new commands.new_client.ClientUITooltip(new List<commands.new_client.ClientUITooltipTextFormat>()),
                     new commands.new_client.commandu1C()).Bytes);
@@ -2229,7 +2234,6 @@ namespace NettyBaseReloaded.Game.netty.packet
         #endregion
 
         #region PetBuffCommand
-
         public void PetBuffCommand(GameSession gameSession, bool add, BuffPattern effectId, List<int> addingParameters)
         {
             if (gameSession.Player.UsingNewClient) { }
@@ -2252,6 +2256,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         }
 
         #endregion
+
         #region PetLevelUpdateCommand
 
         public void PetLevelUpdateCommand(GameSession gameSession, Pet pet)
@@ -2682,5 +2687,21 @@ namespace NettyBaseReloaded.Game.netty.packet
             }
         }
         #endregion
+
+        #region HellstormAttackCommand
+
+        public void HellstormAttackCommand(GameSession gameSession, int attackerId, int targetId, bool hit, int currentLoad, short rocketType)
+        {
+            if (gameSession.Player.UsingNewClient)
+            {
+
+            }
+            else
+            {
+                gameSession.Client.Send(commands.old_client.HellstormAttackCommand.write(attackerId, targetId, hit, currentLoad, new commands.old_client.AmmunitionTypeModule(rocketType)).Bytes);
+            }
+        }
+        #endregion
+
     }
 }

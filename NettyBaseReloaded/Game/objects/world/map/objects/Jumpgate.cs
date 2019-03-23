@@ -5,6 +5,39 @@ using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects
 {
+    #region Graphics
+    enum PortalGraphics
+    {
+        STANDARD_GATE = 1,
+        GALAXYGATE_1,
+        GALAXYGATE_2,
+        GALAXYGATE_3,
+        GALAXYGATE_4,
+        BIRTHDAY_GATE=11,
+        OBSTER_GATE,
+        FIFTH_BIRTHDAY_GATE,
+        HIGHSCORE_GATE,
+        SISXTH_BIRTHDAY_GATE,
+        TDM_GATE=21,
+        TDM_GATE_2,
+        GROUP_GATE_1=34,
+        INVASION_GATE_1=41,
+        INVASION_GATE_2,
+        INVASION_GATE_3,
+        PIRATE_GATE=51,
+        PIRATE_GATE_BROKEN,
+        EPSILON_GATE,
+        ZETA_GATE,
+        TUTORIAL_GATE,
+        SOCCER_GATE_LEFT = 61,
+        SOCCER_GATE_RIGHT,
+        KAPPA_GATE = 70,
+        LAMBDA_GATE,
+        KRONOS_GATE,
+        SECTOR_CONTROL_GATE
+    }
+    #endregion
+    #region Sql Object
     class PortalBase
     {
         public int Id { get; set; }
@@ -24,12 +57,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
             this.Map = Map;
         }
     }
-
+    #endregion
+    
     class Jumpgate : Object, IClickable
     {
         public Faction Faction { get; set; }
-
-        public int LevelRequired { get; set; }
 
         public Vector Destination { get; set; }
 
@@ -37,13 +69,13 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public int DestinationVirtualWorldId { get; set; }
 
-        public bool Visible { get; set; }
+        private bool Visible { get; set; }
         
         public int FactionScrap { get; set; }
         
         public int RequiredLevel { get; set; }
 
-        public int Gfx { get; set; }
+        public PortalGraphics Gfx { get; set; }
 
         public bool Working { get; set; }
 
@@ -51,7 +83,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public string DisabledMessage { get; set; }
 
-        public Jumpgate(int id, Faction faction, Vector pos, Spacemap map, Vector destinationPos, int destinationMapId, bool visible, int factionScrap, int requiredLevel, int gfx) : base(id, pos, map)
+        public Jumpgate(int id, Faction faction, Vector pos, Spacemap map, Vector destinationPos, int destinationMapId, bool visible, int factionScrap, int requiredLevel, PortalGraphics gfx) : base(id, pos, map)
         {
             Faction = faction;
             Destination = destinationPos;
@@ -63,7 +95,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
             Working = true;
             DestinationVirtualWorldId = 0;
         }
-       
+
         public override void execute(Character character)
         {
         }
@@ -86,7 +118,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
             return JsonConvert.SerializeObject(this);
         }
 
-        public bool GetVisibility(Player player)
+        public virtual bool GetVisibility(Player player)
         {
             if (this is PirateGate gate)
             {
@@ -98,7 +130,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
 
         public string ToPacket(Player player)
         {//1,1 - last param
-            return "0|p|" + Id + "|" + (int)Faction + "|" + Gfx + "|" + Position.X + "|" + Position.Y + "|" + Convert.ToInt32(GetVisibility(player)) + "|" + "0";
+            return "0|p|" + Id + "|" + (int)Faction + "|" + (int)Gfx + "|" + Position.X + "|" + Position.Y + "|" + Convert.ToInt32(GetVisibility(player)) + "|" + "0";
         }
 
         public void Disable(string disabledMsg = "")

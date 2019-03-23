@@ -74,14 +74,13 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.ClanMemberInvitationRequest.ID, new ClanMemberInvitationHandler());
             LegacyCommands.Add(ServerCommands.EXCHANGE_PALLADIUM, new ExchangePalladiumHandler());
             OldClientCommands.Add(commands.old_client.requests.ShipWarpRequest.ID, new ShipWarpHandler());
+            OldClientCommands.Add(commands.old_client.requests.LabUpdateRequest.ID, new LabUpdateHandler());
+            OldClientCommands.Add(commands.old_client.UserKeyBindingsUpdate.ID, new UserKeyBindingsUpdateHandler());
         }
 
         public void LookUp(byte[] bytes, GameClient client)
         {
             var parser = new ByteParser(bytes);
-
-            if (Properties.Game.PRINTING_COMMANDS)
-                Console.WriteLine("Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
 
             if (parser.CMD_ID == commands.old_client.requests.VersionRequest.ID)
             {
@@ -107,29 +106,32 @@ namespace NettyBaseReloaded.Game.netty.packet
                 {
                     if (NewClientCommands.ContainsKey(parser.CMD_ID))
                         NewClientCommands[parser.CMD_ID].execute(gameSession, bytes);
+                    //else if (parser.CMD_ID != commands.new_client.LegacyModule.ID) Console.WriteLine("[3D] Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
                 }
                 else
                 {
                     if (OldClientCommands.ContainsKey(parser.CMD_ID))
                         OldClientCommands[parser.CMD_ID].execute(gameSession, bytes);
+                    //else if (parser.CMD_ID != commands.old_client.LegacyModule.ID) Console.WriteLine("[7.5.3] Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
                 }
 
                 if (parser.CMD_ID == commands.new_client.LegacyModule.ID || parser.CMD_ID == commands.old_client.LegacyModule.ID)
                 {
                     var packet = parser.readUTF();
-                    if (Properties.Game.PRINTING_LEGACY_COMMANDS)
-                        Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
 
                     if (packet.Contains('|'))
                     {
                         var splittedPacket = packet.Split('|');
                         if (LegacyCommands.ContainsKey(splittedPacket[0]))
                             LegacyCommands[splittedPacket[0]].execute(gameSession, splittedPacket);
+                        //else Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
                     }
                     else
                     {
                         if (LegacyCommands.ContainsKey(packet))
                             LegacyCommands[packet].execute(gameSession, new[] { packet });
+                        //else Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
+
                     }
                 }
             }

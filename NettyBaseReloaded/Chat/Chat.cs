@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoogleTranslateFreeApi;
 using NettyBaseReloaded.Chat.managers;
 
 namespace NettyBaseReloaded.Chat
@@ -12,10 +13,13 @@ namespace NettyBaseReloaded.Chat
         public static StorageManager StorageManager = new StorageManager();
         public static DatabaseManager DatabaseManager = new DatabaseManager();
 
+        public static GoogleTranslator Translator;
+
         public static void Init()
         {
             InitiateManagers();
             LoadBots();
+            Translator = new GoogleTranslator();
         }
 
         private static void InitiateManagers()

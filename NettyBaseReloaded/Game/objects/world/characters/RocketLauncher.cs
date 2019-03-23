@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
     {
         private Character Character;
 
-        private RocketLaunchers[] RocketLaunchers;
+        public RocketLaunchers[] RocketLaunchers;
 
         public int LoadedRockets;
 
@@ -35,8 +35,12 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         {
             get
             {
-                var player = Character as Player;
-                return player?.Information.Ammunitions[LoadLootId];
+                if (Character is Player player && player.Information.Ammunitions.ContainsKey(LoadLootId))
+                {
+                    return player.Information.Ammunitions[LoadLootId];
+                }
+
+                return null;
             }
         }
         
@@ -49,7 +53,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             {
                 LoadLootId = player.Settings.CurrentHellstorm.LootId;
             }
-
         }
 
         public void Tick()
@@ -66,7 +69,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         private DateTime _lastLoadedRocketTime;
         private void AddRocket()
         {
-            if (!Loading || LoadedRockets == MaxLoadableRockets || _lastLoadedRocketTime.AddSeconds(1) > DateTime.Now) return;
+            if (!Loading || LoadedRockets == MaxLoadableRockets || _lastLoadedRocketTime.AddSeconds(1) >= DateTime.Now) return;
             _lastLoadedRocketTime = DateTime.Now;
             if (Character is Player player)
             {
