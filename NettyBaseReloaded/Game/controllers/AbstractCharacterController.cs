@@ -73,7 +73,7 @@ namespace NettyBaseReloaded.Game.controllers
                 if (StopController || Character.EntityState == EntityStates.DEAD)
                 {
                     StopAll();
-                    Logger.Logger._instance.Enqueue("pact", "Escaped controller for ID " + Character.Id + ":" + Character.Name);
+                    Logger.Logger._instance.Enqueue("pact", "Escaped controller for ID " + Character.Id + ":" + Character.Name + " // StopController:" + StopController + " Is DEAD: " + (Character.EntityState == EntityStates.DEAD));
                     return;
                 }
 

@@ -24,7 +24,7 @@ namespace NettyStatusBot.Networking
 
         private int _port;
 
-        private bool Connected => _socket != null && _socket.Connected;
+        private bool _connectionFactor;
 
         /// <summary>
         /// Constructor -> Needs the Discord client for connection successful packet
@@ -36,24 +36,24 @@ namespace NettyStatusBot.Networking
             _instance = this;
             _client = client;
             _port = port;
-            ConnectionMonitor();
+            Task.Factory.StartNew(ConnectionMonitor);
         }
 
         private void SocketOnConnectionClosedEvent(object sender, EventArgs e)
         {
+            _connectionFactor = false;
+            Task.Factory.StartNew(ConnectionMonitor);
         }
 
         /// <summary>
         /// Monitors the connections if xSocket is connected else will attempt @TryConnection
         /// </summary>
-        private void ConnectionMonitor()
+        private async Task ConnectionMonitor()
         {
-            while (true)
+            while (!_connectionFactor)
             {
-                if (!Connected)
-                {
-                    TryConnection();
-                }
+                await TryConnection();
+                await Task.Delay(1000);
             }
         }
 
@@ -61,12 +61,12 @@ namespace NettyStatusBot.Networking
         /// Attempting a connection
         /// First will connect using TcpClient => Preventing bugs then transferring it to XSocket
         /// </summary>
-        private void TryConnection()
+        private async Task TryConnection()
         {
             try
             {
                 var tcpClient = new TcpClient();
-                tcpClient.Connect("127.0.0.1", _port);
+                await tcpClient.ConnectAsync("127.0.0.1", _port);
                 if (tcpClient.Connected)
                 {
                     _socket = new XSocket(tcpClient.Client);
@@ -75,10 +75,12 @@ namespace NettyStatusBot.Networking
                     _socket.Read(true);
                     _socket.Write("sini|" + _client.CurrentUser.Id + "|" + _client.CurrentUser.Username + "#" +
                                   _client.CurrentUser.DiscriminatorValue);
+                    _connectionFactor = true;
                 }
             }
             catch (Exception)
             {
+                _connectionFactor = false;
             }
         }
 
@@ -92,7 +94,7 @@ namespace NettyStatusBot.Networking
         {
             try
             {
-                if (Connected)
+                if (_connectionFactor)
                     _socket.Write(packet);
             }
             catch (Exception)

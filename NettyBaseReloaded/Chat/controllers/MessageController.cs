@@ -42,7 +42,7 @@ namespace NettyBaseReloaded.Chat.controllers
                     {
                         return;
                     }
-                    Task.Factory.StartNew(() => room.LanguageCheck(character, message));
+                    //Task.Factory.StartNew(() => room.LanguageCheck(character, message));
 
                     var packet = "a%" + roomId + "@" + character.Name + "@" + message + "#";
                     if (character.Clan.Id != 0)

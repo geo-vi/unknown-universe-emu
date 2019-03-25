@@ -208,11 +208,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void RespawnPlayer()
         {
-            Character.EntityState = EntityStates.ALIVE;
-
             var player = (Player) Character;
             var killscreen = Killscreen.Load(player);
             player.CurrentHealth = killscreen.SelectedOption == netty.commands.old_client.KillScreenOptionTypeModule.AT_DEATHLOCATION_REPAIR ? (player.Hangar.Ship.Health / 100) * 10 : 1000; //if its location repair %10 of base ship hp else just 1000 hp
+            Character.EntityState = EntityStates.ALIVE;
 
             if (player.Controller == null)
             {
