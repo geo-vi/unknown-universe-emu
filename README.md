@@ -9,7 +9,7 @@
  
 #### Branch state:
 * **(master)** Beta 5.1 _STABLE_
-* **(bugfixings)** 5.1.X
+* **(update)** 5.1.X
  
 ##### Coding syntax
  I've simplifed absolutely everything as much as possible and most of the server is dynamic.
