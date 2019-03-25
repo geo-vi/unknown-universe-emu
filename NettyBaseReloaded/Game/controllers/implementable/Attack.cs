@@ -34,26 +34,26 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
         }
 
-        public override void Tick()
+        public override async Task Tick()
         {
             if (Attacking && Character.Selected != null)
             {
-                LaserAttack();
+                await Task.Run(() => LaserAttack());
                 if (Character is Npc npc)
                 {
                     if (npc is EventNpc)
                     {
-                        Wizard(npc.SelectedCharacter);
+                        await Task.Run(() => Wizard(npc.SelectedCharacter));
                     }
 
                     if (npc.RocketLauncher != null && npc.RocketLauncher.ReadyForLaunch)
                     {
-                        LaunchRocketLauncher();
+                        await Task.Run(() => LaunchRocketLauncher());
                     }
 
                     if (npc.Hangar.Ship.Id == 113) // saboteur
                     {
-                        SlowdownAttack();
+                        await Task.Run(() => SlowdownAttack());
                     }
                 }
             }

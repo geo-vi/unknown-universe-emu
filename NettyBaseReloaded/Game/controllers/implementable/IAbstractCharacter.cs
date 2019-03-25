@@ -18,7 +18,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Controller = controller;
         }
 
-        public abstract void Tick();
+        public abstract Task Tick();
 
         public abstract void Stop();
     }

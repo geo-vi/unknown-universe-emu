@@ -104,9 +104,9 @@ namespace NettyBaseReloaded.Game.objects.world
             return TickId;
         }
 
-        public void Tick()
+        public async Task Tick()
         {
-            ObjectsTicker();
+            await Task.Run(() => ObjectsTicker());
             //ZoneTicker();
             //NpcTicker();
         }

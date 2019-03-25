@@ -44,7 +44,7 @@ namespace NettyBaseReloaded
             throw new NotImplementedException();
         }
 
-        public void Tick()
+        public async Task Tick()
         {
             foreach (var instance in Instances)
             {
@@ -55,8 +55,7 @@ namespace NettyBaseReloaded
                 }
             }
 
-            FixActivity();
-
+            await Task.Factory.StartNew(FixActivity);
         }
 
         #region Methods

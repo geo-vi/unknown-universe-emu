@@ -235,9 +235,9 @@ namespace NettyBaseReloaded.Game.objects.world
         }
 
         public EventHandler Ticked;
-        public override void Tick()
+        public override async Task Tick()
         {
-            Ticked?.Invoke(this, EventArgs.Empty);
+            await Task.Run(() => Ticked?.Invoke(this, EventArgs.Empty));
         }
 
         public virtual void Invalidate()

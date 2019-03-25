@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects
 {
@@ -40,10 +41,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects
             ShieldPenetration = pen;
         }
 
-        public override void Tick()
+        public override async Task Tick()
         {
-            Update();
-            TickVisuals();
+            await Task.Run(() => Update());
+            await Task.Run(() => TickVisuals());
         }
 
         public void Update()

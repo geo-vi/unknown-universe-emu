@@ -69,7 +69,7 @@ namespace NettyBaseReloaded.Game.objects.world
             TickId = id;
         }
 
-        public abstract void Tick();
+        public abstract Task Tick();
 
         public abstract void Destroy();
 

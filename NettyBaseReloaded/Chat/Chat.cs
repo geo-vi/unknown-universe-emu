@@ -19,7 +19,7 @@ namespace NettyBaseReloaded.Chat
         {
             InitiateManagers();
             LoadBots();
-            Translator = new GoogleTranslator();
+            //Translator = new GoogleTranslator();
         }
 
         private static void InitiateManagers()

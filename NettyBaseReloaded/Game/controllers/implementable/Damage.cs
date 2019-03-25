@@ -57,9 +57,9 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             
         }
 
-        public override void Tick()
+        public override async Task Tick()
         {
-            DistributeDamage();
+            await Task.Run(() => DistributeDamage());
         }
 
         public override void Stop()
