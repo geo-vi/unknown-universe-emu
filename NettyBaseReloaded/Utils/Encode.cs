@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Utils
     {
         public static string Base64(string toEncode)
         {
-            var toEncodeAsBytes = System.Text.Encoding.ASCII.GetBytes(toEncode);
+            var toEncodeAsBytes = System.Text.Encoding.UTF8.GetBytes(toEncode);
             var returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
             return returnValue;
         }

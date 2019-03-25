@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using NettyBaseReloaded.Game.controllers.implementable;
@@ -32,7 +33,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         public Effects Effects { get; }
 
-        public bool StopController { get; set; }
+        public bool StopController;
 
         public bool Active { get; set; }
 
@@ -48,7 +49,6 @@ namespace NettyBaseReloaded.Game.controllers
             Effects = new Effects(this);
 
             StopController = false;
-
         }
 
         public virtual void Initiate()
