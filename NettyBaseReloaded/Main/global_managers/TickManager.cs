@@ -62,14 +62,17 @@ namespace NettyBaseReloaded.Main.global_managers
             return false;
         }
 
-        public async void Tick()
+        public void Tick()
         {
-            while (true)
+            lock (this)
             {
-                foreach (var tickable in Tickables) { 
-                     await Task.Run(() => tickable.Value.Tick());
+                while (true)
+                {
+                    foreach (var tickable in Tickables)
+                    {
+                        tickable.Value.Tick();
+                    }
                 }
-                await Task.Delay(84);
             }
         }
     }
