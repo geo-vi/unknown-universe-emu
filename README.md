@@ -8,9 +8,8 @@
  Server's usage is low, stable & solid.
  
 #### Branch state:
-* **(master)** Beta 1.0 _STABLE_
-* **(dev)** Beta 1.1 _UNSTABLE_
-* **(dev_reconstruction)** Beta 2.1 _STABLE_ 
+* **(master)** Beta 5.1 _STABLE_
+* **(bugfixings)** 5.1.X
  
 ##### Coding syntax
  I've simplifed absolutely everything as much as possible and most of the server is dynamic.
@@ -23,5 +22,5 @@ I've organized this Repo for anyone that joins to work with me and so you'll be 
 
 ### Special thanks to
 * Turso
-* Yuuki
+* Yuuki 
 * Requi
