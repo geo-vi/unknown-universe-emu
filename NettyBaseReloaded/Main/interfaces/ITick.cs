@@ -9,6 +9,6 @@ namespace NettyBaseReloaded.Main.interfaces
     interface ITick
     {
         int GetId();
-        Task Tick();
+        void Tick();
     }
 }

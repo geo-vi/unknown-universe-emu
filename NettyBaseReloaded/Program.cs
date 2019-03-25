@@ -265,7 +265,8 @@ namespace NettyBaseReloaded
 
         private static void OnProcessExit(object sender, EventArgs e)
         {
-            Out.QuickLog("Proccess Exit ////");
+
+            Global.Close();
         }
 
 
@@ -384,7 +385,11 @@ namespace NettyBaseReloaded
 
         public static void Exit()
         {
-            Environment.Exit(-1);
+            foreach (var session in World.StorageManager.GameSessions)
+            {
+                session.Value.Player.Save();
+            }
+            Environment.Exit(0);
         }
     }
 }

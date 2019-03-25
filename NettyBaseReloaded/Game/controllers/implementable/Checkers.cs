@@ -33,7 +33,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
         }
 
-        public override async Task Tick()
+        public override void Tick()
         {
             if (Controller.Character is Player player)
             {

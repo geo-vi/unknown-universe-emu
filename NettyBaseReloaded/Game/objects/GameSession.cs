@@ -52,7 +52,7 @@ namespace NettyBaseReloaded.Game.objects
             return TickId;
         }
 
-        public async Task Tick()
+        public void Tick()
         {
             if (LastActivityTime.AddSeconds(25) < DateTime.Now && !Active  /*Player.LastCombatTime.AddMinutes(3) > LastActivityTime && Player.MovementStartTime.AddMinutes(3) > LastActivityTime*/ )
             {

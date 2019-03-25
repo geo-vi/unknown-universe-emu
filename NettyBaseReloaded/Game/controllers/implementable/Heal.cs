@@ -22,11 +22,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         }
 
         private DateTime LastTick = new DateTime();
-        public override async Task Tick()
+        public override void Tick()
         {
             if (LastTick.AddSeconds(1) < DateTime.Now)
             {
-                await Task.Run(() => Pulse());
+                Pulse();
                 LastTick = DateTime.Now;
             }
         }

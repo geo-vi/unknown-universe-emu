@@ -59,7 +59,7 @@ namespace NettyBaseReloaded.Utils
         public void UTF(string String)
         {
             Short((short)String.Length);
-            AddBytes(Encoding.UTF8.GetBytes(String), false);
+            AddBytes(Encoding.Default.GetBytes(String), false);
         }
 
         public void Boolean(bool Bool)

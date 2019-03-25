@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using NettyBaseReloaded.Game.controllers.implementable;
@@ -33,7 +32,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         public Effects Effects { get; }
 
-        public bool StopController;
+        public bool StopController { get; set; }
 
         public bool Active { get; set; }
 
@@ -49,6 +48,7 @@ namespace NettyBaseReloaded.Game.controllers
             Effects = new Effects(this);
 
             StopController = false;
+
         }
 
         public virtual void Initiate()
@@ -66,7 +66,7 @@ namespace NettyBaseReloaded.Game.controllers
             return TickId;
         }
 
-        public async Task Tick()
+        public void Tick()
         {
             try
             {
@@ -77,19 +77,19 @@ namespace NettyBaseReloaded.Game.controllers
                     return;
                 }
 
-                await TickClasses();
+                TickClasses();
 
                 if (this is PlayerController playerController)
                 {
-                    await Task.Run(() => playerController.Tick());
+                    playerController.Tick();
                 }
                 else if (this is NpcController npcController)
                 {
-                    await Task.Run(() => npcController.Tick());
+                    npcController.Tick();
                 }
                 else if (this is PetController petController)
                 {
-                    await Task.Run(() => petController.Tick());
+                    petController.Tick();
                 }
             }
             catch (Exception e)
@@ -160,19 +160,15 @@ namespace NettyBaseReloaded.Game.controllers
             }
         }
 
-        public async Task TickClasses()
+        public void TickClasses()
         {
             Character.Position = MovementController.ActualPosition(Character);
-            try
-            {
-                await Checkers.Tick();
-                await Attack.Tick();
-                await Damage.Tick();
-                await Heal.Tick();
-                await Destruction.Tick();
-                await Effects.Tick();
-            }
-            catch (Exception) { }
+            Checkers?.Tick();
+            Attack?.Tick();
+            Damage?.Tick();
+            Heal?.Tick();
+            Destruction?.Tick();
+            Effects?.Tick();
         }
 
         public void StopAll()

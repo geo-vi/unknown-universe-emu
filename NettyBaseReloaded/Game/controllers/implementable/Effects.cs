@@ -17,7 +17,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
         }
 
-        public override async Task Tick()
+        public override void Tick()
         {
         }
 

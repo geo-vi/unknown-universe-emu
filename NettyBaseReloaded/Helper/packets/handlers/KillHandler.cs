@@ -11,6 +11,7 @@ namespace NettyBaseReloaded.Helper.packets.handlers
     {
         public void Execute(HelperBrain brain, string[] packet)
         {
+            Global.Close();
         }
     }
 }
