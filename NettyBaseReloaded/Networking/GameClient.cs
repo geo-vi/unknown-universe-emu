@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Networking
         /* debug only */
 
         public int SentPackets;
-        public bool Listening;
+        public bool Listening = false;
 
         /* -end debug only- */
 
@@ -89,7 +89,7 @@ namespace NettyBaseReloaded.Networking
                     var entity = entry.Value as Player;
                     if (entity == null) continue;
 
-                    if (entity.InRange(character, character.RenderRange) && entity != character)
+                    if (entity.InRange(character, character.RenderRange) && entity != character || entity.Pet == character)
                     {
                         if (entity.UsingNewClient && command.IsNewClient)
                         {

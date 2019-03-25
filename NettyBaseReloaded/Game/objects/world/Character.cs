@@ -245,12 +245,13 @@ namespace NettyBaseReloaded.Game.objects.world
             try
             {
                 Global.TickManager.Remove(this);
-                Controller.StopController = true;
+                Controller.StopAll();
                 Range.Clean();
+                if (Spacemap.Entities.ContainsKey(Id))
+                    Spacemap.Entities.TryRemove(Id, out _);
             }
             catch (Exception)
             {
-                Controller.StopAll();
             }
         }
 

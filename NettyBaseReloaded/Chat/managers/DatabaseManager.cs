@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using MySql.Data.MySqlClient;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Chat.objects.chat;
+using NettyBaseReloaded.Chat.objects.chat.players;
 using NettyBaseReloaded.Chat.objects.chat.rooms;
 using NettyBaseReloaded.Game;
+using NettyBaseReloaded.Game.objects.world.players.informations;
 using NettyBaseReloaded.Main.global_managers;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
@@ -19,7 +22,7 @@ namespace NettyBaseReloaded.Chat.managers
             LoadAnnouncements();
             LoadLoginMsg();
             LoadRooms();
-            LoadGlobalBans();
+            LoadModerators();
         }
 
         private void LoadAnnouncements()
@@ -75,40 +78,42 @@ namespace NettyBaseReloaded.Chat.managers
 
         private void LoadRooms()
         {
-            Chat.StorageManager.Rooms.Add(0, new Global(0));
+            Chat.StorageManager.Rooms.Add(0, new GlobalChatRoom(0));
+            Chat.StorageManager.Rooms.Add(1, new Room(1, "FR", 1, ChatRoomTypes.NORMAL_ROOM, 250, false, "fr"));
+            Chat.StorageManager.Rooms.Add(2, new Room(2, "TR", 2, ChatRoomTypes.NORMAL_ROOM, 250, false, "tr"));
+            Chat.StorageManager.Rooms.Add(3, new Room(3, "FIN", 3, ChatRoomTypes.NORMAL_ROOM, 250, false, "fin"));
+            Chat.StorageManager.Rooms.Add(4, new Room(4, "DE", 4, ChatRoomTypes.NORMAL_ROOM, 250, false, "de"));
         }
 
-        private void LoadGlobalBans()
+        public void LoadModerators()
         {
-        }
-
-        public Moderator LoadModerator(int id)
-        {
-            Moderator mod = null;
             try
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow = mySqlClient.ExecuteQueryRow($"SELECT * FROM server_chat_moderators WHERE PLAYER_ID={id}");
-                    //Informations
-                    string name = queryRow["NAME"].ToString();
-                    Moderator.Level lvl = (Moderator.Level) intConv(queryRow["LEVEL"]);
+                    var queryTable = mySqlClient.ExecuteQueryTable($"SELECT * FROM server_chat_moderators");
+                    foreach (DataRow queryRow in queryTable.Rows)
+                    {
+                        var id = intConv(queryRow["PLAYER_ID"]);
+                        //Informations
+                        string name = queryRow["NAME"].ToString();
+                        var lvl = (ModeratorLevelTypes)(intConv(queryRow["LEVEL"]));
+                        ////add to Storage
+                        var mod = new Moderator(
+                            id,
+                            name,
+                            "",
+                            Main.Global.StorageManager.Clans[0],
+                            lvl
+                        );
 
-                    ////add to Storage
-                    mod = new Moderator(
-                        id,
-                        name,
-                        "",
-                        Main.Global.StorageManager.Clans[0],
-                        lvl
-                    );
-                    
+                        Chat.StorageManager.ChatModerators.Add(id, mod);
+                    }
                 }
             }
             catch (Exception)
             {
             }
-            return mod;
         }
 
         public Player LoadPlayer(int id)
@@ -155,6 +160,53 @@ namespace NettyBaseReloaded.Chat.managers
             {
                 Console.WriteLine(e);
                 Console.WriteLine(e.Message);
+            }
+        }
+
+        public Dictionary<int, ChatIssue> LoadChatIssues(Player player)
+        {
+            var issues = new Dictionary<int, ChatIssue>();
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM player_chat_issues WHERE PLAYER_ID=" + player.Id);
+                    foreach (DataRow row in queryTable.Rows)
+                    {
+                        var id = intConv(row["ID"]);
+                        var issueType = (ChatIssueTypes) intConv(row["ISSUE_TYPE"]);
+                        var issuedTime = DateTime.Parse(row["ISSUED_AT"].ToString());
+                        var reason = row["REASON"].ToString();
+                        var expireTime = DateTime.Parse(row["EXPIRY"].ToString());
+                        var issuedBy = intConv(row["ISSUED_BY"]);
+                        var chatIssue = new ChatIssue(id, issueType, issuedBy, issuedTime, expireTime, reason);
+                        issues.Add(id, chatIssue);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return issues;
+        }
+
+        public void AddChatIssue(Player player, ChatIssue issue)
+        {
+            try
+            {
+                var userId = 0;
+                userId = player.GetSession().GetEquivilentGameSession().Player.GlobalId;
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryReader($"INSERT INTO player_chat_issues (USER_ID, PLAYER_ID, ISSUE_TYPE, ISSUED_BY, ISSUED_AT, EXPIRY, REASON) VALUES ('{userId}', '{player.Id}', '{Convert.ToInt32(issue.IssueType)}', '{issue.IssuedBy}', '{issue.IssuedAt:yyyy-MM-dd H:mm:ss}', '{issue.Expiry:yyyy-MM-dd H:mm:ss}', '{issue.Reason}')");
+                    issue.Id = intConv(queryRow["ID"]);
+                    player.Issues.Add(issue.Id, issue);
+                }
+            }
+            catch (Exception)
+            {
+
             }
         }
     }

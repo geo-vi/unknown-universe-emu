@@ -27,10 +27,11 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         public override void Execute()
         {
-            InitiateEvents();
+            //InitiateEvents();
             SendSettings();
             Spawn();
             SendLegacy();
+            Console.WriteLine("Successfully logged in: " + GameSession.Player.Id + " Client used: " + (GameSession.Player.UsingNewClient ? "10.1" : "7.5.3") + " [" + GameSession.Player.Name + "]");
         }
 
         private void Spawn()
@@ -47,6 +48,13 @@ namespace NettyBaseReloaded.Game.controllers.login
 
             Packet.Builder.ShipInitializationCommand(GameSession);
             Packet.Builder.DronesCommand(GameSession, GameSession.Player);
+
+            if (GameSession.Player.Information.GameBans.Any(x => x.Value.Expiry > DateTime.Now))
+            {
+                var ban = GameSession.Player.Information.GameBans.FirstOrDefault(x => x.Value.Expiry > DateTime.Now);
+                Packet.Builder.LegacyModule(GameSession, "0|A|STD|You've been banned by " + ban.Value.GetBanAccountant().Name + " at " + ban.Value.IssuedTime + "#" + ban.Key + "\n" + ban.Value.Reason);
+                GameSession.Kick();
+            }
         }
     }
 }

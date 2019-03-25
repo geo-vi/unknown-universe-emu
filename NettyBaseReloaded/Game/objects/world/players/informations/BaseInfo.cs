@@ -38,8 +38,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
         {
             double addedVal = 0;
             SyncedValue = amount;
+            bool upd = Value != SyncedValue;
             Value = SyncedValue;
-            Update();
+            if (upd) Update();
             return addedVal;
         }
 

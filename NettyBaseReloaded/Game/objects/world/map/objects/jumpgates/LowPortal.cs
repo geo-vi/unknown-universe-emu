@@ -10,7 +10,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
 {
     class LowPortal : Jumpgate
     {
-        public LowPortal(int id, Vector pos, Spacemap map, int vw) : base(id, Faction.NONE, pos, map, new Vector(1000, 11800), 200, true, 0, 0, 34)
+        public LowPortal(int id, Vector pos, Spacemap map, int vw) : base(id, Faction.NONE, pos, map, new Vector(1000, 11800), 200, true, 0, 0, PortalGraphics.GROUP_GATE_1)
         {
             DestinationVirtualWorldId = vw;
         }
@@ -47,7 +47,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
             else
             {
                 var low = new LowGate(0, World.StorageManager.Spacemaps[200]);
-                player.CreateGalaxyGate(low);
+                low.DefineOwner(player);
                 low.InitiateVirtualWorld();
                 player.Controller.Miscs.Jump(low.Spacemap.Id, Destination, Id, low.VWID);
                 low.PendingPlayers.TryAdd(player.Id, player);

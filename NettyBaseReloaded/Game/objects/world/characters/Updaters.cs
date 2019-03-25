@@ -22,6 +22,14 @@ namespace NettyBaseReloaded.Game.objects.world.characters
             Regenerate();
         }
 
+        private int LastSpeedSent = 0;
+        private int LastShieldSent = 0;
+        private int LastMaxShieldSent = 0;
+        private int LastHpSent = 0;
+        private int LastMaxHpSent = 0;
+        private int LastNanoSent = 0;
+        private int LastMaxNanoSent = 0;
+
         public void Update()
         {
             try
@@ -37,11 +45,30 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     var gameSession = World.StorageManager.GetGameSession(Character.Id);
                     if (gameSession == null) return;
 
-                    Packet.Builder.HitpointInfoCommand(gameSession, player.CurrentHealth, player.MaxHealth, player.CurrentNanoHull, player.MaxNanoHull);
+                    if (LastMaxNanoSent != player.MaxNanoHull || LastNanoSent != player.CurrentNanoHull ||
+                        LastMaxHpSent != player.MaxHealth || LastHpSent != player.CurrentHealth)
+                    {
+                        Packet.Builder.HitpointInfoCommand(gameSession, player.CurrentHealth, player.MaxHealth, player.CurrentNanoHull, player.MaxNanoHull);
+                        LastMaxHpSent = player.MaxHealth;
+                        LastHpSent = player.CurrentHealth;
+                        LastMaxNanoSent = player.MaxNanoHull;
+                        LastNanoSent = player.CurrentNanoHull;
+                    }
                     //Update shield
-                    Packet.Builder.AttributeShieldUpdateCommand(gameSession, player.CurrentShield, player.MaxShield);
+                    if (LastShieldSent != player.CurrentShield || LastMaxShieldSent != player.MaxShield)
+                    {
+                        Packet.Builder.AttributeShieldUpdateCommand(gameSession, player.CurrentShield,
+                            player.MaxShield);
+                        LastShieldSent = player.CurrentShield;
+                        LastMaxShieldSent = player.MaxShield;
+                    }
+
                     //Update speed
-                    Packet.Builder.AttributeShipSpeedUpdateCommand(gameSession, player.Speed);
+                    if (LastSpeedSent != player.Speed)
+                    {
+                        Packet.Builder.AttributeShipSpeedUpdateCommand(gameSession, player.Speed);
+                        LastSpeedSent = player.Speed;
+                    }
                 }
 
                 if (Character is Pet pet)
@@ -49,9 +76,19 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     var gameSession = pet.GetOwner().GetGameSession();
                     if (gameSession == null || !pet.Controller.Active) return;
 
-                    Packet.Builder.PetHitpointsUpdateCommand(gameSession, pet.CurrentHealth, pet.MaxHealth, false);
+                    if (LastHpSent != pet.CurrentHealth || LastMaxHpSent != pet.MaxHealth)
+                    {
+                        Packet.Builder.PetHitpointsUpdateCommand(gameSession, pet.CurrentHealth, pet.MaxHealth, false);
+                        LastHpSent = pet.CurrentHealth;
+                        LastMaxHpSent = pet.MaxHealth;
+                    }
 
-                    Packet.Builder.PetShieldUpdateCommand(gameSession, pet.CurrentShield, pet.MaxShield);
+                    if (LastShieldSent != pet.CurrentShield || LastMaxShieldSent != pet.MaxShield)
+                    {
+                        Packet.Builder.PetShieldUpdateCommand(gameSession, pet.CurrentShield, pet.MaxShield);
+                        LastShieldSent = pet.CurrentShield;
+                        LastMaxShieldSent = pet.MaxShield;
+                    }
                 }
 
                 GameClient.SendPacketSelected(Character, netty.commands.old_client.ShipSelectionCommand.write(Character.Id, Character.Hangar.ShipDesign.Id, Character.CurrentShield, Character.MaxShield,

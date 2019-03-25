@@ -182,12 +182,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Kill()
         {
-            Controller.StopAll();
-
-            GameClient.SendToPlayerView(Character, ShipDestroyedCommand.write(Character.Id, 1), true);
-            GameClient.SendToPlayerView(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 1),
+            GameClient.SendToPlayerView(Character, ShipDestroyedCommand.write(Character.Id, 0), true);
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 0),
                 true);
-            Remove();
+
+            Controller.RemoveFromMap();
 
             Character.Invalidate();
 
@@ -207,52 +206,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
-        public void Remove()
-        {
-            Character.Controller.StopAll();
-            Deselect(Character);
-            Character.Selected = null;
-            Character.Spacemap.RemoveEntity(Character);
-            if (Character is Player player)
-            {
-                player.Storage.Clean();
-            }
-        }
-
-        public void Deselect(Character targetCharacter)
-        {
-            if (targetCharacter == null)
-                return;
-
-            foreach (var entity in targetCharacter.Spacemap.Entities)
-            {
-                if (entity.Value.Selected != null && entity.Value.Selected == targetCharacter)
-                {
-                    if (entity.Value.Controller != null)
-                    {
-                        if (entity.Value.Controller.Attack.Attacking)
-                        {
-                            entity.Value.Controller.Attack.Attacking = false;
-                        }
-                    }
-
-                    if (entity.Value is Player)
-                    {
-                        Packet.Builder.ShipSelectionCommand(World.StorageManager.GetGameSession(entity.Value.Id), null);
-                    }
-
-                    entity.Value.Selected = null;
-                }
-            }
-        }
-
         public void RespawnPlayer()
         {
-            Character.EntityState = EntityStates.ALIVE;
-
             var player = (Player) Character;
             var killscreen = Killscreen.Load(player);
             player.CurrentHealth = killscreen.SelectedOption == netty.commands.old_client.KillScreenOptionTypeModule.AT_DEATHLOCATION_REPAIR ? (player.Hangar.Ship.Health / 100) * 10 : 1000; //if its location repair %10 of base ship hp else just 1000 hp
+            Character.EntityState = EntityStates.ALIVE;
 
             if (player.Controller == null)
             {

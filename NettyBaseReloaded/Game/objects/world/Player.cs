@@ -309,7 +309,7 @@ namespace NettyBaseReloaded.Game.objects.world
             get { return Hangar.Configurations[CurrentConfig - 1].RocketLauncher; }
         }
 
-        public override int AttackRange => 700;
+        public override int AttackRange => 800;
 
         /// <summary>
         /// This is a for the multi-client support.
@@ -352,6 +352,8 @@ namespace NettyBaseReloaded.Game.objects.world
             Pet = World.DatabaseManager.LoadPet(this);
             QuestData = new QuestPlayerData(this);
             Announcements = new Announcements(this);
+            Gates = new PlayerGates(this);
+            World.DatabaseManager.SavePlayerHangar(this, Hangar);
         }
 
         public override void AssembleTick(object sender, EventArgs eventArgs)
@@ -359,7 +361,6 @@ namespace NettyBaseReloaded.Game.objects.world
             if (GetGameSession() == null)
             {
                 Invalidate();
-                Global.TickManager.Remove(this);
                 return;
             }
             if (!Controller.Active || EntityState == EntityStates.DEAD)
@@ -372,12 +373,12 @@ namespace NettyBaseReloaded.Game.objects.world
             AssembleEnemyWarn();
             TickEvents();
             TickTechs();
-            //TickGates();
             TickAbilities();
             TickQuests();
             TickAnnouncements();
             Skylab.Tick();
         }
+        
 
         public override void Invalidate()
         {
@@ -415,7 +416,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void ClickableCheck(Object obj)
         {
-            if (obj is IClickable)
+            if (obj is IClickable && obj.Position != null)
             {
                 var active = Vector.IsInRange(Position, obj.Position, obj.Range);
                 Packet.Builder.MapAssetActionAvailableCommand(World.StorageManager.GetGameSession(Id), obj, active);
@@ -433,13 +434,16 @@ namespace NettyBaseReloaded.Game.objects.world
             else if (obj is Jumpgate) Storage.LoadPortal(obj as Jumpgate);
             else if (obj is Asteroid) Storage.LoadAsteroid(obj as Asteroid);
             else if (obj is Asset) Storage.LoadAsset(obj as Asset);
-            else if (obj is Collectable) Storage.LoadCollectable(obj as Collectable);
-            else if (obj is Ore) Storage.LoadResource(obj as Ore);
             else if (obj is Billboard) Storage.LoadBillboard(obj as Billboard);
-            else if (obj is Mine) Storage.LoadMine(obj as Mine);
-            else if (obj is Firework) Storage.LoadFirework(obj as Firework);
             else
             {
+                //if (obj.Position.DistanceTo(Position) < 2000)
+                //{
+                    if (obj is Collectable) Storage.LoadCollectable(obj as Collectable);
+                    else if (obj is Ore) Storage.LoadResource(obj as Ore);
+                    else if (obj is Mine) Storage.LoadMine(obj as Mine);
+                    else if (obj is Firework) Storage.LoadFirework(obj as Firework);
+                //}
                 if (!Storage.LoadedObjects.ContainsKey(obj.Id))
                     Storage.LoadedObjects.TryAdd(obj.Id, obj);
             }
@@ -493,7 +497,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void SetPosition(Vector targetPosition)
         {
-            if (Pet != null) Pet.Controller.Deactivate();
+            Pet?.Controller.Deactivate();
             ChangePosition(targetPosition);
             Packet.Builder.MoveCommand(GetGameSession(), this, 0);
         }
@@ -716,15 +720,15 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void BoostExpReward(double value)
         {
-            if (value + BoostedExpReward > 1)
-                BoostedExpReward = 1;
+            if (value + BoostedExpReward > 0.5)
+                BoostedExpReward = 0.5;
             else BoostedExpReward += value;
         }
 
         public void BoostHonReward(double value)
         {
-            if (value + BoostedHonorReward > 1)
-                BoostedHonorReward = 1;
+            if (value + BoostedHonorReward > 0.5)
+                BoostedHonorReward = 0.5;
             else BoostedHonorReward += value;
         }
         
@@ -758,11 +762,11 @@ namespace NettyBaseReloaded.Game.objects.world
             Pet?.Controller.Deactivate();
             Spacemap.RemoveEntity(this);
             ResetPlayer();
-            VirtualWorldId = vwid;
             Spacemap = map;
             Position = pos;
+            VirtualWorldId = vwid;
             ChangePosition(Position);
-            Spacemap.Entities.TryAdd(Id, this);
+            Controller.AddToMap();
             Refresh();
         }
 
@@ -833,6 +837,14 @@ namespace NettyBaseReloaded.Game.objects.world
                 Global.TickManager.Add(this, out id);
                 SetTickId(id);
             }
+        }
+
+        public void RestartSessions()
+        {
+            Global.TickManager.Remove(this);
+            Global.TickManager.Remove(Controller);
+            Setup();
+            Controller.Setup();
         }
     }
 }

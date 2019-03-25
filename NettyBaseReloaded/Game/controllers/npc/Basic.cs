@@ -97,7 +97,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     }
                     if (candidatePlayer != null)
                     {
-                        if (Controller.Attack.Select(candidatePlayer))
+                        if (Controller.Attack.TrySelect(candidatePlayer))
                             candidatePlayer.AttachedNpcs.Add(Controller.Npc);
                         else Exit();
                     }
@@ -134,7 +134,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                             var selectedPlayer = (Player)Controller.Npc.Selected;
                             if (selectedPlayer != null && selectedPlayer.AttachedNpcs.Contains(Controller.Npc))
                                 selectedPlayer.AttachedNpcs.Remove(Controller.Npc);
-                            if (Controller.Attack.Select(player.Value))
+                            if (Controller.Attack.TrySelect(player.Value))
                                 ((Player) player.Value).AttachedNpcs.Add(Controller.Npc);
                         }
                     }

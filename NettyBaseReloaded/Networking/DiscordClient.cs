@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Helper;
 
 namespace NettyBaseReloaded.Networking
 {
@@ -17,49 +18,23 @@ namespace NettyBaseReloaded.Networking
             XSocket = gameSocket;
             XSocket.OnReceive += XSocketOnOnReceive;
             XSocket.Read(true);
-            Task.Factory.StartNew(CheckingLoop);
         }
 
         private void XSocketOnOnReceive(object sender, EventArgs e)
         {
             var packetArgs = (StringArgs)e;
-            if (packetArgs.Packet == "ping")
-            {
-                XSocket.Write($"pong|{DateTime.Now - Properties.Server.RUNTIME:g}|{World.StorageManager.GameSessions.Count}");
-            }
-            else if (packetArgs.Packet.StartsWith("kick"))
-            {
-                var id = int.Parse(packetArgs.Packet.Split('|')[1]);
-                var gameSession = World.StorageManager.GetGameSession(id);
-                gameSession?.Kick();
-            }
-            else if (packetArgs.Packet == "restart")
-            {
-                foreach (var session in World.StorageManager.GameSessions)
-                {
-                    Packet.Builder.LegacyModule(session.Value, "0|A|STD|Restarting server...");
-                    session.Value.Kick();
-                }
-
-                Program.Exit();
-            }
-            //Socketty.PacketHandler.Handle(packetArgs.Packet);
+            HelperBrain.Handler.Handle(this, packetArgs.Packet);
         }
 
-        private async Task CheckingLoop()
+        public void Write(string message)
         {
-            int lastPlayerCount = 0;
-            DateTime lastSentTime = new DateTime();
-            while (true)
+            try
             {
-                var playerCount = World.StorageManager.GameSessions.Count;
-                if (playerCount != lastPlayerCount || lastSentTime.AddMinutes(5) <= DateTime.Now)
-                {
-                    XSocket.Write($"pong|{DateTime.Now - Properties.Server.RUNTIME:g}|{World.StorageManager.GameSessions.Count}");
-                    lastSentTime = DateTime.Now;
-                    lastPlayerCount = playerCount;
-                }
-                await Task.Delay(500);
+                XSocket.Write(message);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error writing to BOT (Helper)");
             }
         }
     }

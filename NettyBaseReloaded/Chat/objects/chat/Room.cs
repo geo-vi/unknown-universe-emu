@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using GoogleTranslateFreeApi;
+using NettyBaseReloaded.Chat.controllers;
 using NettyBaseReloaded.Chat.objects.chat.rooms;
 
 namespace NettyBaseReloaded.Chat.objects.chat
@@ -23,7 +26,7 @@ namespace NettyBaseReloaded.Chat.objects.chat
         /// <summary>
         /// Room type
         /// </summary>
-        public Types Type { get; set; }
+        public ChatRoomTypes Type { get; set; }
 
         /// <summary>
         /// If room is multilanguage / Allowed to speak in different language than English
@@ -42,9 +45,7 @@ namespace NettyBaseReloaded.Chat.objects.chat
 
         public Dictionary<int, Character> ConnectedUsers = new Dictionary<int, Character>();
 
-        public Dictionary<int, Banned> BannedUsers = new Dictionary<int, Banned>();
-
-        public Room(int id, string name, int tabOrder, Types type = Types.NORMAL_ROOM, int maxUsers = 250, bool multiLang = false, string roomLang = "en")
+        public Room(int id, string name, int tabOrder, ChatRoomTypes type = ChatRoomTypes.NORMAL_ROOM, int maxUsers = 250, bool multiLang = false, string roomLang = "en")
         {
             Id = id;
             Name = name;
@@ -53,6 +54,19 @@ namespace NettyBaseReloaded.Chat.objects.chat
             MaxUsers = maxUsers;
             MultiLanguageRoom = multiLang;
             RoomLanguage = roomLang;
+        }
+
+        public async Task LanguageCheck(Character character, string message)
+        {
+            var player = character as Player;
+            if (player == null) return;
+
+            var englishLanguage = GoogleTranslator.GetLanguageByName("English");
+            var translation = await Chat.Translator.TranslateAsync(message, Language.Auto, englishLanguage);
+            if (RoomLanguage == "en" && !translation.SourceLanguage.Equals(englishLanguage))
+            {
+                player.GetSession().Kick("Spoken wrong language in Global english chat. Language spoken: " + translation.SourceLanguage.FullName);
+            }
         }
 
         public void Mute(Character character)
@@ -75,6 +89,5 @@ namespace NettyBaseReloaded.Chat.objects.chat
             return Id + "|" + Name + "|" + TabOrder + "|" + -1 + "|" +
                    (int) Type + "|" + 0;
         }
-
     }
 }

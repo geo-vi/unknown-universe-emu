@@ -353,7 +353,7 @@ namespace NettyBaseReloaded.Networking
                 _socket.BeginReceive(_readBuffer, 0, _readBuffer.Length, 0, OnReceiveCallback, this);
 
             }
-            catch { Close(); }
+            catch (Exception) { Close(); }
         }
 
         /// <summary>

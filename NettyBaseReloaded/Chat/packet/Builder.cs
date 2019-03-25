@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Chat.objects.chat;
 
@@ -36,7 +37,10 @@ namespace NettyBaseReloaded.Chat.packet
             foreach (var roomConnected in chatSession.Player.ConnectedRooms.Values)
             {
                 packet += roomConnected.ToString();
+                if (roomConnected != chatSession.Player.ConnectedRooms.Values.Last())
+                    packet += "}";
             }
+
             Legacy(chatSession, packet);
         }
         #endregion

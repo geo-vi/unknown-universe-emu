@@ -23,5 +23,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         {
             BoxReward.ParseRewards(player);
         }
+
+        public override bool PetCanCollect(Player owner)
+        {
+            return true;
+        }
     }
 }

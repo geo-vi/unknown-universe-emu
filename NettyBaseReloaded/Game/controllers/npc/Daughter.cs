@@ -40,26 +40,34 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Inactive()
         {
-            if (Controller.Npc.LastCombatTime.AddSeconds(30) < DateTime.Now || Controller.Npc.MotherShip == null)
+            if (Controller.Npc.LastCombatTime.AddSeconds(30) < DateTime.Now)
             {
                 Exit();
                 return;
             }
 
-            var attacker = Controller.Npc.MotherShip.Controller.Attack.GetActiveAttackers().OrderBy(x => x.Damage).FirstOrDefault();
-            if (attacker == null)
+            Character attacker = null;
+            if (Controller.Npc.MotherShip == null || !Controller.Npc.MotherShip.Controller.Attack.GetActiveAttackers().Any())
             {
                 var rangePlayers = Controller.Npc.Range.Entities.Where(x => x.Value is Player);
                 attacker = rangePlayers.FirstOrDefault().Value;
             }
+            else if (Controller.Npc.MotherShip.Controller.Attack.GetActiveAttackers().Any(x => x is Player))
+            {
+                attacker = Controller.Npc.MotherShip.Controller.Attack.GetActiveAttackers().Where(x => x is Player).OrderBy(x => x.Damage).FirstOrDefault();
+            }
 
-            Controller.Attack.Select(attacker);
+            if (!Controller.Attack.TrySelect(attacker))
+            {
+                Controller.Attack.TrySelect(Controller.Npc.Range.Entities.FirstOrDefault(x =>
+                    x.Value is Player && x.Value.Position.DistanceTo(Controller.Npc.Position) < 700).Value);
+            }
         }
 
         public void PositionChecker()
         {
             if (Controller.Npc.MovementStartTime.AddSeconds(1) <= DateTime.Now)
-                MovementController.Move(Controller.Npc, Vector.GetPosOnCircle(Center, 400));
+                MovementController.Move(Controller.Npc, Vector.GetPosOnCircle(Center, 550));
         }
 
         public void Paused()

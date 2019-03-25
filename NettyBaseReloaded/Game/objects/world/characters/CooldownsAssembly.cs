@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,39 +11,35 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 {
     class CooldownsAssembly
     {
-        private List<Cooldown> PendingToBeAdded = new List<Cooldown>();
-        private List<Cooldown> PendingToBeRemoved = new List<Cooldown>();
+        public ConcurrentDictionary<int, Cooldown> CooldownDictionary = new ConcurrentDictionary<int, Cooldown>();
 
-        public List<Cooldown> Cooldowns = new List<Cooldown>();
         private Character Character;
         public CooldownsAssembly(Character character)
         {
             Character = character;
         }
 
+        private int GetNextId()
+        {
+            var i = 0;
+            while (true)
+            {
+                if (CooldownDictionary.ContainsKey(i))
+                    i++;
+                else return i;
+            }
+        }
+
         public void Add(Cooldown cooldown)
         {
-            PendingToBeAdded.Add(cooldown);
+            cooldown.Id = GetNextId();
+            CooldownDictionary.TryAdd(cooldown.Id, cooldown);
         }
 
         public void Remove(Cooldown cooldown)
         {
-            PendingToBeRemoved.Add(cooldown);
-        }
-
-        private void Sync()
-        {
-            if (PendingToBeAdded.Count > 0)
-            {
-                Cooldowns.AddRange(PendingToBeAdded);
-                PendingToBeAdded.Clear();
-            }
-            if (PendingToBeRemoved.Count > 0)
-            {
-                foreach (var tick in PendingToBeRemoved)
-                    Cooldowns.Remove(tick);
-                PendingToBeRemoved.Clear();
-            }
+            CooldownDictionary.TryRemove(cooldown.Id, out _);
+            cooldown.Id = -1;
         }
 
         private DateTime LastTick = new DateTime();
@@ -50,28 +47,20 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public void Tick()
         {
             if (LastTick.AddMilliseconds(100) > DateTime.Now) return;
-            Sync();
-            foreach (var cooldown in Cooldowns)
+            foreach (var cooldown in CooldownDictionary.Values)
             {
-                if (_sendAll && Character is Player player)
-                {
-                    var session = player.GetGameSession();
-                    if (session != null) cooldown.Send(session);
-                }
+                //if (_sendAll && Character is Player player)
+                //{
+                //    var session = player.GetGameSession();
+                //    if (session != null) cooldown.Send(session);
+                //}
                 if (cooldown.EndTime < DateTime.Now)
                 {
                     cooldown.OnFinish(Character);
                     Remove(cooldown);
                 }
             }
-            Sync();
             LastTick = DateTime.Now;
-        }
-
-        public bool Any(Predicate<Cooldown> source)
-        {
-            if (PendingToBeRemoved.Count == 0 && PendingToBeAdded.Count == 0) return Cooldowns.Exists(source);
-            return (PendingToBeAdded.Exists(source) || Cooldowns.Exists(source));
         }
 
         public void SendAll()

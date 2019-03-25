@@ -17,7 +17,16 @@ namespace NettyBaseReloaded.Game.objects.world.map.ores
         public override void Collect(Character character)
         {
             base.Collect(character);
-            Reward(character as Player);
+            Player player = null;
+            if (character is Pet pet)
+            {
+                player = pet.GetOwner();
+            }
+            else if (character is Player _player)
+            {
+                player = _player;
+            }
+            Reward(player);
         }
 
         private void Reward(Player player)
@@ -36,7 +45,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.ores
                     player.Information.Cargo.Reward(new DropableRewards(0, 0, 1, 0, 0, 0, 0, 0, 0));
                     break;
                 case OreTypes.PALLADIUM:
-                    player.Information.Cargo.Reward(new DropableRewards(0, 0, 0, 0, 0, 0, 0, 0, 8));
+                    player.Information.Cargo.Reward(new DropableRewards(0, 0, 0, 0, 0, 0, 0, 0, 1));
                     break;
             }
         }

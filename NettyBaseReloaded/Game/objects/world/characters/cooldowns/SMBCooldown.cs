@@ -22,11 +22,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
         {
             if (gameSession.Player.UsingNewClient)
             {
-                gameSession.Client.Send(SetCooldown("ammunition_mine_smb-01", TimerState.COOLDOWN, 30000, 30000,true));
+                gameSession.Client.Send(SetCooldown("ammunition_mine_smb-01", TimerState.COOLDOWN, TimeLeft.TotalMilliseconds, TotalTime.TotalMilliseconds, true));
             }
             else
             {
-                Packet.Builder.LegacyModule(gameSession, "0|A|CLD|SMB|30");
+                Packet.Builder.LegacyModule(gameSession, "0|A|CLD|SMB|" + TimeLeft.Seconds, true);
             }
         }
     }

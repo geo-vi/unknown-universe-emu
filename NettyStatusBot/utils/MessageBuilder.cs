@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 
-namespace NettyStatusBot.utils
+namespace NettyStatusBot.Utils
 {
     static class MessageBuilder
     {
@@ -22,10 +17,10 @@ namespace NettyStatusBot.utils
         public static EmbedBuilder GetOnlineMsg()
         {
             var builder = new EmbedBuilder();
-            builder.Title = "Current server status";
-            builder.Description = $"Server is ONLINE, Running for ~{Program.ServerStatus.Runtime:g}.";
-            builder.Color = Color.Green;
-            builder.AddField("Currently online players", Program.ServerStatus.PlayersOnline.ToString(), true);
+            //builder.Title = "Current server status";
+            //builder.Description = $"Server is ONLINE, Running for ~{Program.ServerStatus.Runtime:g}.";
+            //builder.Color = Color.Green;
+            //builder.AddField("Currently online players", Program.ServerStatus.PlayersOnline.ToString(), true);
             return builder;
         }
 

@@ -10,7 +10,6 @@ namespace NettyBaseReloaded.Networking
     {
         public const int GAME_PORT = 8080;
         public const int CHAT_PORT = 9338;
-        public const int SOCKET_PORT = 1337;
         public const int POLICY_PORT = 843;
         public const int DISCORD_PORT = 7778;
 
@@ -35,9 +34,6 @@ namespace NettyBaseReloaded.Networking
                 case CHAT_PORT:
                     new ChatClient(xSocketArgs.XSocket);
                     break;
-                case SOCKET_PORT:
-                    new SocketClient(xSocketArgs.XSocket);
-                    break;
                 case POLICY_PORT:
                     new PolicyClient(xSocketArgs.XSocket);
                     break;
@@ -45,6 +41,11 @@ namespace NettyBaseReloaded.Networking
                     new DiscordClient(xSocketArgs.XSocket);
                     break;
             }
+        }
+
+        public void Stop()
+        {
+            serverSocket.Close();
         }
     }
 }

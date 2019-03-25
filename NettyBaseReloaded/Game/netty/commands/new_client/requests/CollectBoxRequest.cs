@@ -31,8 +31,6 @@ namespace NettyBaseReloaded.Game.netty.commands.new_client.requests
             var3 = var3 << 16 | var3 >> 16;
             var5 = parser.readInt();
             var5 = var5 << 6 | var5 >> 26;
-
-            Console.WriteLine($"itemHash {itemHash}, var2 {var2}, var3 {var3}, var4 {var4}, var5 {var5}");
         }
     }
 }

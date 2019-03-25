@@ -28,7 +28,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 
         public override void execute()
         {
-            if (Enabled && !Player.Cooldowns.Any(x => x is BattleRepairRobotCooldown))
+            if (Enabled && !Player.Cooldowns.CooldownDictionary.Any(c => c.Value is BattleRepairRobotCooldown))
             {
                 Active = true;
                 Player.Storage.BattleRepairRobotActivated = true;

@@ -33,10 +33,10 @@ namespace NettyBaseReloaded.Game.controllers.npc
             {
                 if (Controller.Attack.GetActiveAttackers().Count == 0)
                 {
-                    var firstOrDefalt = npc.Spacemap.Entities.Values.FirstOrDefault(x => x is Player);
-                    Controller.Attack.Select(firstOrDefalt);
+                    var firstOrDefault = npc.Spacemap.Entities.Values.FirstOrDefault(x => x is Player);
+                    Controller.Attack.TrySelect(firstOrDefault);
                 }
-                else Controller.Attack.Select(Controller.Attack.MainAttacker);
+                else Controller.Attack.TrySelect(Controller.Attack.MainAttacker);
             }
             else
             {

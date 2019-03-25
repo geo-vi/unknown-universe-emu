@@ -20,10 +20,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.mines
             var area = Spacemap.Entities.Where(x => x.Value.Position.DistanceTo(Position) <= 1000 && x.Value is Player);
             foreach (var entry in area)
             {
-                if (entry.Value.Cooldowns.Any(x => x is DecelerationEffect))
+                if (entry.Value.Cooldowns.CooldownDictionary.Any(x => x.Value is DecelerationEffect))
                 {
-                    var dc = entry.Value.Cooldowns.Cooldowns.Find(x => x is DecelerationEffect);
-                    dc.EndTime = dc.EndTime.AddSeconds(3);
+                    var dc = entry.Value.Cooldowns.CooldownDictionary.FirstOrDefault(x => x.Value is DecelerationEffect);
+                    dc.Value.EndTime = dc.Value.EndTime.AddSeconds(3);
                 }
                 else
                 {

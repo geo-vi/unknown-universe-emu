@@ -756,7 +756,7 @@ namespace NettyBaseReloaded.Game.managers
             return player;
         }
 
-        internal Dictionary<string, Ammunition> LoadAmmunition(Player player)
+        public Dictionary<string, Ammunition> LoadAmmunition(Player player)
         {
             var ammoDictionary = new Dictionary<string, Ammunition>();
             try
@@ -1158,12 +1158,18 @@ namespace NettyBaseReloaded.Game.managers
         {
             try
             {
+                var activeHangarId = player.Hangar.Id;
                 if (player.Spacemap != null && player.Position != null)
                 {
                     using (var mySqlClient = SqlDatabaseManager.GetClient())
                     {
                         mySqlClient.ExecuteNonQuery(
-                            $"UPDATE player_hangar SET SHIP_MAP_ID={player.Spacemap.Id}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y},ACTIVE={Convert.ToInt32(hangar.Active)} WHERE PLAYER_ID={player.Id} AND ID={hangar.Id}");
+                            $"UPDATE player_hangar SET ACTIVE=0 WHERE PLAYER_ID={player.Id}");
+                        mySqlClient.ExecuteNonQuery(
+                            $"UPDATE player_hangar SET ACTIVE=1 WHERE ID={activeHangarId} AND PLAYER_ID={player.Id}");
+
+                        mySqlClient.ExecuteNonQuery(
+                            $"UPDATE player_hangar SET SHIP_MAP_ID={player.Spacemap.Id}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, SHIP_X={player.Position.X}, SHIP_Y={player.Position.Y} WHERE PLAYER_ID={player.Id} AND ID={hangar.Id}");
                         player.Storage.DistancePassed = 0;
                     }
                 }
@@ -1399,7 +1405,6 @@ namespace NettyBaseReloaded.Game.managers
             return killscreen;
         }
 
-
         public void AddKillScreen(Killscreen killscreen)
         {
             try
@@ -1506,7 +1511,7 @@ namespace NettyBaseReloaded.Game.managers
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     mySqlClient.ExecuteNonQuery(
-                        $"UPDATE player_extra_data SET CARGO='{JsonConvert.SerializeObject(cargo)}' WHERE PLAYER_ID=" +
+                        $"UPDATE player_extra_data SET CARGO='{JsonConvert.SerializeObject(cargo.GetOreArray())}' WHERE PLAYER_ID=" +
                         player.Id);
                 }
             }
@@ -1525,14 +1530,12 @@ namespace NettyBaseReloaded.Game.managers
                     var queryRow =
                         mySqlClient.ExecuteQueryRow("SELECT CARGO FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
                     var cargoJson = queryRow["CARGO"].ToString();
-                    var cargo = JsonConvert.DeserializeObject<Cargo>(cargoJson);
+                    var cargo = JsonConvert.DeserializeObject<int[]>(cargoJson);
                     if (cargo != null)
                     {
-                        cargo.Player = player;
+                        return new Cargo(player, cargo[0], cargo[1], cargo[2], cargo[3], cargo[4], cargo[5], cargo[6], cargo[7], cargo[8]);
                     }
-                    else return new Cargo(player, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-                    return cargo;
+                    return new Cargo(player, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                 }
             }
             catch (Exception e)
@@ -1540,7 +1543,7 @@ namespace NettyBaseReloaded.Game.managers
                 Debug.WriteLine("Error loading player cargo, " + e.Message);
             }
 
-            return null;
+            return new Cargo(player, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         }
 
         public Skylab LoadSkylab(Player player)
@@ -2048,6 +2051,141 @@ namespace NettyBaseReloaded.Game.managers
                 Console.WriteLine(e);
                 Console.WriteLine(e.StackTrace);
             }
+        }
+
+        public object GetPlayerKeySettings(Player player)
+        {
+            object keySettings = null;
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var settingsVersion = "SETTINGS_KEYS_OLD";
+                    var queryRow =
+                        mySqlClient.ExecuteQueryRow("SELECT " + settingsVersion +
+                                                    " FROM player_extra_data WHERE PLAYER_ID=" + player.Id);
+                    if (player.UsingNewClient)
+                    {
+                    }
+                    else
+                    {
+                        keySettings =
+                            JsonConvert.DeserializeObject<netty.commands.old_client.UserKeyBindingsUpdate>(
+                                queryRow[settingsVersion].ToString());
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("error " + e);
+            }
+            return keySettings;
+        }
+
+        public void SavePlayerKeySettings(Settings settings)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    string query = "";
+                    if (settings.Player.UsingNewClient)
+                    {
+                        //TODO Save player ship settings for new client
+                        Console.WriteLine("TODO Save player key settings for new client");
+                        //throw new NotImplementedException();
+                    }
+                    else
+                    {
+                        query =
+                            $"UPDATE player_extra_data SET SETTINGS_KEYS_OLD='{JsonConvert.SerializeObject(settings.OldClientKeyBindingsCommand)}' WHERE PLAYER_ID={settings.Player.Id}";
+                    }
+                    mySqlClient.ExecuteNonQuery(query);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public void LoadPlayerGates(Player player)
+        {
+            PlayerGates gates = new PlayerGates(player);
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var row = mySqlClient.ExecuteQueryRow("SELECT * FROM player_galaxy_gates WHERE PLAYER_ID=" + player.Id);
+                    var completedGates = JsonConvert.DeserializeObject<int[]>(row["COMPLETED_GATES"].ToString());
+                    if (completedGates != null && completedGates.Length == 7)
+                    {
+                        gates.AlphaComplete = completedGates[0];
+                        gates.BetaComplete = completedGates[1];
+                        gates.GammaComplete = completedGates[2];
+                        gates.DeltaComplete = completedGates[3];
+                        gates.EpsilonComplete = completedGates[4];
+                        gates.ZetaComplete = completedGates[5];
+                        gates.KappaComplete = completedGates[6];
+                    }
+
+                    var alphaPrepared = Convert.ToBoolean(intConv(row["ALPHA_PREPARED"]));
+                    gates.AlphaReady = alphaPrepared;
+
+                    var betaPrepared = Convert.ToBoolean(intConv(row["BETA_PREPARED"]));
+                    gates.BetaReady = betaPrepared;
+
+                    var gammaPrepared = Convert.ToBoolean(intConv(row["GAMMA_PREPARED"]));
+                    gates.GammaReady = gammaPrepared;
+
+                    var deltaPrepared = Convert.ToBoolean(intConv(row["DELTA_PREPARED"]));
+                    gates.DeltaReady = deltaPrepared;
+
+                    var epsilonPrepared = Convert.ToBoolean(intConv(row["EPSILON_PREPARED"]));
+                    gates.EpsilonReady = epsilonPrepared;
+
+                    var zetaPrepared = Convert.ToBoolean(intConv(row["ZETA_PREPARED"]));
+                    gates.ZetaReady = zetaPrepared;
+
+                    var kappaPrepared = Convert.ToBoolean(intConv(row["KAPPA_PREPARED"]));
+                    gates.KappaReady = kappaPrepared;
+
+                }
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+
+        public Dictionary<int, GameBan> LoadGameBans(Player player)
+        {
+            var gameBans = new Dictionary<int, GameBan>();
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryTable = mySqlClient.ExecuteQueryTable("SELECT * FROM player_game_bans WHERE PLAYER_ID=" + player.Id);
+                    foreach (DataRow row in queryTable.Rows)
+                    {
+                        var id = intConv(row["ID"]);
+                        var issuedTime = DateTime.Parse(row["ISSUED_TIME"].ToString());
+                        var reason = row["REASON"].ToString();
+                        var expireTime = DateTime.Parse(row["EXPIRE_TIME"].ToString());
+                        var issuedBy = intConv(row["ISSUED_BY"]);
+                        var gameBan = new GameBan(id, issuedTime, reason, expireTime, issuedBy);
+                        gameBans.Add(id, gameBan);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return gameBans;
         }
     }
 }

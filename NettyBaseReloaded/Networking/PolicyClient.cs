@@ -39,7 +39,11 @@ namespace NettyBaseReloaded.Networking
             if (packet.StartsWith("<policy-file-request/>"))
                 XSocket.Write(policyPacket);
             else
-                Console.WriteLine("Errorino with policy request: {0}", packet);
+            {
+                var ip = XSocket.IpEndPoint.Address.ToString();
+                Out.QuickLog("Error with policy request: " + packet + " [" + ip + "]");
+                Console.WriteLine("Errorino with policy request: {0}, [{1}]", packet, ip);
+            }
         }
     }
 }

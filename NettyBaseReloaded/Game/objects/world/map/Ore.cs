@@ -44,6 +44,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 player = _player;
             }
             if (player == null) return;
+            if (player.Information.Cargo.Full)
+            {
+                Packet.Builder.MapEventOreCommand(player.GetGameSession(), this, OreCollection.FAILED_CARGO_FULL);
+                return;
+            }
             if (Disposed)
             {
                 Packet.Builder.MapEventOreCommand(player.GetGameSession(), this, OreCollection.FAILED_ALREADY_COLLECTED);

@@ -75,22 +75,13 @@ namespace NettyBaseReloaded.Game.controllers
             var tickId = 0;
             TickId = tickId;
             Restarting = true;
-            Task.Factory.StartNew(() =>
-            {
-                Thread.Sleep(Npc.RespawnTime * 1000);
-                if (!Restarting)
-                {
-                    return;
-                }
-                Restarting = false;
 
+            Task.Factory.StartNew(() => {
+                Task.Delay(Npc.RespawnTime * 1000).Wait();
+                if (!Restarting) return;
+                Restarting = false;
                 Restart();
             });
-            // TODO
-            //RespawnTimer = DateTime.Now.AddSeconds(Npc.RespawnTime);
-            //if (!StopController) return;
-            //StopController = false;
-            //Sleep();
         }
 
         public void Restart()
@@ -99,6 +90,9 @@ namespace NettyBaseReloaded.Game.controllers
             StopController = false;
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
+            var id = 0;
+            Global.TickManager.Add(Character, out id);
+            Character.SetTickId(id);
             Initiate();
         }
 

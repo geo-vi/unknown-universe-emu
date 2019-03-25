@@ -36,26 +36,12 @@ namespace NettyBaseReloaded.Main.global_managers
         public void Add(ITick tick, out int id)
         {
             id = -1;
-            if (Tickables.Values.Contains(tick))
+            if (/*Tickables.Values.Contains(tick) ||*/ Tickables.ContainsKey(id))
             {
                 return;
             }
 
             id = GetNextTickId();
-
-            if (tick is Player tickedPlayer)
-            {
-                Player _player = null;
-                World.StorageManager.TickedPlayers.TryGetValue(tickedPlayer.Id, out _player);
-                if (_player != null)
-                {
-                    Remove(_player); 
-                    if (_player.Controller != null) Remove(_player.Controller);
-                }
-
-                World.StorageManager.TickedPlayers.TryAdd(tickedPlayer.Id, tickedPlayer);
-            }
-
             Tickables.TryAdd(id, tick);
         }
 
@@ -66,13 +52,6 @@ namespace NettyBaseReloaded.Main.global_managers
             {
                 return;
             }
-
-            if (tick is Player tickedPlayer)
-            {
-                World.StorageManager.TickedPlayers.TryRemove(tickedPlayer.Id, out tickedPlayer);
-                if (tickedPlayer.Controller != null) Remove(tickedPlayer.Controller);
-            }
-
             Tickables.TryRemove(tick.GetId(), out output);
         }
 
@@ -88,7 +67,7 @@ namespace NettyBaseReloaded.Main.global_managers
             while (true)
             {
                 foreach (var tickable in Tickables) { 
-                     Task.Factory.StartNew(tickable.Value.Tick);
+                     await Task.Run(() => tickable.Value.Tick());
                 }
                 await Task.Delay(84);
             }

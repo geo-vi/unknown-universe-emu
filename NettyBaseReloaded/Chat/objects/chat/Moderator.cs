@@ -6,22 +6,14 @@ namespace NettyBaseReloaded.Chat.objects.chat
 {
     class Moderator : Player
     {
-        public enum Level
-        {
-            ADMIN = -1,
-            MOD = 1,
-            VIP = 2,
-            SUPPORTER = 3
-        }
-
-        public Level AdminLevel { get; set; }
+        public ModeratorLevelTypes AdminLevel { get; set; }
 
         /// <summary>
         /// Moderator controller
         /// </summary>
         public new ModeratorController Controller { get; set; }
 
-        public Moderator(int id, string name, string sessionId, Clan clan, Level adminLevel) : base(id, name, sessionId, clan)
+        public Moderator(int id, string name, string sessionId, Clan clan, ModeratorLevelTypes adminLevel) : base(id, name, sessionId, clan)
         {
             AdminLevel = adminLevel;
         }

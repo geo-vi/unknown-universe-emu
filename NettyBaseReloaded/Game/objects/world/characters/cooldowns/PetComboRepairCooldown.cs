@@ -24,14 +24,14 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
             var player = character as Player;
             if (player != null)
             {
-                Packet.Builder.PetBuffCommand(player.GetGameSession(), false, BuffPattern.SHIP_REPAIR_BUFF, new List<int>());
+                //Packet.Builder.PetBuffCommand(player.GetGameSession(), false, BuffPattern.SHIP_REPAIR_BUFF, new List<int>());
             }
         }
 
 
         public override void Send(GameSession gameSession)
         {
-            Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.SHIP_REPAIR_BUFF, new List<int>{ 30 });
+            //Packet.Builder.PetBuffCommand(gameSession, true, BuffPattern.SHIP_REPAIR_BUFF, new List<int>{ TimeLeft.Seconds });
         }
     }
 }

@@ -26,6 +26,13 @@ namespace NettyBaseReloaded.Main.commands
 
                 switch (whomst)
                 {
+                    case "npcsforplayer":
+                        foreach (var entity in World.StorageManager.GetGameSession(targetId).Player.Spacemap.Entities)
+                        {
+                            if (entity.Value is Npc)
+                                entity.Value.Controller.Destruction.Kill();
+                        }
+                        break;
                     case "npcs":
                         foreach (var entity in World.StorageManager.Spacemaps[targetId].Entities)
                         {

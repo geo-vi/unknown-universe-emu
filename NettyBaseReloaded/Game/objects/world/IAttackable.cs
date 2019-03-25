@@ -85,6 +85,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 {
                     return false;
                 }
+                if (character is Pet pet && pet.GetOwner() == this) return true;
             }
             if (range == -1 || attackable.Spacemap.RangeDisabled) return true;
             return attackable.Id != Id &&

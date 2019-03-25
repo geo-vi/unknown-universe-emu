@@ -10,7 +10,6 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
 
         public override void OnStart(Character character)
         {
-            base.OnStart(character);
         }
 
         public override void OnFinish(Character character)
@@ -21,14 +20,13 @@ namespace NettyBaseReloaded.Game.objects.world.characters.cooldowns
         {
             var player = gameSession.Player;
 
-            var item = player.Settings.CurrentAmmo;
             if (player.UsingNewClient)
             {
-                gameSession.Client.Send(SetCooldown(item.LootId, TimerState.COOLDOWN, 3000, 3000, true));
+                gameSession.Client.Send(SetCooldown("ammunition_laser_rsb-75", TimerState.COOLDOWN, TimeLeft.TotalMilliseconds, TotalTime.TotalMilliseconds, true));
             }
             else
             {
-                Packet.Builder.LegacyModule(gameSession, "0|A|CLD|RSB|3");
+                Packet.Builder.LegacyModule(gameSession, "0|A|CLD|RSB|" + TimeLeft.Seconds, true);
             }
         }
     }

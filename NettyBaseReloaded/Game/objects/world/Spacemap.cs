@@ -194,20 +194,18 @@ namespace NettyBaseReloaded.Game.objects.world
         }
         #region Thread Safe Adds / Removes
 
-        public event EventHandler<CharacterArgs> EntityAdded;
         public bool AddEntity(Character character)
         {
             var success = Entities.TryAdd(character.Id, character);
-            if (success) EntityAdded?.Invoke(this, new CharacterArgs(character));
+            //if (success) EntityAdded?.Invoke(this, new CharacterArgs(character));
             return success;
         }
 
-        public event EventHandler<CharacterArgs> EntityRemoved;
         public bool RemoveEntity(Character character)
         {
             Character output;
             var success = Entities.TryRemove(character.Id, out output);
-            if (success) EntityRemoved?.Invoke(this, new CharacterArgs(character));
+            //if (success) EntityRemoved?.Invoke(this, new CharacterArgs(character));
             return success;
         }
 
@@ -505,7 +503,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreatePortal(int map, int x, int y, int newX, int newY, int vwId = 0)
         {
             var id = GetNextObjectId();
-            AddObject(new Jumpgate(id, 0, new Vector(x, y), this, new Vector(newX, newY), map, true, 0, 0, 1));
+            AddObject(new Jumpgate(id, 0, new Vector(x, y), this, new Vector(newX, newY), map, true, 0, 0, PortalGraphics.STANDARD_GATE));
 
             var zoneId = GetNextZoneId();
             if (!Pvp)
@@ -522,10 +520,58 @@ namespace NettyBaseReloaded.Game.objects.world
         public void CreateLoW(Vector pos)
         {
             var id = GetNextObjectId();
-            AddObject(new LowPortal(id, pos, this, 0) { Working = false, DisabledMessage = "Reworking..." });
+            AddObject(new LowPortal(id, pos, this, 0) { Working = true });
 
             var zoneId = GetNextZoneId();
             Zones.Add(zoneId, new DemiZone(zoneId, new Vector(pos.X - 500, pos.Y + 500), new Vector(pos.X + 500, pos.Y - 500),Faction.NONE));
+        }
+
+        public void CreateGalaxyGates(Player player)
+        {
+            var id = GetNextObjectId();
+            switch (Id)
+            {
+                case 1:
+                    if (player.Gates.AlphaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 1, new Vector(3500, 1500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                    id = GetNextObjectId();
+                    if (player.Gates.BetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 2, new Vector(3000, 3000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_2));
+                    id = GetNextObjectId();
+                    if (player.Gates.GammaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 3, new Vector(1500, 3500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
+                    break;
+                case 9:
+                    if (player.Gates.AlphaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 1, new Vector(17500, 11500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                    id = GetNextObjectId();
+                    if (player.Gates.BetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 2, new Vector(18000, 10500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_2));
+                    id = GetNextObjectId();
+                    if (player.Gates.GammaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 3, new Vector(19000, 10000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
+                    id = GetNextObjectId();
+                    if (player.Gates.DeltaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 4, new Vector(15500, 9000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_4));
+                    id = GetNextObjectId();
+                    if (player.Gates.EpsilonReady)
+                        AddObject(new GalaxyGatePortal(player, id, 5, new Vector(18000, 9000), this, new Vector(10400, 6400), 51, PortalGraphics.EPSILON_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.ZetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 6, new Vector(16000, 10800), this, new Vector(10400, 6400), 51, PortalGraphics.ZETA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KappaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 7, new Vector(16700, 9600), this, new Vector(10400, 6400), 51, PortalGraphics.KAPPA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KronosReady)
+                        AddObject(new GalaxyGatePortal(player, id, 8, new Vector(13500, 7800), this, new Vector(10400, 6400), 51, PortalGraphics.KRONOS_GATE));
+                    break;
+            }
+        }
+
+        public void CreateGalaxyGate(Player player, int ggId, Vector position, Vector destination, int destinationMapId, int gfxId)
+        {
+
         }
 
         public void CreateHiddenPortal(int map, Vector pos, Vector newPos, int vwId = 0)

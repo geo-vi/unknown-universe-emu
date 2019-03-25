@@ -83,25 +83,18 @@ namespace NettyBaseReloaded.Game.controllers
             StopController = false;
             Active = true;
             if (CheckedClasses.Count == 0)
-                AddClasses();    
+                AddClasses();
+            if (!Global.TickManager.Exists(this))
+            {
+                Global.TickManager.Add(this, out var tickId);
+                TickId = tickId;
+            }
         }
 
         public new void Tick()
         {
             try
             {
-                if (Player.Moving)
-                {
-                    var session = Player.GetGameSession();
-                    if (session == null)
-                    {
-                        Global.TickManager.Remove(Player);
-                        Exit();
-                        return;
-                    }
-                    session.LastActivityTime = DateTime.Now;
-                }
-
                 foreach (var _class in CheckedClasses.ToList())
                 {
                     _class.Check();

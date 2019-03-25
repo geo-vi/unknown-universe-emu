@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 using NettyBaseReloaded.Game.controllers.implementable;
 using NettyBaseReloaded.Game.objects.world;
@@ -72,6 +73,7 @@ namespace NettyBaseReloaded.Game.controllers
                 if (StopController || Character.EntityState == EntityStates.DEAD)
                 {
                     StopAll();
+                    Logger.Logger._instance.Enqueue("pact", "Escaped controller for ID " + Character.Id + ":" + Character.Name + " // StopController:" + StopController + " Is DEAD: " + (Character.EntityState == EntityStates.DEAD));
                     return;
                 }
 
@@ -99,7 +101,6 @@ namespace NettyBaseReloaded.Game.controllers
                 builder.AppendLine(e.StackTrace);
                 builder.AppendLine("ENDERROR");
                 Logger.Logger._instance.Enqueue("pact", builder.ToString());
-                StopAll();
                 if (Character is Player player)
                 {
                     var session = player.GetGameSession();
@@ -112,6 +113,52 @@ namespace NettyBaseReloaded.Game.controllers
             }
         }
 
+        public void AddToMap()
+        {
+            if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
+            {
+                while (!Character.Spacemap.Entities.TryAdd(Character.Id, Character))
+                {
+                }
+            }
+        }
+
+        public void RemoveFromMap()
+        {
+            Character.Controller.StopAll();
+            Character.RemoveSelection();
+            DeselectFromShip();
+            if (Character.Spacemap.Entities.ContainsKey(Character.Id))
+            {
+                while (!Character.Spacemap.Entities.TryRemove(Character.Id, out _))
+                {
+                }
+            }
+        }
+
+        public void DeselectFromShip()
+        {
+            foreach (var entity in Character.Spacemap.Entities)
+            {
+                if (entity.Value.Selected != null && entity.Value.Selected == Character)
+                {
+                    if (entity.Value.Controller != null)
+                    {
+                        if (entity.Value.Controller.Attack.Attacking)
+                        {
+                            entity.Value.Controller.Attack.Attacking = false;
+                        }
+                    }
+
+                    if (entity.Value is Player)
+                    {
+                        Packet.Builder.ShipSelectionCommand(World.StorageManager.GetGameSession(entity.Value.Id), null);
+                    }
+
+                    entity.Value.Selected = null;
+                }
+            }
+        }
 
         public void TickClasses()
         {

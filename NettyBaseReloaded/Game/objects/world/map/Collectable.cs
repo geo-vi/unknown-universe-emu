@@ -21,13 +21,16 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public Vector[] Limits;
 
-        public virtual bool PetCanCollect => false;
-
-        public Collectable(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits) : base(id, pos, map)
+        protected Collectable(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits) : base(id, pos, map)
         {
             Hash = hash;
             Type = type;
             Limits = limits;
+        }
+
+        public virtual bool PetCanCollect(Player owner)
+        {
+            return false;
         }
 
         public override void Tick()
@@ -37,23 +40,26 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public virtual void Collect(Character character)
         {
-            if (Disposed) return;
-            Player player = null;
-            if (character is Player _player)
+            lock (this)
             {
-                player = _player;
-                if (player.Position.DistanceTo(Position) > 200) return;
-            }
-            else if (character is Pet pet)
-            {
-                player = pet.GetOwner();
-            }
+                if (Disposed) return;
+                Player player = null;
+                if (character is Player _player)
+                {
+                    player = _player;
+                    if (player.Position.DistanceTo(Position) > 200) return;
+                }
+                else if (character is Pet pet)
+                {
+                    player = pet.GetOwner();
+                }
 
-            if (player == null) return;
-            if (this is CargoLoot && player.Information.Cargo.Full) return;
-            player.QuestData.AddCollection(this);
-            Dispose();
-            Reward(player);
+                if (player == null) return;
+                if (this is CargoLoot && player.Information.Cargo.Full) return;
+                player.QuestData.AddCollection(this);
+                Dispose();
+                Reward(player);
+            }
         }
 
         protected abstract void Reward(Player player);

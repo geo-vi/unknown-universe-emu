@@ -9,10 +9,11 @@ namespace NettyBaseReloaded.Utils
 {
     class Encode
     {
-        public static string Base64(string plainText)
+        public static string Base64(string toEncode)
         {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
+            var toEncodeAsBytes = System.Text.Encoding.ASCII.GetBytes(toEncode);
+            var returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
+            return returnValue;
         }
 
         public static string MD5(string source)

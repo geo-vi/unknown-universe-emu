@@ -46,6 +46,13 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     Collectables.Add(collectable.Hash, collectable);
                 }
             }
+            else if (obj is Ore ore)
+            {
+                if (!Resources.ContainsKey(ore.Hash))
+                {
+                    Resources.Add(ore.Hash, ore);
+                }
+            } 
             return Objects.TryAdd(obj.Id, obj);
         }
 

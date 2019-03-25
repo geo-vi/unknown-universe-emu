@@ -15,6 +15,7 @@ using NettyBaseReloaded.Networking;
 using NettyBaseReloaded.Game.objects.world.players.extra.techs;
 using Newtonsoft.Json;
 using NettyBaseReloaded.Game.objects.world.npcs;
+using NettyBaseReloaded.Game.objects.world.players.ammo;
 using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
@@ -84,7 +85,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private DateTime RSBCooldownEnd = new DateTime();
 
-        public bool Select(IAttackable target)
+        public bool TrySelect(IAttackable target)
         {
             if (target != null && target.Targetable && target.EntityState != EntityStates.DEAD)
             {
@@ -98,7 +99,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void LaserAttack()
         {
             var enemy = Character.Selected;
-            if (!AssembleEnemy(enemy) || Disabled) return;
+            if (!AssembleEnemy(enemy)) return;
 
             var isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
             if (isRsb)
@@ -106,8 +107,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (RSBCooldownEnd > DateTime.Now) return;
 
                 var cld = new RSBCooldown();
-                cld.Send(((Player)Character).GetGameSession());
                 Character.Cooldowns.Add(cld);
+                cld.Send(((Player)Character).GetGameSession());
                 RSBCooldownEnd = cld.EndTime;
             }
             else
@@ -118,7 +119,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             var damage = Character.Damage;
             var absDamage = 0; //This variable will be used for ammo that absobrs shield too
-
             var laserColor = 0;
 
             if (Character is Player)
@@ -322,22 +322,22 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     break;
                 case "ammunition_specialammo_pld-8":
                     rocketId = 5;
-                    if (Character.Cooldowns.Any(c => c is PlasmaCooldown)) return;
+                    if (Character.Cooldowns.CooldownDictionary.Any(c => c.Value is PlasmaCooldown)) return;
                     Plasma(enemy as Character);
                     return;
                 case "ammunition_specialammo_dcr-250":
                     rocketId = 6;
-                    if (Character.Cooldowns.Any(c => c is DecelerationCooldown)) return;
+                    if (Character.Cooldowns.CooldownDictionary.Any(c => c.Value is DecelerationCooldown)) return;
                     Decelerate(enemy as Character);
                     return;
                 case "ammunition_specialammo_wiz-x":
                     rocketId = 8;
-                    if (Character.Cooldowns.Any(c => c is WizardCooldown)) return;
+                    if (Character.Cooldowns.CooldownDictionary.Any(c => c.Value is WizardCooldown)) return;
                     Wizard(enemy as Character);
                     return;
             }
 
-            if (Character.Cooldowns.Any(c => c is RocketCooldown)) return;
+            if (Character.Cooldowns.CooldownDictionary.Any(c => c.Value is RocketCooldown)) return;
 
             if (player?.Settings.CurrentRocket.Shoot() == 0)
             {
@@ -376,44 +376,34 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Damage.Types dmgTypes = Damage.Types.ROCKET;
 
             var loadedRockets = Character.RocketLauncher.LoadedRockets;
-            
+
             switch (Character.RocketLauncher.LoadLootId)
             {
                 case "ammunition_rocketlauncher_eco-10":
-                    rocketId = 9;
                     damage = RandomizeDamage(2000 * loadedRockets);
                     break;
                 case "ammunition_rocketlauncher_hstrm-01":
-                    rocketId = 10;
                     damage = RandomizeDamage(4000 * loadedRockets);
                     break;
                 case "ammunition_rocketlauncher_ubr-100":
-                    rocketId = 11;
                     var baseDamage = 4000;
                     if (enemy is Npc) baseDamage = 7500;
                     damage = RandomizeDamage(baseDamage * loadedRockets);
                     break;
                 case "ammunition_rocketlauncher_sar-01":
-                    rocketId = 12;
                     absDamage = RandomizeDamage(1200 * loadedRockets);
                     dmgTypes = Damage.Types.SHIELD_ABSORBER_ROCKET_CREDITS;
                     break;
                 case "ammunition_rocketlauncher_sar-02":
-                    rocketId = 13;
                     absDamage = RandomizeDamage(5000 * loadedRockets);
                     dmgTypes = Damage.Types.SHIELD_ABSORBER_ROCKET_URIDIUM;
                     break;
             }
 
-            if (Character.Cooldowns.Any(cooldown => cooldown is RocketLauncherCooldown)) return;
+            GameClient.SendToPlayerView(Character, netty.commands.old_client.HellstormAttackCommand.write(Character.Id, enemy.Id, damage != 0, loadedRockets, AmmoConverter.ToAmmoType(Character.RocketLauncher.LoadLootId)), true);
+            //GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + loadedRockets + "|" + rocketId), true);
 
             Character.RocketLauncher.Shoot(loadedRockets);
-
-            var newCooldown = new RocketLauncherCooldown();
-            Character.Cooldowns.Add(newCooldown);
-
-            GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + loadedRockets + "|" + rocketId), true);
-            GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|RL|A|" + Character.Id + "|" + enemy.Id + "|" + loadedRockets + "|" + rocketId), true);
 
             Controller.Damage?.Rocket(enemy, absDamage, true, dmgTypes);
             Controller.Damage?.Rocket(enemy, damage, false, dmgTypes);
@@ -468,7 +458,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Wizard(Character target)
         {
-            if (target == null || Character.Cooldowns.Any(x => x is WizardCooldown)) return;
+            if (target == null || Character.Cooldowns.CooldownDictionary.Any(c => c.Value is WizardCooldown)) return;
 
             var wizCooldown = new WizardCooldown();
             if (Character is Player)
@@ -583,7 +573,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         public void SlowdownAttack()
         {
             var enemy = Character.SelectedCharacter;
-            if (!AssembleEnemy(enemy) || Character.Cooldowns.Any(x => x is SlowdownAttackCooldown)) return;
+            if (!AssembleEnemy(enemy) || Character.Cooldowns.CooldownDictionary.Any(c => c.Value is SlowdownAttackCooldown)) return;
 
             GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|n|SAB_SHOT|" + Character.Id + "|" + enemy.Id), true);
             GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|n|SAB_SHOT|" + Character.Id + "|" + enemy.Id), true);

@@ -129,9 +129,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
                 {
                     return;
                 }
-                Task.Factory.StartNew(() => Waves[Wave].Create(VirtualMap, VWID));
+
+                Waves[Wave].Create(VirtualMap, VWID);
                 Wave++;
                 WavesLeftTillEnd--;
+
                 foreach (var joined in JoinedPlayers.Values)
                 {
                     if (joined.GetGameSession() == null) continue;
@@ -152,28 +154,31 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
 
         public override void Reward()
         {
+            base.Reward();
             AlmostNoNpcsLeft -= LowGate_AlmostNoNpcsLeft;
-            Finished = true;
-            var random = RandomInstance.getInstance(Owner);
-            var hit = random.Next(0, 100);
+            var randomInstance = RandomInstance.getInstance(this);
+            var num = randomInstance.NextDouble();
             foreach (var joined in JoinedPlayers.Values)
             {
-                var currencyReward = new Reward(new Dictionary<RewardType, int> { { RewardType.CREDITS, 2500000 }, { RewardType.URIDIUM, 25000 } });
-                var ammoReward = new Reward(RewardType.AMMO, Item.Find("ammunition_laser_ucb-100"), 25000);
+                var currencyReward = new Reward(new Dictionary<RewardType, int> { { RewardType.CREDITS, 1250000 }, { RewardType.URIDIUM, 12500 } });
+                var ammoReward = new Reward(RewardType.AMMO, Item.Find("ammunition_laser_ucb-100"), 12500);
                 var specialReward = new characters.Reward(RewardType.ITEM, Item.Find("equipment_weapon_laser_lf-4"), 1);
-                if (joined?.GetGameSession() == null) continue;
-                var joinedSession = joined.GetGameSession();
-                if (hit == 15)
+                if (num < 0.03)
                 {
-                    Packet.Builder.LegacyModule(joinedSession, "0|A|STD|You've won a LF4!");
                     specialReward.ParseRewards(joined);
                 }
                 //TODO
                 MoveOut(joined);
                 ammoReward.ParseRewards(joined);
                 currencyReward.ParseRewards(joined);
+
+                if (joined.OwnedGates.ContainsKey(Id))
+                {
+                    joined.OwnedGates.TryRemove(Id, out _);
+                }
             }
             JoinedPlayers.Clear();
+
         }
     }
 }

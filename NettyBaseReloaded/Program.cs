@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 using NettyBaseReloaded.Main;
@@ -384,6 +385,10 @@ namespace NettyBaseReloaded
 
         public static void Exit()
         {
+            foreach (var session in World.StorageManager.GameSessions)
+            {
+                session.Value.Player.Save();
+            }
             Environment.Exit(0);
         }
     }
