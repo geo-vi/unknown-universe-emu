@@ -52,7 +52,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
             GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
             Opened = true;
 
-            for (int i = 0; i <= DaughterSpawnCount; i++)
+            for (int i = 0; i <= 20 - GetActiveDaughtersCount(); i++)
             {
                 var minionId = Controller.Npc.Spacemap.CreateNpc(DaughterType, AILevels.DAUGHTER, Controller.Npc);
                 Mother.Children.TryAdd(minionId, Mother.Spacemap.Entities[minionId] as Npc);
@@ -80,10 +80,10 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 GameClient.SendToPlayerView(Controller.Npc,
                     netty.commands.old_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
                 GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
-
+                Opened = false;
             }
 
-            if (GetActiveDaughtersCount() < 5)
+            if (GetActiveDaughtersCount() != 20 && !Opened)
             {
                 Active();
             }
