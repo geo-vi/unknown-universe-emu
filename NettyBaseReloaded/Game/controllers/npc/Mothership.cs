@@ -83,7 +83,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
             }
 
-            if (Mother.Children.Count < 5)
+            if (GetActiveDaughtersCount() < 5)
             {
                 Active();
             }
@@ -104,6 +104,16 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Exit()
         {
             Opened = false;
+        }
+
+        public int GetActiveDaughtersCount()
+        {
+            if (Mother?.Children != null)
+            {
+                return Mother.Children.Count(x => x.Value.Controller.Active);
+            }
+
+            return 0;
         }
     }
 }

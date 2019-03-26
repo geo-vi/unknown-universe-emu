@@ -74,6 +74,29 @@ namespace NettyBaseReloaded.Game.controllers
                 {
                     StopAll();
                     Logger.Logger._instance.Enqueue("pact", "Escaped controller for ID " + Character.Id + ":" + Character.Name + " // StopController:" + StopController + " Is DEAD: " + (Character.EntityState == EntityStates.DEAD));
+                    if (Character.EntityState != EntityStates.DEAD)
+                    {
+                        if (Character is Player player)
+                        {
+                            var session = player.GetGameSession();
+                            if (session != null)
+                            {
+                                Packet.Builder.LegacyModule(session, "0|A|STD|Kicked because of bug that was found on your account");
+                                session.Kick();
+                            }
+                        }
+
+                        if (Character is Pet pet)
+                        {
+                            pet.Controller.Deactivate();
+                            var petOwner = pet.GetOwner();
+                            var petOwnerSession = petOwner?.GetGameSession();
+                            if (petOwnerSession != null)
+                            {
+                                Packet.Builder.LegacyModule(petOwnerSession, "0|A|STD|P.E.T force deactivated by server - bug found on the account.");
+                            }
+                        }
+                    }
                     return;
                 }
 

@@ -380,35 +380,39 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
         }
 
-        public static void Area(Spacemap map, Vector center, int radius, int amount, Types attackType, DamageType damageType = DamageType.DEFINED)
+        public static void Area(Spacemap map, Vector center, int radius, int amount, Types attackType, DamageType damageType = DamageType.DEFINED, bool playersOnly = true)
         {
             foreach (var entry in map.Entities.Where(x => x.Value.Position.DistanceTo(center) <= radius))
             {
-                var damage = 0;
-                switch (damageType)
+                if (entry.Value is Player && playersOnly || !playersOnly)
                 {
-                    case DamageType.DEFINED:
-                        damage = amount;
-                        break;
-                    case DamageType.PERCENTAGE:
-                        damage = (int)(entry.Value.CurrentHealth * amount / 100.0);
-                        break;
-                }
-                //TODO use Damage() method instead
+                    var damage = 0;
+                    switch (damageType)
+                    {
+                        case DamageType.DEFINED:
+                            damage = amount;
+                            break;
+                        case DamageType.PERCENTAGE:
+                            damage = (int) (entry.Value.CurrentHealth * amount / 100.0);
+                            break;
+                    }
+                    //TODO use Damage() method instead
 
-                entry.Value.CurrentHealth -= damage;
-                entry.Value.LastCombatTime = DateTime.Now;
+                    entry.Value.CurrentHealth -= damage;
+                    entry.Value.LastCombatTime = DateTime.Now;
 
-                foreach (var session in AssembleSelectedSessions(entry.Value))
-                {
-                    Packet.Builder.AttackHitCommand(session, 0, entry.Value, damage, (short)attackType);
-                }
+                    foreach (var session in AssembleSelectedSessions(entry.Value))
+                    {
+                        Packet.Builder.AttackHitCommand(session, 0, entry.Value, damage, (short) attackType);
+                    }
 
-                if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
-                {
-                    entry.Value.Destroy();
+                    if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
+                    {
+                        entry.Value.Destroy();
+                    }
+
+                    entry.Value.Updaters.Update();
                 }
-                entry.Value.Updaters.Update();
             }
         }
 
