@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             var duranium = gameSession.Player.Information.Cargo.Duranium;
             var xeno = gameSession.Player.Information.Cargo.Xenomit;
 
-            var count = request.toProduce.count;
+            var count = Math.Abs(request.toProduce.count);
             switch (request.toProduce.oreType.typeValue)
             {
                 case OreTypeModule.PROMERIUM: // orange

@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         private const int COLLECTION_TIME = 3; // default 5 
 
-        public PirateBooty(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning) : base(id, hash, type, pos, map, limits)
+        public PirateBooty(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning) : base(id, hash, type, pos, map, limits, false)
         {
             Respawning = respawning;
         }

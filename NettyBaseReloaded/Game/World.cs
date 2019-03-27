@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.netty;
@@ -448,9 +449,10 @@ namespace NettyBaseReloaded.Game
         private static void CreateHashes(Spacemap map)
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var stringChars = new char[4];
-            const int HASHES = 1000;
+            var stringChars = new char[5];
+            const int HASHES = 800;
 
+            int created = 0;
             var randomInstance = RandomInstance.getInstance(map);
             for (int entry = 0; entry < HASHES; entry++)
             {
@@ -460,13 +462,21 @@ namespace NettyBaseReloaded.Game
                     stringChars[i] = chars[randomInstance.Next(chars.Length)];
                 }
 
-                var hash = new String(stringChars);
-                if (map.HashedObjects.ContainsKey(hash))
+                var hash = new string(stringChars);
+                if (map.HashedObjects.ContainsKey(hash) || StorageManager.HoneyBoxes.Contains(hash))
                     goto NEWHASH;
-                map.HashedObjects.TryAdd(hash, null);
+                map.HashedObjects[hash] = null;
+                created++;
             }
+
+            foreach (var honeyBox in StorageManager.HoneyBoxes)
+            {
+                map.HashedObjects[honeyBox] = new FakeHoneyBox(honeyBox);
+                created++;
+            }
+
             map.Objects.TryAdd(0, null);
-            Debug.WriteLine($"Created {HASHES-1} hashes.");
+            Debug.WriteLine($"Created {created} hashes.");
         }
     }
 }

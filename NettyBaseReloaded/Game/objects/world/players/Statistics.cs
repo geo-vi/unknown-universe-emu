@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         /// <summary>
         /// Killed entities
         /// </summary>
-        public Dictionary<string, int> SHIPS_KILLED { get; set; }
+        public Dictionary<int, int> SHIPS_KILLED { get; set; }
 
         /// <summary>
         /// Deaths
@@ -34,36 +34,19 @@ namespace NettyBaseReloaded.Game.objects.world.players
         /// <summary>
         /// Average movement per minute
         /// </summary>
-        public double AVG_MOVE_PER_MIN { get; set; }
+        public double AVG_MOVEREQUESTS_PER_MIN { get; set; }
 
         /// <summary>
         /// Averege session lenght
         /// </summary>
-        public int AVG_SESSION_LENGHT { get; set; } 
+        public int AVG_GAMESESSION_LENGHT { get; set; } 
 
         public DateTime LAST_TIME_CONNECTED { get; set; }
-
-        public double PacketsPerSec;
 
         private DateTime ConnectedTime = DateTime.Now;
 
         public Statistics(Player player) : base(player)
         {
-        }
-
-        private async void CalculatePackets()
-        {
-            ConnectedTime = DateTime.Now;
-            while (true)
-            {
-                var session = Player.GetGameSession();
-                if (session != null && session.Active)
-                {
-                    PacketsPerSec = session.Client.SentPackets / (DateTime.Now - ConnectedTime).TotalSeconds;
-                }
-
-                await Task.Delay(1000);
-            }
         }
     }
 }

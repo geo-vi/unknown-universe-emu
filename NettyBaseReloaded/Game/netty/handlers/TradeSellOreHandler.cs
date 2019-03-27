@@ -23,7 +23,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             var oreType = (OreTypes) request.toSell.oreType.typeValue;
             var cargo = gameSession.Player.Information.Cargo;
-            var count = (int)request.toSell.count;
+            var count = Convert.ToInt32(Math.Abs(request.toSell.count));
             if (count <= 0) return;
             var cred = gameSession.Player.Information.Credits;
             var value = 0;

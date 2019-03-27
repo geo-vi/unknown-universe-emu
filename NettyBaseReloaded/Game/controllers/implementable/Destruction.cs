@@ -217,6 +217,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 player.Controller = new PlayerController(Character);
             }
+            player.Controller.StopController = false;
+
             var (newPos, spacemap) = player.GetClosestStation();
 
             player.VirtualWorldId = 0;
@@ -225,6 +227,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
                 Character.Spacemap.AddEntity(Character);
+
 
             player.Setup();
             player.Controller.Setup();
@@ -262,6 +265,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             Character.EntityState = EntityStates.ALIVE;
             Character.CurrentHealth = 1000;
+            Character.Controller.StopController = false;
         }
     }
 }

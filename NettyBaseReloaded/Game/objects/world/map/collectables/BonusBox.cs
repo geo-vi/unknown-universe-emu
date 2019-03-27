@@ -22,9 +22,15 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         private bool Respawning { get; }
 
-        public BonusBox(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning = false) : base(id, hash, type, pos, map, limits)
+        /// <summary>
+        /// Bot detection system!
+        /// </summary>
+        public bool IsHoneyBox;
+
+        public BonusBox(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning = false, bool isHoneyBox = false) : base(id, hash, type, pos, map, limits, isHoneyBox)
         {
             Respawning = respawning;
+            IsHoneyBox = isHoneyBox;
         }
 
         public override void Dispose()
@@ -87,7 +93,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         public override bool PetCanCollect(Player owner)
         {
-            return true;
+            return !IsHoneyBox;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (gameSession == null || gameSession.Player.Information.Cargo.Palladium < 15) return;
             var player = gameSession.Player;
 
-            var valueExchanged = Convert.ToInt32(param[1]);
+            var valueExchanged = Math.Abs(Convert.ToInt32(param[1]));
             if (player.Information.Cargo.Palladium - valueExchanged >= 0)
             {
                 var rate = World.StorageManager.OrePrices.Palladium;

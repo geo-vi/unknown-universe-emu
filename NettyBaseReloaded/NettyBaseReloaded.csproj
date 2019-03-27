@@ -552,6 +552,7 @@
     <Compile Include="Game\objects\world\events\BinaryBotGameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
     <Compile Include="Game\objects\world\map\collectables\EventBox.cs" />
+    <Compile Include="Game\objects\world\map\collectables\FakeHoneyBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\LootBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\PirateBooty.cs" />
     <Compile Include="Game\objects\world\map\collectables\rewards\PotentialReward.cs" />
@@ -792,6 +793,7 @@
     <Compile Include="Main\commands\InfoCommand.cs" />
     <Compile Include="Main\commands\KickCommand.cs" />
     <Compile Include="Main\commands\KillCommand.cs" />
+    <Compile Include="Main\commands\MapCommand.cs" />
     <Compile Include="Main\commands\MuteCommand.cs" />
     <Compile Include="Main\commands\NpcCommand.cs" />
     <Compile Include="Main\commands\RconCommand.cs" />

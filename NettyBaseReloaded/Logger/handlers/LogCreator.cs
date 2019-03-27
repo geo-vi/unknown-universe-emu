@@ -13,6 +13,7 @@ namespace NettyBaseReloaded.Logger.handlers
         public static readonly string PATH_LOG = Server.LOGGING_DIRECTORY + Program.SERVER_SESSION + "/log.txt";
         public static readonly string PATH_DBLOG = Server.LOGGING_DIRECTORY + Program.SERVER_SESSION + "/dblog.txt";
         public static readonly string PATH_PACT = Server.LOGGING_DIRECTORY + Program.SERVER_SESSION + "/pact.txt";
+        public static readonly string PATH_ANTICHEAT = Server.LOGGING_DIRECTORY + Program.SERVER_SESSION + "/anticheat.txt";
 
         public static void Initialize()
         {
@@ -20,11 +21,13 @@ namespace NettyBaseReloaded.Logger.handlers
             New(PATH_LOG);
             New(PATH_DBLOG);
             New(PATH_PACT);
+            New(PATH_ANTICHEAT);
             Logger._instance = new Logger(new Dictionary<string, string>
             {
                 {"log", PATH_LOG },
                 {"dblog", PATH_DBLOG },
-                {"pact", PATH_PACT }
+                {"pact", PATH_PACT },
+                {"anticheat", PATH_ANTICHEAT }
             });
             foreach (var logfile in Logger._instance.LogFiles)
             {

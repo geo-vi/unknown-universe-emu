@@ -241,9 +241,9 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public int GetNextObjectId()
+        public int GetNextObjectId(int start = 0)
         {
-            var i = 0;
+            var i = start;
             while (true)
             {
                 if (Objects.ContainsKey(i))
@@ -698,7 +698,12 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
-            var box = new BonusBox(id, hash, type, pos, this, limits,true);
+            var honeyBox = HashedObjects[hash] is FakeHoneyBox;
+            if (honeyBox)
+            {
+                Debug.WriteLine("Honey box created: " + HashedObjects.Keys.ToList()[id]);
+            }
+            var box = new BonusBox(id, hash, type, pos, this, limits,true, honeyBox);
             HashedObjects[hash] = box;
             if (AddObject(box))
                 Out.WriteLog("Created Box[" + type + "] on mapId " + Id);

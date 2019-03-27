@@ -148,7 +148,7 @@ namespace NettyBaseReloaded.Main.commands
                     Console.WriteLine("Entities: " + player.Spacemap.Entities.Count + ", Objects: " + player.Spacemap.Objects.Count);
                     foreach (var entity in player.Spacemap.Entities.Values)
                     {
-                        Console.WriteLine("ID: " + entity.Id + ";"+entity.Name + ";tick: (character)" + Global.TickManager.Exists(entity) +",(controller)" + Global.TickManager.Exists(entity.Controller));
+                        Console.WriteLine("ID: " + entity.Id + ";"+entity.Name + ";tick: (character)" + Global.TickManager.Exists(entity) +",(controller)" + Global.TickManager.Exists(entity.Controller) + "," + entity.Position);
                     }
                     break;
             }

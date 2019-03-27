@@ -2187,6 +2187,11 @@ namespace NettyBaseReloaded.Game.managers
 
             return gameBans;
         }
+
+        public void AddToCheatList(Player player)
+        {
+            
+        }
     }
 }
 

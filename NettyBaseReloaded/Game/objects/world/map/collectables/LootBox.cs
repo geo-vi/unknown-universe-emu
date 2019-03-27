@@ -12,7 +12,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
     {
         private Reward BoxReward;
 
-        public LootBox(int id, string hash, Types type, Vector pos, Spacemap map, Reward reward, int disposeTimeMs) : base(id, hash, type, pos, map, null)
+        public LootBox(int id, string hash, Types type, Vector pos, Spacemap map, Reward reward, int disposeTimeMs) : base(id, hash, type, pos, map, null, false)
         {
             Temporary = true;
             DelayedDispose(disposeTimeMs);
