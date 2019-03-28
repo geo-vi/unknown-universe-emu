@@ -15,12 +15,6 @@ namespace QuestBuilder.mysql
 
         public static void Initialize(bool remote = false)
         {
-            if (remote)
-            {
-                SERVER = "5.9.14.50";
-                UID = "remote";
-                PWD = "789456123gta";
-            }
             GenerateConnectionString();
             using (var client = GetClient())
             {
