@@ -143,6 +143,7 @@ namespace NettyBaseReloaded.Game.objects
                 Global.TickManager.Remove(Player);
             }
             Player?.Controller?.Exit();
+            World.StorageManager.GameSessions.TryRemove(Player.Id, out _);
         }
     }
 }

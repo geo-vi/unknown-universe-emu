@@ -64,15 +64,13 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public void Tick()
         {
-            lock (this)
+            while (true)
             {
-                while (true)
+                foreach (var tickable in Tickables)
                 {
-                    foreach (var tickable in Tickables)
-                    {
-                        tickable.Value.Tick();
-                    }
+                    tickable.Value.Tick();
                 }
+                Thread.Sleep(1);
             }
         }
     }

@@ -330,9 +330,9 @@ namespace NettyBaseReloaded.Networking
             {
                 if (_socket == null) return;
 
-                var bytesRead = _socket.EndReceive(ar);
+                var bytesRead = _socket.EndReceive(ar, out var errorCode);
 
-                if (bytesRead <= 0)
+                if (errorCode != SocketError.Success || bytesRead <= 0)
                 {
                     Close();
                     return;

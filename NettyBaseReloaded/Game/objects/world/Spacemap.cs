@@ -107,8 +107,6 @@ namespace NettyBaseReloaded.Game.objects.world
         public void Tick()
         {
             ObjectsTicker();
-            //ZoneTicker();
-            //NpcTicker();
         }
 
         private DateTime LastTimeTicketObjects = new DateTime();
@@ -130,68 +128,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             return position.X < Limits[0].X || position.X > Limits[1].X || position.Y < Limits[0].Y || position.Y > Limits[1].Y;
         }
-
-        private DateTime LastTimeTickedPlayers = new DateTime();
-
-        public void PlayerTicker()
-        {
-            if (LastTimeTickedPlayers.AddSeconds(2) > DateTime.Now) return;
-
-            foreach (var entity in Entities)
-            {
-                var player = entity.Value as Player;
-                if (player != null && player.IsLoaded)
-                {
-                    if (player.Spacemap != this)
-                    {
-                        RemoveEntity(player);
-                        continue;
-                    }
-                    if (player.Storage.LoadedObjects.Count != Objects.Count)
-                    {
-                        var dicOne = player.Storage.LoadedObjects.ToList();
-                        var dicTwo = Objects;
-
-                        if (dicOne == null || dicTwo == null) continue;
-
-                        var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
-
-                        foreach (var differance in diff)
-                        {
-                            if (Objects.ContainsKey(differance.Key))
-                                player.LoadObject(differance.Value);
-                            else if (player.Storage.LoadedObjects.ContainsKey(differance.Key))
-                                player.UnloadObject(differance.Value);
-                        }
-                    }
-
-                    if (player.IsLoaded && player.Storage.LoadedPOI.Count != POIs.Count)
-                    {
-                        var dicOne = player.Storage.LoadedPOI;
-                        var dicTwo = POIs;
-                        var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
-
-                        foreach (var differance in diff)
-                        {
-                            player.Storage.LoadPOI(differance.Value);
-                        }
-                    }
-                }
-            }
-            LastTimeTickedPlayers = DateTime.Now;
-        }
-
-        public void NpcTicker()
-        {
-            if (Entities.Count > 0)
-            {
-                var entries = Entities.ToList().Where(x => x.Value is Npc);
-                foreach (var entry in entries)
-                {
-                    ((Npc)entry.Value).Tick();
-                }
-            }
-        }
+        
         #region Thread Safe Adds / Removes
 
         public bool AddEntity(Character character)

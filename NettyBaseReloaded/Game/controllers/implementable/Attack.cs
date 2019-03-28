@@ -535,7 +535,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void RefreshAttackers()
         {
-            Parallel.ForEach(Attackers, attacker =>
+            foreach (var attacker in Attackers)
             {
                 if (attacker.Value?.Player != null && attacker.Value.LastRefresh.AddSeconds(10) > DateTime.Now)
                 {
@@ -560,7 +560,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     Attacker removedAttacker;
                     Attackers.TryRemove(attacker.Key, out removedAttacker);
                 }
-            });
+            }
             if (MainAttacker != null)
             {
                 if (!Attackers.ContainsKey(MainAttacker.Id))

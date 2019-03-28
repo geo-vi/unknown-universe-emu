@@ -48,11 +48,17 @@ namespace NettyBaseReloaded.Game.controllers.npc
         private DateTime LastActiveTime = new DateTime();
         public void Active()
         {
+            var daughtersAlive = GetActiveDaughtersCount();
+            if (daughtersAlive > 20)
+            {
+                return;
+            }
+
             GameClient.SendToPlayerView(Controller.Npc, netty.commands.old_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
             GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
             Opened = true;
 
-            for (int i = 0; i <= 20 - GetActiveDaughtersCount(); i++)
+            for (int i = 0; i < 20 - daughtersAlive; i++)
             {
                 var minionId = Controller.Npc.Spacemap.CreateNpc(DaughterType, AILevels.DAUGHTER, Controller.Npc);
                 Mother.Children.TryAdd(minionId, Mother.Spacemap.Entities[minionId] as Npc);
@@ -81,11 +87,6 @@ namespace NettyBaseReloaded.Game.controllers.npc
                     netty.commands.old_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
                 GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
                 Opened = false;
-            }
-
-            if (GetActiveDaughtersCount() != 20 && !Opened)
-            {
-                Active();
             }
 
             if (Controller.Npc.LastCombatTime > DateTime.Now.AddSeconds(10))

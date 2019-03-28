@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Main.global_managers;
@@ -35,8 +36,10 @@ namespace NettyBaseReloaded.Main
             InitiateRandomResetTimer();
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
-            var task = new Task(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
-            task.Start();
+            var thread = new Thread(TickManager.Tick);
+            thread.Start();
+            //var task = new Task(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
+            //task.Start();
         }
 
         private static void InitiateStatusUpdater()
