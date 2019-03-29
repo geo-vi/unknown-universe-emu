@@ -58,7 +58,6 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 //todo
                 var n = random.NextDouble();
                 var potentialReward = orderedRewards.FirstOrDefault(x => x.Chance > n) ?? orderedRewards.Last();
-                Console.WriteLine(n + " " + potentialReward.Chance + " " + potentialReward.LootId);
 
                 Reward reward = null;
                 RewardType type;
