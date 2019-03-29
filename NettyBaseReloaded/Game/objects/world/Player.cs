@@ -32,17 +32,19 @@ namespace NettyBaseReloaded.Game.objects.world
          * BASICS *
          **********/
 
+        #region Basics Variables
         public int GlobalId;
 
         public string SessionId { get; set; }
 
         public Rank RankId { get; set; }
         public new PlayerController Controller { get; set; }
-
+        #endregion
         /***************
          * INFORMATION *
          ***************/
 
+        #region Information Variables
         public Equipment Equipment { get; private set; }
 
         public Statistics Statistics { get; private set; }
@@ -52,7 +54,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public State State { get; private set; }
 
         public override Hangar Hangar => Equipment.ActiveHangar;
-
+        #endregion
         /*********
          * EXTRA *
          *********/

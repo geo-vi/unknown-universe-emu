@@ -88,7 +88,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                                 //TODO: Group reward modes & stuff
                                                 var percentageTotalDmgGiven =
                                                     (double)attacker.Value.TotalDamage /
-                                                    (target.MaxHealth + target.MaxShield);
+                                                    attackers.Sum(x => x.Value.TotalDamage);
 
                                                 if (target.Hangar.Ship.Id != 80 && attacker.Value.Player == mainAttacker)
                                                     percentageTotalDmgGiven = 1;
@@ -101,6 +101,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                                 else reward.Rewards.Add(rewardValue);
                                             }
                                             reward.ParseRewards(attacker.Value.Player);
+                                            attacker.Value.Player.QuestData.AddKill(target);
                                         }
                                     }
                                     else 
@@ -116,6 +117,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 eventP.Value.DestroyAttackable(target);
                             player.QuestData.AddKill(target);
                             player.Information.AddKill(target.Hangar.Ship.Id);
+
+                            var damageDealt = attackers.FirstOrDefault(x => x.Value.Player == player).Value
+                                ?.TotalDamage;
+                            player.Statistics.AddKill(target, Convert.ToInt32(damageDealt));
                         }
                     }
                     if (target is Npc)

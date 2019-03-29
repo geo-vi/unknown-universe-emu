@@ -99,6 +99,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public bool WaitingForEquipmentRefresh;
 
+        public bool CollectingLoot;
+
         public State(Player player) : base(player)
         {
             AddHomeMaps();

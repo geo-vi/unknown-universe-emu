@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NettyBaseReloaded.Game.objects.world
 {
-    #pragma warning disable 1591
+#pragma warning disable 1591
     enum RewardType
     {
         CREDITS,
@@ -14,14 +14,14 @@ namespace NettyBaseReloaded.Game.objects.world
         EXPERIENCE,
         HONOR,
         ITEM,
-        GALAXY_GATES_ENERGY, 
+        GALAXY_GATES_ENERGY,
         BOOSTER,
         AMMO,
         ORE,
         DESIGN,
         SHIP
     }
-    
+
     /// <summary>
     /// Faction Ids
     /// </summary>
@@ -229,5 +229,15 @@ namespace NettyBaseReloaded.Game.objects.world
         ROCKET_PRECISSION,
         SHIELD_BUFF
     }
-    #pragma warning restore 1591
+
+    public enum PlayerLogTypes
+    {
+        DEBUG = 1,
+        SYSTEM,
+        NORMAL,
+        VOUCHER,
+        ACP,
+        CLAN
+    }
+#pragma warning restore 1591
 }

@@ -73,6 +73,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             if (Player.Information.KilledShips.ContainsKey(shipId))
                 Player.Information.KilledShips[shipId]++;
             else Player.Information.KilledShips.Add(shipId, 1);
+            World.DatabaseManager.SaveStats(Player);
         }
 
         private DateTime LastUpd = new DateTime();

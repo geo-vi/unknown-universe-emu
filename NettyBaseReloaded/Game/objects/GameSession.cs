@@ -24,6 +24,8 @@ namespace NettyBaseReloaded.Game.objects
 
         public DateTime LastActivityTime { get; set; }
 
+        public DateTime SessionStartTime;
+
         public bool Active
         {
             get
@@ -45,6 +47,7 @@ namespace NettyBaseReloaded.Game.objects
             Global.TickManager.Add(this, out tickId);
             TickId = tickId;
             World.StorageManager.GameSessions.TryAdd(Player.Id, this);
+            SessionStartTime = DateTime.Now;
         }
 
         public int GetId()

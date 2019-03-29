@@ -57,7 +57,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
                         World.DatabaseManager.AddToCheatList(_player);
                         Console.WriteLine("Cheater found, logged.");
                     }
-                    if (player.Position.DistanceTo(Position) > 200) return;
+                    if (player.Position.DistanceTo(Position) > 150 || player.State.CollectingLoot) return;
                 }
                 else if (character is Pet pet)
                 {
@@ -66,9 +66,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
                 if (player == null) return;
                 if (this is CargoLoot && player.Information.Cargo.Full) return;
+                player.State.CollectingLoot = true;
                 player.QuestData.AddCollection(this);
                 Dispose();
                 Reward(player);
+                player.State.CollectingLoot = false;
             }
         }
 

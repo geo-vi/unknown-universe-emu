@@ -6,6 +6,7 @@
         SHIP_LOOT = 1,
         BONUS_BOX = 2,
         EASTER_EGG = 3,
+        PB_BONUS_BOX = 4,
         BIG_PUMPKIN = 5,
         ORANGE_PUMPKIN = 6,
         TURKEY = 7,

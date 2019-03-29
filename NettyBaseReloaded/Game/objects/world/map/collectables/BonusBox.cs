@@ -33,6 +33,15 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
             IsHoneyBox = isHoneyBox;
         }
 
+        public override void Collect(Character character)
+        {
+            base.Collect(character);
+            if (Type == Types.BONUS_BOX && character is Player player)
+            {
+                player.Statistics.CollectBox();
+            }
+        }
+
         public override void Dispose()
         {
             base.Dispose();

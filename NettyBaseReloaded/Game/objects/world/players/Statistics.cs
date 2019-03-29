@@ -31,6 +31,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public int COLLECTABLES_COLLECTED { get; set; }
 
+        public int COLLECTED_PIXELBOXES = 0;
+
         /// <summary>
         /// Average movement per minute
         /// </summary>
@@ -39,14 +41,50 @@ namespace NettyBaseReloaded.Game.objects.world.players
         /// <summary>
         /// Averege session lenght
         /// </summary>
-        public int AVG_GAMESESSION_LENGHT { get; set; } 
+        public int AVG_GAMESESSION_LENGHT { get; set; }
+
+        private int AVG_DISTANCE_FROM_NPC { get; set; }
 
         public DateTime LAST_TIME_CONNECTED { get; set; }
 
-        private DateTime ConnectedTime = DateTime.Now;
+        private TimeSpan ConnectedTime => DateTime.Now - Player.GetGameSession().SessionStartTime;
 
         public Statistics(Player player) : base(player)
         {
+            AVG_DISTANCE_FROM_NPC = 500;
+        }
+
+        public void CollectBox(bool isPixelBox = false)
+        {
+            if (isPixelBox) COLLECTED_PIXELBOXES++;
+            else COLLECTABLES_COLLECTED++;
+        }
+
+        public void AddKill(Character character, int damageDealt = 0)
+        {
+            var ship = character.Hangar.Ship;
+            if (character is Npc npc)
+            {
+                KillNpc(npc, damageDealt);
+            }
+
+            if (SHIPS_KILLED.ContainsKey(ship.Id))
+            {
+                SHIPS_KILLED[ship.Id]++;
+            }
+            else
+            {
+                SHIPS_KILLED.Add(ship.Id, 1);
+            }
+        }
+
+        private void KillNpc(Npc npcKilled, int damageDealt = 0)
+        {
+            var distanceFromNpc = npcKilled.Position.DistanceTo(Player.Position);
+            AVG_DISTANCE_FROM_NPC = (int)((AVG_DISTANCE_FROM_NPC + distanceFromNpc) / 2);
+            World.DatabaseManager.AddPlayerLog(Player, PlayerLogTypes.NORMAL,
+                "Killed NPC " + npcKilled.Name + " and you have dealt " + damageDealt +
+                " damage to it with attack starting at " + DateTime.Now + " and finishing it off at " + Math.Round(distanceFromNpc) + " meters away!");
         }
     }
 }

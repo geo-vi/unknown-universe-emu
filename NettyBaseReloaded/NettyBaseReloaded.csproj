@@ -555,6 +555,7 @@
     <Compile Include="Game\objects\world\map\collectables\FakeHoneyBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\LootBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\PirateBooty.cs" />
+    <Compile Include="Game\objects\world\map\collectables\PixelBonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\rewards\PotentialReward.cs" />
     <Compile Include="Game\objects\world\map\Firework.cs" />
     <Compile Include="Game\objects\world\map\mines\DDM01.cs" />

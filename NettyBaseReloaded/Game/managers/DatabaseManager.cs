@@ -2192,6 +2192,23 @@ namespace NettyBaseReloaded.Game.managers
         {
             
         }
+
+        public void AddPlayerLog(Player player, PlayerLogTypes logType, string log)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery(
+                        $"INSERT INTO player_logs (`USER_ID`, `PLAYER_ID`, `LOG_TYPE`, `LOG_DESCRIPTION`, `LOG_DATE`) VALUES('{player.GlobalId}', '{player.Id}', '{(int)logType}', '{log}', '{DateTime.Now:yyyy-MM-dd H:mm:ss}')");
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
     }
 }
 

@@ -106,6 +106,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
             if (Collector != null || CollectionTimeStart.AddSeconds(4) > DateTime.Now) return;
             if (character is Player player)
             {
+                if (player.State.CollectingLoot) return;
                 if (player.Information.BootyKeys[0] <= 0)
                 {
                     //locked
@@ -113,6 +114,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                     return;
                 }
 
+                player.State.CollectingLoot = true;
                 CollectionTimeStart = DateTime.Now;
                 Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|SLA|0|" + player.Id + "|" + COLLECTION_TIME);
                 Collector = character;
@@ -135,7 +137,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 {
                     var session = player?.GetGameSession();
                     if (session != null)
+                    {
+                        player.State.CollectingLoot = false;
                         Packet.Builder.LegacyModule(session, "0|A|SLC|0|" + player.Id);
+                    }
 
                     Collector = null;
                     return;
@@ -149,6 +154,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 BoxReward.ParseRewards(player);
                 Dispose();
                 Collector = null;
+                player.State.CollectingLoot = false;
             }
 
             LastCollectionCheck = DateTime.Now;
