@@ -118,9 +118,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             player.QuestData.AddKill(target);
                             player.Information.AddKill(target.Hangar.Ship.Id);
 
-                            var damageDealt = attackers.FirstOrDefault(x => x.Value.Player == player).Value
-                                ?.TotalDamage;
-                            player.Statistics.AddKill(target, Convert.ToInt32(damageDealt));
+                            var damageDealt = 0;
+                            var attackStarted = DateTime.Now;
+                            var playerAttacker = attackers.FirstOrDefault(x => x.Value.Player == player).Value;
+                            if (playerAttacker != null)
+                            {
+                                damageDealt = playerAttacker.TotalDamage;
+                                attackStarted = playerAttacker.AttackStartTime;
+                            }
+                            player.Statistics.AddKill(target, damageDealt, attackStarted);
                         }
                     }
                     if (target is Npc)

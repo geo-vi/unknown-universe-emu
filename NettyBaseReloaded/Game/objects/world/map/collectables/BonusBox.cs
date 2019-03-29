@@ -53,29 +53,13 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         {
             try
             {
+                var orderedRewards = REWARDS.OrderBy(x => x.Chance).ToArray();
                 var random = RandomInstance.getInstance(this);
                 //todo
-                //var n = random.NextDouble();
-                //foreach (var potentialReward in REWARDS.OrderBy(x => x.Chance))
-                //{
-                //    Reward reward = null;
-                //    RewardType type;
-                //    if (Enum.TryParse(potentialReward.LootId, true, out type))
-                //    {
-                //        reward = new Reward(type, potentialReward.Amount);
-                //    }
-                //    else
-                //    {
-                //        type = RewardType.ITEM;
-                //        if (potentialReward.LootId.StartsWith("ammunition"))
-                //            type = RewardType.AMMO;
-                //        reward = new Reward(type, Item.Find(potentialReward.LootId), potentialReward.Amount);
-                //    }
-                //    reward.ParseRewards(player);
-                //}
-                //TEMP
-                var index = random.Next(0, REWARDS.Count - 1);
-                var potentialReward = REWARDS[index];
+                var n = random.NextDouble();
+                var potentialReward = orderedRewards.FirstOrDefault(x => x.Chance > n) ?? orderedRewards.Last();
+                Console.WriteLine(n + " " + potentialReward.Chance + " " + potentialReward.LootId);
+
                 Reward reward = null;
                 RewardType type;
                 if (Enum.TryParse(potentialReward.LootId, true, out type))

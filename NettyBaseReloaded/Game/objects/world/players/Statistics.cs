@@ -60,12 +60,12 @@ namespace NettyBaseReloaded.Game.objects.world.players
             else COLLECTABLES_COLLECTED++;
         }
 
-        public void AddKill(Character character, int damageDealt = 0)
+        public void AddKill(Character character, int damageDealt = 0, DateTime attackStartTime = new DateTime())
         {
             var ship = character.Hangar.Ship;
             if (character is Npc npc)
             {
-                KillNpc(npc, damageDealt);
+                KillNpc(npc, damageDealt, attackStartTime);
             }
 
             if (SHIPS_KILLED.ContainsKey(ship.Id))
@@ -78,13 +78,13 @@ namespace NettyBaseReloaded.Game.objects.world.players
             }
         }
 
-        private void KillNpc(Npc npcKilled, int damageDealt = 0)
+        private void KillNpc(Npc npcKilled, int damageDealt = 0, DateTime attackStartTime = new DateTime())
         {
             var distanceFromNpc = npcKilled.Position.DistanceTo(Player.Position);
             AVG_DISTANCE_FROM_NPC = (int)((AVG_DISTANCE_FROM_NPC + distanceFromNpc) / 2);
             World.DatabaseManager.AddPlayerLog(Player, PlayerLogTypes.NORMAL,
                 "Killed NPC " + npcKilled.Name + " and you have dealt " + damageDealt +
-                " damage to it with attack starting at " + DateTime.Now + " and finishing it off at " + Math.Round(distanceFromNpc) + " meters away!");
+                " damage to it with attack starting at " + attackStartTime + " and finishing it off at " + Math.Round(distanceFromNpc) + " meters away!");
         }
     }
 }

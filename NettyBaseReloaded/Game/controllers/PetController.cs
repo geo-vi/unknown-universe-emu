@@ -37,7 +37,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         public new void Tick()
         {
-            if (ActiveChecker == null || Pet.ActiveGear == null || Pet.Spacemap != Pet.GetOwner().Spacemap)
+            if (ActiveChecker == null || Pet.ActiveGear == null || Pet.GetOwner() == null || Pet.Spacemap != Pet.GetOwner().Spacemap)
             {
                 Exit();
                 return;
@@ -175,9 +175,8 @@ namespace NettyBaseReloaded.Game.controllers
                     gear.Value.End();
                 }
 
-                Global.TickManager.Remove(Pet);
+                Global.TickManager.Remove(this);
                 Pet.BasicSave();
-                RemoveFromMap();
             }
             catch (Exception e)
             {

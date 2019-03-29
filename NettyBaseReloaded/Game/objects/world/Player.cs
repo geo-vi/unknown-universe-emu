@@ -386,6 +386,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             Unloaded = true;
             base.Invalidate();
+            Pet?.Invalidate();
             Controller.Exit();
             Storage.Clean();
             State.Reset();
