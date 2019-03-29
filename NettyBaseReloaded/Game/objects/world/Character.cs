@@ -245,6 +245,7 @@ namespace NettyBaseReloaded.Game.objects.world
             try
             {
                 Global.TickManager.Remove(this);
+                Controller.RemoveFromMap();
                 Controller.StopAll();
                 Range.Clean();
                 if (Spacemap.Entities.ContainsKey(Id))

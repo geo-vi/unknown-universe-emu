@@ -198,6 +198,7 @@ namespace NettyBaseReloaded.Game.controllers
                 Packet.Builder.PetIsDestroyedCommand(ownerSession);
                 Packet.Builder.PetUIRepairButtonCommand(ownerSession, true, price);
             }
+            Pet.BasicSave();
         }
 
         public void SendResetGear()

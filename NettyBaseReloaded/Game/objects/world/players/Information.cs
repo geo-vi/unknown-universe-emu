@@ -91,6 +91,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             if (Player.Pet != null && Player.Pet.Controller.Active)
             {
                 Player.Pet.Experience += expChange * 0.1;
+                Player.Pet.BasicSave();
             }
         }
 

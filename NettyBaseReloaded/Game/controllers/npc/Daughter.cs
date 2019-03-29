@@ -78,7 +78,6 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Exit()
         {
             Controller.Npc.Invalidate();
-            Controller.StopAll();
             if (Controller.Npc.Spacemap.RemoveEntity(Controller.Npc))
             {
                 var cube = Controller.Npc.MotherShip as Cubikon;

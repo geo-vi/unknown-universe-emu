@@ -77,7 +77,7 @@ namespace NettyBaseReloaded.Game.controllers
             var player = _gameSession.Player;
             player.Storage.Clean();
             player.Range.Clean();
-            player.Controller.StopAll();
+            player.Invalidate();
         }
     }
 }

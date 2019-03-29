@@ -72,7 +72,7 @@ namespace NettyBaseReloaded.Game.controllers
             {
                 if (StopController || Character.EntityState == EntityStates.DEAD)
                 {
-                    StopAll();
+                    Character.Invalidate();
                     Logger.Logger._instance.Enqueue("pact", "Escaped controller for ID " + Character.Id + ":" + Character.Name + " // StopController:" + StopController + " Is DEAD: " + (Character.EntityState == EntityStates.DEAD));
                     if (Character.EntityState != EntityStates.DEAD)
                     {
@@ -148,7 +148,6 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void RemoveFromMap()
         {
-            Character.Controller.StopAll();
             Character.RemoveSelection();
             DeselectFromShip();
             if (Character.Spacemap.Entities.ContainsKey(Character.Id))

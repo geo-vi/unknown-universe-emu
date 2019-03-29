@@ -108,7 +108,6 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Exit()
         {
-            StopAll();
             CheckedClasses.Clear();
         }
     }
