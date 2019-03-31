@@ -348,7 +348,7 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 var session = player.GetGameSession();
                 if (session != null)
-                    Packet.Builder.ShipSelectionCommand(session, SelectedCharacter);
+                    Packet.Builder.ShipSelectionCommand(session, null);
             }
         }
     }

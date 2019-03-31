@@ -50,6 +50,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public PlayerGates(Player player) : base(player)
         {
             RefreshGates();
+            AlphaReady = false;
+            BetaReady = false;
+            GammaReady = false;
+            DeltaReady = false;
+            EpsilonReady = false;
+            ZetaReady = false;
+            KappaReady = false;
+            KronosReady = false;
         }
 
         public void Tick()

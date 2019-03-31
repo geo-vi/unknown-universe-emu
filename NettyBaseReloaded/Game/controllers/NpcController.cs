@@ -75,12 +75,13 @@ namespace NettyBaseReloaded.Game.controllers
             var tickId = 0;
             TickId = tickId;
             Restarting = true;
-
-            Task.Factory.StartNew(() => {
-                Task.Delay(Npc.RespawnTime * 1000).Wait();
+            Console.WriteLine("Restart: " + Npc.RespawnTime);
+            Task.Delay(Npc.RespawnTime * 1000).ContinueWith(x =>
+            {
                 if (!Restarting) return;
                 Restarting = false;
                 Restart();
+                Console.WriteLine("Restarted");
             });
         }
 

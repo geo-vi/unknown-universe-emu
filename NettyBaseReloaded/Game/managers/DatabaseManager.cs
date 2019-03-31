@@ -1956,6 +1956,24 @@ namespace NettyBaseReloaded.Game.managers
                             case 105:
                                 boosters.TryAdd(id, new EP50(id, player, endTime));
                                 break;
+                            case 115:
+                                boosters.TryAdd(id, new DMGB02(id, player, endTime));
+                                break;
+                            case 116:
+                                boosters.TryAdd(id, new EPB02(id, player, endTime));
+                                break;
+                            case 117:
+                                boosters.TryAdd(id, new HONB02(id, player, endTime));
+                                break;
+                            case 118:
+                                boosters.TryAdd(id, new HPB02(id, player, endTime));
+                                break;
+                            case 119:
+                                boosters.TryAdd(id, new REPB02(id, player, endTime));
+                                break;
+                            case 120:
+                                boosters.TryAdd(id, new RESB02(id, player, endTime));
+                                break;
                         }
                     }
                 }

@@ -38,16 +38,16 @@ namespace NettyBaseReloaded.Game.objects.world.players.informations
 
         public void Reward(DropableRewards dropableRewards)
         {
-            var addedPalladium = TryAdd(8, dropableRewards.Palladium);
-            var addedSeprom = TryAdd(7, dropableRewards.Seprom);
-            var addedPromerium = TryAdd(6, dropableRewards.Promerium);
-            var addedXenomit = dropableRewards.Xenomit;
-            Xenomit += dropableRewards.Xenomit;
-            var addedDuranium = TryAdd(4, dropableRewards.Duranium);
-            var addedPrometid = TryAdd(3, dropableRewards.Prometid);
-            var addedTerbium = TryAdd(2, dropableRewards.Terbium);
-            var addedEndurium = TryAdd(1, dropableRewards.Endurium);
-            var addedPrometium = TryAdd(0, dropableRewards.Prometium);
+            var addedPalladium = TryAdd(8, (int)(dropableRewards.Palladium * (1+Player.BoostedResources)));
+            var addedSeprom = TryAdd(7, (int)(dropableRewards.Seprom * (1 + Player.BoostedResources)));
+            var addedPromerium = TryAdd(6, (int)(dropableRewards.Promerium * (1 + Player.BoostedResources)));
+            var addedXenomit = (int)(dropableRewards.Xenomit * (1 + Player.BoostedResources));
+            Xenomit += addedXenomit;
+            var addedDuranium = TryAdd(4, (int)(dropableRewards.Duranium * (1 + Player.BoostedResources)));
+            var addedPrometid = TryAdd(3, (int)(dropableRewards.Prometid * (1 + Player.BoostedResources)));
+            var addedTerbium = TryAdd(2, (int)(dropableRewards.Terbium * (1 + Player.BoostedResources)));
+            var addedEndurium = TryAdd(1, (int)(dropableRewards.Endurium * (1 + Player.BoostedResources)));
+            var addedPrometium = TryAdd(0, (int)(dropableRewards.Prometium * (1 + Player.BoostedResources)));
             World.DatabaseManager.SaveCargo(Player, this);
             var session = Player.GetGameSession();
             if (session == null) return;

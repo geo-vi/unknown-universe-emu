@@ -8,7 +8,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.boosters
 {
     class HONB02 : Booster
     {
-        public HONB02(int id, Player player, DateTime finishTime, Boosters boosterType, Types type) : base(id, player, finishTime, boosterType, type)
+        public HONB02(int id, Player player, DateTime finishTime) : base(id, player, finishTime, Boosters.HON_B02, Types.HONOUR)
         {
         }
 

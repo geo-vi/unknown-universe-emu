@@ -199,11 +199,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             GameClient.SendToPlayerView(Character, netty.commands.old_client.ShipDestroyedCommand.write(Character.Id, 0),
                 true);
 
-            Controller.RemoveFromMap();
+            Character.EntityState = EntityStates.DEAD;
 
             Character.Invalidate();
 
-            Character.EntityState = EntityStates.DEAD;
             Character.CurrentHealth = 0;
             Character.CurrentNanoHull = 0;
             Character.CurrentShield = 0;
@@ -211,10 +210,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             if (Character is Player)
             {
                 var player = (Player)Character;
-                var closestStation = player.GetClosestStation();
+                var lowerMapRespawn = player.Spacemap.Disabled;
+                var closestStation = player.GetClosestStation(lowerMapRespawn);
                 var newPos = closestStation.Item1;
-                player.Spacemap = closestStation.Item2;
-                player.SetPosition(newPos);
+                player.MoveToMap(closestStation.Item2, newPos, 0);
                 player.Save();
             }
         }

@@ -723,15 +723,15 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void BoostExpReward(double value)
         {
-            if (value + BoostedExpReward > 0.5)
-                BoostedExpReward = 0.5;
+            if (value + BoostedExpReward > 1)
+                BoostedExpReward = 1;
             else BoostedExpReward += value;
         }
 
         public void BoostHonReward(double value)
         {
-            if (value + BoostedHonorReward > 0.5)
-                BoostedHonorReward = 0.5;
+            if (value + BoostedHonorReward > 1)
+                BoostedHonorReward = 1;
             else BoostedHonorReward += value;
         }
         
