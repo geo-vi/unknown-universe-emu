@@ -827,7 +827,8 @@ namespace NettyBaseReloaded.Game.managers
 
         public Statistics LoadStatistics(Player player)
         {
-            return new Statistics(player);
+            var statistics = new Statistics(player);
+            return statistics;
         }
 
         public BaseInfo LoadInfo(Player player, BaseInfo baseInfo)

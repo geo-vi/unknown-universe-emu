@@ -40,7 +40,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Inactive()
         {
-            if (Controller.Npc.LastCombatTime.AddSeconds(30) < DateTime.Now)
+            if (Controller.Npc.LastCombatTime.AddSeconds(30) < DateTime.Now || (Controller.Npc.MotherShip != null && Controller.Npc.MotherShip.Controller.Active && Controller.Npc.MotherShip.LastCombatTime.AddSeconds(30) < DateTime.Now))
             {
                 Exit();
                 return;

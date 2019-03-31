@@ -126,6 +126,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 damageDealt = playerAttacker.TotalDamage;
                                 attackStarted = playerAttacker.AttackStartTime;
                             }
+
                             player.Statistics.AddKill(target, damageDealt, attackStarted);
                         }
                     }
@@ -178,6 +179,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
                 Debug.WriteLine("Failed destruction, " + e.Message + " [" + Character.Id + "]");
             }
         }

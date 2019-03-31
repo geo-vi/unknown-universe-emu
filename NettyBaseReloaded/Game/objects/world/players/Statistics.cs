@@ -52,6 +52,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public Statistics(Player player) : base(player)
         {
             AVG_DISTANCE_FROM_NPC = 500;
+            SHIPS_KILLED = new Dictionary<int, int>();
+            DEATHS = new List<DeathStat>();
+            SPENT_AMMO = new Dictionary<string, int>();
         }
 
         public void CollectBox(bool isPixelBox = false)
@@ -60,10 +63,12 @@ namespace NettyBaseReloaded.Game.objects.world.players
             else COLLECTABLES_COLLECTED++;
         }
 
-        public void AddKill(Character character, int damageDealt = 0, DateTime attackStartTime = new DateTime())
+        public void AddKill(Character target, int damageDealt = 0, DateTime attackStartTime = new DateTime())
         {
-            var ship = character.Hangar.Ship;
-            if (character is Npc npc)
+            var ship = target.Hangar.Ship;
+            Console.WriteLine(ship.Name);
+            Console.WriteLine(target.Hangar.Ship.Name);
+            if (target is Npc npc)
             {
                 KillNpc(npc, damageDealt, attackStartTime);
             }
