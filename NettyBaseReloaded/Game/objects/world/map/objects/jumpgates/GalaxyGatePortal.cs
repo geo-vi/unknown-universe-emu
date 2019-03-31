@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects.world.map.gg;
 
 namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
 {
@@ -19,9 +20,27 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
 
         public override void click(Character character)
         {
-            if (character is Player player)
+            var player = character as Player;
+            if (player == null) return;
+
+            if (player.OwnedGates.Any())
             {
-                Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Work in progress");
+                var gate = player.OwnedGates.FirstOrDefault().Value;
+                gate.WaitingPhaseEnd = DateTime.Now;
+                gate.PlayerJoinMap(player);
+                return;
+            }
+
+            switch (GalaxyGateId)
+            {
+                case 1:
+                    var alphaWave = player.Gates.GetAlphaWave();
+                    var alpha = new AlphaGate(World.StorageManager.Spacemaps[51], alphaWave);
+                    alpha.DefineOwner(player);
+                    alpha.InitiateVirtualWorld();
+                    player.Controller.Miscs.Jump(alpha.Spacemap.Id, Destination, Id, alpha.VWID);
+                    alpha.PendingPlayers.TryAdd(player.Id, player);
+                    break;
             }
         }
     }

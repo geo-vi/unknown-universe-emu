@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.objects.world.map;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
@@ -10,9 +11,15 @@ namespace NettyBaseReloaded.Game.objects.world.players
     {
         public bool AlphaReady { get; set; }
 
+        public Wave AlphaWave { get; set; }
+
         public bool BetaReady { get; set; }
 
+        public Wave BetaWave { get; set; }
+
         public bool GammaReady { get; set; }
+
+        public Wave GammaWave { get; set; }
 
         public bool DeltaReady { get; set; }
 
@@ -42,7 +49,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public PlayerGates(Player player) : base(player)
         {
-           RefreshGates();
+            RefreshGates();
         }
 
         public void Tick()
@@ -68,6 +75,11 @@ namespace NettyBaseReloaded.Game.objects.world.players
             if (ZetaComplete > 0) i += (int)Math.Pow(2, 5);
             if (KronosComplete > 0) i += (int)Math.Pow(2, 0);
             return i;
+        }
+
+        public int GetAlphaWave()
+        {
+            return AlphaWave?.Id ?? 0;
         }
     }
 }

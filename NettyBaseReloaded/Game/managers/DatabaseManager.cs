@@ -177,6 +177,9 @@ namespace NettyBaseReloaded.Game.managers
 
                 }
 
+                World.StorageManager.Spacemaps.Add(51, new Spacemap(51, "GG α", Faction.NONE, false, false, 0, new List<BaseNpc>(), 
+                    new List<PortalBase>()) { Disabled = true, RangeDisabled = true });
+
                 World.StorageManager.Spacemaps.Add(200,
                     new Spacemap(200, "Lord of War", Faction.NONE, false, false, 0, new List<BaseNpc>(),
                         new List<PortalBase>())

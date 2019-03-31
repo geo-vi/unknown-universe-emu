@@ -159,6 +159,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public event EventHandler<Object> RemovedObject;
         public bool RemoveObject(Object obj)
         {
+            if (obj == null) return false;
             RemovedObject?.Invoke(this, obj);
             obj.Position = null;
             return Objects.TryRemove(obj.Id, out obj);
@@ -258,14 +259,20 @@ namespace NettyBaseReloaded.Game.objects.world
                 ship.Damage, 5));
         }
 
-        public void CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null, int vwId = 0)
+        public void CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null, int vwId = 0, string namePrefix = "")
         {
             var id = GetNextAvailableId();
             ship.AI = (int)ai;
             if (pos == null)
                 pos = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
             else pos = Vector.GetPosOnCircle(pos, 100);
-            CreateNpc(new Npc(id, ship.Name,
+
+            var name = ship.Name;
+            if (namePrefix != "")
+            {
+                name += " " + namePrefix;
+            }
+            CreateNpc(new Npc(id, name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), pos, this, ship.Health, ship.Nanohull),
                 0, pos, this, ship.Health, ship.Nanohull, ship.Shield,
                 ship.Damage, respawnTime, respawning){VirtualWorldId = vwId});
@@ -506,9 +513,15 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public void CreateGalaxyGate(Player player, int ggId, Vector position, Vector destination, int destinationMapId, int gfxId)
+        public void CreateGalaxyGate(Player player, int ggId, Vector position)
         {
-
+            var id = GetNextObjectId();
+            switch (ggId)
+            {
+                case 1:
+                    AddObject(new GalaxyGatePortal(player, id, 1, position, this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                    break;
+            }
         }
 
         public void CreateHiddenPortal(int map, Vector pos, Vector newPos, int vwId = 0)

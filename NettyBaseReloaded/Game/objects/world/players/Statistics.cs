@@ -66,8 +66,6 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public void AddKill(Character target, int damageDealt = 0, DateTime attackStartTime = new DateTime())
         {
             var ship = target.Hangar.Ship;
-            Console.WriteLine(ship.Name);
-            Console.WriteLine(target.Hangar.Ship.Name);
             if (target is Npc npc)
             {
                 KillNpc(npc, damageDealt, attackStartTime);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.objects.world.map
 {
@@ -36,10 +37,13 @@ namespace NettyBaseReloaded.Game.objects.world.map
             }
         }
 
+        [JsonProperty("id")]
         public int Id { get; set; }
 
+        [JsonProperty("npcs_left")]
         public List<Npc> Npcs { get; set; }
 
+        [JsonProperty("pos")]
         public Vector Position { get; set; }
 
         public Wave(int id, List<Npc> npcs, Vector position)
@@ -63,7 +67,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
         {
             foreach (var npc in Npcs)
             {
-                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Position, 0);
+                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Position, 0, npc.NamePrefix + " " + Id);
             }
         }
 
@@ -72,7 +76,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
             System.Random rnd = new System.Random();
             foreach (var npc in Npcs)
             {
-                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Vector.GetPosOnCircle(vector, rnd.Next(0,360), r), 0);
+                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Vector.GetPosOnCircle(vector, rnd.Next(0,360), r), 0, npc.NamePrefix + " " + (Id + 1));
             }
         }
     }

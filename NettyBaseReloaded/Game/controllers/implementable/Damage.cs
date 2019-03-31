@@ -348,35 +348,39 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 if (pet != null && pet.GetOwner() == entry.Value) continue;
 
-                var damage = 0;
-                switch (damageType)
+                Task.Factory.StartNew(() =>
                 {
-                    case DamageType.DEFINED:
-                        damage = amount;
-                        break;
-                    case DamageType.PERCENTAGE:
-                        damage = (int)(entry.Value.CurrentHealth * amount / 100.0);
-                        break;
-                }
-                //TODO use Damage() method instead
-
-                entry.Value.CurrentHealth -= damage;
-                entry.Value.LastCombatTime = DateTime.Now;
-
-                foreach (var session in AssembleSelectedSessions(entry.Value))
-                {
-                    Packet.Builder.AttackHitCommand(session, Character.Id, entry.Value, damage, (short)attackType);
-                }
-                
-                if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
-                {
-                    if (pet != null)
+                    var damage = 0;
+                    switch (damageType)
                     {
-                        entry.Value.Destroy(pet.GetOwner());
+                        case DamageType.DEFINED:
+                            damage = amount;
+                            break;
+                        case DamageType.PERCENTAGE:
+                            damage = (int) (entry.Value.CurrentHealth * amount / 100.0);
+                            break;
                     }
-                    else entry.Value.Destroy(Character);
-                }
-                entry.Value.Updaters.Update();
+                    //TODO use Damage() method instead
+
+                    entry.Value.CurrentHealth -= damage;
+                    entry.Value.LastCombatTime = DateTime.Now;
+
+                    foreach (var session in AssembleSelectedSessions(entry.Value))
+                    {
+                        Packet.Builder.AttackHitCommand(session, Character.Id, entry.Value, damage, (short) attackType);
+                    }
+
+                    if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
+                    {
+                        if (pet != null)
+                        {
+                            entry.Value.Destroy(pet.GetOwner());
+                        }
+                        else entry.Value.Destroy(Character);
+                    }
+
+                    entry.Value.Updaters.Update();
+                });
             }
         }
 

@@ -258,7 +258,7 @@ namespace NettyBaseReloaded
         private static int BugsRecorded = 0;
         private static void CurrentDomainOnFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
-            if (BugsRecorded >= 200) Exit();
+            //if (BugsRecorded >= 200) Exit();
             Out.QuickLog(e.Exception);
             BugsRecorded++;
         }

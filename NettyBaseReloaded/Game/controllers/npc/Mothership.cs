@@ -49,7 +49,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Active()
         {
             var daughtersAlive = GetActiveDaughtersCount();
-            if (daughtersAlive > 20)
+            if (daughtersAlive >= 20)
             {
                 return;
             }
