@@ -42,10 +42,10 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (World.StorageManager.GameSessions.ContainsKey(userId))
             {
                 var gameSession = World.StorageManager.GameSessions[userId];
-                gameSession.Client?.Disconnect();
-                gameSession.Client = client;
-                gameSession.Player.UsingNewClient = usingNewClient;
-                return gameSession;
+                gameSession.Kick();
+                account = gameSession.Player;
+                account.SessionId = sessionId;
+                account.UsingNewClient = usingNewClient;
             }
             return new GameSession(account) { Client = client };
         }
