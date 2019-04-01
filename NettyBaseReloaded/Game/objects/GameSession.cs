@@ -121,6 +121,7 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Kick()
         {
+            Player.Invalidate();
             Player.Save();
             Disconnect();
         }
