@@ -417,7 +417,9 @@ namespace NettyBaseReloaded.Game
                 //map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));                
                 if (BonusBoxMaps.Contains(map.Key))
                 {
-                    for (int i = 0; i <= BonusBox.SPAWN_COUNT; i++)
+                    var bbCount = BonusBox.SPAWN_COUNT;
+                    if (map.Value.Pvp) bbCount = BonusBox.PVP_SPAWN_COUNT;
+                    for (int i = 0; i <= bbCount; i++)
                     {
                         map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value), new [] { map.Value.Limits[0], map.Value.Limits[1]});
                     }
