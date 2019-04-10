@@ -620,10 +620,16 @@
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\BuffPattern.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetCollectorGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetComboGuardGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetComboShipRepairGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetEnemyLocatorGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetGuardGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetKamikazeGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetPassiveGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetRepairGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetResourceCollectorGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetResourceLocatorGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetTradePodGear.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
     <Compile Include="Game\objects\world\pets\PetGear.cs" />
     <Compile Include="Game\objects\world\players\ammo\AmmoConverter.cs" />

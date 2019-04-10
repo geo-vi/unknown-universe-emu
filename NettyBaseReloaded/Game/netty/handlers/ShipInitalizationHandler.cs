@@ -43,9 +43,9 @@ namespace NettyBaseReloaded.Game.netty.handlers
             {
                 var gameSession = World.StorageManager.GameSessions[userId];
                 gameSession.Kick();
-                account = gameSession.Player;
-                account.SessionId = sessionId;
-                account.UsingNewClient = usingNewClient;
+//                account = gameSession.Player;
+//                account.SessionId = sessionId;
+//                account.UsingNewClient = usingNewClient;
             }
             return new GameSession(account) { Client = client };
         }
