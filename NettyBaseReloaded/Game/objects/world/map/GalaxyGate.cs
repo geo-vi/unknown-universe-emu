@@ -123,7 +123,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 {
                     if (JoinedPlayers.Count > 0)
                     {
-                        CountdownEnd = DateTime.Now.AddSeconds(30);
+                        CountdownEnd = DateTime.Now.AddSeconds(5);
                         CountdownInProcess = true;
                     }
                 }

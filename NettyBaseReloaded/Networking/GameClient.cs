@@ -31,7 +31,7 @@ namespace NettyBaseReloaded.Networking
         /* debug only */
 
         public int SentPackets;
-        public bool Listening = false;
+        public bool Listening = true;
 
         /* -end debug only- */
 
@@ -93,11 +93,11 @@ namespace NettyBaseReloaded.Networking
                     {
                         if (entity.UsingNewClient && command.IsNewClient)
                         {
-                            entity.GetGameSession()?.Client.Send(command.Bytes);
+                            //entity.GetGameSession()?.Client.Send(command.Bytes);
                         }
                         if (!entity.UsingNewClient && !command.IsNewClient)
                         {
-                            entity.GetGameSession()?.Client.Send(command.Bytes);
+                            //entity.GetGameSession()?.Client.Send(command.Bytes);
                         }
                     }
                 }
@@ -105,8 +105,8 @@ namespace NettyBaseReloaded.Networking
                 if (sendCharacter && character is Player)
                 {
                     var player = (Player) character;
-                    if (command.IsNewClient == player.UsingNewClient)
-                        player.GetGameSession()?.Client.Send(command.Bytes);
+                    //if (command.IsNewClient == player.UsingNewClient)
+                        //player.GetGameSession()?.Client.Send(command.Bytes);
                 }
             }
             catch (Exception e)

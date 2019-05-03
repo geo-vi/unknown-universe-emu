@@ -365,6 +365,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void ShipCreateCommand(GameSession gameSession, Character character)
         {
+            Console.WriteLine("?Creating Ship");
             if (Properties.Game.DEBUG_ENTITIES)
                 Console.WriteLine("ID: {0} Type: {1} Position: {2}", character.Id, character.Hangar.Ship.Id,
                     character.Position);
@@ -530,7 +531,7 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void JumpgateRemoveCommand(GameSession gameSession, Jumpgate portal)
         {
-            LegacyModule(gameSession, "0|n|p|REM|" + portal.Id, true);
+            //LegacyModule(gameSession, "0|n|p|REM|" + portal.Id, true);
         }
 
         #endregion

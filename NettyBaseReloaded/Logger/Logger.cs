@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +38,7 @@ namespace NettyBaseReloaded.Logger
 
         public void Enqueue(string key, string text)
         {
+            Debug.WriteLine("[" + key + "] " + text);
             if (LogFiles.ContainsKey(key))
             {
                 LogFiles[key].QueuedTextWriter.Enqueue(text);

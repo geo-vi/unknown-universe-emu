@@ -73,10 +73,10 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         internal void Create(Spacemap spacemap, int vwId, Vector vector, int r)
         {
-            System.Random rnd = new System.Random();
+            var random = RandomInstance.getInstance(this);
             foreach (var npc in Npcs)
             {
-                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Vector.GetPosOnCircle(vector, rnd.Next(0,360), r), 0, npc.NamePrefix + " " + (Id + 1));
+                spacemap.CreateNpc(npc.Ship, AILevels.GALAXY_GATES, false, 0, Vector.GetPosOnCircle(vector, random.Next(0,360), r), 0, npc.NamePrefix + " " + (Id + 1));
             }
         }
     }
