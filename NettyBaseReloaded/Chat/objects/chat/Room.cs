@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GoogleTranslateFreeApi;
 using NettyBaseReloaded.Chat.controllers;
 using NettyBaseReloaded.Chat.objects.chat.rooms;
 
@@ -61,12 +60,12 @@ namespace NettyBaseReloaded.Chat.objects.chat
             var player = character as Player;
             if (player == null) return;
 
-            var englishLanguage = GoogleTranslator.GetLanguageByName("English");
-            var translation = await Chat.Translator.TranslateAsync(message, Language.Auto, englishLanguage);
-            if (RoomLanguage == "en" && !translation.SourceLanguage.Equals(englishLanguage))
-            {
-                player.GetSession().Kick("Spoken wrong language in Global english chat. Language spoken: " + translation.SourceLanguage.FullName);
-            }
+//            var englishLanguage = GoogleTranslator.GetLanguageByName("English");
+//            var translation = await Chat.Translator.TranslateAsync(message, Language.Auto, englishLanguage);
+//            if (RoomLanguage == "en" && !translation.SourceLanguage.Equals(englishLanguage))
+//            {
+//                player.GetSession().Kick("Spoken wrong language in Global english chat. Language spoken: " + translation.SourceLanguage.FullName);
+//            }
         }
 
         public void Mute(Character character)

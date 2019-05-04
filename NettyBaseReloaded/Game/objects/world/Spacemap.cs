@@ -486,6 +486,8 @@ namespace NettyBaseReloaded.Game.objects.world
                         AddObject(new GalaxyGatePortal(player, id, 3, new Vector(1500, 3500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
                     break;
                 case 9:
+                    Console.WriteLine("Galaxy Gates?");
+                    Console.WriteLine(player.Gates.AlphaReady + " ?");
                     if (player.Gates.AlphaReady)
                         AddObject(new GalaxyGatePortal(player, id, 1, new Vector(17500, 11500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
                     id = GetNextObjectId();

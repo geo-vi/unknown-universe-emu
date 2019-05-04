@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 
@@ -258,12 +259,15 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
 
             Waves[Wave].Create(VirtualMap, VWID, Owner.Position, 2000);
             Wave++;
+            
             WavesLeftTillEnd--;
 
             foreach (var joined in JoinedPlayers.Values)
             {
                 if (joined.GetGameSession() == null) continue;
                 Packet.Builder.LegacyModule(joined.GetGameSession(), "0|A|STD|Wave " + Wave);
+                joined.Gates.AlphaWave++;
+                joined.Gates.Save();
             }
 
             LastSentWaveTime = DateTime.Now;
@@ -283,6 +287,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
                 Owner.OwnedGates.TryRemove(Id, out _);
             }
             Owner.Gates.AlphaComplete++;
+            Owner.Gates.AlphaReady = false;
+            Owner.Gates.Save();
             JoinedPlayers.Clear();
             Owner.RefreshPlayersView();
         }

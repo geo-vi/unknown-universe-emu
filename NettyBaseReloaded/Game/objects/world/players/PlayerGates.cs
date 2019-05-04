@@ -11,15 +11,15 @@ namespace NettyBaseReloaded.Game.objects.world.players
     {
         public bool AlphaReady { get; set; }
 
-        public Wave AlphaWave { get; set; }
+        public int AlphaWave { get; set; }
 
         public bool BetaReady { get; set; }
 
-        public Wave BetaWave { get; set; }
+        public int BetaWave { get; set; }
 
         public bool GammaReady { get; set; }
 
-        public Wave GammaWave { get; set; }
+        public int GammaWave { get; set; }
 
         public bool DeltaReady { get; set; }
 
@@ -47,31 +47,34 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public int KronosComplete { get; set; }
 
+        public int HadesComplete { get; set; }
+        
         public PlayerGates(Player player) : base(player)
-        {
+        {            
+            World.DatabaseManager.LoadPlayerGates(this);
             RefreshGates();
-            AlphaReady = false;
-            BetaReady = false;
-            GammaReady = false;
-            DeltaReady = false;
-            EpsilonReady = false;
-            ZetaReady = false;
-            KappaReady = false;
-            KronosReady = false;
         }
 
         public void Tick()
         {
             if (LastRefresh.AddSeconds(30) < DateTime.Now)
+            {
                 RefreshGates();
+            }
         }
 
         private DateTime LastRefresh = DateTime.Now;
         private void RefreshGates()
         {
+            World.DatabaseManager.LoadPlayerGates(this);
             LastRefresh = DateTime.Now;
         }
 
+        public void Save()
+        {
+            World.DatabaseManager.SaveGalaxyGates(this);
+        }
+        
         public int CalculateRings()
         {
             var i = 0;
@@ -87,7 +90,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public int GetAlphaWave()
         {
-            return AlphaWave?.Id ?? 0;
+            return AlphaWave;
         }
     }
 }

@@ -236,7 +236,9 @@ namespace NettyBaseReloaded
         /// <param name="e"></param>
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
-            Out.QuickLog(e.ExceptionObject as Exception);
+            var ex = e.ExceptionObject as Exception;
+            Debug.WriteLine("Unhandled Exception Trapper: " + ex?.Message);
+            Out.QuickLog(ex);
             //new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
             //Environment.Exit(0);
             // TODO: Save everything and then fuck up
@@ -245,6 +247,7 @@ namespace NettyBaseReloaded
 
         private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs threadExceptionEventArgs)
         {
+            Debug.WriteLine("Thread Exception: " + threadExceptionEventArgs.Exception.Message);
             Out.QuickLog(threadExceptionEventArgs.Exception);
             //new ExceptionLog("thread_exception", $"Unhandled thread exception trapped and logged", threadExceptionEventArgs.Exception);
             //Environment.Exit(0);
@@ -258,7 +261,8 @@ namespace NettyBaseReloaded
         private static int BugsRecorded = 0;
         private static void CurrentDomainOnFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
-            //if (BugsRecorded >= 200) Exit();
+            if (BugsRecorded >= 200) Exit();
+            Debug.WriteLine("Current Domain: " + e.Exception.Message);
             Out.QuickLog(e.Exception);
             BugsRecorded++;
         }

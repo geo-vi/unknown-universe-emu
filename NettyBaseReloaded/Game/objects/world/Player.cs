@@ -379,6 +379,7 @@ namespace NettyBaseReloaded.Game.objects.world
             TickQuests();
             TickAnnouncements();
             Skylab.Tick();
+            Gates.Tick();
         }
         
 

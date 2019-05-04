@@ -246,20 +246,37 @@ namespace NettyBaseReloaded.Game.objects.world
             PetGears.Clear();
             PetGears.Add(GearType.PASSIVE, new PetPassiveGear(this));
             PetGears.Add(GearType.GUARD, new PetGuardGear(this));
-            PetGears.Add(GearType.AUTO_RESOURCE_COLLECTION, new PetResourceCollectorGear(this, 3));
-            var tempGearLevel = 1;
-            if (Level.Id >= 13) tempGearLevel = 3;
-            else if (Level.Id >= 7) tempGearLevel = 2;
             
             foreach (var item in Hangar.Configurations[CurrentConfig - 1].EquippedItemsOnShip)
             {
                 switch (item.Value.Item.LootId)
                 {
-                    case "pet_gear_g-kk1": // Kamikaze lvl 1
-                        PetGears.Add(GearType.KAMIKAZE, new PetKamikazeGear(this, tempGearLevel));
+                    case "pet_gear_g-kk1": // Kamikaze
+                        PetGears.Add(GearType.KAMIKAZE, new PetKamikazeGear(this, item.Value.Level));
                         break;
-                    case "pet_gear_g-al1": // Auto Loot lvl 1
-                        PetGears.Add(GearType.AUTO_LOOT, new PetCollectorGear(this, tempGearLevel));
+                    case "pet_gear_g-al1": // Auto Loot
+                        PetGears.Add(GearType.AUTO_LOOT, new PetCollectorGear(this, item.Value.Level));
+                        break;
+                    case "pet_gear_g-ar1": // Resource collector
+                        PetGears.Add(GearType.AUTO_RESOURCE_COLLECTION, new PetResourceCollectorGear(this, item.Value.Level));
+                        break;
+                    case "pet_gear_g-el1":
+                        PetGears.Add(GearType.ENEMY_LOCATOR, new PetEnemyLocatorGear(this, item.Value.Level));
+                        break;
+                    case "pet_gear_g-rep1":
+                        PetGears.Add(GearType.REPAIR_PET, new PetRepairGear(this, item.Value.Level));
+                        break;
+                    case "pet_gear_g-rl1":
+                        PetGears.Add(GearType.RESOURCE_LOCATOR, new PetResourceLocatorGear(this, item.Value.Level));
+                        break;
+                    case "pet_gear_g-tra1":
+                        PetGears.Add(GearType.TRADE_POD, new PetTradePodGear(this, item.Value.Level));
+                        break;
+                    case "pet_gear_cgm-02":
+                        PetGears.Add(GearType.COMBO_GUARD, new PetComboGuardGear(this, item.Value.Level));
+                        break;
+                    case "pet_gear_csr-02":
+                        PetGears.Add(GearType.COMBO_SHIP_REPAIR, new PetComboShipRepairGear(this, item.Value.Level));
                         break;
                 }
             }

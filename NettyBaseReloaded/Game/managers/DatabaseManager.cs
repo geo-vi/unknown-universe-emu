@@ -2133,16 +2133,15 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public void LoadPlayerGates(Player player)
+        public void LoadPlayerGates(PlayerGates gates)
         {
-            PlayerGates gates = new PlayerGates(player);
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var row = mySqlClient.ExecuteQueryRow("SELECT * FROM player_galaxy_gates WHERE PLAYER_ID=" + player.Id);
+                    var row = mySqlClient.ExecuteQueryRow("SELECT * FROM player_galaxy_gates WHERE PLAYER_ID=" + gates.Player.Id);
                     var completedGates = JsonConvert.DeserializeObject<int[]>(row["COMPLETED_GATES"].ToString());
-                    if (completedGates != null && completedGates.Length == 7)
+                    if (completedGates != null && completedGates.Length == 9)
                     {
                         gates.AlphaComplete = completedGates[0];
                         gates.BetaComplete = completedGates[1];
@@ -2151,17 +2150,29 @@ namespace NettyBaseReloaded.Game.managers
                         gates.EpsilonComplete = completedGates[4];
                         gates.ZetaComplete = completedGates[5];
                         gates.KappaComplete = completedGates[6];
+                        gates.KronosComplete = completedGates[7];
+                        gates.HadesComplete = completedGates[8];
                     }
 
                     var alphaPrepared = Convert.ToBoolean(intConv(row["ALPHA_PREPARED"]));
                     gates.AlphaReady = alphaPrepared;
 
+                    Console.WriteLine("Alpha ready? " + gates.AlphaReady );
+                    
+                    var alphaWave = intConv(row["ALPHA_WAVE"]);
+                    gates.AlphaWave = alphaWave;
+                    
                     var betaPrepared = Convert.ToBoolean(intConv(row["BETA_PREPARED"]));
                     gates.BetaReady = betaPrepared;
 
+                    var betaWave = intConv(row["BETA_WAVE"]);
+                    gates.BetaWave = betaWave;
+                    
                     var gammaPrepared = Convert.ToBoolean(intConv(row["GAMMA_PREPARED"]));
                     gates.GammaReady = gammaPrepared;
 
+                    
+                    
                     var deltaPrepared = Convert.ToBoolean(intConv(row["DELTA_PREPARED"]));
                     gates.DeltaReady = deltaPrepared;
 
@@ -2174,6 +2185,32 @@ namespace NettyBaseReloaded.Game.managers
                     var kappaPrepared = Convert.ToBoolean(intConv(row["KAPPA_PREPARED"]));
                     gates.KappaReady = kappaPrepared;
 
+                }
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+
+        public void SaveGalaxyGates(PlayerGates gates)
+        {
+            try
+            {
+                using (var mysqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var completedGates = new int[]
+                    {
+                        gates.AlphaComplete, gates.BetaComplete, gates.GammaComplete,
+                        gates.DeltaComplete, gates.EpsilonComplete, gates.ZetaComplete,
+                        gates.KappaComplete, gates.KronosComplete, gates.HadesComplete
+                    };
+                    
+                    mysqlClient.ExecuteNonQuery(
+                        $"UPDATE player_galaxy_gates SET COMPLETED_GATES='" + JsonConvert.SerializeObject(completedGates) + "'," +
+                        $" ALPHA_PREPARED = {gates.AlphaReady}, ALPHA_WAVE = {gates.AlphaWave}," +
+                        $" BETA_PREPARED = {gates.BetaReady}, BETA_WAVE = {gates.BetaWave}" +
+                        $" WHERE PLAYER_ID = {gates.Player.Id}");
                 }
             }
             catch (Exception e)

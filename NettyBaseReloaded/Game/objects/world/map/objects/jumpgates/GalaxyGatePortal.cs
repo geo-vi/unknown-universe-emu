@@ -23,6 +23,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
             var player = character as Player;
             if (player == null) return;
 
+            Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Gates are currently getting tested live on the server by admins. " +
+                                                                 "Please be patient ))");
+            return;
+            
             if (player.OwnedGates.Any())
             {
                 var gate = player.OwnedGates.FirstOrDefault().Value;

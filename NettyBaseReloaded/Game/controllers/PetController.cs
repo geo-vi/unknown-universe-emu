@@ -60,6 +60,11 @@ namespace NettyBaseReloaded.Game.controllers
             var session = owner.GetGameSession();
 
             if (session == null) return;
+            if (Active)
+            {
+                Packet.Builder.PetStatusCommand(session, Pet);
+                return;
+            }
             if (Pet.Hangar.Configurations == null || Pet.Hangar.Configurations.Length != 2)
             {
                 Packet.Builder.LegacyModule(session,
@@ -80,9 +85,9 @@ namespace NettyBaseReloaded.Game.controllers
             Initiate();
             Pet.RefreshConfig();
 
-            var ownerSession = owner.GetGameSession();
-            Packet.Builder.PetHeroActivationCommand(ownerSession, Pet);
-            Packet.Builder.PetStatusCommand(ownerSession, Pet);
+            Packet.Builder.PetHeroActivationCommand(session, Pet);
+            Packet.Builder.PetStatusCommand(session, Pet);
+            
             SendGearsToOwner();
             SwitchGear(GearType.PASSIVE, 0);
             SendBuffs();
