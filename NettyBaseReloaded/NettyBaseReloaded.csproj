@@ -896,6 +896,7 @@
     <Compile Include="WebSocks\packets\Handler.cs" />
     <Compile Include="WebSocks\packets\handlers\ExternalClientHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\IHandler.cs" />
+    <Compile Include="WebSocks\packets\handlers\ShopHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\UserHandler.cs" />
     <Compile Include="WebSocks\WebSocketReceiver.cs" />
     <Compile Include="WebSocks\WebSocketListener.cs" />
@@ -1024,6 +1025,7 @@
   <ItemGroup>
     <EmbeddedResource Include="AdministratePlayers.resx">
       <DependentUpon>AdministratePlayers.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controller.resx">
       <DependentUpon>Controller.cs</DependentUpon>
@@ -1031,6 +1033,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MapEditor.resx">
       <DependentUpon>MapEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

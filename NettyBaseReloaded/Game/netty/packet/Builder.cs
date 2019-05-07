@@ -365,7 +365,6 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void ShipCreateCommand(GameSession gameSession, Character character)
         {
-            Console.WriteLine("?Creating Ship");
             if (Properties.Game.DEBUG_ENTITIES)
                 Console.WriteLine("ID: {0} Type: {1} Position: {2}", character.Id, character.Hangar.Ship.Id,
                     character.Position);

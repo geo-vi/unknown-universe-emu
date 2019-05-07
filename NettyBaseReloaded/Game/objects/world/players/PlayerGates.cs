@@ -13,6 +13,8 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public int AlphaWave { get; set; }
 
+        public int AlphaLives { get; set; }
+
         public bool BetaReady { get; set; }
 
         public int BetaWave { get; set; }
@@ -91,6 +93,21 @@ namespace NettyBaseReloaded.Game.objects.world.players
         public int GetAlphaWave()
         {
             return AlphaWave;
+        }
+
+        public void RemoveLife(int gateID)
+        {
+            switch (gateID)
+            {
+                case 1:
+                    if (AlphaLives > 0) AlphaLives--;
+                    else
+                    {
+                        AlphaReady = false;
+                    }
+                    break;
+            }
+            Save();
         }
     }
 }

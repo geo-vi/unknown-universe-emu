@@ -123,7 +123,7 @@ namespace NettyBaseReloaded.Chat.managers
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_data,server_chat_moderators WHERE player_data.PLAYER_ID=" + id);
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_data WHERE player_data.PLAYER_ID=" + id);
                     string name = queryRow["PLAYER_NAME"].ToString();
                     string sessionId = queryRow["SESSION_ID"].ToString();
                     int clanId = intConv(queryRow["CLAN_ID"]);

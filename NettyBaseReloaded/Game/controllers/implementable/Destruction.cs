@@ -15,6 +15,7 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.statistics;
 using System.Diagnostics;
 using NettyBaseReloaded.Main;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.controllers.implementable
 {
@@ -140,6 +141,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         var pTarget = target as Player;
                         foreach (var eventP in pTarget.EventsPraticipating)
                             eventP.Value.Destroyed();
+
                         switch (deathType)
                         {
                             case DeathType.MINE:

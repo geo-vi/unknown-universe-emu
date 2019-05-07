@@ -14,6 +14,7 @@ namespace NettyBaseReloaded.WebSocks
         protected override void OnMessage(MessageEventArgs e)
         {
             var packetData = e.Data;
+            //Console.WriteLine(packetData + "[ws]");
             Handler.Handle(this, packetData);
         }
 

@@ -73,7 +73,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Id = id;
             Name = name;
             Faction = faction;
-            Pvp = isPvp();
+            Pvp = IsPvp();
             Starter = starter;
             ParseLimits();
             Level = level;
@@ -94,9 +94,9 @@ namespace NettyBaseReloaded.Game.objects.world
             else Limits[1] = new Vector(20800, 12800);
         }
 
-        private bool isPvp()
+        private bool IsPvp()
         {
-            return Id == 16 || Id == 15 || Id == 14 || Id == 13;
+            return Id == 16 || Id == 15 || Id == 14 || Id == 13 || Id >= 29;
         }
 
         public int GetId()
@@ -477,17 +477,53 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 case 1:
                     if (player.Gates.AlphaReady)
-                        AddObject(new GalaxyGatePortal(player, id, 1, new Vector(3500, 1500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                        AddObject(new GalaxyGatePortal(player, id, 1, new Vector(2700, 700), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
                     id = GetNextObjectId();
                     if (player.Gates.BetaReady)
-                        AddObject(new GalaxyGatePortal(player, id, 2, new Vector(3000, 3000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_2));
+                        AddObject(new GalaxyGatePortal(player, id, 2, new Vector(2300, 1800), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_2));
                     id = GetNextObjectId();
                     if (player.Gates.GammaReady)
-                        AddObject(new GalaxyGatePortal(player, id, 3, new Vector(1500, 3500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
+                        AddObject(new GalaxyGatePortal(player, id, 3, new Vector(1500, 3000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
+                    id = GetNextObjectId();
+                    if (player.Gates.DeltaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 4, new Vector(4400, 3600), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_4));
+                    if (player.Gates.EpsilonReady)
+                        AddObject(new GalaxyGatePortal(player, id, 5, new Vector(4000, 1300), this, new Vector(10400, 6400), 51, PortalGraphics.EPSILON_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.ZetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 6, new Vector(2500, 3500), this, new Vector(10400, 6400), 51, PortalGraphics.ZETA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KappaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 7, new Vector(5200, 2600), this, new Vector(10400, 6400), 51, PortalGraphics.KAPPA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KronosReady)
+                        AddObject(new GalaxyGatePortal(player, id, 8, new Vector(7400, 4200), this, new Vector(10400, 6400), 51, PortalGraphics.KRONOS_GATE));
+                    break;
+                case 5:
+                    if (player.Gates.AlphaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 1, new Vector(17300, 1000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                    id = GetNextObjectId();
+                    if (player.Gates.BetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 2, new Vector(18000, 2300), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_2));
+                    id = GetNextObjectId();
+                    if (player.Gates.GammaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 3, new Vector(19100, 3600), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
+                    id = GetNextObjectId();
+                    if (player.Gates.DeltaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 4, new Vector(15100, 1700), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_4));
+                    if (player.Gates.EpsilonReady)
+                        AddObject(new GalaxyGatePortal(player, id, 5, new Vector(18600, 4200), this, new Vector(10400, 6400), 51, PortalGraphics.EPSILON_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.ZetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 6, new Vector(16200, 1600), this, new Vector(10400, 6400), 51, PortalGraphics.ZETA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KappaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 7, new Vector(15900, 2800), this, new Vector(10400, 6400), 51, PortalGraphics.KAPPA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KronosReady)
+                        AddObject(new GalaxyGatePortal(player, id, 8, new Vector(10114, 5800), this, new Vector(10400, 6400), 51, PortalGraphics.KRONOS_GATE));
                     break;
                 case 9:
-                    Console.WriteLine("Galaxy Gates?");
-                    Console.WriteLine(player.Gates.AlphaReady + " ?");
                     if (player.Gates.AlphaReady)
                         AddObject(new GalaxyGatePortal(player, id, 1, new Vector(17500, 11500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
                     id = GetNextObjectId();

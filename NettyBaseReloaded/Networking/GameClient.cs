@@ -26,7 +26,6 @@ namespace NettyBaseReloaded.Networking
 
         public IPAddress IPAddress => XSocket.RemoteHost;
 
-        public bool Connected => XSocket.Connected;
 
         /* debug only */
 
@@ -57,24 +56,23 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                if (!Connected) return;
                 XSocket.Write(bytes);
                 //SentPackets++;
-                if (Listening)
-                {
-                    var caller = Out.GetCaller();
-                    Console.WriteLine($"Listener ({UserId})::" + caller);
-                    if (caller.EndsWith("LegacyModule"))
-                    {
-                        var legacy = new LegacyModule();
-                        legacy.readCommand(bytes);
-                        Console.WriteLine("[" + legacy.message + "]");
-                    }
-                }
+                //if (Listening)
+                //{
+                //    var caller = Out.GetCaller();
+                //    Console.WriteLine($"Listener ({UserId})::" + caller);
+                //    if (caller.EndsWith("LegacyModule"))
+                //    {
+                //        var legacy = new LegacyModule();
+                //        legacy.readCommand(bytes);
+                //        Console.WriteLine("[" + legacy.message + "]");
+                //    }
+                //}
             }
-            catch (Exception)
+            catch
             {
-                World.StorageManager.GetGameSession(UserId).Kick();
+                World.StorageManager.GetGameSession(UserId)?.KillSession();
                 Debug.WriteLine("->" + Out.GetCaller());
             }
         }
@@ -93,11 +91,11 @@ namespace NettyBaseReloaded.Networking
                     {
                         if (entity.UsingNewClient && command.IsNewClient)
                         {
-                            //entity.GetGameSession()?.Client.Send(command.Bytes);
+                            entity.GetGameSession()?.Client.Send(command.Bytes);
                         }
                         if (!entity.UsingNewClient && !command.IsNewClient)
                         {
-                            //entity.GetGameSession()?.Client.Send(command.Bytes);
+                            entity.GetGameSession()?.Client.Send(command.Bytes);
                         }
                     }
                 }
@@ -105,14 +103,13 @@ namespace NettyBaseReloaded.Networking
                 if (sendCharacter && character is Player)
                 {
                     var player = (Player) character;
-                    //if (command.IsNewClient == player.UsingNewClient)
-                        //player.GetGameSession()?.Client.Send(command.Bytes);
+                    if (command.IsNewClient == player.UsingNewClient)
+                        player.GetGameSession()?.Client.Send(command.Bytes);
                 }
             }
-            catch (Exception e)
+            catch
             {
                 Out.WriteLog("Something went wrong sending a range packet.", "ERROR");
-                Debug.WriteLine(e.Message, "Debug Error");
             }
         }
 
@@ -138,10 +135,9 @@ namespace NettyBaseReloaded.Networking
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
                 Out.WriteLog("Something went wrong sending a range packet.", "ERROR");
-                Debug.WriteLine(e.Message, "Debug Error");
             }
         }
 
@@ -167,11 +163,9 @@ namespace NettyBaseReloaded.Networking
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
                 Out.WriteLog("Something went wrong sending a spacemap packet.", "ERROR");
-                Debug.WriteLine(e.Message, "Debug Error");
-
             }
         }
 
@@ -180,12 +174,9 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                if (Connected)
-                {
-                    XSocket.Close();
-                }
+                XSocket.Close();
             }
-            catch (Exception)
+            catch
             {
                 Out.WriteLog("Error disconnecting user from Game", "GAME");
             }

@@ -540,7 +540,7 @@ namespace NettyBaseReloaded.Game.managers
         public Dictionary<int, Hangar> LoadHangar(Player player)
         {
             var drones = LoadDrones(player);
-            Dictionary<int, Hangar> hangars = new Dictionary<int, Hangar>();
+            var hangars = new Dictionary<int, Hangar>();
             try
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
@@ -616,10 +616,9 @@ namespace NettyBaseReloaded.Game.managers
             return items;
         }
 
-        //SELECT * FROM player_drones WHERE PLAYER_ID=" + player.Id
         public Dictionary<int, Drone> LoadDrones(Player player)
         {
-            Dictionary<int, Drone> drones = new Dictionary<int, Drone>();
+            var drones = new Dictionary<int, Drone>();
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
@@ -2156,12 +2155,13 @@ namespace NettyBaseReloaded.Game.managers
 
                     var alphaPrepared = Convert.ToBoolean(intConv(row["ALPHA_PREPARED"]));
                     gates.AlphaReady = alphaPrepared;
-
-                    Console.WriteLine("Alpha ready? " + gates.AlphaReady );
                     
                     var alphaWave = intConv(row["ALPHA_WAVE"]);
                     gates.AlphaWave = alphaWave;
-                    
+
+                    var alphaLives = intConv(row["ALPHA_LIVES"]);
+                    gates.AlphaLives = alphaLives;
+
                     var betaPrepared = Convert.ToBoolean(intConv(row["BETA_PREPARED"]));
                     gates.BetaReady = betaPrepared;
 
@@ -2208,7 +2208,7 @@ namespace NettyBaseReloaded.Game.managers
                     
                     mysqlClient.ExecuteNonQuery(
                         $"UPDATE player_galaxy_gates SET COMPLETED_GATES='" + JsonConvert.SerializeObject(completedGates) + "'," +
-                        $" ALPHA_PREPARED = {gates.AlphaReady}, ALPHA_WAVE = {gates.AlphaWave}," +
+                        $" ALPHA_PREPARED = {gates.AlphaReady}, ALPHA_WAVE = {gates.AlphaWave}, ALPHA_LIVES = {gates.AlphaLives}," +
                         $" BETA_PREPARED = {gates.BetaReady}, BETA_WAVE = {gates.BetaWave}" +
                         $" WHERE PLAYER_ID = {gates.Player.Id}");
                 }
@@ -2218,7 +2218,7 @@ namespace NettyBaseReloaded.Game.managers
                 
             }
         }
-
+        
         public Dictionary<int, GameBan> LoadGameBans(Player player)
         {
             var gameBans = new Dictionary<int, GameBan>();

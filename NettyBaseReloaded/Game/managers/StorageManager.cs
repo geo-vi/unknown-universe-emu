@@ -25,8 +25,6 @@ namespace NettyBaseReloaded.Game.managers
         
         public readonly Dictionary<int, Spacemap> Spacemaps = new Dictionary<int, Spacemap>();
 
-        public readonly Dictionary<int, Player> PlayerStorage = new Dictionary<int, Player>();
-
         public readonly OrePrices OrePrices = new OrePrices(20, 30, 50, 400, 400, 0, 1000, 0, 5);
         
         public readonly Levels Levels = new Levels();
@@ -52,11 +50,6 @@ namespace NettyBaseReloaded.Game.managers
         
         public readonly Dictionary<int, Ship> NpcReferences = new Dictionary<int, Ship>();
         #endregion
-
-        /// <summary>
-        /// Handled purely by TickManager
-        /// </summary>
-        public readonly ConcurrentDictionary<int, Player> TickedPlayers = new ConcurrentDictionary<int, Player>();
 
         public string[] HoneyBoxes = {
             "ozims", "1604u", "znmjs", "bu9m9", "zel71", "q4knx", "ci7m0", "1ukl6", "1gtlm", "180fk", "13b44", "ntr63",

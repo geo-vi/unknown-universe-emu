@@ -19,6 +19,12 @@ namespace NettyBaseReloaded.Game.controllers.npc
 
         public void Tick()
         {
+            if (Controller.Character.SelectedCharacter == null)
+            {
+                var firstEntity = Controller.Character.Range.Entities.FirstOrDefault(x => x.Value is Player);
+                if (firstEntity.Value != null)
+                    Controller.Attack.TrySelect(firstEntity.Value);
+            }
             Controller.Attack.Attacking = true;
             if (Controller.Character.CurrentHealth < 0.05 * Controller.Character.MaxHealth)
                 Inactive();

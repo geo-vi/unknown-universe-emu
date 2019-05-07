@@ -385,12 +385,19 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Invalidate()
         {
-            Unloaded = true;
-            base.Invalidate();
-            Pet?.Invalidate();
-            Controller.Exit();
-            Storage.Clean();
-            State.Reset();
+            try
+            {
+                Unloaded = true;
+                base.Invalidate();
+                Pet?.Invalidate();
+                Controller?.Exit();
+                Storage.Clean();
+                State.Reset();
+            }
+            catch
+            {
+
+            }
         }
 
         private void TickTechs()

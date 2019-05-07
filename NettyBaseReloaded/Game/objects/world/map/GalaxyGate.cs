@@ -59,7 +59,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         private async Task RunThread()
         {
-            while (!(Finished && Rewarded))
+            while (!Finished && !Rewarded)
             {
                 Tick();
                 await Task.Delay(100);
@@ -123,7 +123,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 {
                     if (JoinedPlayers.Count > 0)
                     {
-                        CountdownEnd = DateTime.Now.AddSeconds(5);
+                        CountdownEnd = DateTime.Now.AddSeconds(25);
                         CountdownInProcess = true;
                     }
                 }
@@ -190,6 +190,8 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public abstract void SendWave();
 
         public abstract void End();
+
+        public virtual void RemoveLife() { }
 
         #endregion
 
@@ -324,10 +326,13 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 foreach (var entity in VirtualMap.Entities)
                 {
                     entity.Value.Destroy();
+                    VirtualMap.Entities.TryRemove(entity.Key, out _);
                 }
-                GalaxyGate removedGate = null;
-                player.OwnedGates.TryRemove(Id, out removedGate);
+                player.OwnedGates.TryRemove(Id, out _);
+                RemoveLife();
                 MoveOut(player);
+                Finished = true;
+                GGTask.Dispose();
             }
         }
 

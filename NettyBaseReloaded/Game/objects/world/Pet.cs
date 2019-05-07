@@ -95,7 +95,7 @@ namespace NettyBaseReloaded.Game.objects.world
             var ownerSession = World.StorageManager.GetGameSession(OwnerId);
             if (ownerSession == null)
             {
-                Controller?.Exit();
+                Invalidate();
                 return null;
             }
             return ownerSession.Player;
@@ -115,10 +115,10 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             if (_lastTimeSynced.AddSeconds(5) > DateTime.Now) return;
 
-            if (Moving) Fuel -= 10;
-            Fuel -= 5;
-            if (Fuel < 0) Fuel = 0;
-            Packet.Builder.PetFuelUpdateCommand(GetOwner().GetGameSession(), this);
+            //if (Moving) Fuel -= 10;
+            //Fuel -= 5;
+            //if (Fuel < 0) Fuel = 0;
+            //Packet.Builder.PetFuelUpdateCommand(GetOwner().GetGameSession(), this);
             _lastTimeSynced = DateTime.Now;
         }
 

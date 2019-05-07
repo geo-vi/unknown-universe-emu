@@ -231,11 +231,9 @@ namespace NettyBaseReloaded.Game.controllers.player
 
         private void ForceChangeMap(Spacemap targetMap, Vector targetPosition, int vw = 0)
         {
+            Console.WriteLine("[ " + targetMap.Id + "] " + targetPosition + ", " + vw);
             baseController.Player.State.Jumping = true;
-            baseController.Player.Pet?.Invalidate();
             if (baseController.Player.Spacemap == targetMap) return;
-            var gameSession = World.StorageManager.GetGameSession(baseController.Player.Id);
-            Packet.Builder.MapChangeCommand(gameSession);
             baseController.Player.MoveToMap(targetMap, targetPosition, vw);
             baseController.Player.State.Jumping = false;
         }

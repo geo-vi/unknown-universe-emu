@@ -176,6 +176,12 @@ namespace NettyBaseReloaded.Game.objects.world.players
             var session = Player.GetGameSession();
             if (session != null)
             {
+                if (WaitingForEquipmentRefresh)
+                {
+                    Player.Equipment.Reload();
+                    Player.Refresh();
+                    WaitingForEquipmentRefresh = false;
+                }
                 Packet.Builder.EquipReadyCommand(session, InEquipmentArea);
             }
         }

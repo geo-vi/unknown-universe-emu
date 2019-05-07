@@ -26,14 +26,15 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public void LoadEquipment()
         {
-            CreateHangars();
+            var hangars = CreateHangars();
             LoadItems();
-            CreateConfigs();
+            CreateConfigs(hangars);
+            Hangars = hangars;
         }
 
-        private void CreateHangars()
+        private Dictionary<int, Hangar> CreateHangars()
         {
-            Hangars = World.DatabaseManager.LoadHangar(Player);
+            return World.DatabaseManager.LoadHangar(Player);
         }
 
         private void LoadItems()
@@ -41,9 +42,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
             EquipmentItems = World.DatabaseManager.LoadEquipment(Player);
         }
 
-        private void CreateConfigs()
+        private void CreateConfigs(Dictionary<int, Hangar> hangars)
         {
-            foreach (var hangar in Hangars)
+            foreach (var hangar in hangars)
             {
                 hangar.Value.Configurations = ConfigParser(hangar.Value);
             }
@@ -361,6 +362,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Player.Refresh();
             World.DatabaseManager.SavePlayerHangar(Player, activeHangar);
             World.DatabaseManager.SavePlayerHangar(Player, targetHangar);
+        }
+
+        public void Reload()
+        {
+            var oldConfig = Player.Hangar.Configurations;
+            LoadEquipment();
+            Player.Hangar.Configurations[0].CurrentShieldLeft = oldConfig[0].CurrentShieldLeft;
+            Player.Hangar.Configurations[1].CurrentShieldLeft = oldConfig[1].CurrentShieldLeft;
         }
     }
 }
