@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
@@ -11,7 +12,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class TradeSellOreHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -19,7 +20,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             }
 
             var request = new TradeSellOreRequest();
-            request.readCommand(bytes);
+            request.readCommand(buffer);
 
             var oreType = (OreTypes) request.toSell.oreType.typeValue;
             var cargo = gameSession.Player.Information.Cargo;

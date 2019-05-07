@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.netty.handlers;
 using NettyBaseReloaded.Networking;
@@ -78,14 +79,14 @@ namespace NettyBaseReloaded.Game.netty.packet
             OldClientCommands.Add(commands.old_client.UserKeyBindingsUpdate.ID, new UserKeyBindingsUpdateHandler());
         }
 
-        public void LookUp(byte[] bytes, GameClient client)
+        public void LookUp(IByteBuffer buffer, GameClient client)
         {
-            var parser = new ByteParser(bytes);
+            var parser = new ByteParser(buffer.Copy());
 
             if (parser.CMD_ID == commands.old_client.requests.VersionRequest.ID)
             {
                 var cmd = new commands.old_client.requests.VersionRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
                 new ShipInitalizationHandler(client, cmd.playerId, cmd.sessionId);
                 return;
             }
@@ -93,7 +94,7 @@ namespace NettyBaseReloaded.Game.netty.packet
             if (parser.CMD_ID == commands.new_client.requests.LoginRequest.ID)
             {
                 var cmd = new commands.new_client.requests.LoginRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
                 new ShipInitalizationHandler(client, cmd.playerId, cmd.sessionId, true);
                 return;
             }
@@ -105,13 +106,13 @@ namespace NettyBaseReloaded.Game.netty.packet
                 if (gameSession.Player.UsingNewClient)
                 {
                     if (NewClientCommands.ContainsKey(parser.CMD_ID))
-                        NewClientCommands[parser.CMD_ID].execute(gameSession, bytes);
+                        NewClientCommands[parser.CMD_ID].execute(gameSession, buffer);
                     //else if (parser.CMD_ID != commands.new_client.LegacyModule.ID) Console.WriteLine("[3D] Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
                 }
                 else
                 {
                     if (OldClientCommands.ContainsKey(parser.CMD_ID))
-                        OldClientCommands[parser.CMD_ID].execute(gameSession, bytes);
+                        OldClientCommands[parser.CMD_ID].execute(gameSession, buffer);
                     //else if (parser.CMD_ID != commands.old_client.LegacyModule.ID) Console.WriteLine("[7.5.3] Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
                 }
 

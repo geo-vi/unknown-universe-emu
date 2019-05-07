@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
@@ -31,19 +33,29 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
       
         public string barStatus = "";
 
-        public void readCommand(byte[] bytes)
+        public void readCommand(IByteBuffer bytes)
         {
             var parser = new ByteParser(bytes);
-            clientResolutionId = parser.readShort();
-            windowSettings = parser.readUTF();
-            resizableWindows = parser.readUTF();
-            minimapScale = parser.readInt();
-            mainmenuPosition = parser.readUTF();
-            slotmenuPosition = parser.readUTF();
-            slotMenuOrder = parser.readUTF();
-            slotmenuPremiumPosition = parser.readUTF();
-            slotMenuPremiumOrder = parser.readUTF();
-            barStatus = parser.readUTF();
+            this.clientResolutionId = parser.readShort();
+            Debug.WriteLine("ClientRes = " + clientResolutionId);
+            this.windowSettings = parser.readUTF();
+            Debug.WriteLine(windowSettings);
+            this.resizableWindows = parser.readUTF();
+            Debug.WriteLine(resizableWindows);
+            this.minimapScale = parser.readInt();
+            Debug.WriteLine(minimapScale);
+            this.mainmenuPosition = parser.readUTF();
+            Debug.WriteLine(mainmenuPosition);
+            this.slotmenuPosition = parser.readUTF();
+            Debug.WriteLine(slotmenuPosition);
+            this.slotMenuOrder = parser.readUTF();
+            Debug.WriteLine(slotMenuOrder);
+            this.slotmenuPremiumPosition = parser.readUTF();
+            Debug.WriteLine(slotmenuPremiumPosition);
+            this.slotMenuPremiumOrder = parser.readUTF();
+            Debug.WriteLine(slotMenuPremiumOrder);
+            this.barStatus = parser.readUTF();
+            Debug.WriteLine(barStatus);
         }
     }
 }

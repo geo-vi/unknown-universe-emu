@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
+using DotNetty.Transport.Channels;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands;
@@ -20,55 +22,24 @@ namespace NettyBaseReloaded.Networking
 {
     class GameClient
     {
-        private XSocket XSocket;
+        private IChannelHandlerContext Context;
 
         public int UserId { get; set; }
 
-        public IPAddress IPAddress => XSocket.RemoteHost;
+        public IPEndPoint IpEndPoint => Context.Channel.RemoteAddress as IPEndPoint;
 
-
-        /* debug only */
-
-        public int SentPackets;
-        public bool Listening = true;
-
-        /* -end debug only- */
-
-        public GameClient(XSocket gameSocket)
+        public GameClient(IChannelHandlerContext context)
         {
-            XSocket = gameSocket;
-            XSocket.OnReceive += XSocketOnOnReceive;
-            XSocket.ConnectionClosedEvent += XSocketOnConnectionClosedEvent;
-            XSocket.Read();
+            Context = context;
         }
 
-        private void XSocketOnConnectionClosedEvent(object sender, EventArgs eventArgs)
-        {
-        }
-
-        private void XSocketOnOnReceive(object sender, EventArgs eventArgs)
-        {
-            var bytes = (ByteArrayArgs)eventArgs;
-            Packet.Handler.LookUp(bytes.ByteArray, this);
-        }
-
-        public void Send(byte[] bytes)
+        public async Task Send(byte[] bytes)
         {
             try
             {
-                XSocket.Write(bytes);
-                //SentPackets++;
-                //if (Listening)
-                //{
-                //    var caller = Out.GetCaller();
-                //    Console.WriteLine($"Listener ({UserId})::" + caller);
-                //    if (caller.EndsWith("LegacyModule"))
-                //    {
-                //        var legacy = new LegacyModule();
-                //        legacy.readCommand(bytes);
-                //        Console.WriteLine("[" + legacy.message + "]");
-                //    }
-                //}
+                var buffer = PooledByteBufferAllocator.Default.DirectBuffer();
+                buffer.WriteBytes(bytes);
+                await Context.WriteAndFlushAsync(buffer);
             }
             catch
             {
@@ -116,7 +87,7 @@ namespace NettyBaseReloaded.Networking
         public static void SendToPlayerView(Character character, Command command, bool sendCharacter = false) =>
             SendRangePacket(character, command, sendCharacter);
 
-        public static void SendPacketSelected(Character character, Command command)
+        public static async void SendPacketSelected(Character character, Command command)
         {
             try
             {
@@ -130,7 +101,7 @@ namespace NettyBaseReloaded.Networking
                         {
                             var entitySession = World.StorageManager.GetGameSession(entity.Id);
                             if (entitySession != null && entitySession.Player.UsingNewClient == command.IsNewClient)
-                                entitySession.Client.Send(command.Bytes);
+                                await entitySession.Client.Send(command.Bytes);
                         }
                     }
                 }
@@ -170,11 +141,11 @@ namespace NettyBaseReloaded.Networking
         }
 
 
-        public void Disconnect()
+        public async Task Disconnect()
         {
             try
             {
-                XSocket.Close();
+                await Context.CloseAsync();
             }
             catch
             {

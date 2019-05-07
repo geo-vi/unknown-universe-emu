@@ -1,10 +1,11 @@
-﻿using NettyBaseReloaded.Game.objects;
+﻿using DotNetty.Buffers;
+using NettyBaseReloaded.Game.objects;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
     class AttackAbortLaserHandler : IHandler, ILegacyHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             gameSession.Player.Controller.Attack.Attacking = false;
         }

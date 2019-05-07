@@ -108,7 +108,7 @@ namespace NettyBaseReloaded.Main.commands
                         break;
                     case "listen":
                         var session = World.StorageManager.GetGameSession(playerId);
-                        session.Client.Listening = !session.Client.Listening;
+                        //session.Client.Listening = !session.Client.Listening;
                         break;
                     case "near":
                         player = World.StorageManager.GetGameSession(playerId).Player;

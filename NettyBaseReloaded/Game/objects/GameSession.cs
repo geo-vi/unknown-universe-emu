@@ -130,25 +130,25 @@ namespace NettyBaseReloaded.Game.objects
         /// </summary>
         public void Disconnect()
         {
-            EndSession();
-            Client.Disconnect();
+            //EndSession();
+            //Client.Disconnect();
         }
 
         public void EndSession()
         {
-            GameSession removedSession;
-            Global.TickManager.Remove(this);
+            //GameSession removedSession;
+            //Global.TickManager.Remove(this);
 
-            World.StorageManager.GameSessions.TryRemove(Player.Id, out removedSession);
+            //World.StorageManager.GameSessions.TryRemove(Player.Id, out removedSession);
 
-            if (Player.Controller != null)
-            {
-                Global.TickManager.Remove(Player.Controller);
-                Player.Controller = null;
-            }
+            //if (Player.Controller != null)
+            //{
+            //    Global.TickManager.Remove(Player.Controller);
+            //    Player.Controller = null;
+            //}
 
-            Global.TickManager.Remove(Player);
-            Player = null;
+            //Global.TickManager.Remove(Player);
+            //Player = null;
         }
 
         public void KillSession()

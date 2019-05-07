@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
@@ -13,7 +14,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class BattleStationEquipHandler : IHandler
     {
-        public void execute(GameSession session, byte[] bytes)
+        public void execute(GameSession session, IByteBuffer buffer)
         {
             if (session.Player.UsingNewClient)
             {
@@ -21,7 +22,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             }
 
             var cmd = new EquipModuleRequest();
-            cmd.readCommand(bytes);
+            cmd.readCommand(buffer);
             if (session.Player.Range.Objects.FirstOrDefault(x => x.Value is Asteroid).Value is Asteroid asteroid)
             {
                 //if (!session.Player.Equipment.Modules.ContainsKey(cmd.itemId))

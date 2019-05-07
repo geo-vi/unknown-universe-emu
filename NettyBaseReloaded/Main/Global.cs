@@ -22,7 +22,7 @@ namespace NettyBaseReloaded.Main
 
         public static State State = State.LOADING;
 
-        private static Server GameServer;
+        private static GameServer GameServer;
 
         public static void Start()
         {
@@ -73,7 +73,8 @@ namespace NettyBaseReloaded.Main
         static void InitiateGame()
         {
             World.InitiateManagers();
-            GameServer = new Server(Server.GAME_PORT);
+            GameServer = new GameServer(8080, 10);
+            GameServer.StartAsync();
 
             Out.WriteLog("Game-Server started successfully and DB loaded!", "SUCCESS");
             Out.WriteLog("Game-Server started.");

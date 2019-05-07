@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world.map;
@@ -11,11 +12,11 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class HarvestHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession.Player.UsingNewClient) return;
             var cmd = new HarvestRequest();
-            cmd.readCommand(bytes);
+            cmd.readCommand(buffer);
             string itemHash = cmd.itemHash;
             var player = gameSession.Player;
             var resource = player.Spacemap.HashedObjects[itemHash];

@@ -36,7 +36,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             if (sessionId != account.SessionId)
             {
-                Console.WriteLine("Breach attempt by " + client.IPAddress);
+                Console.WriteLine("Breach attempt by " + client.IpEndPoint);
                 return null; // Fucked up session
             }
             if (World.StorageManager.GameSessions.ContainsKey(userId))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.objects;
@@ -13,7 +14,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class LabUpdateItemHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -21,7 +22,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             }
             
             var request = new LabUpdateItemRequest();
-            request.readCommand(bytes);
+            request.readCommand(buffer);
 
             var ore = (Ores) request.updateWith.oreType.typeValue;
             var amount = (int)request.updateWith.count;

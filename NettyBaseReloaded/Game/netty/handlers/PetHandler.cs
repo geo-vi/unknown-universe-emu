@@ -1,15 +1,16 @@
 ﻿using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.objects;
 using System;
+using DotNetty.Buffers;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
     class PetHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             var petRequest = new PetRequest();
-            petRequest.readCommand(bytes);
+            petRequest.readCommand(buffer);
 
             try
             {
