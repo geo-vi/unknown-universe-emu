@@ -35,6 +35,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Destroy(Character target, DeathType deathType = DeathType.MISC)
         {
+            Console.WriteLine("Destroy called: " + Out.GetCaller());
             try
             {
                 Vector pos = target.Position;
@@ -209,9 +210,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Character.CurrentNanoHull = 0;
             Character.CurrentShield = 0;
 
-            if (Character is Player)
+            if (Character is Player player)
             {
-                var player = (Player)Character;
                 var lowerMapRespawn = player.Spacemap.Disabled;
                 var closestStation = player.GetClosestStation(lowerMapRespawn);
                 var newPos = closestStation.Item1;

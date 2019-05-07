@@ -165,6 +165,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 damageType = entry.Value.Type;
                 RemoveEntry(entry.Key, entry.Value);
             }
+
             if (target == null) return;
 
             if (Character.Invisible)
@@ -174,16 +175,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             target.LastCombatTime = DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
 
-            if (!target.Invincible)
+            if (!target.Invincible && target.EntityState != EntityStates.DEAD)
             {
                 Entity(target, totalDamage, damageType, Character.Id, Character.ShieldPenetration, totalAbsDamage);
             }
 
-            var player = Character as Player;
-            if (player != null && target is Character)
+            if (Character is Player player && target is Character cTarget)
             {
-                var cTarget = (Character) target;
-
                 player.State.InDemiZone = false;
 
                 if (cTarget.Controller.Attack.Attackers.ContainsKey(player.Id))
