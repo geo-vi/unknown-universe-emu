@@ -35,7 +35,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Destroy(Character target, DeathType deathType = DeathType.MISC)
         {
-            Console.WriteLine("Destroy called: " + Out.GetCaller());
             try
             {
                 Vector pos = target.Position;

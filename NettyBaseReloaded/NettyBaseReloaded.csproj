@@ -377,6 +377,7 @@
     <Compile Include="Game\netty\commands\old_client\QuestPrivilegeCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ClanMemberInvitationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\LabUpdateRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\LoginRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipWarpRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\TradeSellOreRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipDeselectionCommand.cs" />

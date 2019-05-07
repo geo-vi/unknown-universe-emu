@@ -266,8 +266,6 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
             {
                 if (joined.GetGameSession() == null) continue;
                 Packet.Builder.LegacyModule(joined.GetGameSession(), "0|A|STD|Wave " + Wave);
-                joined.Gates.AlphaWave++;
-                joined.Gates.Save();
             }
 
             LastSentWaveTime = DateTime.Now;
@@ -295,6 +293,12 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
 
         public override void End()
         {
+            foreach (var joined in JoinedPlayers.Values)
+            {
+                joined.Gates.AlphaWave = Wave + 1;
+                joined.Gates.Save();
+            }
+
             Active = false;
             WaitingPhaseEnd = DateTime.MaxValue;
             AtPause = true;

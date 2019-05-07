@@ -21,7 +21,7 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
             parser.readShort(); // command id
             //parser.readShort(); // lenght
             gearTypeToActivate = new PetGearTypeModule(parser.readShort());
-            optParam = parser.readInt();
+            optParam = parser.readShort();
         }
     }
 }
