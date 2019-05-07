@@ -18,10 +18,6 @@ namespace NettyBaseReloaded.Networking.handlers
         {
             var buffer = message as IByteBuffer;
             if (buffer == null) return;
-
-            var hexDump = ByteBufferUtil.PrettyHexDump(buffer);
-            Console.WriteLine(hexDump);
-            Debug.WriteLine(buffer.Capacity + "/" + buffer.MaxCapacity);
             Packet.Handler.LookUp(buffer, Client);
         }
 

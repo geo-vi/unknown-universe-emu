@@ -37,25 +37,15 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
         {
             var parser = new ByteParser(bytes);
             this.clientResolutionId = parser.readShort();
-            Debug.WriteLine("ClientRes = " + clientResolutionId);
             this.windowSettings = parser.readUTF();
-            Debug.WriteLine(windowSettings);
             this.resizableWindows = parser.readUTF();
-            Debug.WriteLine(resizableWindows);
             this.minimapScale = parser.readInt();
-            Debug.WriteLine(minimapScale);
             this.mainmenuPosition = parser.readUTF();
-            Debug.WriteLine(mainmenuPosition);
             this.slotmenuPosition = parser.readUTF();
-            Debug.WriteLine(slotmenuPosition);
             this.slotMenuOrder = parser.readUTF();
-            Debug.WriteLine(slotMenuOrder);
             this.slotmenuPremiumPosition = parser.readUTF();
-            Debug.WriteLine(slotmenuPremiumPosition);
             this.slotMenuPremiumOrder = parser.readUTF();
-            Debug.WriteLine(slotMenuPremiumOrder);
             this.barStatus = parser.readUTF();
-            Debug.WriteLine(barStatus);
         }
     }
 }
