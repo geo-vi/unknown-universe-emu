@@ -27,9 +27,9 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
             var parser = new ByteParser(bytes);
             quickbarSlots = parser.readUTF();
             quickbarSlotsPremium = parser.readUTF();
-            selectedLaser = parser.readInt();
-            selectedRocket = parser.readInt();
-            selectedHellstormRocket = parser.readInt();
+            selectedLaser = (int)parser.readUInt();
+            selectedRocket = (int)parser.readUInt();
+            selectedHellstormRocket = (int)parser.readUInt();
         }
     }
 }

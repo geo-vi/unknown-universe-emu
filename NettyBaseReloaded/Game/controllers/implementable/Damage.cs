@@ -331,7 +331,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         /// <summary>
         /// Causes a damage in area.
         /// </summary>
-        public void Area(int amount, Types attackType, int distance = 0, bool playerOnly = false, DamageType damageType = DamageType.DEFINED)
+        public void Area(int amount, Types attackType, int distance = 0, bool playerOnly = false,
+            DamageType damageType = DamageType.DEFINED)
         {
             if (distance == 0) distance = Character.AttackRange;
 
@@ -346,39 +347,37 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
                 if (pet != null && pet.GetOwner() == entry.Value) continue;
 
-                Task.Factory.StartNew(() =>
+
+                var damage = 0;
+                switch (damageType)
                 {
-                    var damage = 0;
-                    switch (damageType)
+                    case DamageType.DEFINED:
+                        damage = amount;
+                        break;
+                    case DamageType.PERCENTAGE:
+                        damage = (int) (entry.Value.CurrentHealth * amount / 100.0);
+                        break;
+                }
+                //TODO use Damage() method instead
+
+                entry.Value.CurrentHealth -= damage;
+                entry.Value.LastCombatTime = DateTime.Now;
+
+                foreach (var session in AssembleSelectedSessions(entry.Value))
+                {
+                    Packet.Builder.AttackHitCommand(session, Character.Id, entry.Value, damage, (short) attackType);
+                }
+
+                if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
+                {
+                    if (pet != null)
                     {
-                        case DamageType.DEFINED:
-                            damage = amount;
-                            break;
-                        case DamageType.PERCENTAGE:
-                            damage = (int) (entry.Value.CurrentHealth * amount / 100.0);
-                            break;
+                        entry.Value.Destroy(pet.GetOwner());
                     }
-                    //TODO use Damage() method instead
+                    else entry.Value.Destroy(Character);
+                }
 
-                    entry.Value.CurrentHealth -= damage;
-                    entry.Value.LastCombatTime = DateTime.Now;
-
-                    foreach (var session in AssembleSelectedSessions(entry.Value))
-                    {
-                        Packet.Builder.AttackHitCommand(session, Character.Id, entry.Value, damage, (short) attackType);
-                    }
-
-                    if (entry.Value.CurrentHealth <= 0 && entry.Value.EntityState == EntityStates.ALIVE)
-                    {
-                        if (pet != null)
-                        {
-                            entry.Value.Destroy(pet.GetOwner());
-                        }
-                        else entry.Value.Destroy(Character);
-                    }
-
-                    entry.Value.Updaters.Update();
-                });
+                entry.Value.Updaters.Update();
             }
         }
 

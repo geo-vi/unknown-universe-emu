@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Utils
         public static string DecodeFrom64(string encodedData)
         {
             byte[] encodedDataAsBytes = Convert.FromBase64String(encodedData);
-            return Encoding.ASCII.GetString(encodedDataAsBytes);
+            return Encoding.UTF8.GetString(encodedDataAsBytes);
         }
     }
 }

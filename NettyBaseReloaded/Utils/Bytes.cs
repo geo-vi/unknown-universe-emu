@@ -148,6 +148,11 @@ namespace NettyBaseReloaded.Utils
             return ByteBuffer.ReadInt();
         }
 
+        public uint readUInt()
+        {
+            return ByteBuffer.ReadUnsignedInt();
+        }
+
         //Reads the next long of the byteArray (8 bytes)
         public long readLong()
         {
@@ -169,15 +174,10 @@ namespace NettyBaseReloaded.Utils
         //Reads the next String of the byteArray. The length of the String is given by one short before it.
         public string readUTF()
         {
-            try
-            {
-                var len = ByteBuffer.ReadShort();
-                return ByteBuffer.ReadString(len, Encoding.UTF8);
-            }
-            catch
-            {
-                return "";
-            }
+            var len = ByteBuffer.ReadUnsignedShort();
+            var final = ByteBuffer.ReadString(len, Encoding.UTF8);
+            Console.WriteLine("Length: " + len + "; String: [ " + final + " ] ");
+            return final;
         }
 
         //Reads the next boolean (1 byte)

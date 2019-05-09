@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Cachet.handlers
 
         private static async void StartListeningForUpdates()
         {
-            if (RetriveIP().ToString().StartsWith("192.168.0")) return;
+            //if (RetriveIP().ToString().StartsWith("192.168.0")) return;
             while (true)
             {
                 Cachet.AddPoint(1, World.StorageManager.GameSessions.Count);

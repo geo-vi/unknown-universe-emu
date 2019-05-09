@@ -144,9 +144,11 @@ namespace NettyBaseReloaded.Game.objects
             if (Player.Controller != null)
             {
                 Global.TickManager.Remove(Player.Controller);
+                Player.Controller = null;
             }
 
             Global.TickManager.Remove(Player);
+            Player = null;
         }
 
         public void KillSession()
