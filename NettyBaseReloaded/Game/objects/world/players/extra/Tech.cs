@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Game.objects.world.players.extra
 {
@@ -14,31 +15,46 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
         public int Count { get; set; }
         public DateTime TimeFinish { get; set; }
 
+        public bool TaskRun = false;
+
         protected Tech(Player player) : base(player) { }
 
         public int TimeLeft => Math.Abs((TimeFinish - DateTime.Now).Seconds);
         
         public abstract void Tick();
 
+        public abstract void Disable();
+
         public abstract void execute();
 
         public virtual void ThreadUpdate() { }
 
-        private Task TechTask;
-
         public void Start()
         {
-            if (TechTask != null && !TechTask.IsCompleted) return;
-            TechTask = Task.Factory.StartNew(() =>
-            {
-                while (Active && Player.Controller.Active)
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    ThreadUpdate();
-                }
-            });
+            Task.Factory.StartNew(TechAsynchronisation);
         }
 
+        public async void TechAsynchronisation()
+        {
+            if (TaskRun) return;
+            TaskRun = true;
+            while (Active && Player.Controller != null)
+            {
+                if (!Player.Controller.Active || Player.Controller.StopController)
+                {
+                    TimeFinish = DateTime.Now;
+                    return;
+                }
+                if (TimeFinish < DateTime.Now)
+                    Disable();
+
+                ThreadUpdate();
+                await Task.Delay(1000);
+            }
+
+            TaskRun = false;
+        }
+        
         public int GetStatus()
         {
             if (Active) return 2;

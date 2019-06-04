@@ -53,7 +53,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             DeleteInvitation(player, acceptedPlayer);
 
             SendInitToAll();
-            Update();
+            Task.Factory.StartNew(Update);
         }
 
         private int FindId()
@@ -125,7 +125,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         private void UpdatePlayer(GameSession instance, Player player)
         {
-            if (instance != null && player != null && Members.Count > 1 && Members.ContainsKey(player.Id))
+            if (instance != null && player?.Controller != null && Members.Count > 1 && Members.ContainsKey(player.Id))
             {
                 Packet.Builder.GroupUpdateCommand(instance, player, GetStats(player));
             }

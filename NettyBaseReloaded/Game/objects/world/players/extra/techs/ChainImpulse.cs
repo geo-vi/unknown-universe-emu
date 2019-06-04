@@ -25,7 +25,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
             Disable();
         }
 
-        private void Disable()
+        public override void Disable()
         {
             var cld = new ChainImpulseCooldown();
             cld.Send(Player.GetGameSession());

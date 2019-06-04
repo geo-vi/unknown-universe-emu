@@ -32,7 +32,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
             Player.Controller.Heal.Execute(75000, 0, HealType.SHIELD);
         }
 
-        private void Disable()
+        public override void Disable()
         {
             var cld = new ShieldBuffCooldown();
             cld.Send(Player.GetGameSession());

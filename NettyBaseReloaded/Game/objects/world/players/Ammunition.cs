@@ -55,7 +55,11 @@ namespace NettyBaseReloaded.Game.objects.world.players
         {
             Amount += amount;
             SyncCheck(true);
-            Packet.Builder.AmmunitionCountUpdateCommand(World.StorageManager.GetGameSession(Player.Id), LootId, Amount);
+            var session = World.StorageManager.GetGameSession(Player.Id);
+            if (session != null)
+            {
+                Packet.Builder.AmmunitionCountUpdateCommand(session, LootId, Amount);
+            }
         }
 
         private void SyncCheck(bool force = false)

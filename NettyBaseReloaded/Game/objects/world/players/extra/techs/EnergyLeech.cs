@@ -19,11 +19,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
 
         public override void Tick()
         {
-            if (Active)
-            {
-                if (TimeFinish < DateTime.Now)
-                    Disable();
-            }
         }
 
         public override void execute()
@@ -46,7 +41,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra.techs
             }
         }
 
-        private void Disable()
+        public override void Disable()
         {
             Active = false;
             Player.Storage.EnergyLeechActivated = false;

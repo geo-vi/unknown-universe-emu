@@ -51,7 +51,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                 || LogoutStartTime.AddSeconds(20) < DateTime.Now)
             {
                 Packet.Builder.LogoutCommand(gameSession);
-                gameSession.Disconnect();
+                gameSession.Kick();
                 LoggingOut = false;
             }
         }
