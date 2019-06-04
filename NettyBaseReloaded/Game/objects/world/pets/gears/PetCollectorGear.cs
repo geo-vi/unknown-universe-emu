@@ -73,7 +73,7 @@ namespace NettyBaseReloaded.Game.objects.world.pets.gears
                 LockedCollectable.Collect(Pet);
                 LockedCollectable = null;
             }
-            else if (LockedCollectable.Position.DistanceTo(Pet.Destination) > 150)
+            else
             {
                 LockedCollectable = null;
             }

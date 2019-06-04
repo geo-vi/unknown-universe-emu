@@ -562,6 +562,13 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public void CreateExitGate(Player player, GalaxyGate gate, Vector position)
+        {
+            var id = GetNextObjectId();
+            var baseLocation = player.GetClosestStation(true);
+            AddObject(new ExitGatePortal(gate, id, position, this, baseLocation.Item1, baseLocation.Item2.Id));
+        }
+        
         public void CreateHiddenPortal(int map, Vector pos, Vector newPos, int vwId = 0)
         {
             var id = GetNextObjectId();
