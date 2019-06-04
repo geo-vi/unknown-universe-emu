@@ -22,6 +22,7 @@ namespace NettyBaseReloaded.Game.objects.world.players.equipment.extras
                 case 73:
                     return 2;
                 case 74:
+                case 75:
                     return 1;
             }
 

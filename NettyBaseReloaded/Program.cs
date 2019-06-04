@@ -165,8 +165,6 @@ namespace NettyBaseReloaded
                 Console.CursorVisible = false;
             }
 
-
-            //TODO: Add QuestBuilder();
             //RewardBuilder();
             InitiateSession();
             ConsoleUpdater();
@@ -372,19 +370,6 @@ namespace NettyBaseReloaded
             Logger.handlers.LogCreator.Initialize();
             Out.WriteLog("Logger succesfully loaded.");
             Logger.Logger._instance.Enqueue("log", "Testing... 1 2 3");
-        }
-
-        static void ParseXML()
-        {
-            var xml = XDocument.Load("http://univ3rse.com/flashinput/translationTitles.php");
-            foreach (var element in xml.Descendants())
-            {
-                var titleId = element.Attribute("name")?.Value;
-                var id = titleId?.Replace("title_", "");
-                Console.WriteLine($"INSERT INTO server_titles VALUES ('{id}', '{titleId}','{element.Value}','0','#FFF');");
-            }
-            Console.Read();
-            //INSERT INTO server_titles (KEY,TITLE_NAME,TITLE_COLOR_HEX) VALUES ("", "","#FFF");
         }
 
         public static void Exit()

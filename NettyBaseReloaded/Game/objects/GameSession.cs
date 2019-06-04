@@ -120,9 +120,16 @@ namespace NettyBaseReloaded.Game.objects
 
         public void Kick()
         {
-            Player.Invalidate();
-            Player.Save();
-            Disconnect();
+            try
+            {
+                Player.Invalidate();
+                Player.Save();
+                Disconnect();
+            }
+            catch (Exception)
+            {
+                EndWithForce();
+            }
         }
 
         /// <summary>
@@ -148,7 +155,16 @@ namespace NettyBaseReloaded.Game.objects
             }
 
             Global.TickManager.Remove(Player);
-            Player = null;
+        }
+
+        public void EndWithForce()
+        {
+            Global.TickManager.Remove(this);
+            World.StorageManager.GameSessions.TryRemove(Client.UserId, out var removedSession);
+            if (removedSession.Player != null)
+            {
+                EndSession();
+            }
         }
 
         public void KillSession()

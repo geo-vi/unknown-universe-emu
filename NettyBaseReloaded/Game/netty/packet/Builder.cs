@@ -1282,19 +1282,27 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void AmmunitionCountUpdateCommand(GameSession gameSession, string lootId, int amount)
         {
-            if (gameSession.Player.UsingNewClient)
+            try
             {
-                gameSession.Player.Settings.Slotbar._items[lootId].CounterValue = amount;
-                //Console.WriteLine("TODO: Find ammo count update command for new client");
-                //throw new NotImplementedException();
+                if (gameSession.Player.UsingNewClient)
+                {
+                    gameSession.Player.Settings.Slotbar._items[lootId].CounterValue = amount;
+                    //Console.WriteLine("TODO: Find ammo count update command for new client");
+                    //throw new NotImplementedException();
+                }
+                else
+                {
+                    gameSession.Client.Send(commands.old_client.AmmunitionCountUpdateCommand
+                        .write(new List<commands.old_client.AmmunitionCountModule>()
+                        {
+                            new commands.old_client.AmmunitionCountModule(AmmoConverter.ToAmmoType(lootId), amount)
+                        }).Bytes);
+                }
             }
-            else
+            catch (Exception e)
             {
-                gameSession.Client.Send(commands.old_client.AmmunitionCountUpdateCommand
-                    .write(new List<commands.old_client.AmmunitionCountModule>()
-                    {
-                        new commands.old_client.AmmunitionCountModule(AmmoConverter.ToAmmoType(lootId), amount)
-                    }).Bytes);
+                Console.WriteLine("Temporary disconnect?");
+                gameSession.Kick();
             }
         }
 
