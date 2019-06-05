@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Utils
 {
@@ -125,15 +126,20 @@ namespace NettyBaseReloaded.Utils
 
         public IByteBuffer ByteBuffer;
 
+        public byte[] byteArray { get; set; }
+        public int byteCounter { get; set; }
+        public List<byte> command { get; set; }
+
         public short Lenght;
         public short CMD_ID;
 
         public ByteParser(IByteBuffer buffer)
         {
-            Debug.WriteLine("[ByteParser] " + Out.GetCaller());
             ByteBuffer = buffer;
-            this.Lenght = readShort();
-            this.CMD_ID = readShort();
+            this.CMD_ID = buffer.ReadShort();
+            this.command = new List<byte>();
+            byteCounter = 0;
+            Debug.WriteLine("[ByteParser] " + Out.GetCaller());
         }
 
         //Reads the next short of the byteArray (2 bytes)
@@ -146,11 +152,6 @@ namespace NettyBaseReloaded.Utils
         public int readInt()
         {
             return ByteBuffer.ReadInt();
-        }
-
-        public uint readUInt()
-        {
-            return ByteBuffer.ReadUnsignedInt();
         }
 
         //Reads the next long of the byteArray (8 bytes)
@@ -174,10 +175,9 @@ namespace NettyBaseReloaded.Utils
         //Reads the next String of the byteArray. The length of the String is given by one short before it.
         public string readUTF()
         {
-            var len = ByteBuffer.ReadUnsignedShort();
-            var final = ByteBuffer.ReadString(len, Encoding.UTF8);
-            Console.WriteLine("Length: " + len + "; String: [ " + final + " ] ");
-            return final;
+            short stringLength = readShort();
+            var value = ByteBuffer.ReadString(stringLength, Encoding.UTF8);
+            return value;
         }
 
         //Reads the next boolean (1 byte)
@@ -185,6 +185,5 @@ namespace NettyBaseReloaded.Utils
         {
             return ByteBuffer.ReadBoolean();
         }
-
     }
 }

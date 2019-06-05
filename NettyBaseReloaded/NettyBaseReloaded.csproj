@@ -43,7 +43,7 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\..\..\..\..\stable\</OutputPath>
@@ -59,6 +59,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -74,12 +75,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AdministratePlayers.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AdministratePlayers.Designer.cs">
-      <DependentUpon>AdministratePlayers.cs</DependentUpon>
-    </Compile>
     <Compile Include="Cachet\Cachet.cs" />
     <Compile Include="Cachet\handlers\CachetAuth.cs" />
     <Compile Include="Cachet\objects\metrics\Point.cs" />
@@ -117,12 +112,6 @@
     <Compile Include="Chat\packet\handlers\UserMessageHandler.cs" />
     <Compile Include="Chat\packet\Packet.cs" />
     <Compile Include="ConfigFileReader.cs" />
-    <Compile Include="Controller.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controller.Designer.cs">
-      <DependentUpon>Controller.cs</DependentUpon>
-    </Compile>
     <Compile Include="Game\controllers\AbstractCharacterController.cs" />
     <Compile Include="Game\controllers\events\IEvent.cs" />
     <Compile Include="Game\controllers\implementable\Attack.cs" />
@@ -853,12 +842,6 @@
     <Compile Include="Main\Global.cs" />
     <Compile Include="Main\objects\Clan.cs" />
     <Compile Include="Main\objects\State.cs" />
-    <Compile Include="MapEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MapEditor.Designer.cs">
-      <DependentUpon>MapEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Networking\auth\GameSessionInitializer.cs" />
     <Compile Include="Networking\ChatClient.cs" />
     <Compile Include="Networking\DiscordClient.cs" />
@@ -879,25 +862,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Server.cs" />
-    <Compile Include="ServerEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ServerEditor.Designer.cs">
-      <DependentUpon>ServerEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Utils\Decode.cs" />
-    <Compile Include="Utils\form\MapDrawing.cs" />
-    <Compile Include="Utils\form\TextboxPopup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Utils\form\TextboxPopup.Designer.cs">
-      <DependentUpon>TextboxPopup.cs</DependentUpon>
-    </Compile>
     <Compile Include="Utils\Random.cs" />
     <Compile Include="WebSocks\objects\Payload.cs" />
     <Compile Include="WebSocks\objects\Server.cs" />
     <Compile Include="WebSocks\objects\User.cs" />
     <Compile Include="WebSocks\packets\Handler.cs" />
+    <Compile Include="WebSocks\packets\handlers\ClanHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\ExternalClientHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\IHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\ShopHandler.cs" />
@@ -931,6 +902,9 @@
     </Reference>
     <Reference Include="DotNetty.Buffers, Version=0.6.0.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetty.Buffers.0.6.0\lib\net45\DotNetty.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty.Codecs, Version=0.6.0.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetty.Codecs.0.6.0\lib\net45\DotNetty.Codecs.dll</HintPath>
     </Reference>
     <Reference Include="DotNetty.Common, Version=0.6.0.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetty.Common.0.6.0\lib\net45\DotNetty.Common.dll</HintPath>
@@ -1048,27 +1022,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AdministratePlayers.resx">
-      <DependentUpon>AdministratePlayers.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controller.resx">
-      <DependentUpon>Controller.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MapEditor.resx">
-      <DependentUpon>MapEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ServerEditor.resx">
-      <DependentUpon>ServerEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Utils\form\TextboxPopup.resx">
-      <DependentUpon>TextboxPopup.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

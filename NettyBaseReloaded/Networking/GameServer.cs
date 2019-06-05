@@ -23,9 +23,6 @@ namespace NettyBaseReloaded.Networking
         private readonly MultithreadEventLoopGroup _workerEventLoopGroup;
         private IChannel _channel;
 
-        Random
-            rnd = new Random(); // Instatiating only one random, as every new have same seed it would repeat positions
-
         public GameServer(int port,
             int backlog)
         {

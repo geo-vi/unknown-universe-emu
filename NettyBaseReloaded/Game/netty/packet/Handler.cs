@@ -82,6 +82,7 @@ namespace NettyBaseReloaded.Game.netty.packet
         public void LookUp(IByteBuffer buffer, GameClient client)
         {
             var parser = new ByteParser(buffer.Copy());
+
             if (parser.CMD_ID == commands.old_client.requests.VersionRequest.ID)
             {
                 var cmd = new commands.old_client.requests.VersionRequest();
