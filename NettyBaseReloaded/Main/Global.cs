@@ -26,7 +26,7 @@ namespace NettyBaseReloaded.Main
 
         public static void Start()
         {
-            InitiateStatusUpdater();
+            //InitiateStatusUpdater();
             InitiateGlobalQueries();
             InitiatePolicy();
             InitiateChat();

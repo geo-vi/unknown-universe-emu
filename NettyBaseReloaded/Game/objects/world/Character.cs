@@ -226,12 +226,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public virtual void AssembleTick(object sender, EventArgs eventArgs)
         {
-            Parallel.Invoke(() =>
-            {
-                Cooldowns.Tick();
-                RocketLauncher?.Tick();
-                TickVisuals();
-            });
+            Cooldowns.Tick();
+            RocketLauncher?.Tick();
+            TickVisuals();
         }
 
         public EventHandler Ticked;
