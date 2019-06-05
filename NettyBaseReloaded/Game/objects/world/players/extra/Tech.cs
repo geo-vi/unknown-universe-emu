@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Game.objects.world.players.extra
 {
@@ -28,6 +29,9 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
 
         public void Start()
         {
+            var session = Player.GetGameSession();
+            if (session != null) Packet.Builder.LegacyModule(session, "0|A|STD|Temporarily disabled, please try again soon");
+            return;
             if (TechTask != null && !TechTask.IsCompleted) return;
             TechTask = Task.Factory.StartNew(() =>
             {
@@ -41,8 +45,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
 
         public int GetStatus()
         {
-            if (Active) return 2;
-            if (Enabled) return 1;
+            //if (Active) return 2;
+            //if (Enabled) return 1;
             return 0;
         }
     }

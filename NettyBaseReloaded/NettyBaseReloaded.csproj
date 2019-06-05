@@ -575,6 +575,7 @@
     <Compile Include="Game\objects\world\map\objects\assets\AssetTypes.cs" />
     <Compile Include="Game\objects\world\map\objects\Billboard.cs" />
     <Compile Include="Game\objects\world\map\objects\IClickable.cs" />
+    <Compile Include="Game\objects\world\map\objects\jumpgates\ExitGatePortal.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\GalaxyGatePortal.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\LowPortal.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\PirateGate.cs" />

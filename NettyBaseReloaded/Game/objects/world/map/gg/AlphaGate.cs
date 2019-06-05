@@ -245,7 +245,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
         {
             if (!AtPause) return;
             var homeBase = Owner.GetClosestStation(true);
-            VirtualMap.CreatePortal(homeBase.Item2.Id, 11200, 6400, homeBase.Item1.X, homeBase.Item1.Y);
+            VirtualMap.CreateExitGate(Owner, this, new Vector(11200, 6400));
             VirtualMap.CreateGalaxyGate(Owner, 1, new Vector(9300, 6400));
         }
 

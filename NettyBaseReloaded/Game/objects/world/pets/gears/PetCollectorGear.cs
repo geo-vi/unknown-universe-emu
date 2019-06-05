@@ -35,7 +35,7 @@ namespace NettyBaseReloaded.Game.objects.world.pets.gears
 
         private void SearchCollectable()
         {
-            var collectable = Pet.Range.Collectables.Values.Where(x => x.Position != null && x.PetCanCollect(Pet.GetOwner())).OrderBy(x => x.Position.DistanceTo(Pet.Position))
+            var collectable = Pet.Range.Collectables.Values.Where(x => x.Position != null && x.PetCanCollect(Pet.GetOwner()) && !x.Disposed).OrderBy(x => x.Position.DistanceTo(Pet.Position))
                 .FirstOrDefault();
 
             var owner = Pet.GetOwner();
@@ -67,13 +67,13 @@ namespace NettyBaseReloaded.Game.objects.world.pets.gears
 
         private void TravelToCollectable()
         {
-            if (Pet.Position.DistanceTo(LockedCollectable.Position) <= 150)
+            if (LockedCollectable.PetCanCollect(Pet.GetOwner()) && !LockedCollectable.Disposed && LockedCollectable.Position != null && Pet.Position.DistanceTo(LockedCollectable.Position) <= 150)
             {
                 CollectionStarted = DateTime.Now;
                 LockedCollectable.Collect(Pet);
                 LockedCollectable = null;
             }
-            else if (LockedCollectable.Position.DistanceTo(Pet.Destination) > 150)
+            else
             {
                 LockedCollectable = null;
             }

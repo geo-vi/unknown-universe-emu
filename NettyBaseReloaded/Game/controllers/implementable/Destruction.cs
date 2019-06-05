@@ -181,6 +181,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
+                Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
                 Debug.WriteLine("Failed destruction, " + e.Message + " [" + Character.Id + "]");
             }
