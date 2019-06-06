@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
+using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
 
 namespace NettyBaseReloaded.Networking.handlers
@@ -34,6 +35,15 @@ namespace NettyBaseReloaded.Networking.handlers
             Console.WriteLine("received a new connection.");
             Client = new GameClient(context);
             base.ChannelActive(context);
+        }
+
+        public override void ChannelInactive(IChannelHandlerContext context)
+        {
+            Console.WriteLine("disconnected");
+            if (Client != null && Client.UserId != 0)
+            {
+                World.StorageManager.GetGameSession(Client.UserId).Kick();
+            }
         }
     }
 }

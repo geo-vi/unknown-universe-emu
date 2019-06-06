@@ -14,6 +14,7 @@ using NettyBaseReloaded.Game.controllers.implementable.attack;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.statistics;
 using System.Diagnostics;
+using System.Threading;
 using NettyBaseReloaded.Main;
 using Newtonsoft.Json;
 
@@ -21,6 +22,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 {
     class Destruction : IAbstractCharacter
     {
+        private readonly object ThreadLock = new object();
         public Destruction(AbstractCharacterController controller) : base(controller)
         {
         }
@@ -35,8 +37,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Destroy(Character target, DeathType deathType = DeathType.MISC)
         {
+            bool lockWasTaken = false;
             try
             {
+                Monitor.Enter(ThreadLock, ref lockWasTaken);
                 Vector pos = target.Position;
                 if (target.CurrentHealth <= 0 && target.EntityState == EntityStates.ALIVE)
                 {
@@ -52,10 +56,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         {
                             player = pet.GetOwner();
                         }
-                        
+
                         if (player != target)
                         {
-                            if (target.FactionId == player.FactionId)//
+                            if (target.FactionId == player.FactionId) //
                             {
                                 Reward newReward = new Reward(new Dictionary<RewardType, int>());
                                 var rewards = target.Hangar.Ship.Reward;
@@ -63,10 +67,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 {
                                     if (reward is int)
                                     {
-                                        newReward.Rewards.Add((int)reward * -1); // * -1
+                                        newReward.Rewards.Add((int) reward * -1); // * -1
                                     }
                                     else newReward.Rewards.Add(reward);
                                 }
+
                                 newReward.ParseRewards(player);
                             }
                             else
@@ -88,10 +93,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                             {
                                                 //TODO: Group reward modes & stuff
                                                 var percentageTotalDmgGiven =
-                                                    (double)attacker.Value.TotalDamage /
+                                                    (double) attacker.Value.TotalDamage /
                                                     attackers.Sum(x => x.Value.TotalDamage);
 
-                                                if (target.Hangar.Ship.Id != 80 && attacker.Value.Player == mainAttacker)
+                                                if (target.Hangar.Ship.Id != 80 &&
+                                                    attacker.Value.Player == mainAttacker)
                                                     percentageTotalDmgGiven = 1;
 
                                                 if (rewardValue is int value)
@@ -101,11 +107,12 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                                 }
                                                 else reward.Rewards.Add(rewardValue);
                                             }
+
                                             reward.ParseRewards(attacker.Value.Player);
                                             attacker.Value.Player.QuestData.AddKill(target);
                                         }
                                     }
-                                    else 
+                                    else
                                         target.Hangar.Ship.Reward.ParseRewards(mainAttacker);
                                 }
                                 else
@@ -113,6 +120,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                     target.Hangar.Ship.Reward.ParseRewards(player);
                                 }
                             }
+
                             Character.Hangar.AddDronePoint(target.Hangar.Ship);
                             foreach (var eventP in player.EventsPraticipating)
                                 eventP.Value.DestroyAttackable(target);
@@ -131,6 +139,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                             player.Statistics.AddKill(target, damageDealt, attackStarted);
                         }
                     }
+
                     if (target is Npc)
                     {
                         target.Spacemap.CreateShipLoot(pos, target.Hangar.Ship.CargoDrop, Character);
@@ -164,12 +173,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                                 }
                                 else if (Character is Pet)
                                 {
-                                    var baddog = (Pet)Character;
+                                    var baddog = (Pet) Character;
                                     var gayowner = baddog.GetOwner();
                                     if (gayowner != null)
                                         new Killscreen(pTarget, gayowner, DeathType.PLAYER);
                                     else new Killscreen(pTarget, baddog, DeathType.MISC);
                                 }
+
                                 break;
                         }
                     }
@@ -181,10 +191,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             }
             catch (Exception e)
             {
+                Console.WriteLine("Destruction failed: Error destroying target");
                 Console.WriteLine(e);
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
                 Debug.WriteLine("Failed destruction, " + e.Message + " [" + Character.Id + "]");
+            }
+            finally
+            {
+                if (lockWasTaken) Monitor.Exit(lockWasTaken);
             }
         }
 

@@ -15,6 +15,12 @@ namespace NettyBaseReloaded.Game.controllers
     {
         public static void Initiate(GameSession gameSession)
         {
+            if (gameSession.Player == null)
+            {
+                Console.WriteLine("Something went wrong with logging in.");
+                return;
+            }
+
             new LoginController(gameSession);
         }
 

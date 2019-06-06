@@ -36,7 +36,7 @@ namespace NettyBaseReloaded.Main.global_managers
         public void Add(ITick tick, out int id)
         {
             id = -1;
-            if (/*Tickables.Values.Contains(tick) ||*/ Tickables.ContainsKey(id))
+            if (/*Tickables.Values.Contains(tick) ||*/ Tickables.ContainsKey(id) || tick == null)
             {
                 return;
             }
