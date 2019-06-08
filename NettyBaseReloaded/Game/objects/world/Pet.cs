@@ -69,7 +69,8 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public int CurrentConfig => GetOwner().CurrentConfig;
 
-        
+        public override Reward Reward => Hangar.Ship.Reward;
+
         // GEARS //
         public Dictionary<GearType, PetGear> PetGears = new Dictionary<GearType, PetGear>();
 

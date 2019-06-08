@@ -235,15 +235,15 @@ namespace NettyBaseReloaded.Game.objects.world
                 {
                     npc = new Barracuda(id, ship.Name,
                         new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                        0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                        ship.Damage, 5);
+                        0, position, this, ship.Health, 0, ship.Shield,
+                        ship.Shield, ship.Health, ship.Damage, ship.Reward, 5);
                 }
                 else
                 {
                     npc = new Npc(id, ship.Name,
                         new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                        0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                        ship.Damage, 5);
+                        0, position, this, ship.Health, 0, ship.Shield,
+                        ship.Shield, ship.Health, ship.Damage, ship.Reward, 5);
                 }
                 CreateNpc(npc);
             }
@@ -255,11 +255,11 @@ namespace NettyBaseReloaded.Game.objects.world
             var position = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 5));
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 5));
         }
 
-        public void CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null, int vwId = 0, string namePrefix = "")
+        public Npc CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null, int vwId = 0, string namePrefix = "", Reward reward = null)
         {
             var id = GetNextAvailableId();
             ship.AI = (int)ai;
@@ -272,10 +272,17 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 name += " " + namePrefix;
             }
-            CreateNpc(new Npc(id, name,
-                new Hangar(0, ship, new Dictionary<int, Drone>(), pos, this, ship.Health, ship.Nanohull),
-                0, pos, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, respawnTime, respawning){VirtualWorldId = vwId});
+
+            if (reward == null)
+                reward = ship.Reward;
+
+            var npc = new Npc(id, name,
+                    new Hangar(0, ship, new Dictionary<int, Drone>(), pos, this, ship.Health, ship.Nanohull),
+                    0, pos, this, ship.Health, 0, ship.Shield,
+                    ship.Shield, ship.Health, ship.Damage, reward, respawnTime, respawning)
+                {VirtualWorldId = vwId};
+            CreateNpc(npc);
+            return npc;
         }
 
         public int CreateNpc(Ship ship, AILevels ai, Npc motherShip)
@@ -285,8 +292,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var position = motherShip.Position;
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 0, false, motherShip));
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 0, false, motherShip));
             return id;
         }
 
@@ -318,8 +325,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var ship = World.StorageManager.Ships[80];
             var npc = new Cubikon(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 25);
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 25);
 
             if (Entities.ContainsKey(npc.Id))
             {
@@ -346,8 +353,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var ship = World.StorageManager.Ships[designId];
             var npc = new Spaceball(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 90);
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 90);
 
             if (Entities.ContainsKey(npc.Id))
             {
@@ -377,8 +384,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var ship = World.StorageManager.Ships[104];
             var npc = new EventNpc(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 90);
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 90);
             if (santa)
             {
                 npc.Hangar.ShipDesign = World.StorageManager.Ships[32];
@@ -558,6 +565,9 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 case 1:
                     AddObject(new GalaxyGatePortal(player, id, 1, position, this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                    break;
+                case 2:
+                    AddObject(new GalaxyGatePortal(player, id, 2, position, this, new Vector(10400, 6400), 52, PortalGraphics.GALAXYGATE_2));
                     break;
             }
         }

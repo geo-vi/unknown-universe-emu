@@ -42,7 +42,7 @@ namespace NettyBaseReloaded.Networking.handlers
             Console.WriteLine("disconnected");
             if (Client != null && Client.UserId != 0)
             {
-                World.StorageManager.GetGameSession(Client.UserId).Kick();
+                World.StorageManager.GetGameSession(Client.UserId)?.Kick();
             }
         }
     }

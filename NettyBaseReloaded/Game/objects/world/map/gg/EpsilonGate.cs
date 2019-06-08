@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NettyBaseReloaded.Game.netty;
-using NettyBaseReloaded.Game.netty.commands.new_client;
-using NettyBaseReloaded.Game.objects.world.characters;
-using NettyBaseReloaded.Game.objects.world.players.equipment;
 
 namespace NettyBaseReloaded.Game.objects.world.map.gg
 {
-    class AlphaGate : BasicGalaxyGate
+    class EpsilonGate : GalaxyGate
     {
         public override Dictionary<int, Wave> Waves => new Dictionary<int, Wave>
         {
@@ -216,28 +212,22 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
             }
         };
 
-        public AlphaGate(Spacemap coreMap, int wave) : base(1, coreMap, wave)
+        public EpsilonGate(Spacemap coreMap, int wave) : base(coreMap, wave)
         {
         }
 
-        public override void Reward()
+        public override void Start()
         {
-            base.Reward();
-            var currencyReward = new Reward(new Dictionary<RewardType, int> { { RewardType.CREDITS, 1250000 }, { RewardType.URIDIUM, 10625 }, { RewardType.EXPERIENCE, 2000000 }, { RewardType.HONOR, 50000 } });
-            var ammoReward = new Reward(RewardType.AMMO, Item.Find("ammunition_laser_ucb-100"), 10625);
-            MoveOut(Owner);
-            ammoReward.ParseRewards(Owner);
-            currencyReward.ParseRewards(Owner);
+        }
 
-            if (Owner.OwnedGates.ContainsKey(Id))
-            {
-                Owner.OwnedGates.TryRemove(Id, out _);
-            }
-            Owner.Gates.AlphaComplete++;
-            Owner.Gates.AlphaReady = false;
-            Owner.Gates.Save();
-            JoinedPlayers.Clear();
-            Owner.RefreshPlayersView();
+        public override void SendWave()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void End()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -139,7 +139,6 @@ namespace NettyBaseReloaded.Utils
             this.CMD_ID = buffer.ReadShort();
             this.command = new List<byte>();
             byteCounter = 0;
-            Debug.WriteLine("[ByteParser] " + Out.GetCaller());
         }
 
         //Reads the next short of the byteArray (2 bytes)

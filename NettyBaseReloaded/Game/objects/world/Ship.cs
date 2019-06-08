@@ -294,5 +294,12 @@ namespace NettyBaseReloaded.Game.objects.world
 
             return null;
         }
+
+        public Ship Strengthen(double p)
+        {
+            return new Ship(Id, Name, LootId, (int)(Health * p), (int)(Nanohull * p), Speed, (int)(Shield * p),
+                ShieldAbsorption, (int)(MinDamage * p), (int)(MaxDamage * p), IsNeutral,
+                LaserColor, Batteries, Rockets, Cargo, Reward, CargoDrop.Multiply(2), AI);
+        }
     }
 }

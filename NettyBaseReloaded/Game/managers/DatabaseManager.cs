@@ -180,6 +180,10 @@ namespace NettyBaseReloaded.Game.managers
                 World.StorageManager.Spacemaps.Add(51, new Spacemap(51, "GG α", Faction.NONE, false, false, 0, new List<BaseNpc>(), 
                     new List<PortalBase>()) { Disabled = true, RangeDisabled = true });
 
+                World.StorageManager.Spacemaps.Add(52, new Spacemap(52, "GG β", Faction.NONE, false, false, 0, new List<BaseNpc>(),
+                        new List<PortalBase>())
+                    { Disabled = true, RangeDisabled = true });
+
                 World.StorageManager.Spacemaps.Add(200,
                     new Spacemap(200, "Lord of War", Faction.NONE, false, false, 0, new List<BaseNpc>(),
                         new List<PortalBase>())
@@ -2140,7 +2144,7 @@ namespace NettyBaseReloaded.Game.managers
                 {
                     var row = mySqlClient.ExecuteQueryRow("SELECT * FROM player_galaxy_gates WHERE PLAYER_ID=" + gates.Player.Id);
                     var completedGates = JsonConvert.DeserializeObject<int[]>(row["COMPLETED_GATES"].ToString());
-                    if (completedGates != null && completedGates.Length == 9)
+                    if (completedGates != null && completedGates.Length == 10)
                     {
                         gates.AlphaComplete = completedGates[0];
                         gates.BetaComplete = completedGates[1];
@@ -2150,29 +2154,29 @@ namespace NettyBaseReloaded.Game.managers
                         gates.ZetaComplete = completedGates[5];
                         gates.KappaComplete = completedGates[6];
                         gates.KronosComplete = completedGates[7];
-                        gates.HadesComplete = completedGates[8];
+                        gates.LambdaComplete = completedGates[8];
+                        gates.HadesComplete = completedGates[9];
                     }
 
+                    // ALPHA Gate
                     var alphaPrepared = Convert.ToBoolean(intConv(row["ALPHA_PREPARED"]));
                     gates.AlphaReady = alphaPrepared;
-                    
                     var alphaWave = intConv(row["ALPHA_WAVE"]);
                     gates.AlphaWave = alphaWave;
-
                     var alphaLives = intConv(row["ALPHA_LIVES"]);
                     gates.AlphaLives = alphaLives;
 
+                    // BETA Gate
                     var betaPrepared = Convert.ToBoolean(intConv(row["BETA_PREPARED"]));
                     gates.BetaReady = betaPrepared;
-
                     var betaWave = intConv(row["BETA_WAVE"]);
                     gates.BetaWave = betaWave;
-                    
+                    var betaLives = intConv(row["BETA_LIVES"]);
+                    gates.BetaLives = betaLives;
+
                     var gammaPrepared = Convert.ToBoolean(intConv(row["GAMMA_PREPARED"]));
                     gates.GammaReady = gammaPrepared;
 
-                    
-                    
                     var deltaPrepared = Convert.ToBoolean(intConv(row["DELTA_PREPARED"]));
                     gates.DeltaReady = deltaPrepared;
 
@@ -2184,6 +2188,9 @@ namespace NettyBaseReloaded.Game.managers
 
                     var kappaPrepared = Convert.ToBoolean(intConv(row["KAPPA_PREPARED"]));
                     gates.KappaReady = kappaPrepared;
+
+                    var lambdaPrepared = Convert.ToBoolean(intConv(row["LAMBDA_PREPARED"]));
+                    gates.LambdaReady = lambdaPrepared;
 
                 }
             }

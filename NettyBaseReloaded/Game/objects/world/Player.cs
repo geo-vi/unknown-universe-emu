@@ -39,6 +39,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public Rank RankId { get; set; }
         public new PlayerController Controller { get; set; }
+
+        public override Reward Reward => Hangar.Ship.Reward;
+
         #endregion
         /***************
          * INFORMATION *

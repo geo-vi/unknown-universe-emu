@@ -239,5 +239,19 @@ namespace NettyBaseReloaded.Game.objects.world
         ACP,
         CLAN
     }
+
+    public enum GalaxyGates
+    {
+        ALPHA = 1,
+        BETA,
+        GAMMA,
+        DELTA,
+        EPSILON,
+        ZETA,
+        KAPPA,
+        KRONOS,
+        LAMBDA,
+        HADES
+    }
 #pragma warning restore 1591
 }

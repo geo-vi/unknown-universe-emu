@@ -81,6 +81,8 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
+        public virtual Reward Reward { get; set; }
+
         /************
          * POSITION *
          ************/

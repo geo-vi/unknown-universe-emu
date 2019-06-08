@@ -50,7 +50,8 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
 
         public int VRUScore = 0;
 
-        public Spaceball(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull, int maxShield, int damage, int respawnTime = 0, bool respawning = true, Npc motherShip = null) : base(id, name, hangar, factionId, position, spacemap, currentHealth, currentNanoHull, maxShield, damage, respawnTime, respawning, motherShip)
+        public Spaceball(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int maxHealth, int currentNanoHull,
+            int maxShield, int currentShield, int currentHealth, int damage, Reward reward, int respawnTime = 0, bool respawning = true, Npc motherShip = null) : base(id, name, hangar, factionId, position, spacemap, maxHealth, currentNanoHull, maxShield, currentShield, currentHealth, damage, reward, respawnTime, respawning, motherShip)
         {
         }
 

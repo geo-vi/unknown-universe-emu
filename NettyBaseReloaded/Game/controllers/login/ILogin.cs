@@ -140,13 +140,13 @@ namespace NettyBaseReloaded.Game.controllers.login
 
         private static void CreateTechs(GameSession session)
         {
-            session.Player.Techs.TryAdd(Techs.ROCKET_PRECISSION, new RocketPrecission(session.Player));
-            session.Player.Techs.TryAdd(Techs.SHIELD_BUFF, new ShieldBuff(session.Player));
-            session.Player.Techs.TryAdd(Techs.BATTLE_REPAIR_ROBOT, new BattleRepairRobot(session.Player));
-            session.Player.Techs.TryAdd(Techs.ENERGY_LEECH, new EnergyLeech(session.Player));
-            session.Player.Techs.TryAdd(Techs.CHAIN_IMPULSE, new ChainImpulse(session.Player));
+            //session.Player.Techs.TryAdd(Techs.ROCKET_PRECISSION, new RocketPrecission(session.Player));
+            //session.Player.Techs.TryAdd(Techs.SHIELD_BUFF, new ShieldBuff(session.Player));
+            //session.Player.Techs.TryAdd(Techs.BATTLE_REPAIR_ROBOT, new BattleRepairRobot(session.Player));
+            //session.Player.Techs.TryAdd(Techs.ENERGY_LEECH, new EnergyLeech(session.Player));
+            //session.Player.Techs.TryAdd(Techs.CHAIN_IMPULSE, new ChainImpulse(session.Player));
 
-            Packet.Builder.TechStatusCommand(session);
+            //Packet.Builder.TechStatusCommand(session);
         }
 
         private static void CreateFormations(GameSession session)

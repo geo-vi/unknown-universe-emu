@@ -211,6 +211,23 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     break;
             }
         }
+
+        public Reward Multiply(double multiplier)
+        {
+            if (multiplier == 1 || multiplier == 0) return this;
+            var reward = new Reward();
+            foreach (var rewardValue in Rewards)
+            {
+                if (rewardValue is int value)
+                {
+                    reward.Rewards.Add(Convert.ToInt32(
+                        value * multiplier));
+                }
+                else reward.Rewards.Add(rewardValue);
+            }
+
+            return reward;
+        }
     }
 }
 

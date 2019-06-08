@@ -27,6 +27,6 @@
         /// </summary>
         public static bool PRINTING_CONNECTIONS = true;
 
-        public static int REWARD_MULTIPLYER = 2;
+        public static int REWARD_MULTIPLYER = 1;
     }
 }

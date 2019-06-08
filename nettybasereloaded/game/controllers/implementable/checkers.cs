@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
@@ -17,6 +18,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 {
     class Checkers : IAbstractCharacter
     {
+        public readonly object ThreadLock = new object();
+
         public int VisibilityRange { get; set; }
 
         public bool InVisibleZone => !Character.Range.Zones.Any(x => x.Value is PalladiumZone);
@@ -58,8 +61,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         #region Character related
         private void AddCharacter(Character main, Character entity)
         {
+            bool lockWasTaken = false;
             try
             {
+                Monitor.Enter(ThreadLock, ref lockWasTaken);
                 if (entity.Id != main.Id && main.Range.AddEntity(entity))
                 {
                     if (!(main is Player)) return;
@@ -81,13 +86,19 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 Console.WriteLine("addcharacter");
                 Console.WriteLine(e);
             }
+            finally
+            {
+                if (lockWasTaken) Monitor.Exit(ThreadLock);
+            }
         }
 
         public void RemoveCharacter(Character main, Character entity)
         {
             //if (!entity.Controller.Active) return;
+            bool lockWasTaken = false;
             try
             {
+                Monitor.Enter(ThreadLock, ref lockWasTaken);
                 if (entity != null && main != null && entity.Id != main.Id && entity.Range.RemoveEntity(main))
                 {
                     if (!(entity is Player)) return;
@@ -107,6 +118,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 Console.WriteLine("removecharacter");
                 Console.WriteLine(e);
+            }
+            finally
+            {
+                if (lockWasTaken) Monitor.Exit(ThreadLock);
             }
         }
 

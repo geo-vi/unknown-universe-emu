@@ -35,16 +35,25 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
                 return;
             }
 
-            switch (GalaxyGateId)
+            switch ((GalaxyGates) GalaxyGateId)
             {
-                case 1:
+                case GalaxyGates.ALPHA:
                     if (!player.Gates.AlphaReady) return;
-                    var alphaWave = player.Gates.GetAlphaWave() - 1;
+                    var alphaWave = player.Gates.GetWave(GalaxyGateId) - 1;
                     var alpha = new AlphaGate(World.StorageManager.Spacemaps[51], alphaWave);
                     alpha.DefineOwner(player);
                     alpha.InitiateVirtualWorld();
                     player.Controller.Miscs.Jump(alpha.Spacemap.Id, Destination, Id, alpha.VWID);
                     alpha.PendingPlayers.TryAdd(player.Id, player);
+                    break;
+                case GalaxyGates.BETA:
+                    if (!player.Gates.BetaReady) return;
+                    var betaWave = player.Gates.GetWave(GalaxyGateId) - 1;
+                    var beta = new BetaGate(World.StorageManager.Spacemaps[52], betaWave);
+                    beta.DefineOwner(player);
+                    beta.InitiateVirtualWorld();
+                    player.Controller.Miscs.Jump(beta.Spacemap.Id, Destination, Id, beta.VWID);
+                    beta.PendingPlayers.TryAdd(player.Id, player);
                     break;
                 default:
                     Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Gates are currently getting tested live on the server by admins. Please be patient ))");

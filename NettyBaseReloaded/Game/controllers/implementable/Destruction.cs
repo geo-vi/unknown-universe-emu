@@ -37,169 +37,166 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public void Destroy(Character target, DeathType deathType = DeathType.MISC)
         {
-            bool lockWasTaken = false;
-            try
+            lock (ThreadLock)
             {
-                Monitor.Enter(ThreadLock, ref lockWasTaken);
-                Vector pos = target.Position;
-                if (target.CurrentHealth <= 0 && target.EntityState == EntityStates.ALIVE)
+                try
                 {
-                    var mainAttacker = target.Controller.Attack.MainAttacker;
-                    var attackers = target.Controller.Attack.Attackers.ToList();
-
-                    target.Controller.Destruction.Kill();
-                    if (Character is Player || Character is Pet)
+                    Vector pos = target.Position;
+                    if (target.CurrentHealth <= 0 && target.EntityState == EntityStates.ALIVE)
                     {
-                        var player = Character as Player;
+                        var mainAttacker = target.Controller.Attack.MainAttacker;
+                        var attackers = target.Controller.Attack.Attackers.ToList();
 
-                        if (Character is Pet pet)
+                        target.Controller.Destruction.Kill();
+                        if (Character is Player || Character is Pet)
                         {
-                            player = pet.GetOwner();
-                        }
+                            var player = Character as Player;
 
-                        if (player != target)
-                        {
-                            if (target.FactionId == player.FactionId) //
+                            if (Character is Pet pet)
                             {
-                                Reward newReward = new Reward(new Dictionary<RewardType, int>());
-                                var rewards = target.Hangar.Ship.Reward;
-                                foreach (var reward in rewards.Rewards)
-                                {
-                                    if (reward is int)
-                                    {
-                                        newReward.Rewards.Add((int) reward * -1); // * -1
-                                    }
-                                    else newReward.Rewards.Add(reward);
-                                }
-
-                                newReward.ParseRewards(player);
+                                player = pet.GetOwner();
                             }
-                            else
+
+                            if (player != target)
                             {
-                                if (attackers.Count > 1)
+                                if (target.FactionId == player.FactionId) //
                                 {
-                                    if (target.Hangar.Ship.Id == 80 || mainAttacker.Group != null)
+                                    Reward newReward = new Reward(new Dictionary<RewardType, int>());
+                                    var rewards = target.Reward;
+                                    foreach (var reward in rewards.Rewards)
                                     {
-                                        foreach (var attacker in attackers)
+                                        if (reward is int)
                                         {
-                                            if (target.Hangar.Ship.Id != 80)
-                                                if (attacker.Value.Player.Group != mainAttacker.Group)
-                                                    continue; // TODO: Add proper mothership/ cubi                                          
-
-                                            Reward reward = new Reward(new Dictionary<RewardType, int>());
-                                            var baseReward = target.Hangar.Ship.Reward;
-
-                                            foreach (var rewardValue in baseReward.Rewards)
-                                            {
-                                                //TODO: Group reward modes & stuff
-                                                var percentageTotalDmgGiven =
-                                                    (double) attacker.Value.TotalDamage /
-                                                    attackers.Sum(x => x.Value.TotalDamage);
-
-                                                if (target.Hangar.Ship.Id != 80 &&
-                                                    attacker.Value.Player == mainAttacker)
-                                                    percentageTotalDmgGiven = 1;
-
-                                                if (rewardValue is int value)
-                                                {
-                                                    reward.Rewards.Add(Convert.ToInt32(
-                                                        value * percentageTotalDmgGiven));
-                                                }
-                                                else reward.Rewards.Add(rewardValue);
-                                            }
-
-                                            reward.ParseRewards(attacker.Value.Player);
-                                            attacker.Value.Player.QuestData.AddKill(target);
+                                            newReward.Rewards.Add((int) reward * -1); // * -1
                                         }
+                                        else newReward.Rewards.Add(reward);
                                     }
-                                    else
-                                        target.Hangar.Ship.Reward.ParseRewards(mainAttacker);
+
+                                    newReward.ParseRewards(player);
                                 }
                                 else
                                 {
-                                    target.Hangar.Ship.Reward.ParseRewards(player);
+                                    if (attackers.Count > 1)
+                                    {
+                                        if (target.Hangar.Ship.Id == 80 || mainAttacker.Group != null)
+                                        {
+                                            foreach (var attacker in attackers)
+                                            {
+                                                if (target.Hangar.Ship.Id != 80)
+                                                    if (attacker.Value.Player.Group != mainAttacker.Group)
+                                                        continue; // TODO: Add proper mothership/ cubi                                          
+
+                                                Reward reward = new Reward(new Dictionary<RewardType, int>());
+                                                var baseReward = target.Reward;
+
+                                                foreach (var rewardValue in baseReward.Rewards)
+                                                {
+                                                    //TODO: Group reward modes & stuff
+                                                    var percentageTotalDmgGiven =
+                                                        (double) attacker.Value.TotalDamage /
+                                                        attackers.Sum(x => x.Value.TotalDamage);
+
+                                                    if (target.Hangar.Ship.Id != 80 &&
+                                                        attacker.Value.Player == mainAttacker)
+                                                        percentageTotalDmgGiven = 1;
+
+                                                    if (rewardValue is int value)
+                                                    {
+                                                        reward.Rewards.Add(Convert.ToInt32(
+                                                            value * percentageTotalDmgGiven));
+                                                    }
+                                                    else reward.Rewards.Add(rewardValue);
+                                                }
+
+                                                reward.ParseRewards(attacker.Value.Player);
+                                                attacker.Value.Player.QuestData.AddKill(target);
+                                            }
+                                        }
+                                        else
+                                            target.Reward.ParseRewards(mainAttacker);
+                                    }
+                                    else
+                                    {
+                                        target.Reward.ParseRewards(player);
+                                    }
                                 }
+
+                                Character.Hangar.AddDronePoint(target.Hangar.Ship);
+                                foreach (var eventP in player.EventsPraticipating)
+                                    eventP.Value.DestroyAttackable(target);
+                                player.QuestData.AddKill(target);
+                                player.Information.AddKill(target.Hangar.Ship.Id);
+
+                                var damageDealt = 0;
+                                var attackStarted = DateTime.Now;
+                                var playerAttacker = attackers.FirstOrDefault(x => x.Value.Player == player).Value;
+                                if (playerAttacker != null)
+                                {
+                                    damageDealt = playerAttacker.TotalDamage;
+                                    attackStarted = playerAttacker.AttackStartTime;
+                                }
+
+                                player.Statistics.AddKill(target, damageDealt, attackStarted);
                             }
-
-                            Character.Hangar.AddDronePoint(target.Hangar.Ship);
-                            foreach (var eventP in player.EventsPraticipating)
-                                eventP.Value.DestroyAttackable(target);
-                            player.QuestData.AddKill(target);
-                            player.Information.AddKill(target.Hangar.Ship.Id);
-
-                            var damageDealt = 0;
-                            var attackStarted = DateTime.Now;
-                            var playerAttacker = attackers.FirstOrDefault(x => x.Value.Player == player).Value;
-                            if (playerAttacker != null)
-                            {
-                                damageDealt = playerAttacker.TotalDamage;
-                                attackStarted = playerAttacker.AttackStartTime;
-                            }
-
-                            player.Statistics.AddKill(target, damageDealt, attackStarted);
                         }
-                    }
 
-                    if (target is Npc)
-                    {
-                        target.Spacemap.CreateShipLoot(pos, target.Hangar.Ship.CargoDrop, Character);
-                        target.Controller.Destruction.RespawnAlien();
-                    }
-                    else if (target is Player)
-                    {
-                        var pTarget = target as Player;
-                        foreach (var eventP in pTarget.EventsPraticipating)
-                            eventP.Value.Destroyed();
-
-                        switch (deathType)
+                        if (target is Npc)
                         {
-                            case DeathType.MINE:
-
-                                break;
-                            case DeathType.BATTLESTATION:
-
-                                break;
-                            case DeathType.RADITATION:
-                                new Killscreen(Character as Player, null, DeathType.RADITATION);
-                                break;
-                            default:
-                                if (Character is Player)
-                                {
-                                    new Killscreen(pTarget, Character, DeathType.PLAYER);
-                                }
-                                else if (Character is Npc)
-                                {
-                                    new Killscreen(pTarget, Character, DeathType.NPC);
-                                }
-                                else if (Character is Pet)
-                                {
-                                    var baddog = (Pet) Character;
-                                    var gayowner = baddog.GetOwner();
-                                    if (gayowner != null)
-                                        new Killscreen(pTarget, gayowner, DeathType.PLAYER);
-                                    else new Killscreen(pTarget, baddog, DeathType.MISC);
-                                }
-
-                                break;
+                            target.Spacemap.CreateShipLoot(pos, target.Hangar.Ship.CargoDrop, Character);
+                            target.Controller.Destruction.RespawnAlien();
                         }
-                    }
-                    else if (target is Pet pet)
-                    {
-                        pet.Controller?.OnPetDestruction();
+                        else if (target is Player)
+                        {
+                            var pTarget = target as Player;
+                            foreach (var eventP in pTarget.EventsPraticipating)
+                                eventP.Value.Destroyed();
+
+                            switch (deathType)
+                            {
+                                case DeathType.MINE:
+
+                                    break;
+                                case DeathType.BATTLESTATION:
+
+                                    break;
+                                case DeathType.RADITATION:
+                                    new Killscreen(Character as Player, null, DeathType.RADITATION);
+                                    break;
+                                default:
+                                    if (Character is Player)
+                                    {
+                                        new Killscreen(pTarget, Character, DeathType.PLAYER);
+                                    }
+                                    else if (Character is Npc)
+                                    {
+                                        new Killscreen(pTarget, Character, DeathType.NPC);
+                                    }
+                                    else if (Character is Pet)
+                                    {
+                                        var baddog = (Pet) Character;
+                                        var gayowner = baddog.GetOwner();
+                                        if (gayowner != null)
+                                            new Killscreen(pTarget, gayowner, DeathType.PLAYER);
+                                        else new Killscreen(pTarget, baddog, DeathType.MISC);
+                                    }
+
+                                    break;
+                            }
+                        }
+                        else if (target is Pet pet)
+                        {
+                            pet.Controller?.OnPetDestruction();
+                        }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Destruction failed: Error destroying target");
-                Console.WriteLine(e);
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
-                Debug.WriteLine("Failed destruction, " + e.Message + " [" + Character.Id + "]");
-            }
-            finally
-            {
-                if (lockWasTaken) Monitor.Exit(lockWasTaken);
+                catch (Exception e)
+                {
+                    Console.WriteLine("Destruction failed: Error");
+                    Console.WriteLine(e);
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                    Debug.WriteLine("Failed destruction, " + e.Message + " [" + Character.Id + "]");
+                }
             }
         }
 
