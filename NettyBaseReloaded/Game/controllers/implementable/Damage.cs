@@ -41,15 +41,15 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             public IAttackable Target { get; set; }
         }
 
-        private ConcurrentDictionary<int, DamageEntry> Entries = new ConcurrentDictionary<int,DamageEntry>();
-        private bool AddEntry(DamageEntry entry)
+        private ConcurrentQueue<DamageEntry> Entries = new ConcurrentQueue<DamageEntry>();
+        private void AddEntry(DamageEntry entry)
         {
-            return Entries.TryAdd(Entries.Count, entry);
+            Entries.Enqueue(entry);
         }
 
-        private bool RemoveEntry(int key, DamageEntry entry)
+        private bool RemoveEntry(out DamageEntry entry)
         {
-            return Entries.TryRemove(key, out entry);
+            return Entries.TryDequeue(out entry);
         }
 
         public Damage(AbstractCharacterController controller) : base(controller)
@@ -154,17 +154,21 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             IAttackable target = null;
             Types damageType = Types.LASER;
 
-            foreach (var entry in Entries)
+            for (int i = 0; i < Entries.Count; i++)
             {
-                if (target != null && entry.Value.Target != target)
-                    continue;
+                DamageEntry entry;
+                if (RemoveEntry(out entry))
+                {
+                    if (target != null && entry.Target != target)
+                        continue;
+                }
 
-                target = entry.Value.Target;
-                if (entry.Value.Absorb) totalAbsDamage += entry.Value.Damage;
-                else totalDamage += entry.Value.Damage;
-                damageType = entry.Value.Type;
-                RemoveEntry(entry.Key, entry.Value);
+                target = entry.Target;
+                if (entry.Absorb) totalAbsDamage += entry.Damage;
+                else totalDamage += entry.Damage;
+                damageType = entry.Type;
             }
+        
 
             if (target == null) return;
 
