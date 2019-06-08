@@ -62,6 +62,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheatSheet.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CheatSheet.Designer.cs">
+      <DependentUpon>CheatSheet.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,6 +95,9 @@
     <Compile Include="quests\QuestTypes.cs" />
     <Compile Include="quests\serializables\QuestSerializableReward.cs" />
     <Compile Include="quests\serializables\QuestSerializableState.cs" />
+    <EmbeddedResource Include="CheatSheet.resx">
+      <DependentUpon>CheatSheet.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

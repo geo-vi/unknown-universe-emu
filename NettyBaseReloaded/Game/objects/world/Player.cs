@@ -390,6 +390,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             try
             {
+                Save();
                 Unloaded = true;
                 base.Invalidate();
                 Pet?.Invalidate();

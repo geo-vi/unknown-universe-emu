@@ -31,6 +31,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
             {
                 var gate = player.OwnedGates.FirstOrDefault().Value;
                 gate.WaitingPhaseEnd = DateTime.Now;
+                player.MoveToMap(gate.Spacemap, Destination, gate.VWID);
                 gate.PlayerJoinMap(player);
                 return;
             }

@@ -2210,7 +2210,8 @@ namespace NettyBaseReloaded.Game.managers
                     {
                         gates.AlphaComplete, gates.BetaComplete, gates.GammaComplete,
                         gates.DeltaComplete, gates.EpsilonComplete, gates.ZetaComplete,
-                        gates.KappaComplete, gates.KronosComplete, gates.HadesComplete
+                        gates.KappaComplete, gates.KronosComplete, gates.LambdaComplete,
+                        gates.HadesComplete
                     };
                     
                     mysqlClient.ExecuteNonQuery(

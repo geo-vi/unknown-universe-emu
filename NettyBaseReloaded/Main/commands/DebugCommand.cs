@@ -180,6 +180,14 @@ namespace NettyBaseReloaded.Main.commands
                         }
 
                         break;
+                    case "equipment":
+                        player = World.StorageManager.GetGameSession(playerId).Player;
+                        Console.WriteLine("Equipment of " + player.Name);
+                        foreach (var eq in player.Equipment.EquipmentItems)
+                        {
+                            Console.WriteLine(eq.Value.Id + "::" + eq.Value.Item.LootId + "[" + eq.Value.Item.Id + "]");
+                        }
+                        break;
                 }
             }
             catch (Exception) 

@@ -173,7 +173,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 Character.Controller.Effects.Uncloak();
             }
 
-            target.LastCombatTime = DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
+            target.LastCombatTime =
+                DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
 
             if (!target.Invincible && target.EntityState != EntityStates.DEAD)
             {
@@ -189,122 +190,131 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     cTarget.Controller.Attack.Attackers[player.Id].Damage(totalDamage + totalAbsDamage);
                 }
             }
+
             Character.Updaters.Update();
+
         }
 
+        private static object DamageLock = new object();
         public static void Entity(IAttackable target, int totalDamage, Types damageType, int attackerId = 0, double shieldPenetration = 1, int totalAbsDamage = 0, bool direct = false)
         {
-            if (target == null) return;
-            if (totalAbsDamage == 0 && totalDamage == 0)
+            lock (DamageLock)
             {
+                if (target == null) return;
+                if (totalAbsDamage == 0 && totalDamage == 0)
+                {
+                    foreach (var session in AssembleSelectedSessions(target))
+                        Packet.Builder.AttackHitCommand(session, attackerId, target, 0, (short) damageType);
+                    return;
+                }
+
+                Character attacker = null;
+                if (attackerId != 0 && target.Spacemap.Entities.ContainsKey(attackerId))
+                    attacker = target.Spacemap.Entities[attackerId];
+
+                #region DamageCalculations
+
+                if (target.CurrentShield > 0)
+                {
+                    //if (totalAbsDamage > 0)
+                    //    totalDamage += totalAbsDamage;
+                    //For example => Target has 80% abs but you' have moth (+20% penetration) :> damage * 0.6
+
+                    var totalAbs = Math.Abs(shieldPenetration - target.ShieldAbsorption);
+
+                    if (totalAbs > 0)
+                    {
+                        var _absDmg = (int) (totalAbs * totalAbsDamage);
+                        target.CurrentShield -= _absDmg;
+                        if (target.CurrentShield < 0) target.CurrentShield = 0;
+                        if (attacker != null)
+                            attacker.CurrentShield += _absDmg;
+                    }
+
+                    var shieldDamage = totalDamage * totalAbs;
+                    if (target is Player targetedPlayer && targetedPlayer.Storage.SentinelFortressActive)
+                    {
+                        shieldDamage *= 0.7;
+                    }
+
+                    var healthDamage = 0;
+                    if (target.CurrentShield <= totalDamage)
+                    {
+                        healthDamage = Math.Abs(target.CurrentShield - totalDamage);
+                        target.CurrentShield = 0;
+                        target.CurrentHealth -= healthDamage;
+                    }
+                    else
+                    {
+                        target.CurrentShield -= (int) shieldDamage; //Correspondent shield damage
+                        healthDamage = (int) (totalDamage * (1 - totalAbs));
+                    }
+
+                    if (target.CurrentNanoHull > 0)
+                    {
+                        //If the player can receive some damage on the nanohull
+                        if (target.CurrentNanoHull - healthDamage < 0)
+                        {
+                            var nanoDamage = healthDamage - target.CurrentNanoHull;
+                            target.CurrentNanoHull = 0;
+                            target.CurrentHealth -= nanoDamage;
+                        }
+                        else
+                            target.CurrentNanoHull -= healthDamage;
+                    }
+                    else
+                        target.CurrentHealth -= healthDamage; //80% shield abs => 20% life
+                }
+                else //NO SHIELD
+                {
+                    totalAbsDamage = 0;
+
+                    if (target.CurrentNanoHull > 0)
+                    {
+                        //If the player can receive some damage on the nanohull
+                        if (target.CurrentNanoHull - totalDamage < 0)
+                        {
+                            var nanoDamage = totalDamage - target.CurrentNanoHull;
+                            target.CurrentNanoHull = 0;
+                            target.CurrentHealth -= nanoDamage;
+                        }
+                        else
+                            target.CurrentNanoHull -= totalDamage; //Full dmg to nanohull
+                    }
+                    else
+                    {
+                        target.CurrentHealth -= totalDamage; //Full dmg to health
+                    }
+                }
+
+                #endregion
+
+                target.Hit(totalDamage, attackerId);
+
                 foreach (var session in AssembleSelectedSessions(target))
-                    Packet.Builder.AttackHitCommand(session, attackerId, target, 0, (short)damageType);
-                return;
-            }
-            Character attacker = null;
-            if (attackerId != 0 && target.Spacemap.Entities.ContainsKey(attackerId))
-                attacker = target.Spacemap.Entities[attackerId];
-
-            #region DamageCalculations
-
-            if (target.CurrentShield > 0)
-            {
-                //if (totalAbsDamage > 0)
-                //    totalDamage += totalAbsDamage;
-                //For example => Target has 80% abs but you' have moth (+20% penetration) :> damage * 0.6
-
-                var totalAbs = Math.Abs(shieldPenetration - target.ShieldAbsorption);
-
-                if (totalAbs > 0)
                 {
-                    var _absDmg = (int)(totalAbs * totalAbsDamage);
-                    target.CurrentShield -= _absDmg;
-                    if (target.CurrentShield < 0) target.CurrentShield = 0;
-                    if (attacker != null)
-                        attacker.CurrentShield += _absDmg;
+                    if (session != null)
+                        Packet.Builder.AttackHitCommand(session, attackerId, target, totalDamage + totalAbsDamage,
+                            (short) damageType);
                 }
 
-                var shieldDamage = totalDamage * totalAbs;
-                if (target is Player targetedPlayer && targetedPlayer.Storage.SentinelFortressActive)
-                {
-                    shieldDamage *= 0.7;
-                }
-
-                var healthDamage = 0;
-                if (target.CurrentShield <= totalDamage)
-                {
-                    healthDamage = Math.Abs(target.CurrentShield - totalDamage);
-                    target.CurrentShield = 0;
-                    target.CurrentHealth -= healthDamage;
-                }
-                else
-                {
-                    target.CurrentShield -= (int)shieldDamage; //Correspondent shield damage
-                    healthDamage = (int)(totalDamage * (1 - totalAbs));
-                }
-
-                if (target.CurrentNanoHull > 0)
-                {
-                    //If the player can receive some damage on the nanohull
-                    if (target.CurrentNanoHull - healthDamage < 0)
+                if (target is AttackableAssetCore)
+                    foreach (var session in target.Spacemap.Entities.Values.Where(x => x is Player))
                     {
-                        var nanoDamage = healthDamage - target.CurrentNanoHull;
-                        target.CurrentNanoHull = 0;
-                        target.CurrentHealth -= nanoDamage;
+                        var player = session as Player;
+                        var gameSession = player?.GetGameSession();
+                        if (gameSession != null)
+                            Packet.Builder.AttackHitAssetCommand(gameSession, target.Id, target.CurrentHealth,
+                                target.MaxHealth);
                     }
-                    else
-                        target.CurrentNanoHull -= healthDamage;
-                }
-                else
-                    target.CurrentHealth -= healthDamage; //80% shield abs => 20% life
-            }
-            else //NO SHIELD
-            {
-                totalAbsDamage = 0;
 
-                if (target.CurrentNanoHull > 0)
+                if (target.CurrentHealth <= 0 && target.EntityState == EntityStates.ALIVE)
                 {
-                    //If the player can receive some damage on the nanohull
-                    if (target.CurrentNanoHull - totalDamage < 0)
-                    {
-                        var nanoDamage = totalDamage - target.CurrentNanoHull;
-                        target.CurrentNanoHull = 0;
-                        target.CurrentHealth -= nanoDamage;
-                    }
-                    else
-                        target.CurrentNanoHull -= totalDamage; //Full dmg to nanohull
-                }
-                else
-                {
-                    target.CurrentHealth -= totalDamage; //Full dmg to health
-                }
-            }
-
-            #endregion
-
-            target.Hit(totalDamage, attackerId);
-
-            foreach (var session in AssembleSelectedSessions(target))
-            {
-                if (session != null)
-                    Packet.Builder.AttackHitCommand(session, attackerId, target, totalDamage + totalAbsDamage,
-                    (short) damageType);
-            }
-
-            if (target is AttackableAssetCore)
-                foreach (var session in target.Spacemap.Entities.Values.Where(x => x is Player))
-                {
-                    var player = session as Player;
-                    var gameSession = player?.GetGameSession();
-                    if (gameSession != null)
-                        Packet.Builder.AttackHitAssetCommand(gameSession, target.Id, target.CurrentHealth, target.MaxHealth);
+                    target.Destroy(attacker);
                 }
 
-            if (target.CurrentHealth <= 0 && target.EntityState == EntityStates.ALIVE)
-            {
-                target.Destroy(attacker);
+                (target as Character)?.Updaters.Update();
             }
-            (target as Character)?.Updaters.Update();
         }
 
         private static GameSession[] AssembleSelectedSessions(IAttackable target)

@@ -158,16 +158,16 @@ namespace NettyBaseReloaded.Game.objects.world.players
                     switch (item.Item.Id)
                     {
                         case 5: // A01
-                            shield = UpgradeShield(1000, item.Level);
+                            shield = UpgradeShield(1000, item.Level, "c");
                             break;
                         case 7: // AO2
-                            shield = UpgradeShield(2000, item.Level);
+                            shield = UpgradeShield(2000, item.Level, "c");
                             break;
                         case 8: // AO3
-                            shield = UpgradeShield(5000, item.Level);
+                            shield = UpgradeShield(5000, item.Level, "c");
                             break;
                         case 9: // BO1
-                            shield = UpgradeShield(4000, item.Level);
+                            shield = UpgradeShield(8000, item.Level);
                             break;
                         case 6: // BO2
                             shield = UpgradeShield(10000, item.Level);

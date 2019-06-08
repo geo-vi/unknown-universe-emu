@@ -61,11 +61,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
             }
             else if (num < 0.2)
             {
-                BoxReward = new Reward(new Dictionary<RewardType, int>{ {RewardType.GALAXY_GATES_ENERGY, 8}});
+                BoxReward = new Reward(new Dictionary<RewardType, int>{ {RewardType.GALAXY_GATES_ENERGY, 16}});
                 BoxReward.Rewards.Add((short)0);
                 BoxReward.Rewards.Add(RewardType.AMMO);
                 BoxReward.Rewards.Add(Item.Find("ammunition_laser_rsb-75"));
-                BoxReward.Rewards.Add(580);
+                BoxReward.Rewards.Add(1024);
             }
             else if (num < 0.3)
             {
@@ -73,7 +73,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 BoxReward.Rewards.Add((short)0);
                 BoxReward.Rewards.Add(RewardType.AMMO);
                 BoxReward.Rewards.Add(Item.Find("ammunition_laser_ucb-100"));
-                BoxReward.Rewards.Add(395);
+                BoxReward.Rewards.Add(500);
             }
             else
             {
@@ -81,11 +81,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 BoxReward.Rewards.Add((short)0);
                 BoxReward.Rewards.Add(RewardType.AMMO);
                 BoxReward.Rewards.Add(Item.Find("ammunition_rocketlauncher_sar-02"));
-                BoxReward.Rewards.Add(75);
+                BoxReward.Rewards.Add(150);
                 BoxReward.Rewards.Add((short)0);
                 BoxReward.Rewards.Add(RewardType.AMMO);
                 BoxReward.Rewards.Add(Item.Find("ammunition_rocketlauncher_hstrm-01"));
-                BoxReward.Rewards.Add(32);
+                BoxReward.Rewards.Add(64);
             }
         }
 

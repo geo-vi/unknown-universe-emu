@@ -221,8 +221,8 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
         public override void Reward()
         {
             base.Reward();
-            var currencyReward = new Reward(new Dictionary<RewardType, int> { { RewardType.CREDITS, 2500000 }, { RewardType.URIDIUM, 21250 }, { RewardType.EXPERIENCE, 4000000 }, { RewardType.HONOR, 100000 } });
-            var ammoReward = new Reward(RewardType.AMMO, Item.Find("ammunition_laser_ucb-100"), 21250);
+            var currencyReward = new Reward(new Dictionary<RewardType, int> { { RewardType.CREDITS, 40000000 }, { RewardType.URIDIUM, 40000 }, { RewardType.EXPERIENCE, 8000000 }, { RewardType.HONOR, 200000 } });
+            var ammoReward = new Reward(RewardType.AMMO, Item.Find("ammunition_laser_ucb-100"), 42500);
             MoveOut(Owner);
             ammoReward.ParseRewards(Owner);
             currencyReward.ParseRewards(Owner);

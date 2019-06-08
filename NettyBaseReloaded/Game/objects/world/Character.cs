@@ -287,17 +287,25 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Destroy()
         {
-            Controller.Destruction.Destroy(this);
+            lock (DestroyLock)
+            {
+                Controller.Destruction.Destroy(this);
+            }
         }
 
+        private object DestroyLock = new object();
         public override void Destroy(Character destroyer)
         {
-            if (destroyer == null)
+            lock (DestroyLock)
             {
-                Destroy();
-                return;
+                if (destroyer == null)
+                {
+                    Destroy();
+                    return;
+                }
+
+                destroyer.Controller.Destruction.Destroy(this);
             }
-            destroyer.Controller.Destruction.Destroy(this);
         }
 
         /// <summary>
