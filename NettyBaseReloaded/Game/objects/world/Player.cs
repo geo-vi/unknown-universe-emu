@@ -333,6 +333,9 @@ namespace NettyBaseReloaded.Game.objects.world
         public bool IsLoaded => Settings != null && Equipment != null && Storage != null && Controller != null &&
                                 !Controller.StopController && !Unloaded && State != null && !State.Jumping;
 
+        // ** THREAD LOCKER ** //
+        private readonly object ThreadLocker = new object();
+
         public Player(int id, int globalId, string name, Clan clan, Faction factionId, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, null, factionId, clan)
         {
             InitializeClasses();
@@ -363,32 +366,36 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void AssembleTick(object sender, EventArgs eventArgs)
         {
-            if (GetGameSession() == null)
+            lock (ThreadLocker)
             {
-                Invalidate();
-                return;
+                if (GetGameSession() == null)
+                {
+                    Invalidate();
+                    return;
+                }
+
+                if (!Controller.Active || EntityState == EntityStates.DEAD)
+                    return;
+
+                base.AssembleTick(sender, eventArgs);
+
+                LevelChecker();
+                TickBoosters();
+                AssembleEnemyWarn();
+                TickEvents();
+                TickTechs();
+                TickAbilities();
+                TickQuests();
+                TickAnnouncements();
+                Skylab.Tick();
+                Gates.Tick();
             }
-            if (!Controller.Active || EntityState == EntityStates.DEAD)
-                return;
-
-            base.AssembleTick(sender, eventArgs);
-
-            LevelChecker();
-            TickBoosters();
-            AssembleEnemyWarn();
-            TickEvents();
-            TickTechs();
-            TickAbilities();
-            TickQuests();
-            TickAnnouncements();
-            Skylab.Tick();
-            Gates.Tick();
         }
-        
+
 
         public override void Invalidate()
         {
-            try
+            lock (ThreadLocker)
             {
                 Save();
                 Unloaded = true;
@@ -397,10 +404,6 @@ namespace NettyBaseReloaded.Game.objects.world
                 Controller?.Exit();
                 Storage.Clean();
                 State.Reset();
-            }
-            catch
-            {
-
             }
         }
 
@@ -774,15 +777,18 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void MoveToMap(Spacemap map, Vector pos, int vwid)
         {
-            Pet?.Controller.Deactivate();
-            Spacemap.RemoveEntity(this);
-            ResetPlayer();
-            Spacemap = map;
-            Position = pos;
-            VirtualWorldId = vwid;
-            ChangePosition(Position);
-            Controller.AddToMap();
-            Refresh();
+            lock (ThreadLocker)
+            {
+                Pet?.Controller.Deactivate();
+                Spacemap.RemoveEntity(this);
+                ResetPlayer();
+                Spacemap = map;
+                Position = pos;
+                VirtualWorldId = vwid;
+                ChangePosition(Position);
+                Controller.AddToMap();
+                Refresh();
+            }
         }
 
         public void ResetPlayer()

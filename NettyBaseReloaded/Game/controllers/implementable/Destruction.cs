@@ -318,8 +318,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         {
             lock (ThreadLock)
             {
-                if (Character.EntityState == EntityStates.ALIVE) return;
-
                 Character.EntityState = EntityStates.ALIVE;
                 Character.CurrentHealth = 1000;
                 Character.Controller.StopController = false;

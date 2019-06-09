@@ -569,6 +569,9 @@ namespace NettyBaseReloaded.Game.objects.world
                 case 2:
                     AddObject(new GalaxyGatePortal(player, id, 2, position, this, new Vector(10400, 6400), 52, PortalGraphics.GALAXYGATE_2));
                     break;
+                case 3:
+                    AddObject(new GalaxyGatePortal(player, id, 3, position, this, new Vector(10400, 6400), 53, PortalGraphics.GALAXYGATE_3));
+                    break;
             }
         }
 

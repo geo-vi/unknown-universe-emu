@@ -32,14 +32,12 @@ namespace NettyBaseReloaded.Networking.handlers
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
-            Console.WriteLine("received a new connection.");
             Client = new GameClient(context);
             base.ChannelActive(context);
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
-            Console.WriteLine("disconnected");
             if (Client != null && Client.UserId != 0)
             {
                 World.StorageManager.GetGameSession(Client.UserId)?.Kick();

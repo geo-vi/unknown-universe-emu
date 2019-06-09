@@ -2227,7 +2227,8 @@ namespace NettyBaseReloaded.Game.managers
                     mysqlClient.ExecuteNonQuery(
                         $"UPDATE player_galaxy_gates SET COMPLETED_GATES='" + JsonConvert.SerializeObject(completedGates) + "'," +
                         $" ALPHA_PREPARED = {gates.AlphaReady}, ALPHA_WAVE = {gates.AlphaWave}, ALPHA_LIVES = {gates.AlphaLives}," +
-                        $" BETA_PREPARED = {gates.BetaReady}, BETA_WAVE = {gates.BetaWave}" +
+                        $" BETA_PREPARED = {gates.BetaReady}, BETA_WAVE = {gates.BetaWave}, BETA_LIVES = {gates.BetaLives}," +
+                        $" GAMMA_PREPARED = {gates.GammaReady}, GAMMA_WAVE = {gates.GammaWave}, GAMMA_LIVES = {gates.GammaLives}" +
                         $" WHERE PLAYER_ID = {gates.Player.Id}");
                 }
             }
