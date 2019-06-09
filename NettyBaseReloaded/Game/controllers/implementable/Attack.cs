@@ -36,7 +36,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Tick()
         {
-            if (Attacking && Character.Selected != null)
+            if (Attacking && Character.Selected != null && TrySelect(Character.Selected))
             {
                 LaserAttack();
                 if (Character is Npc npc)
@@ -87,7 +87,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public bool TrySelect(IAttackable target)
         {
-            if (target != null && target.Targetable && target.EntityState != EntityStates.DEAD)
+            if (target != null && target.Targetable && target.EntityState != EntityStates.DEAD && target.Spacemap == Character.Spacemap)
             {
                 Controller.Character.Selected = target;
                 return true;

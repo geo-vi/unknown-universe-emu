@@ -240,19 +240,20 @@ namespace NettyBaseReloaded.Game.objects.world
             Ticked?.Invoke(this, EventArgs.Empty);
         }
 
+        private object ThreadLock = new object();
         public virtual void Invalidate()
         {
-            try
+            lock(ThreadLock)
             {
+                if (Controller == null || Controller != null && Controller.StopController) return;
+
+                Selected = null;
                 Global.TickManager.Remove(this);
                 Controller.RemoveFromMap();
                 Controller.StopAll();
                 Range.Clean();
                 if (Spacemap.Entities.ContainsKey(Id))
                     Spacemap.Entities.TryRemove(Id, out _);
-            }
-            catch (Exception)
-            {
             }
         }
 

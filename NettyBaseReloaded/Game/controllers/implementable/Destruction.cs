@@ -289,11 +289,10 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (Character.EntityState == EntityStates.ALIVE)
                     return;
 
-                Character.EntityState = EntityStates.ALIVE;
-
                 Vector newPos;
 
                 var npc = (Npc) Character;
+
                 if (!npc.Respawning) return;
                 if (npc.MotherShip != null)
                 {
@@ -301,6 +300,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     return;
                 }
 
+                Character.EntityState = EntityStates.ALIVE;
                 npc.CurrentHealth = npc.MaxHealth;
                 npc.CurrentShield = npc.MaxShield;
 
