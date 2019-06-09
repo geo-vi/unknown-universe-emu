@@ -59,23 +59,25 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         public override void Tick()
         {
-            DistributeDamage();
+            //DistributeDamage();
         }
 
         public override void Stop()
         {
         }
 
-        public void Laser(IAttackable attacked, int damage, bool absorb)
+        public void Laser(IAttackable attacked, int damage, int absorb)
         {
             if (attacked == null || attacked.EntityState == EntityStates.DEAD) return;
-            AddEntry(new DamageEntry {Absorb = absorb, Damage = damage, Target = attacked, Type = Types.LASER});
+            DistributeDamage(Types.LASER, damage, absorb, attacked);
+            //AddEntry(new DamageEntry {Absorb = absorb, Damage = damage, Target = attacked, Type = Types.LASER});
         }
 
-        public void Rocket(IAttackable attacked, int damage, bool absorb, Types type = Types.ROCKET)
+        public void Rocket(IAttackable attacked, int damage, int absorb, Types type = Types.ROCKET)
         {
             if (attacked == null || attacked.EntityState == EntityStates.DEAD) return;
-            AddEntry(new DamageEntry { Absorb = absorb, Damage = damage, Target = attacked, Type = type });
+            DistributeDamage(Types.ROCKET, damage, absorb, attacked);
+            //AddEntry(new DamageEntry { Absorb = absorb, Damage = damage, Target = attacked, Type = type });
         }
 
         public void Radiation(int damage)
@@ -139,64 +141,70 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             foreach (var target in targets)
             {
                 if (target.Value.CurrentHealth <= 0 && target.Value.EntityState != EntityStates.DEAD)
-                    Controller.Destruction.Destroy(target.Value);
+                    Controller.Destruction.Destroy(target.Value, DeathType.PLAYER);
             }
 
             targets.Clear();
         }
 
-        private void DistributeDamage()
+        private void DistributeDamage(Types damageType, int totalDamage, int totalAbsDamage, IAttackable target)
         {
-            if (Entries.Count == 0) return;
+            //if (Entries.Count == 0) return;
 
-            int totalDamage = 0;
-            int totalAbsDamage = 0;
-            IAttackable target = null;
-            Types damageType = Types.LASER;
+            //int totalDamage = 0;
+            //int totalAbsDamage = 0;
+            //IAttackable target = null;
+            //var damageType = Types.LASER;
 
-            for (int i = 0; i < Entries.Count; i++)
+            //for (int i = 0; i < Entries.Count; i++)
+            //{
+            //    DamageEntry entry;
+            //    if (Entries.TryPeek(out entry))
+            //    {
+            //        if (target != null && entry.Target != target)
+            //            break;
+            //    }
+
+            //    if (RemoveEntry(out entry))
+            //    {
+            //        target = entry.Target;
+            //        if (entry.Absorb) totalAbsDamage += entry.Damage;
+            //        else totalDamage += entry.Damage;
+            //        damageType = entry.Type;
+            //    }
+            //    else return;
+            //}
+
+            lock (DamageLock)
             {
-                DamageEntry entry;
-                if (RemoveEntry(out entry))
+
+                if (target == null) return;
+
+                if (Character.Invisible)
                 {
-                    if (target != null && entry.Target != target)
-                        continue;
+                    Character.Controller.Effects.Uncloak();
                 }
 
-                target = entry.Target;
-                if (entry.Absorb) totalAbsDamage += entry.Damage;
-                else totalDamage += entry.Damage;
-                damageType = entry.Type;
-            }
-        
+                target.LastCombatTime =
+                    DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
 
-            if (target == null) return;
-
-            if (Character.Invisible)
-            {
-                Character.Controller.Effects.Uncloak();
-            }
-
-            target.LastCombatTime =
-                DateTime.Now; //To avoid repairing and logging off | My' own logging is set to off in the correspondent handlers
-
-            if (!target.Invincible && target.EntityState != EntityStates.DEAD)
-            {
-                Entity(target, totalDamage, damageType, Character.Id, Character.ShieldPenetration, totalAbsDamage);
-            }
-
-            if (Character is Player player && target is Character cTarget)
-            {
-                player.State.InDemiZone = false;
-
-                if (cTarget.Controller.Attack.Attackers.ContainsKey(player.Id))
+                if (!target.Invincible && target.EntityState != EntityStates.DEAD)
                 {
-                    cTarget.Controller.Attack.Attackers[player.Id].Damage(totalDamage + totalAbsDamage);
+                    Entity(target, totalDamage, damageType, Character.Id, Character.ShieldPenetration, totalAbsDamage);
                 }
+
+                if (Character is Player player && target is Character cTarget)
+                {
+                    player.State.InDemiZone = false;
+
+                    if (cTarget.Controller.Attack.Attackers.ContainsKey(player.Id))
+                    {
+                        cTarget.Controller.Attack.Attackers[player.Id].Damage(totalDamage + totalAbsDamage);
+                    }
+                }
+
+                Character.Updaters.Update();
             }
-
-            Character.Updaters.Update();
-
         }
 
         private static object DamageLock = new object();

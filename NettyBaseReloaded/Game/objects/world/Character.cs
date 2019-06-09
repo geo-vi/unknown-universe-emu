@@ -14,6 +14,7 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
@@ -289,7 +290,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             lock (DestroyLock)
             {
-                Controller.Destruction.Destroy(this);
+                Controller.Destruction.Destroy(this, DeathType.PLAYER);
             }
         }
 
@@ -304,7 +305,7 @@ namespace NettyBaseReloaded.Game.objects.world
                     return;
                 }
 
-                destroyer.Controller.Destruction.Destroy(this);
+                destroyer.Controller.Destruction.Destroy(this, DeathType.PLAYER);
             }
         }
 

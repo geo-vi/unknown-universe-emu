@@ -266,8 +266,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 netty.commands.new_client.AttackLaserRunCommand.write(Character.Id, enemy.Id, laserColor, enemy is Player,
                     Character.Skills.HasFatLasers()), true);
 
-            Controller.Damage?.Laser(enemy, damage, false);
-            Controller.Damage?.Laser(enemy, absDamage, true);
+            Controller.Damage?.Laser(enemy, damage, absDamage);
+            //Controller.Damage?.Laser(enemy, absDamage, true);
 
             if (Character is Player)
             {
@@ -360,7 +360,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
             GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
-            Controller.Damage?.Rocket(enemy, damage, false);
+            Controller.Damage?.Rocket(enemy, damage, 0);
         }
 
         public void LaunchRocketLauncher()
@@ -405,8 +405,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
             Character.RocketLauncher.Shoot(loadedRockets);
 
-            Controller.Damage?.Rocket(enemy, absDamage, true, dmgTypes);
-            Controller.Damage?.Rocket(enemy, damage, false, dmgTypes);
+            Controller.Damage?.Rocket(enemy, damage, absDamage, dmgTypes);
 
             if (player != null && enemy is Character)
             {

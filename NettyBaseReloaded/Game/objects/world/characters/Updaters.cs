@@ -109,9 +109,10 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 if (Character.Controller == null || !Character.Controller.Active || LastRegeneratedTime.AddSeconds(1) >= DateTime.Now) return;
                 LastRegeneratedTime = DateTime.Now;
 
-                if (Character is Npc && Character.LastCombatTime.AddSeconds(5) < DateTime.Now && Character.CurrentHealth < Character.MaxHealth)
+                if (Character is Npc npc && Character.LastCombatTime.AddSeconds(5) < DateTime.Now && Character.CurrentHealth < Character.MaxHealth)
                 {
-                    Character.Controller.Heal.Execute(Character.MaxHealth / 100);
+                    if (npc.IsRegenerating)
+                        Character.Controller.Heal.Execute(Character.MaxHealth / 100);
                 }
 
                 // Takes 25 secs to recover the shield

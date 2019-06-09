@@ -56,6 +56,15 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.jumpgates
                     player.Controller.Miscs.Jump(beta.Spacemap.Id, Destination, Id, beta.VWID);
                     beta.PendingPlayers.TryAdd(player.Id, player);
                     break;
+                case GalaxyGates.GAMMA:
+                    if (!player.Gates.GammaReady) return;
+                    var gammaWave = player.Gates.GetWave(GalaxyGateId) - 1;
+                    var gamma = new GammaGate(World.StorageManager.Spacemaps[53], gammaWave);
+                    gamma.DefineOwner(player);
+                    gamma.InitiateVirtualWorld();
+                    player.Controller.Miscs.Jump(gamma.Spacemap.Id, Destination, Id, gamma.VWID);
+                    gamma.PendingPlayers.TryAdd(player.Id, player);
+                    break;
                 default:
                     Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STD|Gates are currently getting tested live on the server by admins. Please be patient ))");
                     break;

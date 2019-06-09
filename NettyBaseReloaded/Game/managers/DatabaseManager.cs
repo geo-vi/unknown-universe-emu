@@ -184,6 +184,11 @@ namespace NettyBaseReloaded.Game.managers
                         new List<PortalBase>())
                     { Disabled = true, RangeDisabled = true });
 
+                World.StorageManager.Spacemaps.Add(53, new Spacemap(53, "GG γ", Faction.NONE, false, false, 0, new List<BaseNpc>(),
+                        new List<PortalBase>())
+                    { Disabled = true, RangeDisabled = true });
+
+
                 World.StorageManager.Spacemaps.Add(200,
                     new Spacemap(200, "Lord of War", Faction.NONE, false, false, 0, new List<BaseNpc>(),
                         new List<PortalBase>())
@@ -2174,8 +2179,13 @@ namespace NettyBaseReloaded.Game.managers
                     var betaLives = intConv(row["BETA_LIVES"]);
                     gates.BetaLives = betaLives;
 
+                    // GAMMA Gate
                     var gammaPrepared = Convert.ToBoolean(intConv(row["GAMMA_PREPARED"]));
                     gates.GammaReady = gammaPrepared;
+                    var gammaWave = intConv(row["GAMMA_WAVE"]);
+                    gates.GammaWave = gammaWave;
+                    var gammaLives = intConv(row["GAMMA_LIVES"]);
+                    gates.GammaLives = gammaLives;
 
                     var deltaPrepared = Convert.ToBoolean(intConv(row["DELTA_PREPARED"]));
                     gates.DeltaReady = deltaPrepared;
