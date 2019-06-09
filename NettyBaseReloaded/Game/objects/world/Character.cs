@@ -243,17 +243,21 @@ namespace NettyBaseReloaded.Game.objects.world
         private object ThreadLock = new object();
         public virtual void Invalidate()
         {
-            lock(ThreadLock)
+            lock (ThreadLock)
             {
-                if (Controller == null || Controller != null && Controller.StopController) return;
+                try
+                {
+                    if (Controller == null || Controller != null && Controller.StopController) return;
 
-                Selected = null;
-                Global.TickManager.Remove(this);
-                Controller.RemoveFromMap();
-                Controller.StopAll();
-                Range.Clean();
-                if (Spacemap.Entities.ContainsKey(Id))
-                    Spacemap.Entities.TryRemove(Id, out _);
+                    Selected = null;
+                    Global.TickManager.Remove(this);
+                    Controller.StopAll();
+                    Controller.RemoveFromMap();
+                    Range.Clean();
+                    if (Spacemap.Entities.ContainsKey(Id))
+                        Spacemap.Entities.TryRemove(Id, out _);
+                }
+                catch  { }
             }
         }
 
@@ -291,7 +295,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             lock (DestroyLock)
             {
-                Controller.Destruction.Destroy(this, DeathType.PLAYER);
+                Controller.Destruction.Destroy(this);
             }
         }
 

@@ -325,7 +325,12 @@ namespace NettyBaseReloaded.Game.objects.world.map
             {
                 foreach (var entity in VirtualMap.Entities)
                 {
-                    entity.Value.Destroy();
+                    if (entity.Key == player.Id) continue;
+                    if (entity.Value is Npc npc)
+                    {
+                        npc.Controller.ExitAI();
+                        npc.Controller.Destruction.Kill();
+                    }
                     VirtualMap.Entities.TryRemove(entity.Key, out _);
                 }
                 player.OwnedGates.TryRemove(Id, out _);
