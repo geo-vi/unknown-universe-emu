@@ -14,10 +14,9 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         public Updaters(Character character)
         {
             Character = character;
-            character.Ticked += Ticked;
         }
 
-        private void Ticked(object sender, EventArgs eventArgs)
+        public void Tick()
         {
             Regenerate();
         }

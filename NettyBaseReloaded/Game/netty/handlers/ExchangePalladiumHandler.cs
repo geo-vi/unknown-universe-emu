@@ -11,7 +11,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
     {
         public void execute(GameSession gameSession, string[] param)
         {
-            if (gameSession == null || gameSession.Player.Information.Cargo.Palladium < 15) return;
+            if (gameSession == null || gameSession.Player.Information.Cargo.Palladium < World.StorageManager.OrePrices.Palladium) return;
             var player = gameSession.Player;
 
             var valueExchanged = Math.Abs(Convert.ToInt32(param[1]));

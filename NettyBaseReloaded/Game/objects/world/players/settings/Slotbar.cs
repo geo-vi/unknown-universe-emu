@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using AmmunitionTypeModule = NettyBaseReloaded.Game.netty.commands.old_client.AmmunitionTypeModule;
 using NettyBaseReloaded.Game.netty.commands;
@@ -10,7 +11,7 @@ using NettyBaseReloaded.Game.objects.world.players.settings.slotbars;
 
 namespace NettyBaseReloaded.Game.objects.world.players.settings
 {
-    class Slotbar
+    class Slotbar : PlayerBaseClass
     {
         public class Items
         {
@@ -106,11 +107,11 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
 
         public Dictionary<string, SlotbarItem> _items = new Dictionary<string, SlotbarItem>();
 
-        public Slotbar()
+        public Slotbar(Player player) : base(player)
         {
         }
 
-        public List<SlotbarCategoryModule> GetCategories(Player player)
+        public List<SlotbarCategoryModule> GetCategories()
         {
             var counterValue = 0;
 
@@ -121,8 +122,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             var maxCounter = 1000;
             foreach (var itemId in Items.LaserIds)
             {
-                if (!player.Information.Ammunitions.ContainsKey(itemId) || itemId == "ammunition_laser_cbo-100" || itemId == "ammunition_laser_job-100") continue;
-                var ammo = player.Information.Ammunitions[itemId];
+                if (!Player.Information.Ammunitions.ContainsKey(itemId) || itemId == "ammunition_laser_cbo-100" || itemId == "ammunition_laser_job-100") continue;
+                var ammo = Player.Information.Ammunitions[itemId];
 
                 var item = new LaserItem(
                     itemId,
@@ -143,8 +144,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             maxCounter = 200;
             foreach (var itemId in Items.RocketIds)
             {
-                if (!player.Information.Ammunitions.ContainsKey(itemId)) continue;
-                var ammo = player.Information.Ammunitions[itemId];
+                if (!Player.Information.Ammunitions.ContainsKey(itemId)) continue;
+                var ammo = Player.Information.Ammunitions[itemId];
 
                 counterValue = ammo.Get();
 
@@ -166,8 +167,8 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
 
             foreach (var itemId in Items.RocketLauncherIds)
             {
-                if (!player.Information.Ammunitions.ContainsKey(itemId)) continue;
-                var ammo = player.Information.Ammunitions[itemId];
+                if (!Player.Information.Ammunitions.ContainsKey(itemId)) continue;
+                var ammo = Player.Information.Ammunitions[itemId];
                 counterValue = ammo.Get();
 
                 var item = new RocketLauncherItem(
@@ -309,6 +310,78 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
             categories.Add(new SlotbarCategoryModule("drone_formations", items));
             
             return categories;
+        }
+
+        public void HideMenu(MenuButtons btn)
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.LegacyModule(session, "0|UI|MV|HM|" + (int) btn);
+            }
+        }
+
+        public void ShowMenu(MenuButtons btn)
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.LegacyModule(session, "0|UI|MV|SM|" + (int)btn);
+            }
+        }
+
+        public void DisableMenu(MenuButtons btn)
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.LegacyModule(session, "0|UI|MBA|DB|" + (int) btn);
+            }
+        }
+
+        public void EnableMenu(MenuButtons btn)
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.LegacyModule(session, "0|UI|MBA|EB|" + (int)btn);
+            }
+        }
+
+        public void HideButton(Buttons btn)
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.LegacyModule(session, "0|UI|B|HB|" + (int)btn);
+            }
+        }
+
+        public void HideFlash(Buttons btn)
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.LegacyModule(session, "0|UI|B|HF|-1|-1|" + (int)btn);
+            }
+        }
+
+        public void ShowFlash(Buttons btn, bool pointer, int times)
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.LegacyModule(session, "0|UI|B|SF|" + times +"|"+ Convert.ToInt32(pointer) + "|" + (int)btn);
+            }
+        }
+
+        public void ShowButton(Buttons btn)
+        {
+            var session = Player.GetGameSession();
+            if (session != null)
+            {
+                Packet.Builder.LegacyModule(session, "0|UI|B|SB|" + (int)btn);
+            }
         }
     }
 }

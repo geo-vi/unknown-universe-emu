@@ -55,9 +55,8 @@ namespace NettyBaseReloaded.Game.objects.world.npcs
         {
         }
 
-        public override void AssembleTick(object sender, EventArgs eventArgs)
+        public override void Tick()
         {
-            base.AssembleTick(sender, eventArgs);
             Calculate();
         }
 

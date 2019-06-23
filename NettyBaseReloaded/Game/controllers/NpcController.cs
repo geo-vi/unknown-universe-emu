@@ -31,6 +31,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         public override void Initiate()
         {
+
             AILevels ai;
             if (CustomSetAI == AILevels.NULL)
                 ai = (AILevels) Npc.Hangar.Ship.AI;
@@ -63,6 +64,9 @@ namespace NettyBaseReloaded.Game.controllers
             }
 
             base.Initiate();
+            StopController = false;
+            Active = true;
+
             MovementController.Move(Npc, MovementController.ActualPosition(Npc));
             Checkers.Start();
             if (Npc is EventNpc eventNpc) eventNpc.Announce();

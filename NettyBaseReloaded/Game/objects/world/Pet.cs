@@ -102,11 +102,11 @@ namespace NettyBaseReloaded.Game.objects.world
             return ownerSession.Player;
         }
 
-        public override void AssembleTick(object sender, EventArgs eventArgs)
+        public override void Tick()
         {
             GetOwner();
             if (!Controller.Active || EntityState == EntityStates.DEAD) return;
-            base.AssembleTick(sender, eventArgs);
+            base.Tick();
             FuelReduction();
             LevelChecker();
         }

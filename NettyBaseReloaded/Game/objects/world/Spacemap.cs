@@ -717,6 +717,21 @@ namespace NettyBaseReloaded.Game.objects.world
                 Out.WriteLog("Created Box[" + type + "] on mapId " + Id);
         }
 
+        public void CreateUcbBox(Types type, Vector pos, Vector[] limits)
+        {
+            var id = GetNextObjectId();
+            var hash = HashedObjects.Keys.ToList()[id];
+            var honeyBox = HashedObjects[hash] is FakeHoneyBox;
+            if (honeyBox)
+            {
+                Debug.WriteLine("Honey box created: " + HashedObjects.Keys.ToList()[id]);
+            }
+            var box = new BonusBox(id, hash, type, pos, this, limits, true, honeyBox, new Reward(RewardType.AMMO, Item.Find("ammunition_laser_ucb-100"), 1000));
+            HashedObjects[hash] = box;
+            if (AddObject(box))
+                Out.WriteLog("Created UCB Box[" + type + "] on mapId " + Id);
+        }
+
         public void CreateShipLoot(Vector position, DropableRewards content, Character killer)
         {
             //Console.WriteLine($"Created ship loot (content)->{content}");

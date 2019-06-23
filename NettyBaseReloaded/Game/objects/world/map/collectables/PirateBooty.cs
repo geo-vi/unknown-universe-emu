@@ -147,9 +147,10 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 }
 
                 if (CollectionTimeStart.AddSeconds(COLLECTION_TIME) > DateTime.Now || Disposed) return;
-                player.Information.UpdateBootyKeys();
+                player.Information.UpdateExtraData();
                 player.Information.BootyKeys[0] -= 1;
                 World.DatabaseManager.UpdateBootyKeys(player);
+                player.Information.DisplayBootyKeys();
                 RandomiseReward();
                 BoxReward.ParseRewards(player);
                 Dispose();

@@ -78,19 +78,9 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public bool InRange(IAttackable attackable, int range = 2000)
         {
-            if (attackable == null || attackable.Spacemap != Spacemap) return false;
-            if (attackable is Character character)
-            {
-                if (character.Controller == null || !character.Controller.Active || character.Controller.StopController)
-                {
-                    return false;
-                }
-                if (character is Pet pet && pet.GetOwner() == this) return true;
-            }
-
+            if (attackable == null || attackable.Spacemap != Spacemap || attackable == this || attackable.Id == Id) return false;
             if (range == -1 || attackable.Spacemap.RangeDisabled) return true;
-            return attackable.Id != Id &&
-                   Position.DistanceTo(attackable.Position) <= range;
+            return Position.DistanceTo(attackable.Position) <= range;
         }
 
         public virtual void Hit(int totalDamage, int attackerId) { }

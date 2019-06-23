@@ -115,6 +115,7 @@
     <Compile Include="Game\controllers\AbstractCharacterController.cs" />
     <Compile Include="Game\controllers\events\IEvent.cs" />
     <Compile Include="Game\controllers\implementable\Attack.cs" />
+    <Compile Include="Game\controllers\implementable\attack\DestructObject.cs" />
     <Compile Include="Game\controllers\implementable\Checkers.cs" />
     <Compile Include="Game\controllers\implementable\Damage.cs" />
     <Compile Include="Game\controllers\implementable\Destruction.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Game\controllers\player\Specials.cs" />
     <Compile Include="Game\controllers\player\structs\PlayerBeacon.cs" />
     <Compile Include="Game\managers\PortalSystemManager.cs" />
+    <Compile Include="Game\managers\ServerManager.cs" />
     <Compile Include="Game\netty\commands\new_client\ActivatePortalCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AddOreCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AmmunitionTypeModule.cs" />
@@ -735,6 +737,8 @@
     <Compile Include="Game\objects\world\players\quests\QuestTypes.cs" />
     <Compile Include="Game\objects\world\players\quests\serializables\QuestSerializableState.cs" />
     <Compile Include="Game\objects\world\players\quests\serializables\QuestSerializableReward.cs" />
+    <Compile Include="Game\objects\world\players\settings\Buttons.cs" />
+    <Compile Include="Game\objects\world\players\settings\Menus.cs" />
     <Compile Include="Game\objects\world\players\Skylab.cs" />
     <Compile Include="Game\objects\world\players\Storage.cs" />
     <Compile Include="Game\objects\world\players\PlayerBaseClass.cs" />
@@ -781,6 +785,7 @@
     <Compile Include="Logger\objects\LogFile.cs" />
     <Compile Include="Main\ChatCommands.cs" />
     <Compile Include="Main\commands\BanCommand.cs" />
+    <Compile Include="Main\commands\ButtonsCommand.cs" />
     <Compile Include="Main\commands\CleanCommand.cs" />
     <Compile Include="Main\commands\CloseCommand.cs" />
     <Compile Include="Main\commands\Command.cs" />
@@ -791,6 +796,7 @@
     <Compile Include="Main\commands\DestroyCommand.cs" />
     <Compile Include="Main\commands\DynRefresh.cs" />
     <Compile Include="Main\commands\EquipmentCommand.cs" />
+    <Compile Include="Main\commands\POICommand.cs" />
     <Compile Include="Main\commands\InfoCommand.cs" />
     <Compile Include="Main\commands\KickCommand.cs" />
     <Compile Include="Main\commands\KillCommand.cs" />

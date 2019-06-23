@@ -30,23 +30,22 @@ namespace NettyBaseReloaded.Game.objects.world.players.extra
         public void Start()
         {
             var session = Player.GetGameSession();
-            if (session != null) Packet.Builder.LegacyModule(session, "0|A|STD|Temporarily disabled, please try again soon");
-            return;
-            if (TechTask != null && !TechTask.IsCompleted) return;
-            TechTask = Task.Factory.StartNew(() =>
-            {
-                while (Active && Player.Controller.Active)
-                {
-                    System.Threading.Thread.Sleep(1000);
-                    ThreadUpdate();
-                }
-            });
+            Packet.Builder.LegacyModule(session, "0|A|STD|Techs disabled temporarily");
+            //if (TechTask != null && !TechTask.IsCompleted) return;
+            //TechTask = Task.Factory.StartNew(() =>
+            //{
+            //    while (Active && Player.Controller.Active)
+            //    {
+            //        System.Threading.Thread.Sleep(1000);
+            //        ThreadUpdate();
+            //    }
+            //});
         }
 
         public int GetStatus()
         {
-            //if (Active) return 2;
-            //if (Enabled) return 1;
+            if (Active) return 2;
+            if (Enabled) return 1;
             return 0;
         }
     }

@@ -17,6 +17,8 @@ namespace NettyBaseReloaded.WebSocks.packets.handlers
             {
                 var userId = int.Parse(packet[1]);
                 var playerSession = World.StorageManager.GetGameSession(userId);
+                if (playerSession == null) return;
+
                 var player = playerSession.Player;
                 switch (packet[2])
                 {
@@ -36,6 +38,14 @@ namespace NettyBaseReloaded.WebSocks.packets.handlers
                     case "refuel":
                         //todo
                         //player.Pet.Fuel = World.DatabaseManager.GetPetFuel();
+                        break;
+                    case "update_boosters":
+                        player.Boosters = World.DatabaseManager.LoadBoosters(player);
+                        Packet.Builder.AttributeBoosterUpdateCommand(playerSession);
+                        break;
+                    case "update_keys":
+                        player.Information.UpdateExtraData();
+                        player.Information.DisplayBootyKeys();
                         break;
                 }
             }

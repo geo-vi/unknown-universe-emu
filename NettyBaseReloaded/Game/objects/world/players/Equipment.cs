@@ -291,10 +291,24 @@ namespace NettyBaseReloaded.Game.objects.world.players
             return droneFormations.ToArray();
         }
 
-        public int LaserCount()
+        public int LaserCount(bool pet = false)
         {
-            return ActiveHangar.Configurations[Player.CurrentConfig - 1].EquippedItemsOnShip
-                .Count(x => x.Value.Item.Category == EquippedItemCategories.LASER);
+            if (!pet)
+            {
+                var hangar = ActiveHangar.Configurations[Player.CurrentConfig - 1];
+                var shipItems = hangar.EquippedItemsOnShip
+                    .Count(x => x.Value.Item.Category == EquippedItemCategories.LASER);
+                var droneItems = hangar.EquippedItemsOnDrones
+                    .Count(x => x.Value.Item2.Item.Category == EquippedItemCategories.LASER);
+                return shipItems + droneItems;
+            }
+            else
+            {
+                var hangar = Player.Pet.Hangar.Configurations[Player.CurrentConfig - 1];
+                var petItems = hangar.EquippedItemsOnShip
+                    .Count(x => x.Value.Item.Category == EquippedItemCategories.LASER);
+                return petItems;
+            }
         }
 
         public int LaserTypes()

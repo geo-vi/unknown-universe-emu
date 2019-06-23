@@ -68,7 +68,7 @@ namespace NettyBaseReloaded
                         switch (paramSplit[0])
                         {
                             case "TICKS_PER_SEC":
-                                TickManager.TICKS_PER_SECOND = Convert.ToInt16(paramSplit[1]);
+                                //TickManager.TICKS_PER_SECOND = Convert.ToInt16(paramSplit[1]);
                                 break;
                         }
                     }
@@ -93,21 +93,29 @@ namespace NettyBaseReloaded
                         {
                             case "SERVER":
                                 SqlDatabaseManager.SERVER = paramSplit[1];
+                                Console.WriteLine("SERVER:" + paramSplit[1]);
                                 break;
                             case "UID":
                                 SqlDatabaseManager.UID = paramSplit[1];
+                                Console.WriteLine("UID:" + paramSplit[1]);
                                 break;
                             case "PWD":
                                 SqlDatabaseManager.PWD = paramSplit[1];
+                                Console.WriteLine("PWD:" + paramSplit[1]);
                                 break;
                             case "DB":
                                 SqlDatabaseManager.DB = paramSplit[1];
+                                Console.WriteLine("DB:" + paramSplit[1]);
+                                break;
+                            case "DB_EXT":
+                                SqlDatabaseManager.DB_EXT = paramSplit[1];
+                                Console.WriteLine("DB_EXT:" + paramSplit[1]);
                                 break;
                         }
                     }
                 }
             }
-            Out.WriteLog("Finished reading mysql.cfg");
+            Console.WriteLine("Finished reading mysql.cfg");
         }
     }
 }

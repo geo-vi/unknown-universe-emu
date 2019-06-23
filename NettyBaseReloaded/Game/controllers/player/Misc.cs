@@ -188,7 +188,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                 var gameSession = World.StorageManager.GetGameSession(_baseController.Player.Id);
                 if (TargetMap.Level > _baseController.Player.Information.Level.Id)
                 {
-                    World.DatabaseManager.AddPlayerLog(_baseController.Player, PlayerLogTypes.SYSTEM, "Canceling Jump due to not enough level.");
+                    //World.DatabaseManager.AddPlayerLog(_baseController.Player, PlayerLogTypes.SYSTEM, "Canceling Jump due to not enough level.");
                     Packet.Builder.LegacyModule(gameSession, $"0|k|{TargetMap.Level}");
                     Cancel();
                     return;
@@ -210,14 +210,14 @@ namespace NettyBaseReloaded.Game.controllers.player
             {
                 if (_baseController.Character.EntityState == EntityStates.DEAD || _baseController.StopController)
                 {
-                    World.DatabaseManager.AddPlayerLog(_baseController.Player, PlayerLogTypes.SYSTEM, "Canceling Jump due to Entity death or stopped controller.");
+                    //World.DatabaseManager.AddPlayerLog(_baseController.Player, PlayerLogTypes.SYSTEM, "Canceling Jump due to Entity death or stopped controller.");
                     Cancel();
                     return;
                 }
 
                 if (_baseController.Attack.GetActiveAttackers().Any(x => x.InRange(_baseController.Character, x.AttackRange)) && _baseController.Player.Spacemap.Pvp)
                 {
-                    World.DatabaseManager.AddPlayerLog(_baseController.Player, PlayerLogTypes.SYSTEM, "Canceling Jump due to an active attack in PVP map.");
+                    //World.DatabaseManager.AddPlayerLog(_baseController.Player, PlayerLogTypes.SYSTEM, "Canceling Jump due to an active attack in PVP map.");
                     Cancel();
                     return;
                 }
@@ -248,9 +248,9 @@ namespace NettyBaseReloaded.Game.controllers.player
             lock (ThreadLock)
             {
                 JClass.Initiate(targetVW, targetMapId, targetPos, portalId);
-                World.DatabaseManager.AddPlayerLog(baseController.Player, PlayerLogTypes.SYSTEM,
-                    "Started jump process from portal ID " + portalId + " to target map: " + targetMapId + " [pos: " +
-                    targetPos + ",vw: " + targetVW + "]");
+                //World.DatabaseManager.AddPlayerLog(baseController.Player, PlayerLogTypes.SYSTEM,
+                //    "Started jump process from portal ID " + portalId + " to target map: " + targetMapId + " [pos: " +
+                //    targetPos + ",vw: " + targetVW + "]");
             }
         }
 
@@ -263,7 +263,7 @@ namespace NettyBaseReloaded.Game.controllers.player
                 if (baseController.Player.Spacemap == targetMap) return;
                 baseController.Player.MoveToMap(targetMap, targetPosition, vw);
                 baseController.Player.State.Jumping = false;
-                World.DatabaseManager.AddPlayerLog(baseController.Player, PlayerLogTypes.SYSTEM, "Jumped to " + targetMap.Id + " AT " + targetPosition + " IN VW " + vw);
+                //World.DatabaseManager.AddPlayerLog(baseController.Player, PlayerLogTypes.SYSTEM, "Jumped to " + targetMap.Id + " AT " + targetPosition + " IN VW " + vw);
             }
         }
     }

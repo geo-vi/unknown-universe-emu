@@ -279,6 +279,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 player.Controller.Initiate();
                 player.Refresh();
                 player.Save();
+                player.State.StartLoginProtection();
             }
         }
 

@@ -28,26 +28,45 @@ namespace NettyBaseReloaded.Game.objects.world.players
             return Amount;
         }
 
-        public int Shoot()
+        public int Shoot(string shooter = "ship")
         {
             int fireCount;
-            if (LootId.Contains("ammunition_laser"))
+            switch (shooter)
             {
-                fireCount = Player.Equipment.LaserCount();
-                if (fireCount > Amount) return 0;
-                Player.Skylab.ReduceLaserOre(fireCount);
-            }
-            else if (LootId.Contains("ammunition_rocket"))
-            {
-                fireCount = 1;
-                if (fireCount > Amount) return 0;
-                Player.Skylab.ReduceRocketOre(fireCount);
-            }
-            else fireCount = 1;
+                case "ship":
+                    if (LootId.Contains("ammunition_laser"))
+                    {
+                        fireCount = Player.Equipment.LaserCount();
+                        if (fireCount > Amount) return 0;
+                    }
+                    else if (LootId.Contains("ammunition_rocket"))
+                    {
+                        fireCount = 1;
+                        if (fireCount > Amount) return 0;
+                    }
+                    else fireCount = 1;
 
-            if (fireCount > Amount) return 0;
+                    if (fireCount > Amount) return 0;
 
-            Add(-fireCount);
+                    Add(-fireCount);
+                    break;
+                case "pet":
+                    if (LootId.Contains("ammunition_laser"))
+                    {
+                        fireCount = Player.Equipment.LaserCount(true);
+                        if (fireCount > Amount) return 0;
+                        Player.Skylab.ReduceLaserOre(fireCount);
+                    }
+                    else fireCount = 1;
+
+                    if (fireCount > Amount) return 0;
+
+                    Add(-fireCount);
+                    break;
+                default:
+                    fireCount = 0;
+                    break;
+            }
             return fireCount;
         }
 

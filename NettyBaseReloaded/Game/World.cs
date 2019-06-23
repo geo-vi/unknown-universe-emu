@@ -24,6 +24,7 @@ namespace NettyBaseReloaded.Game
         public static managers.StorageManager StorageManager = new StorageManager();
         public static managers.DatabaseManager DatabaseManager = new DatabaseManager();
         public static managers.PortalSystemManager PortalSystemManager = new PortalSystemManager();
+        public static managers.ServerManager ServerManager = new ServerManager();
 
         public static void InitiateManagers()
         {
@@ -31,6 +32,7 @@ namespace NettyBaseReloaded.Game
             Packet.Handler.AddCommands();
             DatabaseManager.Initiate();
             Task.Factory.StartNew(InitiateWorld);
+            ServerManager.Start();
             Out.WriteLog(DateTime.Now - timeStarted + " : World loaded.");
         }
 
@@ -175,7 +177,22 @@ namespace NettyBaseReloaded.Game
                         map.Value.CreatePirateGate(Faction.VRU, new Vector(24400, 6400), 91, new Vector(38000, 18500), false);
                         break;
                     case 42: // ???
-                        map.Value.CreatePortal(16, 10400, 6400, 0, 0);
+                        for (var i = 0; i < 100; i++)
+                        {
+                            map.Value.CreateNpc(World.StorageManager.Ships[80], AILevels.MOTHERSHIP, true, 10,
+                                Vector.Random(map.Value, new Vector(0, 0), new Vector(20800, 12800)));
+                        }
+
+                        for (var i = 0; i < 150; i++)
+                        {
+                            map.Value.CreateNpc(World.StorageManager.Ships[81], AILevels.AGGRESSIVE, true, 10,
+                                Vector.Random(map.Value, new Vector(0, 0), new Vector(20800, 12800)));
+                        }
+
+                        for (int i = 0; i <= 500; i++)
+                        {
+                            map.Value.CreateUcbBox(Types.BONUS_BOX, Vector.Random(map.Value), new[] { map.Value.Limits[0], map.Value.Limits[1] });
+                        }
                         break;
                     case 91:
                         #region POI

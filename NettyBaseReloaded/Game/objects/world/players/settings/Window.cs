@@ -12,8 +12,6 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings
         public const string DEFAULT_OLD = "";
         public const string DEFAULT_NEW = "";
 
-        public string UserSettingsDump { get; set; }
-
         public class New_Client
         {
             public static short STANDARD = ClientUITooltipTextFormat.STANDARD;

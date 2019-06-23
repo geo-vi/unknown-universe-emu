@@ -57,10 +57,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
             KilledShips = World.DatabaseManager.LoadStats(player);
             World.DatabaseManager.LoadExtraData(player, this);
             GameBans = World.DatabaseManager.LoadGameBans(player);
-            player.Ticked += Ticked;
         }
 
-        private void Ticked(object sender, EventArgs eventArgs)
+        public void Tick()
         {
             if (LastUpd.AddSeconds(3) > DateTime.Now) return;
 
@@ -115,12 +114,18 @@ namespace NettyBaseReloaded.Game.objects.world.players
             }
         }
 
-        public void UpdateBootyKeys()
+        public void UpdateExtraData()
         {
             World.DatabaseManager.LoadExtraData(Player, this);
+        }
+
+        public void DisplayBootyKeys()
+        {
             var session = Player.GetGameSession();
             if (session == null) return;
-            Packet.Builder.LegacyModule(session, "0|A|BK|" + Player.Information.BootyKeys[0]);
+            Packet.Builder.LegacyModule(session, "0|A|BK|" + Player.Information.BootyKeys[0]); //green booty
+            Packet.Builder.LegacyModule(session, "0|A|BKR|" + Player.Information.BootyKeys[1]); //red booty
+            Packet.Builder.LegacyModule(session, "0|A|BKB|" + Player.Information.BootyKeys[2]); //blue booty
         }
     }
 }

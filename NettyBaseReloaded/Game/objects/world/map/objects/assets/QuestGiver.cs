@@ -10,7 +10,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
     {
         public int QuestGiverId;
 
-        public QuestGiver(int id, int questGiverId, Faction faction, Vector pos, Spacemap map) : base(id, "Nyx", AssetTypes.QUESTGIVER, faction, Global.StorageManager.Clans[0], 1, 0, pos, map, false, false, false)
+        public QuestGiver(int id, int questGiverId, Faction faction, Vector pos, Spacemap map) : base(id, "Nyx", AssetTypes.QUESTGIVER, faction, Global.StorageManager.Clans[0], 2, 0, pos, map, false, false, false)
         {
             QuestGiverId = questGiverId;
         }
@@ -28,7 +28,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.objects.assets
         {
             if (character is Player player && player.FactionId == Faction)
             {
-                Packet.Builder.QuestGiversAvailableCommand(player.GetGameSession(), this);
+                var session = player.GetGameSession();
+                if (session != null)
+                {
+                    Packet.Builder.QuestGiversAvailableCommand(session, this);
+                }
             }
         }
     }

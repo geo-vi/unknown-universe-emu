@@ -101,15 +101,29 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             var enemy = Character.Selected;
             if (!AssembleEnemy(enemy)) return;
 
-            var isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
+            var isRsb = (Character as Player)?.Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75" || (Character as Pet)?.GetOwner().Settings.CurrentAmmo.LootId == "ammunition_laser_rsb-75";
             if (isRsb)
             {
-                if (RSBCooldownEnd > DateTime.Now) return;
+                if (Character is Player)
+                {
+                    if (RSBCooldownEnd > DateTime.Now) return;
 
-                var cld = new RSBCooldown();
-                Character.Cooldowns.Add(cld);
-                cld.Send(((Player)Character).GetGameSession());
-                RSBCooldownEnd = cld.EndTime;
+                    var cld = new RSBCooldown();
+                    Character.Cooldowns.Add(cld);
+                    cld.Send(((Player) Character).GetGameSession());
+                    RSBCooldownEnd = cld.EndTime;
+                }
+                else
+                {
+                    var cld = Character.Cooldowns.CooldownDictionary.FirstOrDefault(x => x.Value is RSBCooldown);
+                    if (cld.Value != null)
+                    {
+                        if (cld.Value.EndTime > DateTime.Now)  return;
+                    }
+
+                    var newCld = new RSBCooldown();
+                    Character.Cooldowns.Add(newCld);
+                }
             }
             else
             {
@@ -131,7 +145,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     return;
                 }
 
-                if (gameSession.Player.Settings.CurrentAmmo.Shoot() == 0)
+                var shootingAmmo = gameSession.Player.Settings.CurrentAmmo.Shoot();
+                if (shootingAmmo == 0)
                 {
                     // NOTHING TO SHOOT
                     Packet.Builder.LegacyModule(gameSession, "0|A|STD|No more ammo (todo: find a proper STM message)");
@@ -147,6 +162,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     gameSession.Player.Settings.OldClientShipSettingsCommand.selectedLaser = index;
                     Packet.Builder.SendSlotbars(gameSession);
                 }
+                gameSession.Player.Skylab.ReduceLaserOre(shootingAmmo);
 
                 var laserTypes = gameSession.Player.Equipment.LaserTypes();
                 switch (gameSession.Player.Settings.CurrentAmmo.LootId)
@@ -198,7 +214,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 if (pet.GetOwner() == null) return;
                 var gameSession = World.StorageManager.GetGameSession(pet.GetOwner().Id);
                 
-                if (gameSession.Player.Settings.CurrentAmmo.Shoot() == 0)
+                if (gameSession.Player.Settings.CurrentAmmo.Shoot("pet") == 0)
                 {
                     // NOTHING TO SHOOT
                     Packet.Builder.LegacyModule(gameSession,
@@ -269,9 +285,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             Controller.Damage?.Laser(enemy, damage, absDamage);
             //Controller.Damage?.Laser(enemy, absDamage, true);
 
-            if (Character is Player)
+            if (Character is Player player)
             {
-                var player = (Player)Character;
+                if (player.State.LoginProtection)
+                    player.State.EndLoginProtection();
+
                 if (player.Settings.CurrentAmmo.LootId != "ammunition_laser_sab-50") {
                     if (player.Techs.ContainsKey(Techs.ENERGY_LEECH))
                     {
@@ -347,6 +365,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                 return;
             }
 
+            player?.Skylab.ReduceRocketOre(1);
+
             double cooldown_time = 2;
             if (player != null && (player.Extras.Any(x => x.Value is RocketTurbo) || player.Information.Premium.Active))
                 cooldown_time *= 0.5;
@@ -361,6 +381,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             GameClient.SendToPlayerView(Character, netty.commands.old_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
             GameClient.SendToPlayerView(Character, netty.commands.new_client.LegacyModule.write("0|v|" + Character.Id + "|" + enemy.Id + "|H|" + rocketId + "|1|" + (Character is Player && ((Player)Character).Storage.PrecisionTargeterActivated ? 1 : 0)), true);
             Controller.Damage?.Rocket(enemy, damage, 0);
+
+            if (player != null && player.State.LoginProtection)
+            {
+                player.State.EndLoginProtection();
+            }
         }
 
         public void LaunchRocketLauncher()
@@ -411,6 +436,11 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 Packet.Builder.HellstormStatusCommand(World.StorageManager.GetGameSession(player.Id));
                 UpdateAttacker(enemy as Character, player);
+            }
+
+            if (player != null && player.State.LoginProtection)
+            {
+                player.State.EndLoginProtection();
             }
         }
 

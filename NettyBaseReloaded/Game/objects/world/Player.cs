@@ -9,6 +9,7 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.extra;
@@ -348,23 +349,39 @@ namespace NettyBaseReloaded.Game.objects.world
 
         private void InitializeClasses()
         {
-            Equipment = new Equipment(this);
-            Statistics = World.DatabaseManager.LoadStatistics(this);
-            Information = new Information(this);
-            State = new State(this);
-            Storage = new Storage(this);
-            Boosters = World.DatabaseManager.LoadBoosters(this);
-            Abilities = Hangar.Ship.Abilities(this);
-            Settings = new Settings(this);
-            Skylab = World.DatabaseManager.LoadSkylab(this);
-            Pet = World.DatabaseManager.LoadPet(this);
-            QuestData = new QuestPlayerData(this);
-            Announcements = new Announcements(this);
-            Gates = new PlayerGates(this);
-            World.DatabaseManager.SavePlayerHangar(this, Hangar);
+            try
+            {
+                Equipment = new Equipment(this);
+                Statistics = World.DatabaseManager.LoadStatistics(this);
+                Information = new Information(this);
+                State = new State(this);
+                Storage = new Storage(this);
+                Boosters = World.DatabaseManager.LoadBoosters(this);
+                Abilities = Hangar.Ship.Abilities(this);
+                Settings = new Settings(this);
+                Skylab = World.DatabaseManager.LoadSkylab(this);
+                Pet = World.DatabaseManager.LoadPet(this);
+                QuestData = new QuestPlayerData(this);
+                Announcements = new Announcements(this);
+                Gates = new PlayerGates(this);
+                World.DatabaseManager.SavePlayerHangar(this, Hangar);
+            }
+            catch (Exception exception)
+            {
+                // getting rid of user
+                Console.WriteLine("Exception found.. Disconnecting user");
+                Console.WriteLine("Exception: " + exception + ";" + exception.StackTrace + ";" + exception.Message);
+
+                var session = GetGameSession();
+                if (session != null)
+                {
+                    session.Kick();
+                }
+                else Invalidate();
+            }
         }
 
-        public override void AssembleTick(object sender, EventArgs eventArgs)
+        public override void Tick()
         {
             lock (ThreadLocker)
             {
@@ -377,7 +394,7 @@ namespace NettyBaseReloaded.Game.objects.world
                 if (!Controller.Active || EntityState == EntityStates.DEAD)
                     return;
 
-                base.AssembleTick(sender, eventArgs);
+                base.Tick();
 
                 LevelChecker();
                 TickBoosters();
@@ -389,6 +406,8 @@ namespace NettyBaseReloaded.Game.objects.world
                 TickAnnouncements();
                 Skylab.Tick();
                 Gates.Tick();
+                State.Tick();
+                Information.Tick();
             }
         }
 
@@ -866,6 +885,19 @@ namespace NettyBaseReloaded.Game.objects.world
             Global.TickManager.Remove(Controller);
             Setup();
             Controller.Setup();
+        }
+
+        public bool IsStuck()
+        {
+            foreach (var poiZone in Spacemap.POIs)
+            {
+                if (poiZone.Value.IsVectorInShape(Position))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

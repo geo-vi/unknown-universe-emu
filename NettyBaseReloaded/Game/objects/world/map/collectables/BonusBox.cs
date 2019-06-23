@@ -27,10 +27,13 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         /// </summary>
         public bool IsHoneyBox;
 
-        public BonusBox(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning = false, bool isHoneyBox = false) : base(id, hash, type, pos, map, limits, isHoneyBox)
+        public Reward CustomReward;
+
+        public BonusBox(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning = false, bool isHoneyBox = false, Reward reward = null) : base(id, hash, type, pos, map, limits, isHoneyBox)
         {
             Respawning = respawning;
             IsHoneyBox = isHoneyBox;
+            CustomReward = reward;
         }
 
         public override void Collect(Character character)
@@ -53,25 +56,33 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
         {
             try
             {
-                var orderedRewards = REWARDS.OrderBy(x => x.Chance).ToArray();
-                var random = RandomInstance.getInstance(this);
-                //todo
-                var n = random.NextDouble();
-                var potentialReward = orderedRewards.FirstOrDefault(x => x.Chance > n) ?? orderedRewards.Last();
+                Reward reward;
 
-                Reward reward = null;
-                RewardType type;
-                if (Enum.TryParse(potentialReward.LootId, true, out type))
+                if (CustomReward != null)
                 {
-                    reward = new Reward(type, potentialReward.Amount);
+                    reward = CustomReward;
                 }
                 else
                 {
-                    type = RewardType.ITEM;
-                    if (potentialReward.LootId.StartsWith("ammunition"))
-                        type = RewardType.AMMO;
-                    reward = new Reward(type, Item.Find(potentialReward.LootId), potentialReward.Amount);
+                    RewardType type;
+                    var orderedRewards = REWARDS.OrderBy(x => x.Chance).ToArray();
+                    var random = RandomInstance.getInstance(this);
+                    //todo
+                    var n = random.NextDouble();
+                    var potentialReward = orderedRewards.FirstOrDefault(x => x.Chance > n) ?? orderedRewards.Last();
+                    if (Enum.TryParse(potentialReward.LootId, true, out type))
+                    {
+                        reward = new Reward(type, potentialReward.Amount);
+                    }
+                    else
+                    {
+                        type = RewardType.ITEM;
+                        if (potentialReward.LootId.StartsWith("ammunition"))
+                            type = RewardType.AMMO;
+                        reward = new Reward(type, Item.Find(potentialReward.LootId), potentialReward.Amount);
+                    }
                 }
+                
                 if (player.BoostedBoxRewards == 1)
                     reward.ParseRewards(player, 2);
                 else reward.ParseRewards(player);

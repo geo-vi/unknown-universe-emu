@@ -228,7 +228,7 @@ namespace NettyBaseReloaded
         /// </summary>
         static void LookForConfigFiles()
         {
-            Out.WriteLog("Looking for config files");
+            Console.WriteLine("Looking for config files");
             if (File.Exists(Directory.GetCurrentDirectory() + "/server.cfg")) ConfigFileReader.ReadServerConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/game.cfg")) ConfigFileReader.ReadGameConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/mysql.cfg")) ConfigFileReader.ReadMySQLConfig();

@@ -81,60 +81,80 @@ namespace NettyBaseReloaded.Game.netty.packet
 
         public void LookUp(IByteBuffer buffer, GameClient client)
         {
-            var parser = new ByteParser(buffer.Copy());
-
-            if (parser.CMD_ID == commands.old_client.requests.VersionRequest.ID)
+            try
             {
-                var cmd = new commands.old_client.requests.VersionRequest();
-                cmd.readCommand(buffer);
-                new ShipInitalizationHandler(client, cmd.playerId, cmd.sessionId);
-                return;
-            }
+                var parser = new ByteParser(buffer.Copy());
 
-            if (parser.CMD_ID == commands.new_client.requests.LoginRequest.ID)
-            {
-                var cmd = new commands.new_client.requests.LoginRequest();
-                cmd.readCommand(buffer);
-                new ShipInitalizationHandler(client, cmd.playerId, cmd.sessionId, true);
-                return;
-            }
-
-            var gameSession = World.StorageManager.GetGameSession(client.UserId);
-
-            if (gameSession != null)
-            {
-                if (gameSession.Player.UsingNewClient)
+                if (parser.CMD_ID == commands.old_client.requests.VersionRequest.ID)
                 {
-                    if (NewClientCommands.ContainsKey(parser.CMD_ID))
-                        NewClientCommands[parser.CMD_ID].execute(gameSession, buffer);
-                    //else if (parser.CMD_ID != commands.new_client.LegacyModule.ID) Console.WriteLine("[3D] Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
-                }
-                else
-                {
-                    if (OldClientCommands.ContainsKey(parser.CMD_ID))
-                        OldClientCommands[parser.CMD_ID].execute(gameSession, buffer);
-                    //else if (parser.CMD_ID != commands.old_client.LegacyModule.ID) Console.WriteLine("[7.5.3] Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
+                    var cmd = new commands.old_client.requests.VersionRequest();
+                    cmd.readCommand(buffer);
+                    new ShipInitalizationHandler(client, cmd.playerId, cmd.sessionId);
+                    return;
                 }
 
-                if (parser.CMD_ID == commands.new_client.LegacyModule.ID || parser.CMD_ID == commands.old_client.LegacyModule.ID)
+                if (parser.CMD_ID == commands.new_client.requests.LoginRequest.ID)
                 {
-                    var packet = parser.readUTF();
+                    var cmd = new commands.new_client.requests.LoginRequest();
+                    cmd.readCommand(buffer);
+                    new ShipInitalizationHandler(client, cmd.playerId, cmd.sessionId, true);
+                    return;
+                }
 
-                    if (packet.Contains('|'))
+                var gameSession = World.StorageManager.GetGameSession(client.UserId);
+
+                if (gameSession != null)
+                {
+                    if (gameSession.Player.UsingNewClient)
                     {
-                        var splittedPacket = packet.Split('|');
-                        if (LegacyCommands.ContainsKey(splittedPacket[0]))
-                            LegacyCommands[splittedPacket[0]].execute(gameSession, splittedPacket);
-                        //else Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
+                        if (NewClientCommands.ContainsKey(parser.CMD_ID))
+                            NewClientCommands[parser.CMD_ID].execute(gameSession, buffer);
+                        //else if (parser.CMD_ID != commands.new_client.LegacyModule.ID) Console.WriteLine("[3D] Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
                     }
                     else
                     {
-                        if (LegacyCommands.ContainsKey(packet))
-                            LegacyCommands[packet].execute(gameSession, new[] { packet });
-                        //else Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
+                        if (OldClientCommands.ContainsKey(parser.CMD_ID))
+                            OldClientCommands[parser.CMD_ID].execute(gameSession, buffer);
+                        //else if (parser.CMD_ID != commands.old_client.LegacyModule.ID) Console.WriteLine("[7.5.3] Received->{0} Instance: {1}", parser.CMD_ID, client.UserId);
+                    }
 
+                    if (parser.CMD_ID == commands.new_client.LegacyModule.ID ||
+                        parser.CMD_ID == commands.old_client.LegacyModule.ID)
+                    {
+                        var packet = parser.readUTF();
+
+                        if (packet.Contains('|'))
+                        {
+                            var splittedPacket = packet.Split('|');
+                            if (LegacyCommands.ContainsKey(splittedPacket[0]))
+                                LegacyCommands[splittedPacket[0]].execute(gameSession, splittedPacket);
+                            //else Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
+                        }
+                        else
+                        {
+                            if (LegacyCommands.ContainsKey(packet))
+                                LegacyCommands[packet].execute(gameSession, new[] {packet});
+                            //else Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
+
+                        }
                     }
                 }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Exception found.. Disconnecting user");
+                Console.WriteLine("Exception: " + exception + ";" + exception.StackTrace + ";" + exception.Message);
+                if (client.UserId != 0)
+                {
+                    // find session
+                    var session = World.StorageManager.GetGameSession(client.UserId);
+                    if (session != null)
+                    {
+                        session.Kick();
+                    }
+                    else client.Disconnect();
+                }
+                else client.Disconnect();
             }
         }
 

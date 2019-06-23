@@ -36,10 +36,9 @@ namespace NettyBaseReloaded.Main
             InitiateRandomResetTimer();
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
-            var thread = new Thread(TickManager.Tick);
-            thread.Start();
-            //var task = new Task(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
-            //task.Start();
+            Task.Factory.StartNew(() => {
+                TickManager.Tick();
+            }, TaskCreationOptions.LongRunning);
         }
 
         private static void InitiateStatusUpdater()

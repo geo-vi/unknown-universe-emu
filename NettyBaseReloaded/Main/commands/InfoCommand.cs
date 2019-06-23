@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -53,6 +54,11 @@ namespace NettyBaseReloaded.Main.commands
                     var map = World.StorageManager.Spacemaps[mapId];
                     Console.WriteLine(map.Name + "'s Statistics ::");
                     Console.WriteLine($@"Entities: {map.Entities.Count} (Npcs: {map.Entities.Count(x => x.Value is Npc)}, Players: {map.Entities.Count(x => x.Value is Player)}), Objects: {map.Objects.Count} (Collectables: {map.Objects.Count(x => x.Value is Collectable)}, Portals: {map.Objects.Count(x => x.Value is Jumpgate)})");
+                    break;
+                case "server":
+                    var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                    var ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+
                     break;
             }
         }

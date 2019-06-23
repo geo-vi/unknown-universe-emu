@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
+using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 
 namespace NettyBaseReloaded.Game.objects.world.players
 {
@@ -101,13 +102,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public bool CollectingLoot;
 
+        public bool LoginProtection;
+
         public State(Player player) : base(player)
         {
             AddHomeMaps();
-            player.Ticked += Ticked;
         }
 
-        private void Ticked(object sender, EventArgs eventArgs)
+        public void Tick()
         {
             RadiationMonitor();
         }
@@ -183,6 +185,23 @@ namespace NettyBaseReloaded.Game.objects.world.players
                     WaitingForEquipmentRefresh = false;
                 }
                 Packet.Builder.EquipReadyCommand(session, InEquipmentArea);
+            }
+        }
+
+        public void StartLoginProtection()
+        {
+            Player.Controller.Effects.SetInvincible(15000, true);
+            Player.State.LoginProtection = true;
+        }
+
+
+        public void EndLoginProtection()
+        {
+            if (LoginProtection)
+            {
+                var cooldown =
+                    Player.Cooldowns.CooldownDictionary.FirstOrDefault(x => x.Value is InvincibilityCooldown);
+                cooldown.Value.EndTime = DateTime.Now;
             }
         }
     }

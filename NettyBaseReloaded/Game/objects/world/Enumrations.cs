@@ -253,5 +253,28 @@ namespace NettyBaseReloaded.Game.objects.world
         LAMBDA,
         HADES
     }
+
+    public enum AccountFlags
+    {
+        BOT_USER = 1,
+        RANKING_DISABLED,
+        EVENTS_ONLY_ACCOUNT,
+        AUCTION_DISABLED,
+        SHOP_DISABLED,
+        HANGAR_DISABLED,
+        EXCLUSIVE_ACCESS_ENABLED,
+        ACP_VIEW,
+        ACP_EDIT,
+        ACP_SUPPORT,
+        VOUCHERS_DISABLED,
+        PAYMENTS_DISABLED
+    }
+
+    public enum DonationTiers
+    {
+        DONATORS_CLUB = 1,
+        RICH_BOYS_CLUB = 2,
+        OFFICIAL_SUPPORTER = 3
+    }
 #pragma warning restore 1591
 }

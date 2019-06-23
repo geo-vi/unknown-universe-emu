@@ -36,7 +36,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
         
         public Settings(Player player) : base(player)
         {
-            Slotbar = new Slotbar();
+            Slotbar = new Slotbar(player);
             Window = new Window();
             LoadSettings();
             CurrentAmmo = GetLaserLoot();

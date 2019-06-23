@@ -55,6 +55,7 @@ namespace NettyBaseReloaded.Game.controllers.login
                 Packet.Builder.LegacyModule(GameSession, "0|A|STD|You've been banned by " + ban.Value.GetBanAccountant().Name + " at " + ban.Value.IssuedTime + "#" + ban.Key + "\n" + ban.Value.Reason);
                 GameSession.Kick();
             }
+            GameSession.Player.State.StartLoginProtection();
         }
     }
 }

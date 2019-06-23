@@ -223,21 +223,17 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 Clan = Global.StorageManager.Clans[0];
             }
-            
-            Ticked += AssembleTick;
         }
 
-        public virtual void AssembleTick(object sender, EventArgs eventArgs)
-        {
-            Cooldowns.Tick();
-            RocketLauncher?.Tick();
-            TickVisuals();
-        }
-
-        public EventHandler Ticked;
         public override void Tick()
         {
-            Ticked?.Invoke(this, EventArgs.Empty);
+            lock (ThreadLock)
+            {
+                Updaters.Tick();
+                Cooldowns.Tick();
+                RocketLauncher?.Tick();
+                TickVisuals();
+            }
         }
 
         private object ThreadLock = new object();

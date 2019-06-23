@@ -409,6 +409,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
             {
                 if (entry.Value is Player && playersOnly || !playersOnly)
                 {
+
+                    if (entry.Value.Invincible) continue;
                     var damage = 0;
                     switch (damageType)
                     {

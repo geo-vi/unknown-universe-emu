@@ -19,13 +19,17 @@ namespace NettyBaseReloaded.Game.managers
 {
     class StorageManager
     {
+        /* Primary / key = PlayerId (int) */
+        public readonly ConcurrentBag<int> PendingPlayers = new ConcurrentBag<int>();
+
+        /* Primary / key = PlayerId (int); Secondary = GameSession generated on login */
         public readonly ConcurrentDictionary<int, GameSession> GameSessions = new ConcurrentDictionary<int, GameSession>();
         
         public readonly Dictionary<int, Ship> Ships = new Dictionary<int, Ship>();
         
         public readonly Dictionary<int, Spacemap> Spacemaps = new Dictionary<int, Spacemap>();
 
-        public readonly OrePrices OrePrices = new OrePrices(20, 30, 50, 400, 400, 0, 1000, 0, 5);
+        public readonly OrePrices OrePrices = new OrePrices(20, 30, 50, 400, 400, 0, 1000, 0, 1);
         
         public readonly Levels Levels = new Levels();
         

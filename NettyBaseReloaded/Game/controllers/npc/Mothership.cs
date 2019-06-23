@@ -46,6 +46,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
         }
 
         private DateTime LastActiveTime = new DateTime();
+
         public void Active()
         {
             var daughtersAlive = GetActiveDaughtersCount();
@@ -54,16 +55,21 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 return;
             }
 
-            GameClient.SendToPlayerView(Controller.Npc, netty.commands.old_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
-            GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
+            GameClient.SendToPlayerView(Controller.Npc,
+                netty.commands.old_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id), true);
+            GameClient.SendToPlayerView(Controller.Npc,
+                netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id), true);
             Opened = true;
 
             for (int i = 0; i < 20 - daughtersAlive; i++)
             {
                 var minionId = Controller.Npc.Spacemap.CreateNpc(DaughterType, AILevels.DAUGHTER, Controller.Npc);
                 Mother.Children.TryAdd(minionId, Mother.Spacemap.Entities[minionId] as Npc);
-                GameClient.SendToPlayerView(Controller.Npc, netty.commands.old_client.NpcUndockCommand.write(Controller.Npc.Id, minionId));
+                GameClient.SendToPlayerView(Controller.Npc,
+                    netty.commands.old_client.NpcUndockCommand.write(Controller.Npc.Id, minionId), true);
+
             }
+
             LastActiveTime = DateTime.Now;
         }
 

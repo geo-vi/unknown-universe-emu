@@ -29,27 +29,27 @@ namespace NettyBaseReloaded.Game.objects.world.players.settings.slotbars
                 case "ammunition_mine_acm-01":
                     id = player.Spacemap.GetNextObjectId();
                     hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
-                    //player.Spacemap.AddObject(new ACM01(id, hash, player.Position, player.Spacemap));
+                    player.Spacemap.AddObject(new ACM01(id, hash, player.Position, player.Spacemap));
                     break;
                 case "ammunition_mine_empm-01":
                     id = player.Spacemap.GetNextObjectId();
                     hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
-                    //player.Spacemap.AddObject(new EMPM01(id, hash, player.Position, player.Spacemap));
+                    player.Spacemap.AddObject(new EMPM01(id, hash, player.Position, player.Spacemap));
                     break;
                 case "ammunition_mine_ddm-01":
                     id = player.Spacemap.GetNextObjectId();
                     hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
-                    //player.Spacemap.AddObject(new DDM01(id, hash, player.Position, player.Spacemap));
+                    player.Spacemap.AddObject(new DDM01(id, hash, player.Position, player.Spacemap));
                     break;
                 case "ammunition_mine_sabm-01":
                     id = player.Spacemap.GetNextObjectId();
                     hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
-                    //player.Spacemap.AddObject(new SABM01(id, hash, player.Position, player.Spacemap));
+                    player.Spacemap.AddObject(new SABM01(id, hash, player.Position, player.Spacemap));
                     break;
                 case "ammunition_mine_slm-01":
                     id = player.Spacemap.GetNextObjectId();
                     hash = player.Spacemap.HashedObjects.Keys.ToList()[id];
-                    //player.Spacemap.AddObject(new SLM01(id, hash, player.Position, player.Spacemap));
+                    player.Spacemap.AddObject(new SLM01(id, hash, player.Position, player.Spacemap));
                     break;
             }
         }
