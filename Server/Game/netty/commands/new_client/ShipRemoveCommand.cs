@@ -1,0 +1,17 @@
+﻿using Server.Utils;
+
+namespace Server.Game.netty.commands.new_client
+{
+    class ShipRemoveCommand
+    {
+        public const short ID = 14332;
+
+        public static Command write(int uid)
+        {
+            var cmd = new ByteArray(ID);
+            cmd.Short(21523);
+            cmd.Integer(uid >> 9 | uid << 23);
+            return new Command(cmd.ToByteArray(), true);
+        }
+    }
+}

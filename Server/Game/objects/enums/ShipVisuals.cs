@@ -1,0 +1,42 @@
+﻿namespace Server.Game.objects.enums
+{
+    enum ShipVisuals
+    {
+        TRAVEL_MODE = 0,
+        HEALING_POD = 1,
+        FORTIFY = 2,
+        PROTECT_OWNER = 3,
+        PROTECT_TARGET = 4,
+        DRAW_FIRE_OWNER = 5,
+        DRAW_FIRE_TARGET = 6,
+        ULTIMATE_EMP_TARGET = 7,
+        INACTIVE = 8,
+        FORTRESS = 9,
+        PRISMATIC_SHIELD = 10,
+        WEAKEN_SHIELDS = 11,
+        WEAKEN_SHIELDS_TARGET = 12,
+        SINGULARITY = 13,
+        SINGULARITY_TARGET = 14,
+        SHIP_WARP = 15,
+        NPC_INFILTRATOR = 16,
+        LEONOV_EFFECT = 17,
+        WIZARD_ATTACK = 18,
+        GHOST_EFFECT = 19,
+        MIRRORED_CONTROLS = 20,
+        STICKY_BOMB = 21,
+        GREEN_GLOW = 22,
+        RED_GLOW = 23,
+        GENERIC_GLOW = 24,
+        EMERGENCY_REPAIR = 25,
+        INVINCIBILITY = 26,
+        BATTLESTATION_DEFLECTOR = 27,
+        BATTLESTATION_DOWNTIME_TIMER = 28,
+        BATTLESTATION_INSTALLING = 29,
+        BATTLESTATION_CONSTRUCTING = 30,
+        OWNS_BATTLESTATION = 31,
+        BUFFZONE = 32,
+        BLOCKED_ZONE_EXPLOSION = 33,
+        NPC_DECLOAK_ZONE = 34,
+        LEGENDARY_NPC_NAME = 35
+    }
+}

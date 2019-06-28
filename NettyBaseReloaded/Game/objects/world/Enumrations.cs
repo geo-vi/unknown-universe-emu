@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NettyBaseReloaded.Game.objects.world
+﻿namespace NettyBaseReloaded.Game.objects.world
 {
 #pragma warning disable 1591
     enum RewardType
