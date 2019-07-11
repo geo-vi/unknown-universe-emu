@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using Server.Game.objects;
 
 namespace Server.Game.managers
@@ -19,6 +20,8 @@ namespace Server.Game.managers
             }
         }
 
+        
+        public ConcurrentDictionary<int, GameSession> GameSessions = new ConcurrentDictionary<int, GameSession>();
 
         /// <summary>
         /// Boots the storage manager of the Game

@@ -1,5 +1,6 @@
 ﻿using System;
 using Server.Configurations;
+using Server.Game.controllers.player;
 using Server.Game.objects;
 using Server.Networking;
 
@@ -7,6 +8,7 @@ namespace Server.Game.netty.handlers
 {
     class ShipInitializationHandler
     {
+        private GameClient Client { get; }
         private int UserId { get; }
 
         private string SessionId { get; }
@@ -19,36 +21,41 @@ namespace Server.Game.netty.handlers
                 Console.WriteLine("Connection Received, [USERID: " + userId + ", SESSIONID: " + sessionId +
                               "]");
 
+            Client = client;
+            
             UserId = userId;
             client.UserId = userId;
+            
             SessionId = sessionId;
             NewClient = newClient;
         }
 
         public void Execute()
         {
+            var sessionBuilt = SessionBuilder();
+            var loginController = new LoginController(sessionBuilt);
         }
 
-        private GameSession SessionBuilder(GameClient client, int userId, string sessionId, bool usingNewClient)
+        private GameSession SessionBuilder()
         {
             return null;
-//            var account = World.DatabaseManager.GetAccount(userId);
-//            account.UsingNewClient = usingNewClient;
-
-//            if (sessionId != account.SessionId)
+//            var account = GameDatabaseManager.GetAccount(UserId);
+//            account.UsingNewClient = NewClient;
+//
+//            if (SessionId != account.SessionId)
 //            {
-//                Console.WriteLine("Breach attempt by " + client.IpEndPoint);
+//                Console.WriteLine("Breach attempt by " + Client.IpEndPoint);
 //                return null; // Fucked up session
 //            }
-//            if (World.StorageManager.GameSessions.ContainsKey(userId))
+//            if (GameStorageManager.GameSessions.ContainsKey(UserId))
 //            {
-//                var gameSession = World.StorageManager.GameSessions[userId];
+//                var gameSession = GameStorageManager.GameSessions[UserId];
 //                gameSession.Kick();
 ////                account = gameSession.Player;
 ////                account.SessionId = sessionId;
 ////                account.UsingNewClient = usingNewClient;
 //            }
-//            return new GameSession(account) { Client = client };
+//            return new GameSession(account) { GameClient = Client };
        }
     }
 }
