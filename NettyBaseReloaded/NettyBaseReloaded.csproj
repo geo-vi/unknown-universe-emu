@@ -873,6 +873,7 @@
     </Compile>
     <Compile Include="Properties\Server.cs" />
     <Compile Include="Utils\Decode.cs" />
+    <Compile Include="Utils\Profiler.cs" />
     <Compile Include="Utils\Random.cs" />
     <Compile Include="WebSocks\objects\Payload.cs" />
     <Compile Include="WebSocks\objects\Server.cs" />

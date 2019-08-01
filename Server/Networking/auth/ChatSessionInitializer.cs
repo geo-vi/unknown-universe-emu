@@ -1,4 +1,5 @@
-﻿using DotNetty.Transport.Channels;
+﻿using DotNetty.Codecs;
+using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 
 namespace Server.Networking.auth
@@ -7,7 +8,6 @@ namespace Server.Networking.auth
     {
         protected override void InitChannel(ISocketChannel channel)
         {
-
         }
     }
 }

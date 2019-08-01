@@ -35,15 +35,9 @@ namespace Server.Utils
                         var paramSplit = line.Split('=');
                         switch (paramSplit[0])
                         {
-                            //case "LOGGING_DIRECTORY":
-                            //    Properties.Server.LOGGING_DIRECTORY = paramSplit[1];
-                            //    break;
-                            //case "SERVER_PW":
-                            //    Properties.Server.PASSWORD = paramSplit[1];
-                            //    break;
-                            //case "SERVER_RCON_PW":
-                            //    Properties.Server.RCON_PW = paramSplit[1];
-                            //    break;
+                            default:
+                                //TODO: Settings yet to be added
+                                break;
                         }
                     }
                     else

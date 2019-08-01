@@ -121,7 +121,7 @@ namespace Server.Game.managers
                 case AmmunitionTypeModule.EMP:
                     return ItemMap.SpecialItemsIds[2];
                 default:
-                    throw new NotImplementedException();
+                    return "";
             }
         }
 
@@ -223,8 +223,69 @@ namespace Server.Game.managers
                 case "ammunition_rocketlauncher_sar-02":
                     return 13;
                 default:
-                    throw new NotImplementedException();
+                    return 0;
             }
         }
+
+        public static string GetLaserLootId(int ammoId)
+        {
+            switch (ammoId)
+            {
+                case 1:
+                    return "ammunition_laser_lcb-10";
+                case 2:
+                    return "ammunition_laser_mcb-25";
+                case 3:
+                    return "ammunition_laser_mcb-50";
+                case 4:
+                    return "ammunition_laser_ucb-100";
+                case 5:
+                    return "ammunition_laser_sab-50";
+                case 6:
+                    return "ammunition_laser_rsb-75";
+                case 7:
+                    return "ammunition_laser_cbo-100";
+                case 9:
+                    return "ammunition_laser_job-100";
+                default:
+                    return "";
+            }
+        }
+        
+        public static string GetRocketLootId(int ammoId)
+        {
+            switch (ammoId)
+            {
+                case 1:
+                    return "ammunition_rocket_r-310";
+                case 2:
+                    return "ammunition_rocket_plt-2026";
+                case 3:
+                    return "ammunition_rocket_plt-2021";
+                case 4:
+                    return "ammunition_rocket_plt-3030";
+                case 5:
+                    return "ammunition_specialammo_pld-8";
+                case 6:
+                    return "ammunition_specialammo_wiz-x";
+                case 7:
+                    return "ammunition_rocketlauncher_hstrm-01";
+                case 8:
+                    return "ammunition_rocketlauncher_ubr-100";
+                case 9:
+                    return "ammunition_rocketlauncher_eco-10";
+                case 10:
+                    return "ammunition_specialammo_dcr-250";
+                case 11:
+                    return "ammunition_rocket_bdr-1211";
+                case 12:
+                    return "ammunition_rocketlauncher_sar-01";
+                case 13:
+                    return "ammunition_rocketlauncher_sar-02";
+                default:
+                    return "";
+            }
+        }
+
     }
 }

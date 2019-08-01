@@ -1,7 +1,9 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Server.Game.controllers;
 using Server.Game.controllers.characters;
 using Server.Game.controllers.server;
+using Server.Game.objects.entities.characters;
 using Server.Game.objects.entities.players;
 using Server.Game.objects.entities.ships.equipment;
 using Server.Game.objects.enums;
@@ -19,6 +21,28 @@ namespace Server.Game.objects.entities
 
         public string Name { get; set; }
 
+        public virtual AbstractCharacterController Controller
+        {
+            get
+            {
+                if (this is Player)
+                {
+                    var temp = (Player) this;
+                    return temp.Controller;
+                }
+                if (this is Npc)
+                {
+                    var temp = (Npc) this;
+                    return temp.Controller;
+                }
+                if (this is Pet)
+                {
+                    var temp = (Pet) this;
+                    return temp.Controller;
+                }
+                return null;
+            }
+        }        
         public Hangar _hangar;
         public virtual Hangar Hangar
         {
@@ -143,9 +167,11 @@ namespace Server.Game.objects.entities
          * EXTRA *
          *********/
         public IAttackable Selected { get; set; }
+        
         public Character SelectedCharacter => Selected as Character;
 
-//        public Range Range { get; }
+        // * RANGE VIEW WHICH WILL NOTE ALL ENTRIES THAT ARE DISPLAYED
+        public RangeView RangeView = new RangeView();
 
         public virtual RocketLauncher RocketLauncher { get; set; }
 
@@ -184,7 +210,7 @@ namespace Server.Game.objects.entities
         public bool HasWarnBox(StateController controller)
         {
             if (!(this is Player)) return false;
-            if (controller.IsInState(CharacterStates.HomeMap))
+            if (controller.IsInState(CharacterStates.HOME_MAP))
                 return false;
 
             if (Spacemap.Id == 9 || Spacemap.Id == 5 || Spacemap.Id == 1)
@@ -193,6 +219,11 @@ namespace Server.Game.objects.entities
             }
 
             return false;
+        }
+
+        public override string ToString()
+        {
+            return "TODO: Create a proper character return string";
         }
     }
 }

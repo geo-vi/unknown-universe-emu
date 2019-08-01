@@ -1,5 +1,9 @@
 ﻿using DotNetty.Buffers;
 using Server.Game.netty.commands.old_client.requests;
+using Server.Game.objects;
+using Server.Game.objects.entities.players.settings;
+using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.netty.handlers
 {
@@ -7,15 +11,17 @@ namespace Server.Game.netty.handlers
     {
         public void execute(GameSession gameSession, IByteBuffer buffer)
         {
-            var cmd = new AudioSettingsRequest();
-            cmd.readCommand(buffer);
+            var reader = new AudioSettingsRequest();
+            reader.readCommand(buffer);
 
-            var pAudio = gameSession.Player.Settings.OldClientUserSettingsCommand.AudioSettingsModule;
-
-            pAudio.music = cmd.music;
-            pAudio.sound = cmd.sound;
-            
+            var audioSettings = gameSession.Player.Settings.GetSettings<AudioSettings>();
+            audioSettings.Unset = false;
+            audioSettings.Music = reader.music;
+            audioSettings.Sound = reader.sound;
             gameSession.Player.Settings.SaveSettings();
+            
+            Out.WriteLog("Successfully saved AudioSettings for Player", LogKeys.PLAYER_LOG, gameSession.Player.Id);
+
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Server.Game.netty.commands.old_client
 
         public Boolean music = false;
 
-        public AudioSettingsModule(bool param1, bool param2, bool param3)
+        public AudioSettingsModule(bool param1 = true, bool param2 = false, bool param3 = false)
         {
             this.notSet = param1;
             this.sound = param2;

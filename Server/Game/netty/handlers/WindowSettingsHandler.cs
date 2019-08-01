@@ -1,5 +1,10 @@
 ﻿using DotNetty.Buffers;
 using Server.Game.netty.commands.old_client.requests;
+using Server.Game.netty.packet;
+using Server.Game.objects;
+using Server.Game.objects.entities.players.settings;
+using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.netty.handlers
 {
@@ -7,22 +12,25 @@ namespace Server.Game.netty.handlers
     {
         public void execute(GameSession gameSession, IByteBuffer buffer)
         {
-            var playerWindowSettings = gameSession.Player.Settings.OldClientUserSettingsCommand.WindowSettingsModule;
-            var cmd = new WindowSettingsRequest();
-            cmd.readCommand(buffer);
+            var reader = new WindowSettingsRequest();
+            reader.readCommand(buffer);
 
-            playerWindowSettings.clientResolutionId = cmd.clientResolutionId;
-            playerWindowSettings.barStatus = cmd.barStatus;
-            playerWindowSettings.mainmenuPosition = cmd.mainmenuPosition;
-            playerWindowSettings.minmapScale = cmd.minimapScale;
-            playerWindowSettings.notSet = false;
-            playerWindowSettings.resizableWindows = cmd.resizableWindows;
-            playerWindowSettings.slotMenuOrder = cmd.slotMenuOrder;
-            playerWindowSettings.slotMenuPremiumOrder = cmd.slotMenuPremiumOrder;
-            playerWindowSettings.slotmenuPosition = cmd.slotmenuPosition;
-            playerWindowSettings.slotmenuPremiumPosition = cmd.slotmenuPremiumPosition;
-            playerWindowSettings.windowSettings = cmd.windowSettings;
+            var windowSettings = gameSession.Player.Settings.GetSettings<WindowSettings>();
+            windowSettings.Unset = false;
+            windowSettings.BarStatus = reader.barStatus;
+            windowSettings.MainmenuPosition = reader.mainmenuPosition;
+            windowSettings.MinimapScale = reader.minimapScale;
+            windowSettings.SlotmenuPosition = reader.slotmenuPosition;
+            windowSettings.ClientResolutionId = reader.clientResolutionId;
+            windowSettings.ResizableWindowsString = reader.resizableWindows;
+            windowSettings.SlotMenuOrder = reader.slotMenuOrder;
+            windowSettings.SlotmenuPremiumPosition = reader.slotmenuPremiumPosition;
+            windowSettings.WindowSettingsString = reader.windowSettings;
+            windowSettings.SlotMenuPremiumOrder = reader.slotMenuPremiumOrder;
             gameSession.Player.Settings.SaveSettings();
+            
+            Out.WriteLog("Successfully saved WindowSettings for Player", LogKeys.PLAYER_LOG, gameSession.Player.Id);
+
         }
     }
 }

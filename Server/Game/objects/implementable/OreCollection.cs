@@ -26,5 +26,10 @@ namespace Server.Game.objects.implementable
             Seprom = seprom;
             Palladium = palladium;
         }
+
+        public OreCollection()
+        {
+            
+        }
     }
 }

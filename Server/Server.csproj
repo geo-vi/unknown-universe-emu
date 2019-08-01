@@ -60,18 +60,15 @@
     <Compile Remove="Game\netty\handlers\AttackRocketHandler.cs" />
     <Compile Remove="Game\netty\handlers\AttackRocketLegacyHandler.cs" />
     <Compile Remove="Game\netty\handlers\BattleStationEquipHandler.cs" />
-    <Compile Remove="Game\netty\handlers\AudioSettingsHandler.cs" />
     <Compile Remove="Game\netty\handlers\ClanMemberInvitationHandler.cs" />
     <Compile Remove="Game\netty\handlers\BuildStationHandler.cs" />
     <Compile Remove="Game\netty\handlers\ClickableHandler.cs" />
     <Compile Remove="Game\netty\handlers\ClientResolutionChangeHandler.cs" />
     <Compile Remove="Game\netty\handlers\CollectBoxHandler.cs" />
     <Compile Remove="Game\netty\handlers\command42JHandler.cs" />
-    <Compile Remove="Game\netty\handlers\DisplaySettingsHandler.cs" />
     <Compile Remove="Game\netty\handlers\DroneFormationChangeHandler.cs" />
     <Compile Remove="Game\netty\handlers\ExchangePalladiumHandler.cs" />
     <Compile Remove="Game\netty\handlers\ForceInitHandler.cs" />
-    <Compile Remove="Game\netty\handlers\GameplaySettingsHandler.cs" />
     <Compile Remove="Game\netty\handlers\GroupSystemHandler.cs" />
     <Compile Remove="Game\netty\handlers\HarvestHandler.cs" />
     <Compile Remove="Game\netty\handlers\HellstormLaunchHandler.cs" />
@@ -89,21 +86,18 @@
     <Compile Remove="Game\netty\handlers\MoveHandler.cs" />
     <Compile Remove="Game\netty\handlers\PetGearActivationHandler.cs" />
     <Compile Remove="Game\netty\handlers\PetHandler.cs" />
-    <Compile Remove="Game\netty\handlers\QualitySettingsHandler.cs" />
     <Compile Remove="Game\netty\handlers\QuestAcceptHandler.cs" />
     <Compile Remove="Game\netty\handlers\QuestCancelHandler.cs" />
     <Compile Remove="Game\netty\handlers\QuestInfoHandler.cs" />
     <Compile Remove="Game\netty\handlers\QuestListHandler.cs" />
     <Compile Remove="Game\netty\handlers\QuestPrivilegeHandler.cs" />
     <Compile Remove="Game\netty\handlers\ShipSelectionHandler.cs" />
-    <Compile Remove="Game\netty\handlers\ShipSettingsHandler.cs" />
     <Compile Remove="Game\netty\handlers\ShipWarpWindowHandler.cs" />
     <Compile Remove="Game\netty\handlers\ShipWarpHandler.cs" />
     <Compile Remove="Game\netty\handlers\TradeHandler.cs" />
     <Compile Remove="Game\netty\handlers\TradeSellOreHandler.cs" />
     <Compile Remove="Game\netty\handlers\UIOpenHandler.cs" />
     <Compile Remove="Game\netty\handlers\UserKeyBindingsUpdateHandler.cs" />
-    <Compile Remove="Game\netty\handlers\WindowSettingsHandler.cs" />
   </ItemGroup>
 
 </Project>

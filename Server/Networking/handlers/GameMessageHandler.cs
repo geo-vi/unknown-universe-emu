@@ -3,6 +3,9 @@ using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
 using Server.Game;
 using Server.Game.netty;
+using Server.Main.objects;
+using Server.Networking.clients;
+using Server.Utils;
 
 namespace Server.Networking.handlers
 {
@@ -19,24 +22,34 @@ namespace Server.Networking.handlers
 
         public override void ChannelReadComplete(IChannelHandlerContext context) => context.Flush();
 
+        /// <summary>
+        /// Exception caught, closing the connection!
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="exception"></param>
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            Console.WriteLine($"Exception: {exception}");
+            Out.WriteLog($"Socket exception caught: {exception}, closing..", LogKeys.ERROR_LOG);
             context.CloseAsync();
         }
 
+        /// <summary>
+        /// Client is connected, creating a new GameClient instance
+        /// </summary>
+        /// <param name="context"></param>
         public override void ChannelActive(IChannelHandlerContext context)
         {
             Client = new GameClient(context);
             base.ChannelActive(context);
         }
 
+        /// <summary>
+        /// Channel goes inactive, calling client method to announce
+        /// </summary>
+        /// <param name="context"></param>
         public override void ChannelInactive(IChannelHandlerContext context)
         {
-            if (Client != null && Client.UserId != 0)
-            {
-                //World.StorageManager.GetGameSession(Client.UserId)?.Kick();
-            }
+            Client?.OnClientConnectionClosed();
         }
     }
 }

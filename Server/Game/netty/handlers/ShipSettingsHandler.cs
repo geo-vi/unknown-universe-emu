@@ -1,5 +1,10 @@
 ﻿using DotNetty.Buffers;
+using Server.Game.managers;
 using Server.Game.netty.commands.old_client.requests;
+using Server.Game.objects;
+using Server.Game.objects.entities.players.settings;
+using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.netty.handlers
 {
@@ -10,16 +15,17 @@ namespace Server.Game.netty.handlers
             var request = new ShipSettingsRequest();
             request.readCommand(buffer);
 
-            var slotbarSettings = gameSession.Player.Settings.OldClientShipSettingsCommand;
+            var slotbarSettings = gameSession.Player.Settings.GetSettings<SlotbarSettings>();
 
-            slotbarSettings.quickbarSlots = request.quickbarSlots;
-            slotbarSettings.quickbarSlotsPremium = request.quickbarSlotsPremium;
-            slotbarSettings.selectedHellstormRocket = request.selectedHellstormRocket;
-            slotbarSettings.selectedLaser = request.selectedLaser;
-            slotbarSettings.selectedRocket = request.selectedRocket;
+            slotbarSettings.QuickbarSlots = request.quickbarSlots;
+            slotbarSettings.QuickbarSlotsPremium = request.quickbarSlotsPremium;
+            slotbarSettings.SelectedHellstormRocketAmmo = AmmoConvertManager.GetRocketLootId(request.selectedHellstormRocket);
+            slotbarSettings.SelectedLaserAmmo = AmmoConvertManager.GetLaserLootId(request.selectedLaser);
+            slotbarSettings.SelectedRocketAmmo = AmmoConvertManager.GetRocketLootId(request.selectedRocket);
 
             gameSession.Player.Settings.SaveSettings();
 
+            Out.WriteLog("Successfully saved ShipSettings for Player", LogKeys.PLAYER_LOG, gameSession.Player.Id);
         }
     }
 }

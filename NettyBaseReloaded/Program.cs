@@ -16,9 +16,10 @@ using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
-using NettyBaseReloaded.Properties;
+using NettyBaseReloaded.Networking;
 using NettyBaseReloaded.Utils;
 using Newtonsoft.Json;
+using Server = NettyBaseReloaded.Properties.Server;
 
 namespace NettyBaseReloaded
 {

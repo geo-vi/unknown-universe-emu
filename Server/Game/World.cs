@@ -1,4 +1,5 @@
-﻿using Server.Game.managers;
+﻿using Server.Game.controllers;
+using Server.Game.managers;
 
 namespace Server.Game
 {
@@ -8,6 +9,7 @@ namespace Server.Game
         {
             //todo
             GameStorageManager.Instance.Initiate();
+            ServerController.Instance.CreateInstances();
         }
     }
 }

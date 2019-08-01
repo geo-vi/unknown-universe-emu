@@ -7,9 +7,8 @@ namespace Server.Game.objects.entities
 {
     class Npc : Character
     {
-        /**********
-         * BASICS *
-         **********/
+        /****** BASICS */
+        
         public new NpcController Controller { get; set; }
 
         /*********

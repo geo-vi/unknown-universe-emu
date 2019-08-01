@@ -7,11 +7,11 @@ namespace Server.Game.objects.server
     {
         public int Id { get; private set; }
 
-        public int Experience { get; private set; }
+        public double Experience { get; private set; }
 
         public List<Reward> Reward { get; private set; }
         
-        public Level(int id, int experience, List<Reward> reward = null)
+        public Level(int id, double experience, List<Reward> reward = null)
         {
             Id = id;
             Experience = experience;

@@ -1,4 +1,6 @@
 ﻿using Server.Game.controllers.implementable;
+using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.controllers.server
 {
@@ -12,9 +14,13 @@ namespace Server.Game.controllers.server
     /// </summary>
     class DestructionController : ServerImplementedController
     {
+        public override void OnFinishInitiation()
+        {
+            Out.WriteLog("Successfully loaded Destruction Controller", LogKeys.SERVER_LOG);
+        }
+        
         public override void Tick()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

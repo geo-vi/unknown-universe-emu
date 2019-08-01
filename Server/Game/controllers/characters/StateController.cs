@@ -1,7 +1,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Server.Game.objects.entities;
 using Server.Game.objects.enums;
+using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.controllers.characters
 {
@@ -17,63 +20,49 @@ namespace Server.Game.controllers.characters
          *        sleeping
          *        homeMap
          *        onBattleStation
+         *
+         *     .. discontinued documentation, more states on CharacterStates enum )
          */
         
-        private ConcurrentDictionary<CharacterStates, bool> CharacterStates = new ConcurrentDictionary<CharacterStates, bool>();
+        private HashSet<CharacterStates> CharacterStates = new HashSet<CharacterStates>();
         
-        private ConcurrentDictionary<CharacterStates, bool> AllowedStates = new ConcurrentDictionary<CharacterStates, bool>();
-        
-        public StateController(Character character) : base(character)
+        public void AddState(CharacterStates key)
         {
-        }
-
-        public void AddState(CharacterStates key, bool inState, bool allow)
-        {
-            if (inState)
+            if (CharacterStates.Contains(key))
             {
-                if (!AllowedStates.ContainsKey(key))
-                {
-                    AllowedStates.TryAdd(key, true);
-                }
-
-                if (!CharacterStates.ContainsKey(key))
-                {
-                    CharacterStates.TryAdd(key, true);
-                }
+                Out.WriteLog("Something is wrong, trying to add an existing state?", LogKeys.ERROR_LOG);
+                return;
             }
-            else
-            {
-                if (!AllowedStates.ContainsKey(key))
-                {
-                    AllowedStates.TryAdd(key, false);
-                }
-            }
+            
+            CharacterStates.Add(key);
         }
 
         public bool IsInState(CharacterStates key)
         {
-            return CharacterStates.ContainsKey(key);
+            return CharacterStates.Contains(key);
         }
 
-        public bool CanGoToState(CharacterStates key)
+        public CharacterStates[] GetCharacterStates()
         {
-            return AllowedStates.ContainsKey(key);
-        }
-
-        public void ForbidState(CharacterStates key)
-        {
-            if (AllowedStates.ContainsKey(key))
-            {
-                AllowedStates.TryRemove(key, out _);
-            }
+            var states = CharacterStates.ToArray();
+            return states;
         }
         
         public void RemoveState(CharacterStates key)
         {
-            if (CharacterStates.ContainsKey(key))
+            if (CharacterStates.Contains(key))
             {
-                CharacterStates.TryRemove(key, out _);
+                CharacterStates.Remove(key);
             }
+            else
+            {
+                Out.WriteLog("Something is wrong, trying to remove an non-existing state?", LogKeys.ERROR_LOG);
+            }
+        }
+
+        public void RemoveAllStates()
+        {
+            CharacterStates.Clear();
         }
     }
 }

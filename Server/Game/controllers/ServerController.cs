@@ -1,14 +1,19 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Server.Game.controllers.characters;
 using Server.Game.controllers.implementable;
 using Server.Game.controllers.server;
 using Server.Game.objects;
+using RangeController = Server.Game.controllers.server.RangeController;
 
 namespace Server.Game.controllers
 {
     class ServerController
     {
         private static ServerController _instance;
-        
+
         public static ServerController Instance
         {
             get
@@ -18,36 +23,44 @@ namespace Server.Game.controllers
                 return _instance;
             }
         }
-
-        private Dictionary<string, ServerImplementedController> ServerImplementedControllers;
-
-        public ServerController()
+        
+        public static T Get<T>() where T : ServerImplementedController
         {
-            CreateControllers();
+            return Instance.GetInstance<T>();
         }
 
-        public void CreateControllers()
+        private ConcurrentBag<ServerImplementedController> _abstractedSubControllers =
+            new ConcurrentBag<ServerImplementedController>();
+
+        private void CreateControlledInstance<T>() where T : new()
         {
-            ServerImplementedControllers = new Dictionary<string, ServerImplementedController>();
-            ServerImplementedControllers.Add("attackController", new AttackController());
-            ServerImplementedControllers.Add("rangeController", new RangeController());
-            ServerImplementedControllers.Add("movementController", new MovementController());
-            ServerImplementedControllers.Add("spawnController", new SpawnController());
-            ServerImplementedControllers.Add("healingController", new HealingController());
-            ServerImplementedControllers.Add("explosivesController", new ExplosivesController());
-            ServerImplementedControllers.Add("effectsControllers", new EffectsController());
-            ServerImplementedControllers.Add("destructionController", new DestructionController());
+            var instance = new T();
+
+            var controller = instance as ServerImplementedController;
+            if (controller == null) return;
+
+            controller.Initiate();
+
+            _abstractedSubControllers.Add(controller);
         }
 
-        public void CreateMapController(Spacemap spacemap)
+        public void CreateInstances()
         {
-            var name = "map" + spacemap.Id + "Controller";
-            ServerImplementedControllers.Add(name, new MapController(spacemap));
+            CreateControlledInstance<AttackController>();
+            CreateControlledInstance<RangeController>();
+            CreateControlledInstance<MovementController>();
+            CreateControlledInstance<SpawnController>();
+            CreateControlledInstance<HealingController>();
+            CreateControlledInstance<ExplosivesController>();
+            CreateControlledInstance<EffectsController>();
+            CreateControlledInstance<DestructionController>();
+            CreateControlledInstance<MapController>();
         }
 
-        public ServerImplementedController GetController(string key)
+        public T GetInstance<T>() where T : ServerImplementedController
         {
-            return ServerImplementedControllers[key];
+            var instance = _abstractedSubControllers.FirstOrDefault(x => x is T);
+            return instance as T;
         }
     }
 }

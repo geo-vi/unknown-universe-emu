@@ -1,6 +1,6 @@
 namespace Server.Game.objects.entities.ships.equipment
 {
-    public class RocketLauncher
+    class RocketLauncher
     {
         
     }

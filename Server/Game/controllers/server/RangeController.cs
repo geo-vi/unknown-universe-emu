@@ -1,7 +1,14 @@
-﻿using Server.Game.controllers.implementable;
+﻿using System;
+using System.Linq;
+using Server.Game.controllers.characters;
+using Server.Game.controllers.implementable;
+using Server.Game.managers;
+using Server.Game.objects.entities;
+using Server.Game.objects.enums;
 using Server.Game.objects.implementable;
 using Server.Game.objects.maps;
 using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.controllers.server
 {
@@ -10,16 +17,26 @@ namespace Server.Game.controllers.server
         /// <summary>
         /// When a new object is created, make sure to display it in every range
         /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
         
-        public override void Tick()
+        public override void OnFinishInitiation()
         {
-            throw new System.NotImplementedException();
+            Out.WriteLog("Successfully loaded Range Controller", LogKeys.SERVER_LOG); 
         }
 
-        public void DisplayAttackable(IAttackable attackable)
+        public override void Tick()
         {
-            
+        }
+
+        public void DisplayCharacter(Character character)
+        {
+            foreach (var entity in character.Spacemap.Entities.Where(x =>
+                x.Value.Position.DistanceTo(character.Position) < 2000))
+            {
+                if (CharacterStateManager.Instance.IsInState(entity.Value, CharacterStates.SPAWNED))
+                {
+                    entity.Value.Controller.GetInstance<CharacterRangeController>().LoadCharacter(entity.Value);
+                }
+            }
         }
 
         public void DisplayGameObject(GameObject gameObject)

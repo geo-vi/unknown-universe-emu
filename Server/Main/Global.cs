@@ -3,31 +3,38 @@ using System.Threading.Tasks;
 using Server.Game;
 using Server.Game.netty;
 using Server.Main.managers;
+using Server.Main.objects;
 using Server.Networking;
+using Server.Networking.servers;
 using Server.Utils;
 
 namespace Server.Main
 {
     class Global
     {
-        public static CommandManager CommandManager = new CommandManager();
-        public static TickManager TickManager = new TickManager();
-        public static StorageManager StorageManager = new StorageManager();
+        public static readonly CommandManager CommandManager = new CommandManager();
+        public static readonly TickManager TickManager = new TickManager();
+        public static readonly QueryManager QueryManager = new QueryManager();
+        public static readonly StorageManager StorageManager = new StorageManager();
+        public static readonly ServerManager ServerManager = new ServerManager();
 
-        private static GameServer GameServer;
-        
         public static void Initiate()
         {
             InitiateManagers();
             InitiateHelper();
+            InitiatePolicy();
             InitiateGame();
             InitiateChat();
             InitiateWebCommunicator();
+            
+            //Create all servers, allow connection
+            ServerManager.InitiateAll();
         }
 
         private static void InitiateManagers()
         {
             CommandManager.CreateCommands();
+            QueryManager.Initiate();
             Task.Factory.StartNew(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
         }
 
@@ -36,15 +43,23 @@ namespace Server.Main
 
         }
 
+        private static void InitiatePolicy()
+        {
+            var policyServer = new PolicyServer();
+            ServerManager.Create(policyServer);
+            
+            Out.WriteLog("Policy-Server created successfully!", LogKeys.INFO);
+        }
+        
         private static void InitiateGame()
         {
             World.InitiateManagers();
             Packet.Handler.AddCommands();
-            GameServer = new GameServer(8080, 10);
-            GameServer.StartAsync();
-            Out.WriteLog("Game-Server started successfully and DB loaded!", "SUCCESS");
-            Out.WriteLog("Server started.", "GAME");
+            Packet.Builder.AddCommands();
+            var gameServer = new GameServer();
+            ServerManager.Create(gameServer);
 
+            Out.WriteLog("Game-Server created successfully and DB loaded!", LogKeys.INFO);
         }
 
         private static void InitiateChat()

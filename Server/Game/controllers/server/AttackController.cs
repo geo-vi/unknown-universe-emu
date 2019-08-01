@@ -2,6 +2,8 @@
 using System.Linq;
 using Server.Game.controllers.implementable;
 using Server.Game.objects.server;
+using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.controllers.server
 {
@@ -10,6 +12,11 @@ namespace Server.Game.controllers.server
         public ConcurrentQueue<PendingAttack> LaserAttackQueue = new ConcurrentQueue<PendingAttack>();
         public ConcurrentQueue<PendingAttack> RocketAttackQueue = new ConcurrentQueue<PendingAttack>();
         public ConcurrentQueue<PendingAttack> RocketLauncherAttacks = new ConcurrentQueue<PendingAttack>();
+
+        public override void OnFinishInitiation()
+        {
+            Out.WriteLog("Successfully loaded Attack Controller", LogKeys.SERVER_LOG);
+        }
 
         public override void Tick()
         {
@@ -29,7 +36,9 @@ namespace Server.Game.controllers.server
 
                 switch (pendingAttack.LootId)
                 {
+                    default:
                     //todo: add all ammunitions
+                    break;
                 }
             }
         }
@@ -45,7 +54,9 @@ namespace Server.Game.controllers.server
 
                 switch (pendingAttack.LootId)
                 {
+                    default:
                     //todo: add all ammunitions
+                    break;
                 }
             }
         }
@@ -61,7 +72,9 @@ namespace Server.Game.controllers.server
 
                 switch (pendingAttack.LootId)
                 {
+                    default:
                     //todo: add all ammunitions
+                    break;
                 }
             }
         }

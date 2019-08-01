@@ -39,9 +39,7 @@ namespace Server.Game.objects.implementable
         public int CollectedDamage { get; set; }
 
         public virtual int AttackRange => 700;
-
-        public EntityStates EntityState { get; set; }
-
+        
         public bool Invincible { get; set; }
 
         public bool Targetable { get; set; }
@@ -54,7 +52,6 @@ namespace Server.Game.objects.implementable
         protected IAttackable(int id)
         {
             Id = id;
-            EntityState = EntityStates.ALIVE;
             Targetable = true;
         }
 

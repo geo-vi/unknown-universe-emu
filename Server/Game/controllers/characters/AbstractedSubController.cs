@@ -1,14 +1,23 @@
+using System;
 using Server.Game.objects.entities;
 
 namespace Server.Game.controllers.characters
 {
     abstract class AbstractedSubController
     {
-        protected Character Character;
-        
-        protected AbstractedSubController(Character character)
+        public Character Character;
+
+        public virtual void OnAdded()
         {
-            Character = character;
+        }
+
+        public virtual void OnOverwritten()
+        {
+        }
+
+        public virtual void OnTick()
+        {
+            
         }
     }
 }

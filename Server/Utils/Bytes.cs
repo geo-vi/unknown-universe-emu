@@ -12,19 +12,21 @@ namespace Server.Utils
         /// Credits to Yuuki for being a good dog and now he got awarded with a bone(r).
         /// </summary>
 
-        public List<byte> Message;
-        public bool NROL;
-        public ByteArray(short ID, bool NeedReverseOrLength = true)
+        public List<byte> Message { get; set; }
+        
+        public bool NROL { get; set; }
+        
+        public ByteArray(short id, bool needReverseOrLength = true)
         {
             Message = new List<byte>();
-            NROL = NeedReverseOrLength;
-            Short(ID);
+            NROL = needReverseOrLength;
+            Short(id);
         }
 
-        public ByteArray(bool NeedReverseOrLenght = false)
+        public ByteArray(bool needReverseOrLenght = false)
         {
             Message = new List<byte>();
-            NROL = NeedReverseOrLenght;
+            NROL = needReverseOrLenght;
         }
 
         public void setNROL(bool to)
@@ -120,21 +122,23 @@ namespace Server.Utils
         /// Credits to E*PVP
         /// </summary>
 
-        public IByteBuffer ByteBuffer;
+        private IByteBuffer ByteBuffer { get; set; }
 
-        public byte[] byteArray { get; set; }
-        public int byteCounter { get; set; }
-        public List<byte> command { get; set; }
+        private byte[] ByteArray { get; set; }
+        
+        private int ByteCounter { get; set; }
+        
+        private List<byte> Command { get; set; }
 
-        public short Lenght;
-        public short CMD_ID;
+        public short Lenght { get; set; }
+        public short CommandId { get; set; }
 
         public ByteParser(IByteBuffer buffer)
         {
             ByteBuffer = buffer;
-            this.CMD_ID = buffer.ReadShort();
-            this.command = new List<byte>();
-            byteCounter = 0;
+            this.CommandId = buffer.ReadShort();
+            this.Command = new List<byte>();
+            ByteCounter = 0;
         }
 
         //Reads the next short of the byteArray (2 bytes)

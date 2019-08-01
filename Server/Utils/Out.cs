@@ -22,6 +22,12 @@ namespace Server.Utils
 
         public static void QuickLog(string content, string key = "log")
         {
+            Out.WriteLog(content, key);
+            if (key == "errlog")
+            {
+                Console.WriteLine("!-> Trace: " + Utils.Out.GetCaller());
+            }
+
             //Logger<>.Logger._instance.Enqueue(key, content);
         }
 
@@ -43,9 +49,9 @@ namespace Server.Utils
         /// <param name="message">That's where the input text goes</param>
         /// <param name="header">This parameter is optional and it stands for the [header] before the text</param>
         /// <param name="color">This parameter is optional and it is chosing the color you would like the text to be</param>
-        public static void WriteLog(string message, string header = "")
+        public static void WriteLog(string message, string header = "", object prefix = null)
         {
-            StringBuilder builder = new StringBuilder(">");
+            StringBuilder builder = new StringBuilder(prefix + ">");
             if (header != "")
             {
                 builder.Append(" #");

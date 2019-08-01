@@ -31,7 +31,7 @@ namespace Server.Game.objects.entities.ships
         /// 1 => 20-50% of ship inventory is lf3, 2 => 50%-99%, 3 => 100%
         /// if 3 => Elite lasers on attack
         /// </summary>
-        public int ExpansionStage => CalculateExpansionStage();
+        public int ExpansionStage => GetExpansionStage();
 
         /// <summary>
         /// Extras equipped
@@ -40,16 +40,16 @@ namespace Server.Game.objects.entities.ships
 
         public Dictionary<int, Tuple<Drone, EquipmentItem>> EquippedItemsOnDrones = new Dictionary<int, Tuple<Drone, EquipmentItem>>();
 
-        public RocketLauncher RocketLauncher;
+        public RocketLauncher RocketLauncher { get; set; }
 
-        public double ShieldAbsorb => CalculateShieldAbs();
+        public double ShieldAbsorb => GetShieldAbs();
 
         public Configuration(int id)
         {
             Id = id;
         }
 
-        private double CalculateShieldAbs()
+        private double GetShieldAbs()
         {
             return 0.5;
 //            var countA01 = ShieldGens.Count(x => x.Value.Item.Id == 5);
@@ -60,20 +60,19 @@ namespace Server.Game.objects.entities.ships
 //            return (countA01 * 0.4 + countA02 * 0.5 + countA03 * 0.6 + countBO1 * 0.7 + countBO2 * 0.8) / ShieldGens.Count;
         }
 
-        private int CalculateExpansionStage()
+        private int GetExpansionStage()
         {
+            var lasers = EquippedItemsOnShip.Where(x => x.Value.GeneralCategory == GeneralItemCategories.LASER).ToArray();
+            if (lasers
+                .All(x => x.Value.Id == 1 || x.Value.Id == 2))
+            {
+                return 3;
+            }
+
+            if (lasers.Count() > 3)
+                return 2;
+
             return 1;
-//            var lasers = EquippedItemsOnShip.Where(x => x.Value.Item.Category == EquippedItemCategories.LASER).ToArray();
-//            if (lasers
-//                .All(x => x.Value.Item.Id == 1 || x.Value.Item.Id == 2))
-//            {
-//                return 3;
-//            }
-//
-//            if (lasers.Count() > 3)
-//                return 2;
-//
-//            return 1;
         }
 
         public RocketLauncher GetRocketLauncher(Player player)

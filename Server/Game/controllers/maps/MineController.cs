@@ -5,7 +5,7 @@ namespace Server.Game.controllers.maps
 {
     class MineController : GameObjectController
     {
-        public Mine Mine;
+        public Mine Mine { get; set; }
         
         public MineController(Spacemap map, Mine mine) : base(map, mine)
         {

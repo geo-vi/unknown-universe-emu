@@ -8,10 +8,6 @@ namespace Server.Game.controllers.characters
 {
     class ShipController : AbstractedSubController
     {
-        public ShipController(Character character) : base(character)
-        {
-        }
-
         public void Update()
         {
 //            MovementController.Move(this, MovementController.ActualPosition(this));

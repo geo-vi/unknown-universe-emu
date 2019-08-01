@@ -2,13 +2,19 @@ namespace Server.Game.objects.enums
 {
     enum CharacterStates
     {
-        OnJumpgate,
-        OnCollectable,
-        InEquipmentArea,
-        Jumping,
-        Shooting,
-        Sleeping,
-        HomeMap,
-        OnBattlestation
+        ON_JUMPGATE,
+        ON_COLLECTABLE,
+        IN_EQUIPMENT_AREA,
+        JUMPING,
+        SHOOTING,
+        SLEEPING,
+        HOME_MAP,
+        ON_BATTLESTATION,
+        SPAWNED,
+        LOGIN,
+        COLLECTING,
+        MOVING,
+        NO_CLIENT_CONNECTED,
+        FULLY_DISCONNECTED
     }
 }

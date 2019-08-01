@@ -5,10 +5,6 @@ namespace Server.Game.controllers.characters
 {
     class SelectionUpdateController : AbstractedSubController
     {
-        public SelectionUpdateController(Character character) : base(character)
-        {
-        }
-
         public void SelectAttackable(IAttackable attackable)
         {
             

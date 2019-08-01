@@ -13,5 +13,10 @@ namespace Server.Main.managers
         public RconUser ConsoleUser = new RconUser("console", "127.0.0.1");
         
         public ConcurrentDictionary<int, Clan> Clans = new ConcurrentDictionary<int, Clan>();
+
+        public void GetClanById(int clanId, bool nullReturn, out Clan clan)
+        {
+            clan = Clans[0];
+        }
     }
 }

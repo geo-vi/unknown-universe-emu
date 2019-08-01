@@ -4,11 +4,11 @@ namespace Server.Game.objects.entities.players
 {
     class JumpSequence
     {
-        public Spacemap From;
+        public Spacemap From { get; set; }
 
-        public Spacemap To;
+        public Spacemap To { get; set; }
 
-        public DateTime EstimatedTimeOfJump;
+        public DateTime EstimatedTimeOfJump { get; set; }
 
         public event EventHandler Jumped;
 
@@ -17,6 +17,12 @@ namespace Server.Game.objects.entities.players
             From = from;
             To = to;
             EstimatedTimeOfJump = estTimeOfJump;
+            
+        }
+
+        protected virtual void OnJumped()
+        {
+            Jumped?.Invoke(this, EventArgs.Empty);
         }
     }
 }

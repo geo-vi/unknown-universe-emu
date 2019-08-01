@@ -5,17 +5,17 @@ namespace Server.Game.objects.entities.players
 {
     abstract class Tech
     {
-        public Techs Type;
+        protected Techs Type { get; set; }
 
-        public bool Active;
+        protected bool Active { get; set; }
 
-        public int DurationTime;
+        protected int DurationTime { get; set; }
 
-        public DateTime TimeStarted;
+        protected DateTime TimeStarted { get; set; }
         
-        public DateTime TimeEnding;
+        protected DateTime TimeEnding { get; set; }
 
-        public int Count;
+        protected int Count { get; set; }
         
         protected Tech(Techs type, int durationTime, int playerCount)
         {

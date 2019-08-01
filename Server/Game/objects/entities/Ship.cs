@@ -104,10 +104,10 @@ namespace Server.Game.objects.entities
             Reward = reward;
             CargoDrop = cargoDrop;
             AI = ai;
-            Damage = CalculateDamage();
+            Damage = GetDamage();
         }
 
-        private int CalculateDamage()
+        private int GetDamage()
         {
             return Damage = (MaxDamage - MinDamage) / 2 + MinDamage;
         }

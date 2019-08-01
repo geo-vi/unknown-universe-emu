@@ -4,11 +4,7 @@ namespace Server.Game.controllers.characters
 {
     class RocketLauncherController : AbstractedSubController
     {
-        public int LoadedRockets;
-
-        public RocketLauncherController(Character character) : base(character)
-        {
-        }
+        public int LoadedRockets { get; set; }
         
 
         public void Launch()
