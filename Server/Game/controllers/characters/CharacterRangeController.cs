@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Server.Game.objects.entities;
 using Server.Game.objects.implementable;
@@ -16,7 +17,8 @@ namespace Server.Game.controllers.characters
         public void LoadCharactersInRange()
         {
             foreach (var character in Character.Spacemap.Entities.Where(x =>
-                x.Value.InCalculatedRange(Character)))
+                x.Value != Character && 
+                Character.InCalculatedRange(x.Value)))
             {
                 LoadCharacter(character.Value);
             }
@@ -46,6 +48,7 @@ namespace Server.Game.controllers.characters
             }
             
             Character.RangeView.CharactersInRenderRange.TryAdd(targetCharacter.Id, targetCharacter);
+            Console.WriteLine("LoadCharacter");
         }
 
         /// <summary>

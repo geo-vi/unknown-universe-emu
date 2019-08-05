@@ -25,7 +25,7 @@ namespace Server.Game.controllers.players
             CalculateActivity();
         }
 
-        public void CalculateActivity()
+        private void CalculateActivity()
         {
             if (Session == null)
             {

@@ -41,6 +41,12 @@ namespace Server.Game.controllers.server
             
         }
 
+        /// <summary>
+        /// Trying to create character on the map
+        /// </summary>
+        /// <param name="character">Character trying to create</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Something went wrong with the character</exception>
         public bool CreateCharacterOnMap(Character character)
         {
             if (character.Spacemap == null)

@@ -27,14 +27,19 @@ namespace Server.Game.controllers.server
         {
         }
 
-        public void DisplayCharacter(Character character)
+        /// <summary>
+        /// Displaying the target character to all range entities
+        /// </summary>
+        /// <param name="targetCharacter">Target Character which will be displayed</param>
+        public void DisplayCharacter(Character targetCharacter)
         {
-            foreach (var entity in character.Spacemap.Entities.Where(x =>
-                x.Value.InCalculatedRange(character)))
+            var entities = targetCharacter.Spacemap.Entities;
+            foreach (var entity in entities.Where(x => x.Value != targetCharacter &&
+                                                       x.Value.InCalculatedRange(targetCharacter)))
             {
                 if (CharacterStateManager.Instance.IsInState(entity.Value, CharacterStates.SPAWNED))
                 {
-                    entity.Value.Controller.GetInstance<CharacterRangeController>().LoadCharacter(entity.Value);
+                    entity.Value.Controller.GetInstance<CharacterRangeController>().LoadCharacter(targetCharacter);
                 }
             }
         }

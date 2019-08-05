@@ -1,3 +1,4 @@
+using System;
 using Server.Game.objects.entities;
 
 namespace Server.Game.netty.packet.prebuiltCommands
@@ -24,11 +25,12 @@ namespace Server.Game.netty.packet.prebuiltCommands
 
         public void CreateShipCommand(Player player, Character targetShip)
         {
-            
+            Console.WriteLine("Creating ship: " + targetShip.Name);
         }
 
         public void RemoveShipCommand(Player player, Character targetShip)
         {
+            Console.WriteLine("Removing ship: " + targetShip.Name);
         }
     }
 }

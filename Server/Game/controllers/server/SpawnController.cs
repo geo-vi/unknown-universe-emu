@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using Server.Game.controllers.characters;
 using Server.Game.controllers.implementable;
 using Server.Game.managers;
 using Server.Game.netty.packet.prebuiltCommands;
@@ -33,6 +34,7 @@ namespace Server.Game.controllers.server
                 _charactersPendingSpawn.TryDequeue(out var character);
                 SpawnCharacter(character);
                 ProjectToRange(character);
+                DisplayEntitiesWithinRange(character);
                 OnFinishSpawning(character);
             }
         }
@@ -47,6 +49,11 @@ namespace Server.Game.controllers.server
             _charactersPendingSpawn.Enqueue(character);
         }
         
+        /// <summary>
+        /// Creating state and preparing
+        /// </summary>
+        /// <param name="character"></param>
+        /// <exception cref="Exception"></exception>
         private void SpawnCharacter(Character character)
         {
             CharacterStateManager.Instance.RequestStateChange(character, CharacterStates.SPAWNED, out var stateChanged);
@@ -61,41 +68,28 @@ namespace Server.Game.controllers.server
             CharacterStateManager.Instance.RemoveState(character, CharacterStates.LOGIN);
         }
         
+        /// <summary>
+        /// Projecting to range the character's entry
+        /// </summary>
+        /// <param name="targetCharacter"></param>
         private void ProjectToRange(Character targetCharacter)
         {
-            var entities = targetCharacter.Spacemap.Entities;
-            foreach (var entity in entities.Where(x => x.Value.InCalculatedRange(targetCharacter)))
-            {
-                CreateRangeInstanceForEntity(entity.Value, targetCharacter);
-                if (entity.Value is Player player)
-                {
-                    CreateEntityForPlayerScreen(player, targetCharacter);
-                }
-            }
-
-            entities.TryAdd(targetCharacter.Id, targetCharacter);
+            ServerController.Get<MapController>().CreateCharacterOnMap(targetCharacter);
         }
 
-        private void CreateRangeInstanceForEntity(Character entity, Character rangeInstance)
+        /// <summary>
+        /// Displaying all entities which are in visible range
+        /// </summary>
+        /// <param name="targetCharacter">Character which is going to get all entities added to him</param>
+        private void DisplayEntitiesWithinRange(Character targetCharacter)
         {
-            if (rangeInstance == null)
-            {
-                Out.QuickLog("Spawn Controller couldn't access the value of the range's instance", LogKeys.ERROR_LOG);
-                throw new Exception("Trying to create a null instance");
-            }
-
-            if (!entity.RangeView.CharactersInRenderRange.TryAdd(rangeInstance.Id, rangeInstance))
-            {
-                Out.QuickLog("Entity of the same key already exists", LogKeys.ERROR_LOG);
-                throw new Exception("Trying to add a duplicate");
-            }
-        }
-
-        private void CreateEntityForPlayerScreen(Player player, Character createdInstance)
-        {
-            PrebuiltPlayerCommands.Instance.CreateShipCommand(player, createdInstance);
+            targetCharacter.Controller.GetInstance<CharacterRangeController>().LoadCharactersInRange();
         }
         
+        /// <summary>
+        /// Once all the spawn process finishes this will trigger
+        /// </summary>
+        /// <param name="character"></param>
         private void OnFinishSpawning(Character character)
         {
             Out.WriteLog("Character [with ID: " + character.Id + "] successfully spawned", LogKeys.SERVER_LOG);
