@@ -98,15 +98,19 @@ namespace Server.Game.managers
                     },
                     to = new []
                     {
-                        CharacterStates.LOGIN
+                        CharacterStates.LOGIN, CharacterStates.FULLY_DISCONNECTED
                     },
                     rule = StateRules.WIPE_ALL_STATES
                 }
             };
         }
 
-        public bool HasMapRule(CharacterStates from, out StateRules mapRule)
+        public bool HasMapRule(CharacterStates? from, out StateRules mapRule)
         {
+            if (from == null)
+            {
+                throw new Exception("Something went wrong by checking map rules, origin state is null");
+            }
             mapRule = StateRules.KEEP;
             var maps = _map.Where(x => x.from.Any(y => y == from)).ToArray();
             if (maps.Length > 1 && !maps.Any())

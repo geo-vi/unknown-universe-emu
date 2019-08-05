@@ -15,6 +15,7 @@ namespace Server.Main.managers
             RegisteredConsoleCommands.Add("help", new HelpCommand());
             RegisteredConsoleCommands.Add("runtime", new RuntimeCommand());
             RegisteredConsoleCommands.Add("msg", new MsgCommand());
+            RegisteredConsoleCommands.Add("logout", new LogoutCommand());
         }
 
         public void HandleConsoleInput(string input)

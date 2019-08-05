@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Server.Game.managers;
 using Server.Game.netty.packet.prebuiltCommands;
 using Server.Game.objects;
+using Server.Game.objects.enums;
 using Server.Main.objects;
 using Server.Networking.clients;
 using Server.Utils;
@@ -81,6 +82,12 @@ namespace Server.Game.controllers.players
 
         public void Kill()
         {
+            CharacterStateManager.Instance.RequestStateChange(Player, CharacterStates.FULLY_DISCONNECTED, out var stateChanged);
+            if (!stateChanged)
+            {
+                throw new Exception("Something went wrong when trying to fully disconnect player");
+            }
+            
             Player.Controller.Dispose();
             Task.Run(Session.GameClient.Disconnect);
         }

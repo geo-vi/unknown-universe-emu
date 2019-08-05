@@ -6,6 +6,7 @@ using DotNetty.Transport.Channels;
 using Server.Game.managers;
 using Server.Game.objects.entities;
 using Server.Game.objects.enums;
+using Server.Main.objects;
 using Server.Utils;
 
 namespace Server.Networking.clients
@@ -80,9 +81,15 @@ namespace Server.Networking.clients
             {
                 return;
             }
+
+            if (CharacterStateManager.Instance.IsInState(player, CharacterStates.FULLY_DISCONNECTED))
+            {
+                return;
+            }
+
             CharacterStateManager.Instance.RequestStateChange(player, CharacterStates.NO_CLIENT_CONNECTED, out _);
         }
-        
+
         /// <summary>
         /// Disconnect method will close the netty handle
         /// </summary>

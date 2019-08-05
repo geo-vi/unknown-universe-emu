@@ -34,6 +34,7 @@ namespace Server.Game.managers
         /// <exception cref="Exception"></exception>
         public void RequestStateChange(Character character, CharacterStates requestedState, out bool stateChanged)
         {
+            CharacterStates? fromState = null;
             var stateController = character.Controller.GetInstance<StateController>();
             var currentStates = stateController.GetCharacterStates();
             stateChanged = false;
@@ -49,6 +50,7 @@ namespace Server.Game.managers
                         !stateController.IsInState(requestedState))
                     {
                         stateChanged = true;
+                        fromState = state;
                     }
                     else
                     {
@@ -61,13 +63,16 @@ namespace Server.Game.managers
 
             if (stateChanged)
             {
-                if (StateMachineManager.Instance.HasMapRule(requestedState, out var mapRule))
+                if (fromState != null)
                 {
-                    switch (mapRule)
+                    if (StateMachineManager.Instance.HasMapRule(fromState, out var mapRule))
                     {
-                        case StateRules.WIPE_ALL_STATES:
-                            WipeStates(character);
-                            break;
+                        switch (mapRule)
+                        {
+                            case StateRules.WIPE_ALL_STATES:
+                                WipeStates(character);
+                                break;
+                        }
                     }
                 }
                 
