@@ -16,7 +16,7 @@ namespace Server.Game.controllers.characters
         public void LoadCharactersInRange()
         {
             foreach (var character in Character.Spacemap.Entities.Where(x =>
-                x.Value.Position.DistanceTo(Character.Position) < 2000))
+                x.Value.InCalculatedRange(Character)))
             {
                 LoadCharacter(character.Value);
             }

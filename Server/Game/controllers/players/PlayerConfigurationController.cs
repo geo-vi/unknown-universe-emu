@@ -4,6 +4,7 @@ using Server.Game.controllers.characters;
 using Server.Game.objects.entities;
 using Server.Game.objects.entities.ships;
 using Server.Game.objects.entities.ships.equipment;
+using Server.Game.objects.entities.ships.items;
 using Server.Game.objects.enums;
 using Server.Main.objects;
 using Server.Utils;

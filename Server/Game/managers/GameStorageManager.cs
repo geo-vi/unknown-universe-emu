@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using Server.Game.objects;
 using Server.Game.objects.entities;
 using Server.Game.objects.entities.ships.equipment;
+using Server.Game.objects.entities.ships.items;
 using Server.Game.objects.server;
 
 namespace Server.Game.managers

@@ -2,6 +2,7 @@ using System;
 using Server.Game.netty.commands.old_client;
 using Server.Game.objects.entities.players;
 using Server.Game.objects.entities.ships.equipment;
+using Server.Game.objects.entities.ships.items;
 
 namespace Server.Game.managers
 {
@@ -179,8 +180,22 @@ namespace Server.Game.managers
                     return new AmmunitionTypeModule(AmmunitionTypeModule.INSTANT_SHIELD);
                 case "ammunition_specialammo_emp-01":
                     return new AmmunitionTypeModule(AmmunitionTypeModule.EMP);
+                case "ammunition_mine_empm-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.MINE_EMP);
+                case "ammunition_mine_slm-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.MINE_SL);
+                case "ammunition_mine_ddm-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.MINE_DD);
+                case "ammunition_mine_sabm-01":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.MINE_SAB);
+                case "ammunition_firework_fwx-s":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.FIREWORK_1);
+                case "ammunition_firework_fwx-m":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.FIREWORK_2);
+                case "ammunition_firework_fwx-l":
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.FIREWORK_3);
                 default:
-                    return new AmmunitionTypeModule(AmmunitionTypeModule.ROCKET);
+                    return new AmmunitionTypeModule(AmmunitionTypeModule.BATTERY);
             }
         }
 

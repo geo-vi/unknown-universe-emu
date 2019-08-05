@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using Server.Game.objects.entities.ships.equipment;
+using Server.Game.objects.entities.ships.items;
 using Server.Game.objects.implementable;
 using Server.Main.objects;
 using Server.Utils;

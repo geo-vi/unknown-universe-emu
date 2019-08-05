@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace Server.Game.objects.entities.ships.equipment
+namespace Server.Game.objects.entities.ships.items
 {
     static class ItemMap
     {

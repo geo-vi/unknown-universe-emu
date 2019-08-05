@@ -53,5 +53,18 @@ namespace Server.Game.controllers.server
             ServerController.Get<RangeController>().DisplayCharacter(character);
             return mapAdd;
         }
+
+        public bool RemoveCharacterFromMap(Character character)
+        {
+            if (character.Spacemap == null)
+            {
+                Out.WriteLog("Invalid Spacemap when removing a character", LogKeys.ALL_CHARACTER_LOG, character.Id);
+                throw new Exception("Invalid Spacemap when removing Character");
+            }
+            
+            var mapRemove = character.Spacemap.Entities.TryRemove(character.Id, out _);
+            ServerController.Get<RangeController>().RemoveCharacter(character);
+            return mapRemove;
+        }
     }
 }

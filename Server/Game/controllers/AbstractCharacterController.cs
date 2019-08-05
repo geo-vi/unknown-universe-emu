@@ -148,7 +148,7 @@ namespace Server.Game.controllers
         /// </summary>
         public void Dispose()
         {
-            
+            Global.TickManager.Remove(this);
         }
     }
 }

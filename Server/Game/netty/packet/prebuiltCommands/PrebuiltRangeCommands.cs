@@ -2,7 +2,7 @@ using Server.Game.objects.entities;
 
 namespace Server.Game.netty.packet.prebuiltCommands
 {
-    class PrebuiltRangeCommands
+    class PrebuiltRangeCommands : PrebuiltCommandBase
     {
         public static PrebuiltRangeCommands Instance
         {
@@ -17,6 +17,10 @@ namespace Server.Game.netty.packet.prebuiltCommands
         }
 
         private static PrebuiltRangeCommands _instance;
+        
+        public override void AddCommands()
+        {
+        }
 
         public void CreateShipCommand(Player player, Character targetShip)
         {

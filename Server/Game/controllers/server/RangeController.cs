@@ -30,7 +30,7 @@ namespace Server.Game.controllers.server
         public void DisplayCharacter(Character character)
         {
             foreach (var entity in character.Spacemap.Entities.Where(x =>
-                x.Value.Position.DistanceTo(character.Position) < 2000))
+                x.Value.InCalculatedRange(character)))
             {
                 if (CharacterStateManager.Instance.IsInState(entity.Value, CharacterStates.SPAWNED))
                 {
@@ -44,9 +44,15 @@ namespace Server.Game.controllers.server
             
         }
 
-        public void RemoveAttackable(IAttackable attackable)
+        public void RemoveCharacter(Character character)
         {
-            
+            foreach (var entity in character.Spacemap.Entities)
+            {
+                if (CharacterStateManager.Instance.IsInState(entity.Value, CharacterStates.SPAWNED))
+                {
+                    entity.Value.Controller.GetInstance<CharacterRangeController>().RemoveCharacter(entity.Value);
+                }
+            }
         }
 
         public void RemoveGameObject(GameObject gameObject)

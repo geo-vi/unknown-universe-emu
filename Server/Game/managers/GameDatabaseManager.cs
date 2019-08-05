@@ -10,6 +10,7 @@ using Server.Game.objects.entities;
 using Server.Game.objects.entities.players;
 using Server.Game.objects.entities.ships;
 using Server.Game.objects.entities.ships.equipment;
+using Server.Game.objects.entities.ships.items;
 using Server.Game.objects.enums;
 using Server.Game.objects.implementable;
 using Server.Game.objects.maps;
@@ -113,6 +114,50 @@ namespace Server.Game.managers
         
         public Ammunition CreatePlayerAmmunitions(int playerId)
         {
+            try
+            {
+                var ammunition = new Ammunition();
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_ammo WHERE PLAYER_ID=" + playerId);
+                    
+                    ammunition.Create("ammunition_laser_lcb-10", intConv(queryRow["LCB_10"]));
+                    ammunition.Create("ammunition_laser_mcb-25", intConv(queryRow["MCB_25"]));
+                    ammunition.Create("ammunition_laser_mcb-50", intConv(queryRow["MCB_50"]));
+                    ammunition.Create("ammunition_laser_ucb-100", intConv(queryRow["UCB_100"]));
+                    ammunition.Create("ammunition_laser_sab-50", intConv(queryRow["SAB_50"]));
+                    ammunition.Create("ammunition_laser_rsb-75", intConv(queryRow["RSB_75"]));
+                    ammunition.Create("ammunition_laser_cbo-100", intConv(queryRow["CBO_100"]));
+                    ammunition.Create("ammunition_laser_job-100", intConv(queryRow["JOB_100"]));
+                    ammunition.Create("ammunition_rocket_r-310", intConv(queryRow["R_310"]));
+                    ammunition.Create("ammunition_rocket_plt-2026", intConv(queryRow["PLT_2026"]));
+                    ammunition.Create("ammunition_rocket_plt-2021", intConv(queryRow["PLT_2021"]));
+                    ammunition.Create("ammunition_rocket_plt-3030", intConv(queryRow["PLT_3030"]));
+                    ammunition.Create("ammunition_specialammo_pld-8", intConv(queryRow["PLD_8"]));
+                    ammunition.Create("ammunition_specialammo_dcr-250", intConv(queryRow["DCR_250"]));
+                    ammunition.Create("ammunition_specialammo_wiz-x", intConv(queryRow["WIZ_X"]));
+                    ammunition.Create("ammunition_specialammo_emp-01", intConv(queryRow["EMP_01"]));
+                    ammunition.Create("ammunition_rocket_bdr-1211", intConv(queryRow["BDR_1211"]));
+                    ammunition.Create("ammunition_rocketlauncher_hstrm-01", intConv(queryRow["HSTRM_01"]));
+                    ammunition.Create("ammunition_rocketlauncher_ubr-100", intConv(queryRow["UBR_100"]));
+                    ammunition.Create("ammunition_rocketlauncher_eco-10", intConv(queryRow["ECO_10"]));
+                    ammunition.Create("ammunition_rocketlauncher_sar-01", intConv(queryRow["SAR_01"]));
+                    ammunition.Create("ammunition_rocketlauncher_sar-02", intConv(queryRow["SAR_02"]));
+                    ammunition.Create("ammunition_mine_acm-01", intConv(queryRow["ACM_01"]));
+                    ammunition.Create("ammunition_mine_empm-01", intConv(queryRow["EMP_M01"]));
+                    ammunition.Create("ammunition_mine_slm-01", intConv(queryRow["SL_M01"]));
+                    ammunition.Create("ammunition_mine_ddm-01", intConv(queryRow["DD_M01"]));
+                    ammunition.Create("ammunition_mine_sabm-01", intConv(queryRow["SAB_M01"]));
+                    ammunition.Create("ammunition_firework_fwx-s", intConv(queryRow["FWX_S"]));
+                    ammunition.Create("ammunition_firework_fwx-m", intConv(queryRow["FWX_M"]));
+                    ammunition.Create("ammunition_firework_fwx-l", intConv(queryRow["FWX_L"]));
+                }
+                return ammunition;
+            }
+            catch (Exception)
+            {
+                Out.QuickLog("Critical error occured", LogKeys.ERROR_LOG);
+            }
             return null;
         }
 
@@ -508,7 +553,7 @@ namespace Server.Game.managers
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
                     var queryRow = mySqlClient.ExecuteQueryRow(
-                        "SELECT EXP, HONOR, CREDITS, URIDIUM, JACKPOT, PREMIUM_UNTIL, LVL FROM player_data WHERE PLAYER_ID = " + playerId);
+                        "SELECT EXP, HONOR, CREDITS, URIDIUM, JACKPOT, PREMIUM_UNTIL, LVL, BOOTY_KEYS FROM player_data, player_extra_data WHERE player_data.PLAYER_ID = player_extra_data.PLAYER_ID AND player_data.PLAYER_ID = " + playerId);
                     var exp = doubleConv(queryRow["EXP"]);
                     var honor = doubleConv(queryRow["HONOR"]);
                     var credits = doubleConv(queryRow["CREDITS"]);
@@ -516,7 +561,12 @@ namespace Server.Game.managers
                     var jackpot = Convert.ToSingle(queryRow["JACKPOT"]);
                     var premiumUntil = Convert.ToDateTime(queryRow["PREMIUM_UNTIL"]);
                     var levelId = Convert.ToInt32(queryRow["LVL"]);
-                    var information = new Information(exp, honor, credits, uridium, jackpot, premiumUntil, GameStorageManager.Instance.FindPlayerLevel(levelId));
+                    var bootyKeys = JsonConvert.DeserializeObject<int[]>(queryRow["BOOTY_KEYS"].ToString());
+                    if (bootyKeys == null || bootyKeys.Length != 3)
+                    {
+                        bootyKeys = new[] { 0, 0, 0};
+                    }
+                    var information = new Information(exp, honor, credits, uridium, jackpot, premiumUntil, GameStorageManager.Instance.FindPlayerLevel(levelId), bootyKeys);
                     return information;
                 }
             }
@@ -669,9 +719,9 @@ namespace Server.Game.managers
         
         private PlayerSettings LoadPlayerSettings(Player player, string settingsString)
         {
+            var playerSettings = new PlayerSettings(player);
             try
             {
-                var playerSettings = new PlayerSettings(player);
                 if (settingsString == "")
                 {
                     playerSettings.CreateSettings();
@@ -682,18 +732,17 @@ namespace Server.Game.managers
                     {
                         TypeNameHandling = TypeNameHandling.Auto
                     });
-                    
+
                     playerSettings.CreateSettings(settings);
                 }
-
-                return playerSettings;
             }
             catch (Exception)
             {
                 Out.QuickLog("Critical error occured", LogKeys.ERROR_LOG);
+                Out.WriteLog("Creating default settings for player", LogKeys.PLAYER_LOG, player.Id);
+                playerSettings.CreateSettings();
             }
-
-            return null;
+            return playerSettings;
         }
 
         public void SavePlayerSettings(Player player)

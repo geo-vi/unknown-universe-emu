@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Server.Game.objects.entities.ships.equipment;
+using Server.Game.objects.entities.ships.items;
 using Server.Game.objects.implementable;
 
 namespace Server.Game.objects.entities.ships

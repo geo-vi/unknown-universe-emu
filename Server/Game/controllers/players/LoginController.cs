@@ -68,6 +68,8 @@ namespace Server.Game.controllers.players
             PrebuiltPlayerCommands.Instance.CreateSlotbarSettings(GameSession.Player);
             PrebuiltPlayerCommands.Instance.ShipInitializationCommand(GameSession.Player);
             PrebuiltPlayerCommands.Instance.CreateAmmunition(GameSession.Player);
+            PrebuiltLegacyCommands.Instance.SendBootyKeys(GameSession.Player);
+            PrebuiltLegacyCommands.Instance.SendQuickbuyPriceMenu(GameSession.Player);
         }
 
         /// <summary>

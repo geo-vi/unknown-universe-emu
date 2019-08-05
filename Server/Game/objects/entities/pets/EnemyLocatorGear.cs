@@ -1,4 +1,5 @@
 using Server.Game.objects.entities.ships.equipment;
+using Server.Game.objects.entities.ships.items;
 using Server.Game.objects.enums;
 using Server.Game.objects.implementable;
 

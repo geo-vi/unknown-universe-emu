@@ -35,7 +35,7 @@ namespace Server.Game.netty.packet.prebuiltCommands
             Packet.Builder.OldCommands.Add(Commands.LEGACY_MODULE,
                 async (client, actionParams) =>
                 {
-                    Console.WriteLine(actionParams[0]);
+                    ArgumentFixer(actionParams, 1, out actionParams);
                     await client.Send(commands.old_client.LegacyModule.write((string) actionParams[0]).Bytes);
                 });
         }
@@ -83,7 +83,38 @@ namespace Server.Game.netty.packet.prebuiltCommands
                 return;
             }
             
-            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "CC", player.CurrentConfig);
+            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "CC", player.CurrentConfig);
+        }
+
+        /// <summary>
+        /// Sends all the booty keys u currently own
+        /// </summary>
+        /// <param name="player"></param>
+        public void SendBootyKeys(Player player)
+        {
+            var session = GameStorageManager.Instance.FindSession(player);
+            if (session == null)
+            {
+                Out.QuickLog("Trying to send a message to an invalid session", LogKeys.ERROR_LOG);
+                return;
+            }
+            
+            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BK", player.Information.BootyKeys[0]);
+            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BKR", player.Information.BootyKeys[1]);
+            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BKB", player.Information.BootyKeys[2]);
+        }
+
+        public void SendQuickbuyPriceMenu(Player player)
+        {
+            var session = GameStorageManager.Instance.FindSession(player);
+            if (session == null)
+            {
+                Out.QuickLog("Trying to send a message to an invalid session", LogKeys.ERROR_LOG);
+                return;
+            }
+            
+            //~TODO: Create quickbuy packet
+            //Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "g", "a", "b,1000,1,10000.0 ");
         }
     }
 }

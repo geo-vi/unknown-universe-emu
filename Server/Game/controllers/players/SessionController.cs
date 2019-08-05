@@ -33,9 +33,9 @@ namespace Server.Game.controllers.players
                 throw new NullReferenceException("Session is undefined");
             }
 
-            var loginTimePoints = (int)((DateTime.Now - Session.LoginTime).TotalMilliseconds) * 0.0001;
-            var movementTimePoints = (int)((DateTime.Now - Session.LastMovementTime).TotalMilliseconds) * 0.001;
-            var combatTimePoints = (int)((DateTime.Now - Session.LastCombatTime).TotalMilliseconds) * 0.001;
+            var loginTimePoints = (int)((DateTime.Now - Session.LoginTime).TotalMilliseconds) * 0.01;
+            var movementTimePoints = (int)((DateTime.Now - Session.LastMovementTime).TotalMilliseconds) * 0.1;
+            var combatTimePoints = (int)((DateTime.Now - Session.LastCombatTime).TotalMilliseconds) * 0.1;
 
             if (loginTimePoints < 0)
             {

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using Server.Game.objects.entities;
 using Server.Game.objects.enums;
 using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.objects.implementable
 {
@@ -39,6 +40,8 @@ namespace Server.Game.objects.implementable
         public int CollectedDamage { get; set; }
 
         public virtual int AttackRange => 700;
+
+        public virtual int VisibilityRange => 2000;
         
         public bool Invincible { get; set; }
 
@@ -60,12 +63,27 @@ namespace Server.Game.objects.implementable
             TickId = id;
         }
 
-        public bool InRange(IAttackable attackable, int range = 2000)
+        /// <summary>
+        /// Checking if attackable is truly in range
+        /// </summary>
+        /// <param name="attackable"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public bool InCalculatedRange(IAttackable attackable)
         {
             if (attackable == null || attackable.Spacemap != Spacemap || attackable == this ||
-                attackable.Id == Id) return false;
-            if (range == -1 || attackable.Spacemap.RangeDisabled) return true;
-            return Position.DistanceTo(attackable.Position) <= range;
+                attackable.Id == Id)
+            {
+                Out.QuickLog("Something went wrong with attackable specifieid in InRange parameter", LogKeys.ERROR_LOG);
+                throw new ArgumentException("Something went wrong with attackable specified in parameter");    
+            }
+
+            if (VisibilityRange == -1 || attackable.Spacemap.RangeDisabled)
+            {
+                return true;
+            }
+            
+            return Position.DistanceTo(attackable.Position) <= VisibilityRange;
         }
     }
 }

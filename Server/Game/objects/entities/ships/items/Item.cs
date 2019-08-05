@@ -1,6 +1,6 @@
 using Server.Game.objects.enums;
 
-namespace Server.Game.objects.entities.ships.equipment
+namespace Server.Game.objects.entities.ships.items
 {
     /// <summary>
     /// Used for stuff like for stuff like ammo, booty keys, generally unequipable items and every other that exists on player_equipment is EquipmentItem
@@ -19,7 +19,7 @@ namespace Server.Game.objects.entities.ships.equipment
 
         public int Level { get; }
 
-        public int Amount { get; }
+        public int Amount { get; private set; }
 
         public int PriceCredits { get; set; }
 
@@ -50,6 +50,11 @@ namespace Server.Game.objects.entities.ships.equipment
             TypeId = typeId;
             LootId = lootId;
             Level = level;
+            Amount = amount;
+        }
+
+        public void SetAmount(int amount)
+        {
             Amount = amount;
         }
     }

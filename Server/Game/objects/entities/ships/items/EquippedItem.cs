@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Server.Game.objects.entities.ships.equipment
+namespace Server.Game.objects.entities.ships.items
 {
     class EquippedItem
     {

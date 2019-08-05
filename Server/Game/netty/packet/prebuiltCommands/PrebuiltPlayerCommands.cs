@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Server.Game.managers;
 using Server.Game.netty.commands;
+using Server.Game.netty.commands.old_client;
 using Server.Game.objects.entities;
 using Server.Game.objects.entities.players.settings;
 using Server.Main.objects;
@@ -9,7 +11,7 @@ using Server.Utils;
 
 namespace Server.Game.netty.packet.prebuiltCommands
 {
-    class PrebuiltPlayerCommands : AbstractPrebuiltCommand
+    class PrebuiltPlayerCommands : PrebuiltCommandBase
     {
         public static PrebuiltPlayerCommands Instance
         {
@@ -24,6 +26,77 @@ namespace Server.Game.netty.packet.prebuiltCommands
         }
 
         private static PrebuiltPlayerCommands _instance;
+
+        public override void AddCommands()
+        {
+            Packet.Builder.OldCommands.Add(Commands.SHIP_INITIALIZATION_COMMAND, async (client, actionParams) =>
+            {
+                ArgumentFixer(actionParams, 33, out actionParams);
+                var visuals = (List<commands.old_client.VisualModifierCommand>) actionParams[32] ??
+                              new List<commands.old_client.VisualModifierCommand>();
+                await client.Send(
+                    commands.old_client.ShipInitializationCommand.write(
+                        Convert.ToInt32(actionParams[0]), Convert.ToString(actionParams[1]),
+                        Convert.ToInt32(actionParams[2]), Convert.ToInt32(actionParams[3]),
+                        Convert.ToInt32(actionParams[4]), Convert.ToInt32(actionParams[5]),
+                        Convert.ToInt32(actionParams[6]), Convert.ToInt32(actionParams[7]),
+                        Convert.ToInt32(actionParams[8]), Convert.ToInt32(actionParams[9]),
+                        Convert.ToInt32(actionParams[10]), Convert.ToInt32(actionParams[11]),
+                        Convert.ToInt32(actionParams[12]), Convert.ToInt32(actionParams[13]),
+                        Convert.ToInt32(actionParams[14]), Convert.ToInt32(actionParams[15]),
+                        Convert.ToInt32(actionParams[16]), Convert.ToInt32(actionParams[17]),
+                        Convert.ToInt32(actionParams[18]), Convert.ToInt32(actionParams[19]),
+                        Convert.ToBoolean(actionParams[20]), Convert.ToDouble(actionParams[21]),
+                        Convert.ToDouble(actionParams[22]),
+                        Convert.ToInt32(actionParams[23]), Convert.ToDouble(actionParams[24]),
+                        Convert.ToDouble(actionParams[25]), Convert.ToSingle(actionParams[26]),
+                        Convert.ToInt32(actionParams[27]), Convert.ToString(actionParams[28]),
+                        Convert.ToInt32(actionParams[29]), Convert.ToBoolean(actionParams[30]),
+                        Convert.ToBoolean(actionParams[31]), visuals).Bytes);
+
+            });
+
+            Packet.Builder.OldCommands.Add(Commands.USER_SETTINGS_COMMAND, async (client, actionParams) =>
+            {
+                ArgumentFixer(actionParams, 5, out actionParams);
+
+                var qualitySettings = actionParams[0] as QualitySettingsModule ?? new QualitySettingsModule();
+
+                var displaySettings = actionParams[1] as DisplaySettingsModule ?? new DisplaySettingsModule();
+
+                var audioSettings = actionParams[2] as AudioSettingsModule ?? new AudioSettingsModule();
+
+                var windowSettings = actionParams[3] as WindowSettingsModule ?? new WindowSettingsModule();
+
+                var gameplaySettings = actionParams[4] as GameplaySettingsModule ?? new GameplaySettingsModule();
+                
+                await client.Send(commands.old_client.UserSettingsCommand.write(qualitySettings,
+                    displaySettings, audioSettings, windowSettings,
+                    gameplaySettings).Bytes);
+            });
+
+            Packet.Builder.OldCommands.Add(Commands.HOTKEYS_COMMAND, async (client, actionParams) =>
+                {
+                    await client.Send(new commands.old_client.UserKeyBindingsUpdate(new List<UserKeyBindingsModule>(), false).write());
+                });
+            
+            Packet.Builder.OldCommands.Add(Commands.SHIP_SETTINGS_COMMAND, async (client, actionParams) =>
+                {
+                    ArgumentFixer(actionParams, 5, out actionParams);
+
+                    await client.Send(new commands.old_client.ShipSettingsCommand(Convert.ToString(actionParams[0]),
+                        Convert.ToString(actionParams[1]), Convert.ToInt32(actionParams[2]),
+                        Convert.ToInt32(actionParams[3]), Convert.ToInt32(actionParams[4])).write().Bytes);
+                });
+            
+            Packet.Builder.OldCommands.Add(Commands.AMMUNITION_COUNT_UPDATE_COMMAND, async (client, actionParams) =>
+            {
+                ArgumentFixer(actionParams, 1, out actionParams);
+                var ammoList = actionParams[0] as List<AmmunitionCountModule> ?? new List<AmmunitionCountModule>();
+                
+                await client.Send(commands.old_client.AmmunitionCountUpdateCommand.write(ammoList).Bytes);
+            });
+        }
 
         public void ShipInitializationCommand(Player player)
         {
@@ -142,7 +215,13 @@ namespace Server.Game.netty.packet.prebuiltCommands
                 return;
             }
 
-            Packet.Builder.BuildCommand(session.GameClient, Commands.AMMUNITION_COUNT_UPDATE_COMMAND, player.UsingNewClient);
+            var ammoList = new List<AmmunitionCountModule>();
+            foreach (var item in player.Ammunition.Ammo)
+            {
+                var ammunitiounCountModule = new AmmunitionCountModule(AmmoConvertManager.ToAmmoType(item.Key), item.Value.Amount);
+                ammoList.Add(ammunitiounCountModule);
+            }
+            Packet.Builder.BuildCommand(session.GameClient, Commands.AMMUNITION_COUNT_UPDATE_COMMAND, player.UsingNewClient, ammoList);
         }
     }
 }

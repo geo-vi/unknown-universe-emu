@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Server.Game.objects.entities.ships.equipment
+namespace Server.Game.objects.entities.ships.items
 {
     class EquipmentItem : Item
     {

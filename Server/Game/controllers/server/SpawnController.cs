@@ -20,8 +20,6 @@ namespace Server.Game.controllers.server
     class SpawnController : ServerImplementedController
     {
         private ConcurrentQueue<Character> _charactersPendingSpawn = new ConcurrentQueue<Character>();
-
-        private const int SPAWN_PROJECTION_RANGE = 2000;
         
         public override void OnFinishInitiation()
         {
@@ -66,7 +64,7 @@ namespace Server.Game.controllers.server
         private void ProjectToRange(Character targetCharacter)
         {
             var entities = targetCharacter.Spacemap.Entities;
-            foreach (var entity in entities.Where(x => x.Value.Position.DistanceTo(targetCharacter.Position) > SPAWN_PROJECTION_RANGE))
+            foreach (var entity in entities.Where(x => x.Value.InCalculatedRange(targetCharacter)))
             {
                 CreateRangeInstanceForEntity(entity.Value, targetCharacter);
                 if (entity.Value is Player player)
