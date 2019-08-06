@@ -44,5 +44,15 @@ namespace Server.Main.objects
             News = news;
             AssignedMemberIds = new List<int>();
         }
+
+        public ClanRelationships Compare(Clan targetShipClan)
+        {
+            if (targetShipClan == this)
+            {
+                return ClanRelationships.ALLIED;
+            }
+
+            return ClanRelationships.NONE;
+        }
     }
 }

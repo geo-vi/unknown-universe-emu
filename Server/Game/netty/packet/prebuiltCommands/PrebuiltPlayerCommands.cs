@@ -129,18 +129,6 @@ namespace Server.Game.netty.packet.prebuiltCommands
             }
         }
 
-        public void CreateShipCommand(Player player, Character createdInstance)
-        {
-            try
-            {
-                //todo..
-            }
-            catch (Exception)
-            {
-                Out.QuickLog("Failed creating a ship for player " + player.Id, LogKeys.ERROR_LOG);
-            }
-        }
-
         public void CreateSettingsCommand(Player player)
         {
             var session = GameStorageManager.Instance.FindSession(player);

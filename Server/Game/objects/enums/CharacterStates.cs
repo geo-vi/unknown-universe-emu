@@ -14,6 +14,7 @@ namespace Server.Game.objects.enums
         LOGIN,
         COLLECTING,
         MOVING,
+        CLOAKED,
         NO_CLIENT_CONNECTED,
         FULLY_DISCONNECTED
     }

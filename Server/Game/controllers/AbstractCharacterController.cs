@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Server.Game.controllers.characters;
 using Server.Game.controllers.implementable;
+using Server.Game.controllers.server;
 using Server.Game.objects.entities;
 using Server.Main;
 using Server.Main.objects;
@@ -149,6 +150,7 @@ namespace Server.Game.controllers
         public void Dispose()
         {
             Global.TickManager.Remove(this);
+            ServerController.Get<MapController>().RemoveCharacterFromMap(Character);
         }
     }
 }

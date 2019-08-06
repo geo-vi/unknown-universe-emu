@@ -184,5 +184,11 @@ namespace Server.Game.objects.entities
             var config = Hangar.Configurations[CurrentConfig - 1];
             return config;
         }
+
+        public bool IsMapIntruder()
+        {
+            //Get from statistics
+            return false;
+        }
     }
 }

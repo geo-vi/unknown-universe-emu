@@ -49,13 +49,18 @@ namespace Server.Game.controllers.server
             
         }
 
-        public void RemoveCharacter(Character character)
+        /// <summary>
+        /// Removing the target character from all entities's screen
+        /// </summary>
+        /// <param name="character">Target Character which will be removed</param>
+        public void RemoveCharacter(Character targetCharacter)
         {
-            foreach (var entity in character.Spacemap.Entities)
+            var entities = targetCharacter.Spacemap.Entities;
+            foreach (var entity in entities.Where(x => x.Value != targetCharacter))
             {
                 if (CharacterStateManager.Instance.IsInState(entity.Value, CharacterStates.SPAWNED))
                 {
-                    entity.Value.Controller.GetInstance<CharacterRangeController>().RemoveCharacter(entity.Value);
+                    entity.Value.Controller.GetInstance<CharacterRangeController>().RemoveCharacter(targetCharacter);
                 }
             }
         }
