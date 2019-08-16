@@ -11,6 +11,8 @@ namespace Server.Game.objects.server
 
         public Vector EndPosition;
 
+        public bool MovementRendered;
+        
         public PendingMovement(Character parent, Vector start, Vector end)
         {
             ParentCharacter = parent;

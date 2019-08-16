@@ -1,8 +1,8 @@
-using System;
 using Server.Game.controllers.characters;
-using Server.Game.netty;
+using Server.Game.managers;
 using Server.Game.netty.packet.prebuiltCommands;
 using Server.Game.objects.entities;
+using Server.Game.objects.enums;
 
 namespace Server.Game.controllers.players
 {
@@ -28,6 +28,10 @@ namespace Server.Game.controllers.players
         {
             base.LoadCharacter(targetCharacter);
             PrebuiltRangeCommands.Instance.CreateShipCommand(Player, targetCharacter);
+            if (CharacterStateManager.Instance.IsInState(targetCharacter, CharacterStates.MOVING))
+            {
+                PrebuiltRangeCommands.Instance.MoveCommand(Player, targetCharacter);
+            }
         }
 
         /// <summary>

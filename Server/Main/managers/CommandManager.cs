@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using Server.Main.commands.server;
+using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Main.managers
 {
@@ -16,6 +18,8 @@ namespace Server.Main.managers
             RegisteredConsoleCommands.Add("runtime", new RuntimeCommand());
             RegisteredConsoleCommands.Add("msg", new MsgCommand());
             RegisteredConsoleCommands.Add("logout", new LogoutCommand());
+            RegisteredConsoleCommands.Add("whereami", new WhereAmICommand());
+            Out.QuickLog("Successfully added " + RegisteredConsoleCommands.Count + " console commands", LogKeys.SERVER_LOG);
         }
 
         public void HandleConsoleInput(string input)

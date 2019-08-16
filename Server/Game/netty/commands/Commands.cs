@@ -11,6 +11,8 @@ namespace Server.Game.netty.commands
         SHIP_SETTINGS_COMMAND,
         AMMUNITION_COUNT_UPDATE_COMMAND,
         SHIP_CREATE_COMMAND,
-        SHIP_REMOVE_COMMAND
+        SHIP_REMOVE_COMMAND,
+        MOVE_COMMAND,
+        SHIP_SELECT_COMMAND
     }
 }

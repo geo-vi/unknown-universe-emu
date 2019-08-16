@@ -83,7 +83,6 @@
     <Compile Remove="Game\netty\handlers\LabUpdateHandler.cs" />
     <Compile Remove="Game\netty\handlers\LegacySelectHandler.cs" />
     <Compile Remove="Game\netty\handlers\LogoutHandler.cs" />
-    <Compile Remove="Game\netty\handlers\MoveHandler.cs" />
     <Compile Remove="Game\netty\handlers\PetGearActivationHandler.cs" />
     <Compile Remove="Game\netty\handlers\PetHandler.cs" />
     <Compile Remove="Game\netty\handlers\QuestAcceptHandler.cs" />
@@ -91,7 +90,6 @@
     <Compile Remove="Game\netty\handlers\QuestInfoHandler.cs" />
     <Compile Remove="Game\netty\handlers\QuestListHandler.cs" />
     <Compile Remove="Game\netty\handlers\QuestPrivilegeHandler.cs" />
-    <Compile Remove="Game\netty\handlers\ShipSelectionHandler.cs" />
     <Compile Remove="Game\netty\handlers\ShipWarpWindowHandler.cs" />
     <Compile Remove="Game\netty\handlers\ShipWarpHandler.cs" />
     <Compile Remove="Game\netty\handlers\TradeHandler.cs" />

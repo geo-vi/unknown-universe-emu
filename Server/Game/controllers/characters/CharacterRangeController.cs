@@ -1,8 +1,6 @@
-using System;
 using System.Linq;
+using Server.Game.managers;
 using Server.Game.objects.entities;
-using Server.Game.objects.implementable;
-using Server.Game.objects.maps;
 using Server.Main.objects;
 using Server.Utils;
 
@@ -10,20 +8,40 @@ namespace Server.Game.controllers.characters
 {
     class CharacterRangeController : AbstractedSubController
     {
-        
+        public override void OnTick()
+        {
+        }
+
         /// <summary>
-        /// Adds all characters to range
+        /// Loads all relevant characters from range
         /// </summary>
         public void LoadCharactersInRange()
         {
             foreach (var character in Character.Spacemap.Entities.Where(x =>
-                x.Value != Character && 
+                x.Value != Character && !Character.RangeView.CharactersInRenderRange.ContainsKey(x.Key) &&
                 Character.InCalculatedRange(x.Value)))
             {
                 LoadCharacter(character.Value);
+                
+                CharacterRangeManager.Instance.UpdateCharacterRange(character.Value);
             }
         }
 
+        /// <summary>
+        /// Filters all irrelevant entities from range
+        /// </summary>
+        public void FilterRange()
+        {
+            foreach (var character in Character.RangeView.CharactersInRenderRange.Where(x =>
+                Character.Spacemap != x.Value.Spacemap ||
+                !Character.InCalculatedRange(x.Value)))
+            {
+                RemoveCharacter(character.Value);
+                
+                CharacterRangeManager.Instance.UpdateCharacterRange(character.Value);
+            }
+        }
+        
         /// <summary>
         /// Removes all characters from range
         /// </summary>
@@ -48,7 +66,6 @@ namespace Server.Game.controllers.characters
             }
             
             Character.RangeView.CharactersInRenderRange.TryAdd(targetCharacter.Id, targetCharacter);
-            Console.WriteLine("LoadCharacter");
         }
 
         /// <summary>

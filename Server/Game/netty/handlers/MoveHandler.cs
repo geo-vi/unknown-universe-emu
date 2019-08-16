@@ -1,5 +1,12 @@
-﻿using DotNetty.Buffers;
-using Server.Game.netty.commands.new_client.requests;
+﻿using System;
+using DotNetty.Buffers;
+using Server.Game.controllers;
+using Server.Game.controllers.server;
+using Server.Game.netty.commands.old_client.requests;
+using Server.Game.objects;
+using Server.Game.objects.implementable;
+using Server.Main.objects;
+using Server.Utils;
 
 namespace Server.Game.netty.handlers
 {
@@ -7,26 +14,20 @@ namespace Server.Game.netty.handlers
     {
         public void execute(GameSession gameSession, IByteBuffer buffer)
         {
-            var newVector = new Vector(0, 0);
+            var movementRequest = new MoveRequest();
+            movementRequest.readCommand(buffer);
 
-            if (gameSession.Player.UsingNewClient)
+            var player = gameSession.Player;
+            var actualPos = player.Position;
+
+            if (movementRequest.positionX != actualPos.X || movementRequest.positionY != actualPos.Y)
             {
-                var movementCommand = new MoveRequest();
-                movementCommand.readCommand(buffer);
-
-                newVector = new Vector(movementCommand.NewX, movementCommand.NewY);
-            }
-            else
-            {
-                var movementCommand = new Server.Game.netty.commands.old_client.requests.MoveRequest();
-                movementCommand.readCommand(buffer);
-
-                newVector = new Vector(movementCommand.targetX, movementCommand.targetY);
+                Out.WriteLog("Something is wrong with player position", LogKeys.PLAYER_LOG, player.Id);
             }
 
-            //Console.WriteLine("{0}, {1}", gameSession.Player.Id, newVector);
-            MovementController.Move(gameSession.Player, newVector);
+            Console.WriteLine("destination : " + movementRequest.targetX + " " + movementRequest.targetY);
+            
+            ServerController.Get<MovementController>().CreateMovement(player, new Vector(movementRequest.targetX, movementRequest.targetY));
         }
-
     }
 }

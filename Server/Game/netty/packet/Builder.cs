@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Server.Game.managers;
@@ -93,9 +94,23 @@ namespace Server.Game.netty.packet
             BuildCommand(client, Commands.LEGACY_MODULE, usingNewClient, packetBuilder.ToString());
         }
 
-        public void BuildToRange(GameSession parent, Commands key, object[] oldClientParameters, object[] newClientParameters)
+        public void BuildToRange(Character parent, Commands key, object[] oldClientParameters, object[] newClientParameters)
         {
-            throw new NotImplementedException();
+            foreach (var character in parent.Spacemap.Entities.Where(x =>
+                x.Value != parent))
+            {
+                if (!(character.Value is Player player)) continue;
+                
+                var session = GameStorageManager.Instance.FindSession(player);
+                if (player.UsingNewClient)
+                {
+                    BuildCommand(session.GameClient, key, true, newClientParameters);
+                }
+                else
+                {
+                    BuildCommand(session.GameClient, key, false, oldClientParameters);
+                }
+            }
         }
 
         public void BuildToSpacemap(Spacemap map, Commands key, object[] oldClientParameters, object[] newClientParameters)

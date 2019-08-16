@@ -39,7 +39,7 @@ namespace Server.Game.netty.packet.prebuiltCommands
                     await client.Send(commands.old_client.LegacyModule.write((string) actionParams[0]).Bytes);
                 });
         }
-        
+
         /// <summary>
         /// Server message command which will display on player's screen
         /// </summary>
@@ -47,13 +47,10 @@ namespace Server.Game.netty.packet.prebuiltCommands
         /// <param name="message"></param>
         public void ServerMessage(Player player, string message)
         {
-            var session = GameStorageManager.Instance.FindSession(player);
-            if (session == null)
+            if (GetSession(player, out var session))
             {
-                Out.QuickLog("Trying to send a message to an invalid session", LogKeys.ERROR_LOG);
-                return;
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "STD", message);
             }
-            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "STD", message);
         }
 
         /// <summary>
@@ -76,14 +73,11 @@ namespace Server.Game.netty.packet.prebuiltCommands
         /// <param name="player"></param>
         public void UpdateConfigurations(Player player)
         {
-            var session = GameStorageManager.Instance.FindSession(player);
-            if (session == null)
+            if (GetSession(player, out var session))
             {
-                Out.QuickLog("Trying to send a message to an invalid session", LogKeys.ERROR_LOG);
-                return;
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "CC",
+                    player.CurrentConfig);
             }
-            
-            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "CC", player.CurrentConfig);
         }
 
         /// <summary>
@@ -92,29 +86,25 @@ namespace Server.Game.netty.packet.prebuiltCommands
         /// <param name="player"></param>
         public void SendBootyKeys(Player player)
         {
-            var session = GameStorageManager.Instance.FindSession(player);
-            if (session == null)
+            if (GetSession(player, out var session))
             {
-                Out.QuickLog("Trying to send a message to an invalid session", LogKeys.ERROR_LOG);
-                return;
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BK",
+                    player.Information.BootyKeys[0]);
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BKR",
+                    player.Information.BootyKeys[1]);
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BKB",
+                    player.Information.BootyKeys[2]);
             }
-            
-            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BK", player.Information.BootyKeys[0]);
-            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BKR", player.Information.BootyKeys[1]);
-            Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BKB", player.Information.BootyKeys[2]);
         }
 
         public void SendQuickbuyPriceMenu(Player player)
         {
-            var session = GameStorageManager.Instance.FindSession(player);
-            if (session == null)
+            if (GetSession(player, out var session))
             {
-                Out.QuickLog("Trying to send a message to an invalid session", LogKeys.ERROR_LOG);
-                return;
+
+                //~TODO: Create quickbuy packet
+                //Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "g", "a", "b,1000,1,10000.0 ");
             }
-            
-            //~TODO: Create quickbuy packet
-            //Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "g", "a", "b,1000,1,10000.0 ");
         }
     }
 }

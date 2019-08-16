@@ -68,13 +68,14 @@ namespace Server.Game.managers
                     from = new []
                     {
                         CharacterStates.SPAWNED, CharacterStates.HOME_MAP, CharacterStates.MOVING, CharacterStates.ON_JUMPGATE,
-                        CharacterStates.IN_EQUIPMENT_AREA, CharacterStates.ON_BATTLESTATION, CharacterStates.SLEEPING, CharacterStates.SHOOTING,
+                        CharacterStates.IN_EQUIPMENT_AREA, CharacterStates.ON_BATTLESTATION, CharacterStates.SLEEPING,
+                        CharacterStates.SHOOTING, CharacterStates.CLOAKED
                     },
                     to = new []
                     {
                         CharacterStates.ON_JUMPGATE, CharacterStates.ON_COLLECTABLE, CharacterStates.IN_EQUIPMENT_AREA,
                         CharacterStates.ON_BATTLESTATION, CharacterStates.SLEEPING, CharacterStates.JUMPING, CharacterStates.SHOOTING,
-                        CharacterStates.HOME_MAP,
+                        CharacterStates.HOME_MAP, CharacterStates.CLOAKED, CharacterStates.MOVING,
                         CharacterStates.NO_CLIENT_CONNECTED, CharacterStates.FULLY_DISCONNECTED
                     }
                 },

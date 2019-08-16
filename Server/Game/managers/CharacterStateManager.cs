@@ -1,5 +1,4 @@
 using System;
-using Newtonsoft.Json;
 using Server.Game.controllers.characters;
 using Server.Game.objects.entities;
 using Server.Game.objects.enums;
@@ -54,6 +53,7 @@ namespace Server.Game.managers
                     }
                     else
                     {
+                        Console.WriteLine("All states: " + string.Join(", ", currentStates));
                         Out.QuickLog("No permission to move from state: " + state + " to state " + requestedState,
                             LogKeys.ERROR_LOG);
                         throw new Exception("No permission to move to requested state");

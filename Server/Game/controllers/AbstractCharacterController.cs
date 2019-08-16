@@ -39,7 +39,7 @@ namespace Server.Game.controllers
             CreateControlledInstance<CooldownController>();
             CreateControlledInstance<CharacterRangeController>();
             CreateControlledInstance<RocketLauncherController>();
-            CreateControlledInstance<SelectionUpdateController>();
+            CreateControlledInstance<CharacterSelectionController>();
             CreateControlledInstance<ShipController>();
             CreateControlledInstance<ShipEffectController>();
             CreateControlledInstance<StateController>();

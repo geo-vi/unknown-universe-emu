@@ -38,6 +38,8 @@ namespace Server.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.AudioSettingsRequest.ID, new AudioSettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.WindowSettingsRequest.ID, new WindowSettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.ShipSettingsRequest.ID, new ShipSettingsHandler());
+            OldClientCommands.Add(commands.old_client.requests.MoveRequest.ID, new MoveHandler());
+            OldClientCommands.Add(commands.old_client.requests.ShipSelectionRequest.ID, new ShipSelectionHandler());
             Out.QuickLog($"Successfully added {OldClientCommands.Count} old client handlers to Handler");
             Out.QuickLog($"Successfully added {NewClientCommands.Count} new client handlers to Handler");
         }
