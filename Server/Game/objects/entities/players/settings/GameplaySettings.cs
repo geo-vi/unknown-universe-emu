@@ -26,5 +26,8 @@ namespace Server.Game.objects.entities.players.settings
         
         [JsonProperty("autoBuyGreenBootyKeys")]
         public bool AutoBuyGreenBootyKeys { get; set; }
+        
+        [JsonProperty("displayConfigChanges")]
+        public bool DisplayConfigurationChanges { get; set; }
     }
 }

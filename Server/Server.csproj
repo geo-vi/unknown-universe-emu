@@ -54,11 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Game\netty\handlers\AttackLaserHandler.cs" />
-    <Compile Remove="Game\netty\handlers\AbilityLaunchHandler.cs" />
-    <Compile Remove="Game\netty\handlers\AttackAbortLaserHandler.cs" />
-    <Compile Remove="Game\netty\handlers\AttackRocketHandler.cs" />
-    <Compile Remove="Game\netty\handlers\AttackRocketLegacyHandler.cs" />
     <Compile Remove="Game\netty\handlers\BattleStationEquipHandler.cs" />
     <Compile Remove="Game\netty\handlers\ClanMemberInvitationHandler.cs" />
     <Compile Remove="Game\netty\handlers\BuildStationHandler.cs" />
@@ -81,7 +76,6 @@
     <Compile Remove="Game\netty\handlers\LabRefinementHandler.cs" />
     <Compile Remove="Game\netty\handlers\LabUpdateItemHandler.cs" />
     <Compile Remove="Game\netty\handlers\LabUpdateHandler.cs" />
-    <Compile Remove="Game\netty\handlers\LegacySelectHandler.cs" />
     <Compile Remove="Game\netty\handlers\LogoutHandler.cs" />
     <Compile Remove="Game\netty\handlers\PetGearActivationHandler.cs" />
     <Compile Remove="Game\netty\handlers\PetHandler.cs" />

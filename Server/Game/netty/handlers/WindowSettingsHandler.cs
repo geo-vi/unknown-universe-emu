@@ -10,7 +10,7 @@ namespace Server.Game.netty.handlers
 {
     class WindowSettingsHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
             var reader = new WindowSettingsRequest();
             reader.readCommand(buffer);

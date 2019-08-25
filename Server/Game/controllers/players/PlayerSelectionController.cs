@@ -25,13 +25,13 @@ namespace Server.Game.controllers.players
         /// <summary>
         /// Selecting an attackable
         /// </summary>
-        /// <param name="attackable">Attackable</param>
+        /// <param name="abstractAttackable">Attackable</param>
         /// <exception cref="NotImplementedException">Soon to be removed</exception>
-        public override void SelectAttackable(IAttackable attackable)
+        public override void SelectAttackable(AbstractAttackable abstractAttackable)
         {
-            base.SelectAttackable(attackable);
+            base.SelectAttackable(abstractAttackable);
             
-            if (attackable is Character attackableAsCharacter)
+            if (abstractAttackable is Character attackableAsCharacter)
             {
                 PrebuiltRangeCommands.Instance.SelectShipCommand(Player, attackableAsCharacter);
             }

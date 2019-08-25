@@ -7,7 +7,7 @@ using Server.Utils;
 
 namespace Server.Game.objects.implementable
 {
-    abstract class IAttackable
+    abstract class AbstractAttackable
     {
         public int Id { get; }
 
@@ -52,7 +52,7 @@ namespace Server.Game.objects.implementable
         public ConcurrentDictionary<ShipVisuals, VisualEffect> Visuals =
             new ConcurrentDictionary<ShipVisuals, VisualEffect>();
 
-        protected IAttackable(int id)
+        protected AbstractAttackable(int id)
         {
             Id = id;
             Targetable = true;
@@ -66,24 +66,24 @@ namespace Server.Game.objects.implementable
         /// <summary>
         /// Checking if attackable is truly in range
         /// </summary>
-        /// <param name="attackable"></param>
+        /// <param name="abstractAttackable"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public bool InCalculatedRange(IAttackable attackable)
+        public bool InCalculatedRange(AbstractAttackable abstractAttackable)
         {
-            if (attackable == null || attackable.Spacemap != Spacemap || attackable == this ||
-                attackable.Id == Id)
+            if (abstractAttackable == null || abstractAttackable.Spacemap != Spacemap || abstractAttackable == this ||
+                abstractAttackable.Id == Id)
             {
                 Out.QuickLog("Something went wrong with attackable specifieid in InRange parameter", LogKeys.ERROR_LOG);
                 throw new ArgumentException("Something went wrong with attackable specified in parameter");    
             }
 
-            if (VisibilityRange == -1 || attackable.Spacemap.RangeDisabled)
+            if (VisibilityRange == -1 || abstractAttackable.Spacemap.RangeDisabled)
             {
                 return true;
             }
             
-            return Position.DistanceTo(attackable.Position) <= VisibilityRange;
+            return Position.DistanceTo(abstractAttackable.Position) <= VisibilityRange;
         }
     }
 }

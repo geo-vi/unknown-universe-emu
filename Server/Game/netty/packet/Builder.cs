@@ -77,7 +77,6 @@ namespace Server.Game.netty.packet
                     parameter is string || parameter is char || parameter is long ||
                     parameter is short)
                 {
-                    Console.WriteLine("Build parameter: " + parameter);
                     if (i == parameters.Length - 1)
                     {
                         packetBuilder.Append(parameter);
@@ -90,7 +89,6 @@ namespace Server.Game.netty.packet
                 else throw new ArgumentException("Not allowed argument");
             }
 
-            Console.WriteLine(packetBuilder);
             BuildCommand(client, Commands.LEGACY_MODULE, usingNewClient, packetBuilder.ToString());
         }
 

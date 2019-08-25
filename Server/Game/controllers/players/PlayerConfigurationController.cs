@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
 using Server.Game.controllers.characters;
+using Server.Game.netty.packet.prebuiltCommands;
 using Server.Game.objects.entities;
+using Server.Game.objects.entities.players.settings;
 using Server.Game.objects.entities.ships;
 using Server.Game.objects.entities.ships.equipment;
 using Server.Game.objects.entities.ships.items;
@@ -204,6 +206,16 @@ namespace Server.Game.controllers.players
             }
 
             return -1;
+        }
+
+        public override void Switch()
+        {
+            base.Switch();
+            PrebuiltLegacyCommands.Instance.UpdateConfigurations(_player);
+            if (_player.Settings.GetSettings<GameplaySettings>().DisplayConfigurationChanges)
+            {
+                PrebuiltLegacyCommands.Instance.ServerMessage(_player, "Configuration changed!");
+            }
         }
     }
 }

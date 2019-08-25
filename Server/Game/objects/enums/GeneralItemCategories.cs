@@ -8,6 +8,7 @@
         SPEED_GENERATOR,
         BOOSTER = 6,
         REP_BOT = 10,
+        AMMO = 12,
         DRONE_FORMATION = 17,
         PET_PROTOCOL = 25,
         TURBO_ROCKET = 30,

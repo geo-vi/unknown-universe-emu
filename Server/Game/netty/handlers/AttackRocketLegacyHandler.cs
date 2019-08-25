@@ -1,10 +1,14 @@
 ﻿using System;
+using Server.Game.managers;
+using Server.Game.objects;
+using Server.Game.objects.entities.players.settings;
+using Server.Game.objects.enums;
 
 namespace Server.Game.netty.handlers
 {
     class AttackRocketLegacyHandler : ILegacyHandler
     {
-        public void execute(GameSession gameSession, string[] param)
+        public void Execute(GameSession gameSession, string[] param)
         {
             if (gameSession == null) return;
             var targetId = Int32.Parse(param[1]);
@@ -21,7 +25,7 @@ namespace Server.Game.netty.handlers
                 return;
             }
 
-            player.Controller.Attack.LaunchMissle(player.Settings.CurrentRocket.LootId);
+            CombatManager.Instance.CreateCombat(player, player.Selected, AttackTypes.ROCKET, player.Settings.GetSettings<SlotbarSettings>().SelectedRocketAmmo);
         }
     }
 }

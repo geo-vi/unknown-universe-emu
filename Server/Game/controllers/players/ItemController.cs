@@ -1,23 +1,45 @@
-﻿namespace Server.Game.controllers.players
+﻿using Server.Game.objects.entities.ships.items;
+
+namespace Server.Game.controllers.players
 {
     class ItemController : PlayerSubController
     {
-        public void ReduceAmount()
+        /// <summary>
+        /// Should use item
+        /// </summary>
+        public void UseItem(Item item)
+        {
+            
+        }
+        
+        /// <summary>
+        /// Should reduce the item amount
+        /// </summary>
+        public void ReduceItemAmount(Item item)
         {
             
         }
 
-        public void Activate()
+        /// <summary>
+        /// Should activate the item
+        /// </summary>
+        public void ActivateItem(EquipmentItem item)
         {
             
         }
 
-        public void UnEquip()
+        /// <summary>
+        /// Should unequip the item
+        /// </summary>
+        public void UnequipItem(EquipmentItem item)
         {
             
         }
 
-        public void Delete()
+        /// <summary>
+        /// Should delete the item
+        /// </summary>
+        public void DeleteItem(EquipmentItem item)
         {
             
         }

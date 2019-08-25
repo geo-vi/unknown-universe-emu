@@ -11,17 +11,17 @@ namespace Server.Game.controllers.characters
         /// <summary>
         /// Trying to select an attackable
         /// </summary>
-        /// <param name="attackable">Attackable trying to select</param>
+        /// <param name="abstractAttackable">Attackable trying to select</param>
         /// <exception cref="Exception">If it doesnt exist in range</exception>
-        public virtual void SelectAttackable(IAttackable attackable)
+        public virtual void SelectAttackable(AbstractAttackable abstractAttackable)
         {
-            if (!Character.RangeView.CharactersInRenderRange.ContainsKey(attackable.Id))
+            if (!Character.RangeView.CharactersInRenderRange.ContainsKey(abstractAttackable.Id))
             {
                 Out.QuickLog("Something went wrong in select attackable, attackable not rendered", LogKeys.ERROR_LOG);
                 throw new Exception("Something went wrong in select attackable, trying to select something that is not rendered");
             }
 
-            Character.Selected = attackable;
+            Character.Selected = abstractAttackable;
         }
 
         /// <summary>

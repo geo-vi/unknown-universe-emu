@@ -9,7 +9,7 @@ namespace Server.Game.netty.handlers
 {
     class AudioSettingsHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
             var reader = new AudioSettingsRequest();
             reader.readCommand(buffer);

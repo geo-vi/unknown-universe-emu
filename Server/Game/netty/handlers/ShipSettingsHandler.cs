@@ -10,7 +10,7 @@ namespace Server.Game.netty.handlers
 {
     class ShipSettingsHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
             var request = new ShipSettingsRequest();
             request.readCommand(buffer);

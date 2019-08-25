@@ -1,5 +1,4 @@
-﻿using System;
-using DotNetty.Buffers;
+﻿using DotNetty.Buffers;
 using Server.Game.controllers;
 using Server.Game.controllers.server;
 using Server.Game.netty.commands.old_client.requests;
@@ -12,7 +11,7 @@ namespace Server.Game.netty.handlers
 {
     class MoveHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
             var movementRequest = new MoveRequest();
             movementRequest.readCommand(buffer);
@@ -22,10 +21,9 @@ namespace Server.Game.netty.handlers
 
             if (movementRequest.positionX != actualPos.X || movementRequest.positionY != actualPos.Y)
             {
-                Out.WriteLog("Something is wrong with player position", LogKeys.PLAYER_LOG, player.Id);
+                Out.WriteLog("Something is wrong with player position, expected: \n" +
+                             "[" + movementRequest.positionX + "; " + movementRequest.positionY + "] VS SERVER [" + player.Position.X + "; " + player.Position.Y + "]", LogKeys.PLAYER_LOG, player.Id);
             }
-
-            Console.WriteLine("destination : " + movementRequest.targetX + " " + movementRequest.targetY);
             
             ServerController.Get<MovementController>().CreateMovement(player, new Vector(movementRequest.targetX, movementRequest.targetY));
         }

@@ -1,17 +1,12 @@
 ﻿using DotNetty.Buffers;
+using Server.Game.objects;
 
 namespace Server.Game.netty.handlers
 {
-    class AttackAbortLaserHandler : IHandler, ILegacyHandler
+    class AttackAbortLaserHandler : ILegacyHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, string[] packet)
         {
-            gameSession.Player.Controller.Attack.Attacking = false;
-        }
-
-        public void execute(GameSession gameSession, string[] packet)
-        {
-            gameSession.Player.Controller.Attack.Attacking = false;
         }
     }
 }

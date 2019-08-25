@@ -17,7 +17,8 @@ namespace Server.Main
         public static readonly QueryManager QueryManager = new QueryManager();
         public static readonly StorageManager StorageManager = new StorageManager();
         public static readonly ServerManager ServerManager = new ServerManager();
-
+        public static readonly ConsoleStat ConsoleStatistics = new ConsoleStat();
+        
         public static void Initiate()
         {
             InitiateManagers();

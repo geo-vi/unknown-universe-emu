@@ -25,7 +25,7 @@ namespace Server.Game.objects.entities.players
                 {
                     Unset = true, AutoBoost = false, AutoRefinement = false,
                     AutoStart = false, DoubleclickAttack = true, AutoChangeAmmo = false,
-                    AutoBuyGreenBootyKeys = false, QuickslotStopAttack = true
+                    AutoBuyGreenBootyKeys = false, QuickslotStopAttack = true, DisplayConfigurationChanges = true
                 });
                 _settings.Add(new DisplaySettings
                 {

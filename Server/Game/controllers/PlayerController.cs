@@ -19,6 +19,7 @@ namespace Server.Game.controllers
             OverrideControlledInstance<ConfigurationController, PlayerConfigurationController>();
             OverrideControlledInstance<CharacterRangeController, PlayerRangeController>();
             OverrideControlledInstance<CharacterSelectionController, PlayerSelectionController>();
+            OverrideControlledInstance<CharacterMovementController, PlayerMovementController>();
             CreateControlledInstance<AbilityController>();
             CreateControlledInstance<BoosterController>();
             CreateControlledInstance<CargoController>();

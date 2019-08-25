@@ -4,6 +4,6 @@ namespace Server.Game.netty.handlers
 {
     interface ILegacyHandler
     {
-        void execute(GameSession gameSession, string[] param);
+        void Execute(GameSession gameSession, string[] param);
     }
 }

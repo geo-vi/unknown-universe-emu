@@ -69,9 +69,7 @@ namespace Server.Game.objects.entities
         /*********
          * STATS *
          *********/
-
-        public int CurrentConfig { get; set; }
-
+        
         private double BoostedHealth { get; set; }
         public override int MaxHealth
         {

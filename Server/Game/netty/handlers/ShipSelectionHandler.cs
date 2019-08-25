@@ -10,7 +10,7 @@ namespace Server.Game.netty.handlers
 {
     class ShipSelectionHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
             var selectionCommand = new ShipSelectionRequest();
             selectionCommand.readCommand(buffer);

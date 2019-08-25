@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using Server.Game.objects;
 using Server.Game.objects.entities;
 using Server.Game.objects.entities.ships.equipment;
@@ -68,12 +69,13 @@ namespace Server.Game.managers
 
         public Item FindItem(int id)
         {
-            if (Items.ContainsKey(id))
-            {
-                return Items[id];
-            }
+            return Items.ContainsKey(id) ? Items[id] : null;
+        }
 
-            return null;
+        public Item FindItem(string lootId)
+        {
+            var item = Items.FirstOrDefault(x => x.Value.LootId == lootId);
+            return item.Value;
         }
         
         public string FindLootId(int itemId)

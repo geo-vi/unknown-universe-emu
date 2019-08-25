@@ -29,6 +29,7 @@ namespace Server.Game.objects.entities.ships
         public int TotalSpeedCalculated { get; set; }
 
         /// <summary>
+        /// 0 => 0%
         /// 1 => 20-50% of ship inventory is lf3, 2 => 50%-99%, 3 => 100%
         /// if 3 => Elite lasers on attack
         /// </summary>
@@ -65,15 +66,15 @@ namespace Server.Game.objects.entities.ships
         {
             var lasers = EquippedItemsOnShip.Where(x => x.Value.GeneralCategory == GeneralItemCategories.LASER).ToArray();
             if (lasers
-                .All(x => x.Value.Id == 1 || x.Value.Id == 2))
+                .All(x => x.Value.Id == 1 || x.Value.Id == 2) && lasers.Length > 0)
             {
                 return 3;
             }
 
-            if (lasers.Count() > 3)
+            if (lasers.Length > 3)
                 return 2;
 
-            return 1;
+            return lasers.Length > 1 ? 1 : 0;
         }
 
         public RocketLauncher GetRocketLauncher(Player player)

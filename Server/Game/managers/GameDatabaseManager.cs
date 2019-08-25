@@ -764,5 +764,23 @@ namespace Server.Game.managers
                 Out.QuickLog("Critical error occured", LogKeys.ERROR_LOG);
             }
         }
+
+        public void SaveCurrentHangar(Player player)
+        {
+            try
+            {
+                var position = player.Position;
+
+                using (var mySqlCleint = SqlDatabaseManager.GetClient())
+                {
+                    mySqlCleint.ExecuteNonQuery(
+                        $"UPDATE player_hangar SET SHIP_X={position.X}, SHIP_Y={position.Y}, SHIP_HP={player.CurrentHealth}, SHIP_NANO={player.CurrentNanoHull}, SHIP_MAP_ID={player.Spacemap.Id}, IN_EQUIPMENT_ZONE={Convert.ToInt32(CharacterStateManager.Instance.IsInState(player, CharacterStates.IN_EQUIPMENT_AREA))} WHERE PLAYER_ID={player.Id} AND ID={player.Hangar.Id}");
+                }
+            }
+            catch (Exception)
+            {
+                Out.QuickLog("Critical error occured", LogKeys.ERROR_LOG);
+            }
+        }
     }
 }

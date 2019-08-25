@@ -2,10 +2,10 @@
 {
     enum Techs
     {
-        BATTLE_REPAIR_ROBOT,
+        ENERGY_LEECH = 1,
         CHAIN_IMPULSE,
-        ENERGY_LEECH,
         ROCKET_PRECISSION,
-        SHIELD_BUFF
+        SHIELD_BUFF,
+        BATTLE_REPAIR_ROBOT,
     }
 }

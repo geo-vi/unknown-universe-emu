@@ -1,11 +1,15 @@
 ﻿using DotNetty.Buffers;
+using Server.Game.managers;
 using Server.Game.netty.commands.new_client.requests;
+using Server.Game.objects;
+using Server.Game.objects.entities.players.settings;
+using Server.Game.objects.enums;
 
 namespace Server.Game.netty.handlers
 {
     class AttackLaserHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession == null) return;
             var targetId = 0;
@@ -28,14 +32,15 @@ namespace Server.Game.netty.handlers
 
             if (player.Selected == null) return;
 
-            if (!player.Spacemap.Entities.ContainsKey(targetId) && !player.Spacemap.Objects.ContainsKey(targetId)|| player.Selected.Id != targetId)
+            if (!player.Spacemap.Entities.ContainsKey(targetId) && !player.Spacemap.Objects.ContainsKey(targetId) ||
+                player.Selected.Id != targetId)
             {
                 //Debug.WriteLine("Selected ID: " + player.Selected.Id + " Target ID: " + targetId);
                 return;
             }
 
-            player.Controller.Attack.Attacking = true;
-            player.Controller.Attack.LaserAttack();
+            CombatManager.Instance.CreateCombat(player, player.Selected, AttackTypes.LASER,
+                player.Settings.GetSettings<SlotbarSettings>().SelectedLaserAmmo);
         }
     }
 }

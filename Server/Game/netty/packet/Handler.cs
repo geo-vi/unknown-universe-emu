@@ -1,12 +1,10 @@
 ﻿using DotNetty.Buffers;
-using Server.Networking;
 using Server.Utils;
 using System;
 using System.Collections.Generic;
+using NettyBaseReloaded.Game.netty.commands;
 using Server.Game.managers;
-using Server.Game.netty.commands;
 using Server.Game.netty.handlers;
-using Server.Game.objects.entities;
 using Server.Main.objects;
 using Server.Networking.clients;
 
@@ -27,9 +25,9 @@ namespace Server.Game.netty.packet
         
         
         
-        public Dictionary<short, IHandler> OldClientCommands = new Dictionary<short, IHandler>();
-        public Dictionary<short, IHandler> NewClientCommands = new Dictionary<short, IHandler>();
-        public Dictionary<string, ILegacyHandler> LegacyCommands = new Dictionary<string, ILegacyHandler>();
+        private Dictionary<short, IHandler> OldClientCommands = new Dictionary<short, IHandler>();
+        private Dictionary<short, IHandler> NewClientCommands = new Dictionary<short, IHandler>();
+        private Dictionary<string, ILegacyHandler> LegacyCommands = new Dictionary<string, ILegacyHandler>();
         
         public void AddCommands()
         {
@@ -37,9 +35,16 @@ namespace Server.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.DisplaySettingsRequest.ID, new DisplaySettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.AudioSettingsRequest.ID, new AudioSettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.WindowSettingsRequest.ID, new WindowSettingsHandler());
+            OldClientCommands.Add(commands.old_client.requests.GameplaySettingsRequest.ID, new GameplaySettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.ShipSettingsRequest.ID, new ShipSettingsHandler());
             OldClientCommands.Add(commands.old_client.requests.MoveRequest.ID, new MoveHandler());
             OldClientCommands.Add(commands.old_client.requests.ShipSelectionRequest.ID, new ShipSelectionHandler());
+            OldClientCommands.Add(commands.old_client.requests.AttackLaserRequest.ID, new AttackLaserHandler());
+            OldClientCommands.Add(commands.old_client.requests.SelectBatteryRequest.ID, new SelectBatteryHandler());
+            OldClientCommands.Add(commands.old_client.requests.SelectRocketRequest.ID, new SelectRocketHandler());
+            
+            LegacyCommands.Add(ClientCommands.SELECT, new LegacySelectHandler());
+            Out.QuickLog($"Successfully added {LegacyCommands.Count} legacy packet handlers to Handler");
             Out.QuickLog($"Successfully added {OldClientCommands.Count} old client handlers to Handler");
             Out.QuickLog($"Successfully added {NewClientCommands.Count} new client handlers to Handler");
         }
@@ -48,11 +53,11 @@ namespace Server.Game.netty.packet
         {
             try
             {
-                Out.WriteLog("Packet received", "GAME");
-
                 if (client.Initialized)
                 {
                     var parser = new ByteParser(buffer.Copy());
+
+                    Console.WriteLine("ID: " + parser.CommandId);
 
                     var gameSession = GameStorageManager.Instance.GetGameSession(client.UserId);
 
@@ -61,14 +66,12 @@ namespace Server.Game.netty.packet
                         if (gameSession.Player.UsingNewClient)
                         {
                             if (NewClientCommands.ContainsKey(parser.CommandId))
-                                NewClientCommands[parser.CommandId].execute(gameSession, buffer);
-                            else if (parser.CommandId != commands.new_client.LegacyModule.ID) Console.WriteLine("[3D] Received->{0} Instance: {1}", parser.CommandId, client.UserId);
+                                NewClientCommands[parser.CommandId].Execute(gameSession, buffer);
                         }
                         else
                         {
                             if (OldClientCommands.ContainsKey(parser.CommandId))
-                                OldClientCommands[parser.CommandId].execute(gameSession, buffer);
-                            else if (parser.CommandId != commands.old_client.LegacyModule.ID) Console.WriteLine("[7.5.3] Received->{0} Instance: {1}", parser.CommandId, client.UserId);
+                                OldClientCommands[parser.CommandId].Execute(gameSession, buffer);
                         }
 
                         if (parser.CommandId == commands.new_client.LegacyModule.ID ||
@@ -80,13 +83,13 @@ namespace Server.Game.netty.packet
                             {
                                 var splittedPacket = packet.Split('|');
                                 if (LegacyCommands.ContainsKey(splittedPacket[0]))
-                                    LegacyCommands[splittedPacket[0]].execute(gameSession, splittedPacket);
+                                    LegacyCommands[splittedPacket[0]].Execute(gameSession, splittedPacket);
                                 else Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
                             }
                             else
                             {
                                 if (LegacyCommands.ContainsKey(packet))
-                                    LegacyCommands[packet].execute(gameSession, new[] {packet});
+                                    LegacyCommands[packet].Execute(gameSession, new[] {packet});
                                 else Console.WriteLine("Received->{0} Instance: {1}", packet, client.UserId);
 
                             }
@@ -114,8 +117,7 @@ namespace Server.Game.netty.packet
                 var cmd = new commands.old_client.requests.VersionRequest();
                 cmd.readCommand(buffer);
                 var loginHandler = new ShipInitializationHandler(client, cmd.playerId, cmd.sessionId);
-                Profiler.Profile("Player login time profile", 0, loginHandler.Execute);
-//                loginHandler.Execute();
+                loginHandler.Execute();
             }
             else if (parser.CommandId == commands.new_client.requests.LoginRequest.ID)
             {

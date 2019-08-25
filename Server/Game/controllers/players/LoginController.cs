@@ -70,6 +70,7 @@ namespace Server.Game.controllers.players
             PrebuiltPlayerCommands.Instance.CreateAmmunition(GameSession.Player);
             PrebuiltLegacyCommands.Instance.SendBootyKeys(GameSession.Player);
             PrebuiltLegacyCommands.Instance.SendQuickbuyPriceMenu(GameSession.Player);
+            PrebuiltLegacyCommands.Instance.ConfigurationCommand(GameSession.Player);
         }
 
         /// <summary>

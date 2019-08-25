@@ -8,12 +8,13 @@ using Server.Game.objects.entities.players;
 using Server.Game.objects.entities.ships.equipment;
 using Server.Game.objects.enums;
 using Server.Game.objects.implementable;
+using Server.Game.objects.server;
 using Server.Main;
 using Server.Main.objects;
 
 namespace Server.Game.objects.entities
 {
-    class Character : IAttackable
+    class Character : AbstractAttacker
     {
         /**********
          * BASICS *
@@ -21,7 +22,7 @@ namespace Server.Game.objects.entities
 
         public string Name { get; set; }
 
-        public virtual AbstractCharacterController Controller
+        public AbstractCharacterController Controller
         {
             get
             {
@@ -162,11 +163,17 @@ namespace Server.Game.objects.entities
         public Vector Direction { get; set; }
         public DateTime MovementStartTime { get; set; }
         public int MovementTime { get; set; }
-
+        
+        
         /*********
          * EXTRA *
          *********/
-        public IAttackable Selected { get; set; }
+        
+        public int CurrentConfig { get; set; }
+
+        public DateTime LastConfigurationChange { get; set; }
+        
+        public AbstractAttackable Selected { get; set; }
         
         public Character SelectedCharacter => Selected as Character;
 
@@ -176,12 +183,18 @@ namespace Server.Game.objects.entities
         public virtual RocketLauncher RocketLauncher { get; set; }
 
         public DroneFormation Formation = DroneFormation.STANDARD;
+        
 
-//        public CooldownsAssembly Cooldowns;
-//
-//        public Updaters Updaters { get; set; }
+        /*********
+         * EVENTS *
+         *********/
 
+        public event EventHandler<int> OnConfigurationChanged;
 
+        public event EventHandler OnMovementStarted;
+
+        public event EventHandler OnMovementFinished;
+        
         protected Character(int id, string name, Hangar hangar, Factions factionId,
             Clan clan = null) : base(id)
         {
@@ -224,6 +237,24 @@ namespace Server.Game.objects.entities
         public override string ToString()
         {
             return "TODO: Create a proper character return string";
+        }
+
+        public void SetConfiguration(int newConfig)
+        {
+            CurrentConfig = newConfig;
+            OnConfigurationChanged?.Invoke(this, newConfig);
+        }
+
+        public void SetMovement()
+        {
+            OnMovementStarted?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void UnsetMovement()
+        {
+            MovementTime = 0;
+            Destination = Position;
+            OnMovementFinished?.Invoke(this, EventArgs.Empty);
         }
     }
 }

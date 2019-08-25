@@ -111,7 +111,7 @@ namespace Server.Game.netty.packet.prebuiltCommands
                     player.MaxShield, player.CurrentHealth, player.MaxHealth, player.Cargo.CargoSpaceLeft,
                     player.Cargo.MaxCargoSpace,
                     player.CurrentNanoHull, player.MaxNanoHull, player.Position.X, player.Position.Y,
-                    player.Spacemap.Id, player.FactionId, player.Clan.Id, Int32.MaxValue - 1, Int32.MaxValue - 1,
+                    player.Spacemap.Id, player.FactionId, player.Clan.Id, 999999999,999999999,
                     player.GetCurrentConfiguration().ExpansionStage,
                     player.Information.Premium, player.Information.Experience, player.Information.Honor,
                     player.Information.Level.Id, player.Information.Credits,

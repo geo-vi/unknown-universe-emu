@@ -43,8 +43,18 @@ namespace Server.Game.controllers
             CreateControlledInstance<ShipController>();
             CreateControlledInstance<ShipEffectController>();
             CreateControlledInstance<StateController>();
+            CreateControlledInstance<CharacterMovementController>();
         }
 
+        private void RemoveControllers()
+        {
+            foreach (var controller in _abstractedSubControllers)
+            {
+                controller.OnRemoved();
+            }
+            _abstractedSubControllers.Clear();
+        }
+        
         private void CreateTickInstance()
         {
             Global.TickManager.Add(this, out var tickId);
@@ -151,6 +161,7 @@ namespace Server.Game.controllers
         {
             Global.TickManager.Remove(this);
             ServerController.Get<MapController>().RemoveCharacterFromMap(Character);
+            RemoveControllers();
         }
     }
 }

@@ -17,7 +17,10 @@ namespace Server.Game.controllers.characters
 
         public virtual void OnTick()
         {
-            
+        }
+
+        public virtual void OnRemoved()
+        {
         }
     }
 }

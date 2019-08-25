@@ -6,7 +6,7 @@ using Server.Game.objects.entities.ships.items;
 
 namespace Server.Game.managers
 {
-    class AmmoConvertManager
+    static class AmmoConvertManager
     {
         public static string AmmoToDbString(string lootId)
         {

@@ -12,7 +12,7 @@ namespace Server.Game.objects.entities.pets
         
         public int Damage { get; private set; }
         
-        public IAttackable SelectedTarget { get; set; }
+        public AbstractAttackable SelectedTarget { get; set; }
         
         public DateTime EstimatedTimeOfExplosion { get; set; }
         
