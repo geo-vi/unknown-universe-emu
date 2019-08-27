@@ -15,7 +15,7 @@ namespace Server.Game.controllers.players
 {
     class PlayerConfigurationController : ConfigurationController
     {
-        private Player _player
+        private Player Player
         {
             get
             {
@@ -26,19 +26,19 @@ namespace Server.Game.controllers.players
 
         protected override Configuration[] Create()
         {
-            var hangar = _player.Hangar;
+            var hangar = Player.Hangar;
             var hangarId = hangar.Id;
             
             Configuration[] configurations = {new Configuration(1), new Configuration(2)};
 
-            if (_player.Equipment.Items.Any(x => x.Value.GeneralCategory == GeneralItemCategories.HM7))
+            if (Player.Equipment.Items.Any(x => x.Value.GeneralCategory == GeneralItemCategories.HM7))
             {
-                var equippedItem = _player.Equipment.Items.FirstOrDefault(x => x.Value.GeneralCategory == GeneralItemCategories.HM7);
+                var equippedItem = Player.Equipment.Items.FirstOrDefault(x => x.Value.GeneralCategory == GeneralItemCategories.HM7);
                 configurations[0].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
                 configurations[1].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
             }
 
-            foreach (var equippedItem in _player.Equipment.Items.Where(x => x.Value.HangarIds.Contains(hangarId)))
+            foreach (var equippedItem in Player.Equipment.Items.Where(x => x.Value.HangarIds.Contains(hangarId)))
             {
                 if (equippedItem.Value.OnConfig1.Hangars.Contains(hangarId))
                 {
@@ -74,7 +74,7 @@ namespace Server.Game.controllers.players
             }
 
             Out.WriteLog($"Created 2 configurations, 1:: {configurations[0].TotalDamageCalculated} damage, {configurations[0].TotalShieldCalculated} shield, {configurations[0].TotalSpeedCalculated} speed," +
-                         $" 2:: {configurations[1].TotalDamageCalculated} damage, {configurations[1].TotalShieldCalculated} shield, {configurations[1].TotalSpeedCalculated} speed", LogKeys.PLAYER_LOG, _player.Id);
+                         $" 2:: {configurations[1].TotalDamageCalculated} damage, {configurations[1].TotalShieldCalculated} shield, {configurations[1].TotalSpeedCalculated} speed", LogKeys.PLAYER_LOG, Player.Id);
             return configurations;
         }
         
@@ -211,10 +211,10 @@ namespace Server.Game.controllers.players
         public override void Switch()
         {
             base.Switch();
-            PrebuiltLegacyCommands.Instance.UpdateConfigurations(_player);
-            if (_player.Settings.GetSettings<GameplaySettings>().DisplayConfigurationChanges)
+            PrebuiltLegacyCommands.Instance.UpdateConfigurations(Player);
+            if (Player.Settings.GetSettings<GameplaySettings>().DisplayConfigurationChanges)
             {
-                PrebuiltLegacyCommands.Instance.ServerMessage(_player, "Configuration changed!");
+                PrebuiltLegacyCommands.Instance.ServerMessage(Player, "Configuration changed!");
             }
         }
     }

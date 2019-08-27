@@ -44,6 +44,7 @@ namespace Server.Game.controllers
             CreateControlledInstance<ShipEffectController>();
             CreateControlledInstance<StateController>();
             CreateControlledInstance<CharacterMovementController>();
+            CreateControlledInstance<CharacterCombatController>();
         }
 
         private void RemoveControllers()

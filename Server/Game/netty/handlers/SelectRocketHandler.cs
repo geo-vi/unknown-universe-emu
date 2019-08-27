@@ -16,7 +16,6 @@ namespace Server.Game.netty.handlers
             var rocketLootId = AmmoConvertManager.AmmoTypeToString(request.rocketType.type);
             gameSession.Player.Settings.GetSettings<SlotbarSettings>().SelectedRocketAmmo = rocketLootId;
             gameSession.Player.Settings.SaveSettings();
-
         }
     }
 }

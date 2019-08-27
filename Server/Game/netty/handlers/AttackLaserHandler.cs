@@ -1,4 +1,5 @@
 ﻿using DotNetty.Buffers;
+using Server.Game.controllers.players;
 using Server.Game.managers;
 using Server.Game.netty.commands.new_client.requests;
 using Server.Game.objects;
@@ -39,8 +40,7 @@ namespace Server.Game.netty.handlers
                 return;
             }
 
-            CombatManager.Instance.CreateCombat(player, player.Selected, AttackTypes.LASER,
-                player.Settings.GetSettings<SlotbarSettings>().SelectedLaserAmmo);
+            player.Controller.GetInstance<PlayerCombatController>().OnLaserAttackStart(player.Selected);
         }
     }
 }

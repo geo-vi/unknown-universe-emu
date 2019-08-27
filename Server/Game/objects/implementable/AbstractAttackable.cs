@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using Server.Game.objects.entities;
 using Server.Game.objects.enums;
+using Server.Game.objects.server;
 using Server.Main.objects;
 using Server.Utils;
 
@@ -52,6 +53,8 @@ namespace Server.Game.objects.implementable
         public ConcurrentDictionary<ShipVisuals, VisualEffect> Visuals =
             new ConcurrentDictionary<ShipVisuals, VisualEffect>();
 
+        public event EventHandler<PendingDamage> OnDamageReceived;
+        
         protected AbstractAttackable(int id)
         {
             Id = id;
@@ -84,6 +87,15 @@ namespace Server.Game.objects.implementable
             }
             
             return Position.DistanceTo(abstractAttackable.Position) <= VisibilityRange;
+        }
+
+        /// <summary>
+        /// Called to execute damage receive event
+        /// </summary>
+        /// <param name="pendingDamage"></param>
+        public void OnDamaged(PendingDamage pendingDamage)
+        {
+            OnDamageReceived?.Invoke(this, pendingDamage);
         }
     }
 }

@@ -24,6 +24,8 @@ namespace Server.Game.objects.entities
 
         public sealed override int Damage { get; set; }
 
+        public override int LaserColor => Hangar.Ship.LaserColor;
+        
         public sealed override int CurrentShield { get; set; }
 
         public sealed override int MaxShield { get; set; }

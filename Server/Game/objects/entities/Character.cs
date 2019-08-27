@@ -151,9 +151,6 @@ namespace Server.Game.objects.entities
             }
         }
 
-        public virtual int Damage { get; set; }
-        public virtual int RocketDamage { get; set; }
-
         /************
          * MOVEMENT *
          ************/

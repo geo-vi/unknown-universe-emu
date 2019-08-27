@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,7 @@ namespace Server.Game.controllers
         public void CreateInstances()
         {
             CreateControlledInstance<AttackController>();
+            CreateControlledInstance<DamageController>();
             CreateControlledInstance<RangeController>();
             CreateControlledInstance<MovementController>();
             CreateControlledInstance<SpawnController>();
@@ -60,7 +62,11 @@ namespace Server.Game.controllers
         public T GetInstance<T>() where T : ServerImplementedController
         {
             var instance = _abstractedSubControllers.FirstOrDefault(x => x is T);
-            return instance as T;
+            if (!(instance is T typeInstance))
+            {
+                throw new Exception(typeof(T) + " - Server Controller not found");
+            }
+            return typeInstance;
         }
     }
 }

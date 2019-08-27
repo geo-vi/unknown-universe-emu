@@ -13,6 +13,7 @@ namespace Server.Game.netty.commands
         SHIP_CREATE_COMMAND,
         SHIP_REMOVE_COMMAND,
         MOVE_COMMAND,
-        SHIP_SELECT_COMMAND
+        SHIP_SELECT_COMMAND,
+        ATTACK_ABORT_COMMAND
     }
 }

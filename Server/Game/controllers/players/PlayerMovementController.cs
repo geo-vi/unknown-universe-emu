@@ -8,7 +8,7 @@ namespace Server.Game.controllers.players
 {
     class PlayerMovementController : CharacterMovementController
     {
-        private Player _player
+        private Player Player
         {
             get
             {
@@ -16,8 +16,8 @@ namespace Server.Game.controllers.players
                 return player;
             }
         }
-        
-        private DateTime _lastMovementSaveTime = new DateTime();
+
+        private DateTime _lastMovementSaveTime;
         
         /// <summary>
         /// Called upon total movement finish.
@@ -32,7 +32,8 @@ namespace Server.Game.controllers.players
                 return;
             }
             
-            GameDatabaseManager.Instance.SaveCurrentHangar(_player);
+            GameDatabaseManager.Instance.SaveCurrentHangar(Player);
+            _lastMovementSaveTime = DateTime.Now;
         }
     }
 }

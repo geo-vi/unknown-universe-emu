@@ -1,6 +1,13 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using Server.Game.controllers.implementable;
+using Server.Game.managers;
+using Server.Game.netty.packet.prebuiltCommands;
+using Server.Game.objects.entities;
+using Server.Game.objects.entities.ships.items;
+using Server.Game.objects.enums;
+using Server.Game.objects.implementable;
 using Server.Game.objects.server;
 using Server.Main;
 using Server.Main.objects;
@@ -10,9 +17,7 @@ namespace Server.Game.controllers.server
 {
     class AttackController : ServerImplementedController
     {
-        public ConcurrentQueue<PendingAttack> LaserAttackQueue = new ConcurrentQueue<PendingAttack>();
-        public ConcurrentQueue<PendingAttack> RocketAttackQueue = new ConcurrentQueue<PendingAttack>();
-        public ConcurrentQueue<PendingAttack> RocketLauncherAttacks = new ConcurrentQueue<PendingAttack>();
+        private readonly ConcurrentQueue<PendingAttack> _pendingAttacksQueue = new ConcurrentQueue<PendingAttack>();
 
         public override void OnFinishInitiation()
         {
@@ -21,63 +26,114 @@ namespace Server.Game.controllers.server
 
         public override void Tick()
         {
-            PendingLaserAttacks();
-            PendingRocketAttacks();
-            PendingRocketLauncherAttacks();
+            PendingQueue();
         }
 
-        private void PendingLaserAttacks()
+        private void PendingQueue()
         {
-            while (LaserAttackQueue.Any())
+            while (!_pendingAttacksQueue.IsEmpty)
             {
-                PendingAttack pendingAttack;
-                LaserAttackQueue.TryDequeue(out pendingAttack);
-
-                if (pendingAttack.From == pendingAttack.To) continue;
-
-                switch (pendingAttack.LootId)
+                if (!_pendingAttacksQueue.TryDequeue(out var pendingAttack))
                 {
-                    default:
-                    //todo: add all ammunitions
-                    break;
+                    Out.QuickLog("Something went wrong in attack loop, cannot dequeue", LogKeys.ERROR_LOG);
+                    throw new Exception("Failed dequeue attack");
+                }
+
+                switch (pendingAttack.AttackType)
+                {
+                    case AttackTypes.LASER:
+                        PendingLaserAttack(pendingAttack);
+                        break;
+                    case AttackTypes.ROCKET:
+                        PendingRocketAttack(pendingAttack);
+                        break;
+                    case AttackTypes.ROCKET_LAUNCHER:
+                        PendingRocketLauncherAttack(pendingAttack);
+                        break;
                 }
             }
         }
-
-        private void PendingRocketAttacks()
+        
+        private void PendingLaserAttack(PendingAttack pendingAttack)
         {
-            while (RocketAttackQueue.Any())
+            var damage = 0;
+            var absorbDamage = 0;
+            var laserColor = 0;
+            
+            switch (pendingAttack.LootId)
             {
-                PendingAttack pendingAttack;
-                RocketAttackQueue.TryDequeue(out pendingAttack);
-
-                if (pendingAttack.From == pendingAttack.To) continue;
-
-                switch (pendingAttack.LootId)
-                {
-                    default:
-                    //todo: add all ammunitions
+                case "ammunition_laser_lcb-10":
+                    damage = pendingAttack.From.Damage;
+                    laserColor = 1;
                     break;
-                }
+                case "ammunition_laser_mcb-25":
+                    damage = pendingAttack.From.Damage * 2;
+                    laserColor = 1;
+                    break;
+                case "ammunition_laser_mcb-50":
+                    damage = pendingAttack.From.Damage * 3;
+                    laserColor = 2;
+                    break;
+                case "ammunition_laser_ucb-100":
+                    damage = pendingAttack.From.Damage * 4;
+                    laserColor = 3;
+                    break;
+                case "ammunition_laser_sab-50":
+                    absorbDamage = pendingAttack.From.Damage * 2;
+                    laserColor = 4;
+                    break;
+                case "ammunition_laser_cbo-100":
+                    absorbDamage = pendingAttack.From.Damage;
+                    damage = pendingAttack.From.Damage * 2;
+                    laserColor = 8;
+                    break;
+                case "ammunition_laser_rsb-75":
+                    damage = pendingAttack.From.Damage * 6;
+                    laserColor = 6;
+                    break;
+                case "ammunition_laser_job-100":
+                    damage = pendingAttack.From.Damage * 4;
+                    laserColor = 9;
+                    break;
+                default:
+                    laserColor = pendingAttack.From.LaserColor;
+                    damage = pendingAttack.From.Damage;
+                    absorbDamage = 0;
+                    break;
             }
+
+            PrebuiltCombatCommands.Instance.LaserAttackCommand();
+            
+            ServerController.Get<DamageController>().EnforceDamage(pendingAttack.To, pendingAttack.From, 
+                damage, absorbDamage, DamageCalculationTypes.DEFINED, AttackTypes.LASER);
+            
+            pendingAttack.From.OnLaserShoot(pendingAttack);
         }
 
-        private void PendingRocketLauncherAttacks()
+        private void PendingRocketAttack(PendingAttack pendingAttack)
         {
-            while (RocketLauncherAttacks.Any())
+            
+        }
+
+        private void PendingRocketLauncherAttack(PendingAttack pendingAttack)
+        {
+            
+        }
+
+        /// <summary>
+        /// Creating a new combat
+        /// </summary>
+        /// <param name="pendingAttack">Attack pending</param>
+        /// <exception cref="Exception">Error is dropped when duplicate in Queue</exception>
+        public void CreateCombat(PendingAttack pendingAttack)
+        {
+            if (_pendingAttacksQueue.Contains(pendingAttack))
             {
-                PendingAttack pendingAttack;
-                RocketLauncherAttacks.TryDequeue(out pendingAttack);
-
-                if (pendingAttack.From == pendingAttack.To) continue;
-
-                switch (pendingAttack.LootId)
-                {
-                    default:
-                    //todo: add all ammunitions
-                    break;
-                }
+                Out.QuickLog("Duplicate entry of Combat, same PendingAttack already exists in Queue", LogKeys.ERROR_LOG);
+                throw new Exception("Found a duplicate entry of Combat");
             }
+            
+            _pendingAttacksQueue.Enqueue(pendingAttack);
         }
     }
 }

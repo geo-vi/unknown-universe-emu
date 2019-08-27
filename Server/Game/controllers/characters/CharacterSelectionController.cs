@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Server.Game.objects.entities;
 using Server.Game.objects.implementable;
 using Server.Main.objects;
@@ -37,6 +38,12 @@ namespace Server.Game.controllers.characters
             }
             
             Character.Selected = null;
+        }
+
+        public Character[] FindAllSelectors()
+        {
+            return Character.RangeView.CharactersInRenderRange.Values.Where(x => x.SelectedCharacter == Character)
+                .ToArray();
         }
     }
 }

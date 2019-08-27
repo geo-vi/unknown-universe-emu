@@ -1,4 +1,5 @@
 ﻿using System;
+using Server.Game.controllers.players;
 using Server.Game.managers;
 using Server.Game.objects;
 using Server.Game.objects.entities.players.settings;
@@ -25,7 +26,7 @@ namespace Server.Game.netty.handlers
                 return;
             }
 
-            CombatManager.Instance.CreateCombat(player, player.Selected, AttackTypes.ROCKET, player.Settings.GetSettings<SlotbarSettings>().SelectedRocketAmmo);
+            player.Controller.GetInstance<PlayerCombatController>().OnRocketAttack(player.Selected);
         }
     }
 }
