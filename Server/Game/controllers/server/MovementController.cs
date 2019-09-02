@@ -102,8 +102,8 @@ namespace Server.Game.controllers.server
                     {character.Id, character.Destination.X, character.Destination.Y, character.MovementTime};
                 
                 Packet.Builder.BuildToRange(character, Commands.MOVE_COMMAND, parameters, parameters);
-                PrebuiltLegacyCommands.Instance.ServerMessage(character as Player, "X: " + character.Position.X + "; Y:" + character.Position.Y + "; T:" + character.MovementTime + "ms\n" +
-                                                                                   "X2: " + movement.Value.EndPosition.X + "; Y2: " + movement.Value.EndPosition.Y);
+//                PrebuiltLegacyCommands.Instance.ServerMessage(character as Player, "X: " + character.Position.X + "; Y:" + character.Position.Y + "; T:" + character.MovementTime + "ms\n" +
+//                                                                                   "X2: " + movement.Value.EndPosition.X + "; Y2: " + movement.Value.EndPosition.Y);
             }
         }
 
@@ -190,7 +190,7 @@ namespace Server.Game.controllers.server
 
             var time = Math.Round(distance / character.Speed * 1000);
 
-            Console.WriteLine("Character: {0} => Position = {1} , Destination = {2} , Distance = {3} , Speed = {4} , Time = {5}", character.Name, character.Position, character.Destination, distance, character.Speed, time);
+//            Console.WriteLine("Character: {0} => Position = {1} , Destination = {2} , Distance = {3} , Speed = {4} , Time = {5}", character.Name, character.Position, character.Destination, distance, character.Speed, time);
 
             return (int)time;
         }

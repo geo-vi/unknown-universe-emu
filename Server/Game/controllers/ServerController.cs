@@ -7,6 +7,7 @@ using Server.Game.controllers.characters;
 using Server.Game.controllers.implementable;
 using Server.Game.controllers.server;
 using Server.Game.objects;
+using Server.Game.objects.server;
 using RangeController = Server.Game.controllers.server.RangeController;
 
 namespace Server.Game.controllers
@@ -57,6 +58,7 @@ namespace Server.Game.controllers
             CreateControlledInstance<EffectsController>();
             CreateControlledInstance<DestructionController>();
             CreateControlledInstance<MapController>();
+            CreateControlledInstance<CooldownController>();
         }
 
         public T GetInstance<T>() where T : ServerImplementedController

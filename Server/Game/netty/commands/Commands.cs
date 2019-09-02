@@ -14,6 +14,9 @@ namespace Server.Game.netty.commands
         SHIP_REMOVE_COMMAND,
         MOVE_COMMAND,
         SHIP_SELECT_COMMAND,
-        ATTACK_ABORT_COMMAND
+        ATTACK_ABORT_COMMAND,
+        ATTACK_LASER_COMMAND,
+        ATTACK_HIT_COMMAND,
+        ATTACK_MISS_COMMAND
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using Server.Main.objects;
 
 namespace Server.Utils
 {
@@ -23,9 +24,9 @@ namespace Server.Utils
         public static void QuickLog(string content, string key = "log")
         {
             Out.WriteLog(content, key);
-            if (key == "errlog")
+            if (key == LogKeys.ERROR_LOG)
             {
-                Console.WriteLine("!-> Trace: " + Utils.Out.GetCaller());
+                Out.WriteLog("!-> Trace: " + Utils.Out.GetCaller(), LogKeys.ERROR_LOG);
             }
 
             //Logger<>.Logger._instance.Enqueue(key, content);

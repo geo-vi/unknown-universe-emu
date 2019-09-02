@@ -36,7 +36,6 @@ namespace Server.Game.controllers
         protected virtual void CreateControllers()
         {
             CreateControlledInstance<ConfigurationController>();
-            CreateControlledInstance<CooldownController>();
             CreateControlledInstance<CharacterRangeController>();
             CreateControlledInstance<RocketLauncherController>();
             CreateControlledInstance<CharacterSelectionController>();
@@ -45,6 +44,7 @@ namespace Server.Game.controllers
             CreateControlledInstance<StateController>();
             CreateControlledInstance<CharacterMovementController>();
             CreateControlledInstance<CharacterCombatController>();
+            CreateControlledInstance<CharacterDamageController>();
         }
 
         private void RemoveControllers()

@@ -12,6 +12,7 @@ using Server.Game.objects;
 using Server.Game.objects.entities;
 using Server.Game.objects.entities.players.settings;
 using Server.Game.objects.enums;
+using Server.Game.objects.implementable;
 using Server.Main.objects;
 using Server.Networking;
 using Server.Networking.clients;
@@ -29,6 +30,7 @@ namespace Server.Game.netty.packet
             PrebuiltLegacyCommands.Instance.AddCommands();
             PrebuiltPlayerCommands.Instance.AddCommands();
             PrebuiltRangeCommands.Instance.AddCommands();
+            PrebuiltCombatCommands.Instance.AddCommands();
             Out.QuickLog($"Successfully added {OldCommands.Count} old client commands to Builder");
             Out.QuickLog($"Successfully added {NewCommands.Count} new client commands to Builder");
         }
@@ -92,10 +94,9 @@ namespace Server.Game.netty.packet
             BuildCommand(client, Commands.LEGACY_MODULE, usingNewClient, packetBuilder.ToString());
         }
 
-        public void BuildToRange(Character parent, Commands key, object[] oldClientParameters, object[] newClientParameters)
+        public void BuildToRange(AbstractAttackable parent, Commands key, object[] oldClientParameters, object[] newClientParameters)
         {
-            foreach (var character in parent.Spacemap.Entities.Where(x =>
-                x.Value != parent))
+            foreach (var character in parent.Spacemap.Entities)
             {
                 if (!(character.Value is Player player)) continue;
                 

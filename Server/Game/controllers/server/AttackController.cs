@@ -56,6 +56,14 @@ namespace Server.Game.controllers.server
         
         private void PendingLaserAttack(PendingAttack pendingAttack)
         {
+            var secondaryLaser = ItemMap.IsSecondaryAmmunition(pendingAttack.LootId);
+
+            if (CooldownManager.Instance.Exists(pendingAttack.From, CooldownTypes.LASER_SHOT_COOLDOWN) && !secondaryLaser || 
+                CooldownManager.Instance.Exists(pendingAttack.From, CooldownTypes.SECONDARY_LASER_SHOT_COOLDOWN) && secondaryLaser)
+            {
+                return;
+            }
+
             var damage = 0;
             var absorbDamage = 0;
             var laserColor = 0;
@@ -102,11 +110,22 @@ namespace Server.Game.controllers.server
                     break;
             }
 
-            PrebuiltCombatCommands.Instance.LaserAttackCommand();
+            PrebuiltCombatCommands.Instance.LaserAttackCommand(pendingAttack, laserColor);
             
             ServerController.Get<DamageController>().EnforceDamage(pendingAttack.To, pendingAttack.From, 
-                damage, absorbDamage, DamageCalculationTypes.DEFINED, AttackTypes.LASER);
-            
+                damage, absorbDamage, DamageCalculationTypes.RANDOMISED, AttackTypes.LASER);
+
+            if (secondaryLaser)
+            {
+                CooldownManager.Instance.CreateCooldown(new Cooldown(pendingAttack.From,
+                    CooldownTypes.SECONDARY_LASER_SHOT_COOLDOWN, 3000));
+            }
+            else
+            {
+                CooldownManager.Instance.CreateCooldown(new Cooldown(pendingAttack.From,
+                    CooldownTypes.LASER_SHOT_COOLDOWN, 850));
+            }
+
             pendingAttack.From.OnLaserShoot(pendingAttack);
         }
 
@@ -134,6 +153,11 @@ namespace Server.Game.controllers.server
             }
             
             _pendingAttacksQueue.Enqueue(pendingAttack);
+        }
+
+        public PendingAttack[] GetActiveAttacksByAttacker(AbstractAttacker attacker)
+        {
+            return _pendingAttacksQueue.Where(x => x.From == attacker).ToArray();
         }
     }
 }

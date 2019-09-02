@@ -36,7 +36,7 @@ namespace Server.Main
         {
             CommandManager.CreateCommands();
             QueryManager.Initiate();
-            Task.Factory.StartNew(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
+            TickManager.Initialize();
         }
 
         private static void InitiateHelper()

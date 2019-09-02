@@ -1,3 +1,5 @@
+using System;
+
 namespace Server.Game.objects.entities.ships.items
 {
     static class ItemMap
@@ -88,5 +90,10 @@ namespace Server.Game.objects.entities.ships.items
             "ability_spearhead_jam-x", "ability_spearhead_target-marker", "ability_spearhead_ultimate-cloak",
             "ability_spectrum", "ability_venom"
         };
+
+        public static bool IsSecondaryAmmunition(string lootId)
+        {
+            return lootId == LaserIds[6];
+        }
     }
 }

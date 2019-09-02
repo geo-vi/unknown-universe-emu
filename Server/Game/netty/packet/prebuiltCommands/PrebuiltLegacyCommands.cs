@@ -106,13 +106,18 @@ namespace Server.Game.netty.packet.prebuiltCommands
                 //Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "g", "a", "b,1000,1,10000.0 ");
             }
         }
-
+        
         public void ConfigurationCommand(Player player)
         {
             if (GetSession(player, out var session))
             {
                 Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, "0|A|CC|" + player.CurrentConfig); // Config
             }
+        }
+
+        public void SendCooldown(Player player, string cooldownType, int totalSeconds)
+        {
+            
         }
     }
 }

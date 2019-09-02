@@ -17,6 +17,8 @@ namespace Server.Game.netty.handlers
             var batteryLootId = AmmoConvertManager.AmmoTypeToString(request.batteryType.type);
             gameSession.Player.Settings.GetSettings<SlotbarSettings>().SelectedLaserAmmo = batteryLootId;
             gameSession.Player.Settings.SaveSettings();
+            
+            gameSession.Player.OnLaserAmmoChange(batteryLootId);
         }
     }
 }

@@ -50,6 +50,8 @@ namespace Server.Game.objects.implementable
 
         public bool Invisible { get; set; }
 
+        public bool IsDead { get; set; }
+        
         public ConcurrentDictionary<ShipVisuals, VisualEffect> Visuals =
             new ConcurrentDictionary<ShipVisuals, VisualEffect>();
 

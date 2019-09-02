@@ -79,10 +79,11 @@ namespace Server.Game.managers
         public void CreateAttackCombat(PendingAttack pendingAttack)
         {
             ServerController.Get<AttackController>().CreateCombat(pendingAttack);
-            
-            Console.WriteLine("Creating a combat entry: \nFrom:" + pendingAttack.From.Id + "; To: " +
-                              pendingAttack.To.Id + " " + pendingAttack.AttackType + " " + pendingAttack.LootId + "; Amount: " + 
-                              pendingAttack.Amount);
+        }
+
+        public PendingAttack[] GetActiveCombatsForAttacker(AbstractAttacker attacker)
+        {
+            return ServerController.Get<AttackController>().GetActiveAttacksByAttacker(attacker);
         }
     }
 }
