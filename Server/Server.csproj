@@ -1,0 +1,95 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <PackageVersion>1.1.0</PackageVersion>
+    <Title>Server of Universe</Title>
+    <Authors>Heisenberg</Authors>
+    <Copyright>Dont fucking steal my stuff 1.0</Copyright>
+    <PackageProjectUrl>http://univ3rse.com</PackageProjectUrl>
+    <PackageLicenseUrl>http://univ3rse.com</PackageLicenseUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Chat\" />
+    <Folder Include="Game\managers\" />
+    <Folder Include="Game\netty\" />
+    <Folder Include="Game\objects\maps\objects\ores\" />
+    <Folder Include="Helper\" />
+    <Folder Include="Main\commands\admin\" />
+    <Folder Include="WebCommunicator\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetty.Buffers" Version="0.6.0" />
+    <PackageReference Include="DotNetty.Codecs" Version="0.6.0" />
+    <PackageReference Include="DotNetty.Common" Version="0.6.0" />
+    <PackageReference Include="DotNetty.Transport" Version="0.6.0" />
+    <PackageReference Include="MySql.Data" Version="8.0.16" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Configurations\game.cfg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Configurations\mysql.cfg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Configurations\server.cfg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\Copyrights.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\Credits.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Game\netty\handlers\BattleStationEquipHandler.cs" />
+    <Compile Remove="Game\netty\handlers\ClanMemberInvitationHandler.cs" />
+    <Compile Remove="Game\netty\handlers\BuildStationHandler.cs" />
+    <Compile Remove="Game\netty\handlers\ClickableHandler.cs" />
+    <Compile Remove="Game\netty\handlers\ClientResolutionChangeHandler.cs" />
+    <Compile Remove="Game\netty\handlers\CollectBoxHandler.cs" />
+    <Compile Remove="Game\netty\handlers\command42JHandler.cs" />
+    <Compile Remove="Game\netty\handlers\DroneFormationChangeHandler.cs" />
+    <Compile Remove="Game\netty\handlers\ExchangePalladiumHandler.cs" />
+    <Compile Remove="Game\netty\handlers\ForceInitHandler.cs" />
+    <Compile Remove="Game\netty\handlers\GroupSystemHandler.cs" />
+    <Compile Remove="Game\netty\handlers\HarvestHandler.cs" />
+    <Compile Remove="Game\netty\handlers\HellstormLaunchHandler.cs" />
+    <Compile Remove="Game\netty\handlers\HellstormSelectRocketHandler.cs" />
+    <Compile Remove="Game\netty\handlers\HellstormLoadHandler.cs" />
+    <Compile Remove="Game\netty\handlers\ItemSelectionHandler.cs" />
+    <Compile Remove="Game\netty\handlers\JumpRequestHandler.cs" />
+    <Compile Remove="Game\netty\handlers\JumpCPUHandler.cs" />
+    <Compile Remove="Game\netty\handlers\KillScreenRepairRequestHandler.cs" />
+    <Compile Remove="Game\netty\handlers\LabRefinementHandler.cs" />
+    <Compile Remove="Game\netty\handlers\LabUpdateItemHandler.cs" />
+    <Compile Remove="Game\netty\handlers\LabUpdateHandler.cs" />
+    <Compile Remove="Game\netty\handlers\LogoutHandler.cs" />
+    <Compile Remove="Game\netty\handlers\PetGearActivationHandler.cs" />
+    <Compile Remove="Game\netty\handlers\PetHandler.cs" />
+    <Compile Remove="Game\netty\handlers\QuestAcceptHandler.cs" />
+    <Compile Remove="Game\netty\handlers\QuestCancelHandler.cs" />
+    <Compile Remove="Game\netty\handlers\QuestInfoHandler.cs" />
+    <Compile Remove="Game\netty\handlers\QuestListHandler.cs" />
+    <Compile Remove="Game\netty\handlers\QuestPrivilegeHandler.cs" />
+    <Compile Remove="Game\netty\handlers\ShipWarpWindowHandler.cs" />
+    <Compile Remove="Game\netty\handlers\ShipWarpHandler.cs" />
+    <Compile Remove="Game\netty\handlers\TradeHandler.cs" />
+    <Compile Remove="Game\netty\handlers\TradeSellOreHandler.cs" />
+    <Compile Remove="Game\netty\handlers\UIOpenHandler.cs" />
+    <Compile Remove="Game\netty\handlers\UserKeyBindingsUpdateHandler.cs" />
+  </ItemGroup>
+
+</Project>

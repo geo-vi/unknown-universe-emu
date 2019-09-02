@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="label1.Text" xml:space="preserve">
+    <value>         this._npc_names[1] = "Streuner";
+         this._npc_names[2] = "Lordakia";
+         this._npc_names[3] = "Devolarium";
+         this._npc_names[4] = "Mordon";
+         this._npc_names[5] = "Sibelon";
+         this._npc_names[6] = "Saimon";
+         this._npc_names[7] = "Sibelonit";
+         this._npc_names[8] = "Lordakium";
+         this._npc_names[9] = "Kristallin";
+         this._npc_names[10] = "Kristallon";
+         this._npc_names[11] = "StreuneR";
+         this._npc_names[12] = "Protegit";
+         this._npc_names[13] = "Cubikon";
+         this._npc_names[14] = "Boss Streuner";
+         this._npc_names[15] = "Boss Lordakia";
+         this._npc_names[16] = "Boss Mordon";
+         this._npc_names[17] = "Boss Saimon";
+         this._npc_names[18] = "Boss Devolarium";
+         this._npc_names[19] = "Boss Sibelonit";
+         this._npc_names[20] = "Boss Sibelon";
+         this._npc_names[21] = "Boss Lordakium";
+         this._npc_names[22] = "Boss Kristallin";
+         this._npc_names[23] = "Boss Kristallon";
+         this._npc_names[24] = "Boss StreuneR";
+         this._npc_names[25] = "UFO";
+         this._npc_names[26] = "UFONIT";
+         this._npc_names[27] = "Aggro-Streuner";
+         this._npc_names[28] = "UberStreuner";
+         this._npc_names[29] = "UberLordakia";
+         this._npc_names[30] = "UberMordon";
+         this._npc_names[31] = "UberSaimon";
+         this._npc_names[32] = "UberDevolarium";
+         this._npc_names[33] = "UberSibelonit";
+         this._npc_names[34] = "UberSibelon";
+         this._npc_names[35] = "UberLordakium";
+         this._npc_names[36] = "UberKristallin";
+         this._npc_names[37] = "UberKristallon";
+         this._npc_names[38] = "UberStreuneR";
+         this._npc_names[39] = "Demaner";
+         this._npc_names[40] = "Kucurbium";
+         this._npc_names[41] = "BossKucurbium";
+         this._npc_names[42] = "Vagrant";
+         this._npc_names[43] = "Marauder";
+         this._npc_names[44] = "Outcast";
+         this._npc_names[45] = "Corsair";
+         this._npc_names[46] = "Hooligan";
+         this._npc_names[47] = "Ravager";
+         this._npc_names[48] = "Convict";
+         this._npc_names[49] = "Century Falcon";
+         this._npc_names[50] = "Unidentified Destroyer";
+         this._npc_names[51] = "Unidentified Dreadnought";
+         this._npc_names[52] = "Cubikon";
+         this._npc_names[53] = "UberProtegit";
+         this._npc_names[54] = "Ice Meteoroid";
+         this._npc_names[55] = "Super Ice Meteoroid";
+         this._npc_names[56] = "Icy";
+         this._npc_names[57] = "1100101";
+         this._npc_names[58] = "Interceptor";
+         this._npc_names[59] = "Barracuda";
+         this._npc_names[60] = "Saboteur";
+         this._npc_names[61] = "Annihilator";
+         this._npc_names[62] = "Battleray";
+         this._npc_names[63] = "Infernal";
+         this._npc_names[64] = "Scorcher";
+         this._npc_names[65] = "Melter";
+         this._npc_names[66] = "Devourer";
+         this._npc_names[67] = "Vagrant";
+         this._npc_names[68] = "Marauder";
+         this._npc_names[69] = "Outcast";
+         this._npc_names[70] = "Corsair";
+         this._npc_names[71] = "Hooligan";
+         this._npc_names[72] = "Ravager";
+         this._npc_names[73] = "Convict";
+         this._npc_names[74] = "Santa-1100101";
+         this._npc_names[75] = "Referee-Bot";
+         this._npc_names[76] = "Sunburst Lordakium";
+         this._npc_names[77] = "Saturn Phoenix";
+         this._npc_names[78] = "Saturn Yamato";
+         this._npc_names[79] = "Saturn Defcom";
+         this._npc_names[80] = "Saturn Liberator";
+         this._npc_names[81] = "Saturn Nostromo";
+         this._npc_names[82] = "Saturn Piranha";
+         this._npc_names[83] = "Saturn Bigboy";
+         this._npc_names[84] = "Saturn Vengeance";
+         this._npc_names[85] = "Saturn Goliath";
+         this._npc_names[86] = "Saturn Leonov";
+         this._npc_names[87] = "Saturn Venom";
+         this._npc_names[88] = "Saturn Sentinel";
+         this._npc_names[89] = "Saturn Spectrum";
+         this._npc_names[90] = "Saturn Diminisher";
+         this._npc_names[91] = "Saturn Solace";
+         this._npc_names[92] = "Saturn Revenge";
+         this._npc_names[93] = "Saturn Lightning";
+         this._npc_names[94] = "Saturn Avenger";
+         this._npc_names[95] = "Saturn Bastion";
+         this._npc_names[96] = "Saturn Enforcer";
+         this._npc_names[97] = "Saturn Spearhead";
+         this._npc_names[98] = "Saturn Citadel";
+         this._npc_names[99] = "Saturn Aegis";
+         this._npc_names[100] = "Saturn Crimson";
+         this._npc_names[101] = "Saturn Jade";
+         this._npc_names[102] = "Saturn Sapphire";
+         this._npc_names[103] = "Evil You";
+         this._npc_names[104] = "Evil Iris";
+         this._npc_names[105] = "Hitac-Minion";
+         this._npc_names[106] = "Hitac 2.0";
+         this._npc_names[107] = "Crazy Ufo";
+         this._npc_names[108] = "Boss Curcubitor";
+         this._npc_names[109] = "Curcubitor";
+         this._npc_names[110] = "Disguisor";
+         this._npc_names[111] = "Protekid";
+         this._npc_names[112] = "Cubikid";</value>
+  </data>
+  <data name="richTextBox9.Text" xml:space="preserve">
+    <value>('equipment_weapon_laser_lf-3'),
+('equipment_weapon_laser_lf-4'),
+('equipment_generator_shield_sg3n-a01'),
+('equipment_generator_shield_sg3n-b02'),
+('equipment_generator_shield_sg3n-a02'),
+('equipment_generator_shield_sg3n-a03'),
+('equipment_generator_shield_sg3n-b01'),
+('drone_apis'),
+('drone_iris'),
+('drone_flax'),
+('equipment_generator_speed_g3n-1010'),
+('equipment_generator_speed_g3n-2010'),
+('equipment_generator_speed_g3n-3210'),
+('equipment_generator_speed_g3n-3310'),
+('equipment_generator_speed_g3n-6900'),
+('equipment_generator_speed_g3n-7900'),
+('equipment_weapon_laser_lf-2'),
+('equipment_weapon_laser_mp-1'),
+('equipment_weapon_laser_lf-1'),
+('equipment_weapon_rocketlauncher_hst-2'),
+('equipment_weapon_rocketlauncher_hst-1'),
+('ammunition_laser_rsb-75'),
+('ammunition_laser_ucb-100'),
+('ammunition_laser_sab-50'),
+('ammunition_laser_mcb-50'),
+('ammunition_laser_mcb-25'),
+('ammunition_laser_lcb-10'),
+('booster_dmg-b01'),
+('booster_ep-b01'),
+('booster_hon-b01'),
+('booster_hp-b01'),
+('booster_rep-b01'),
+('booster_res-b01'),
+('booster_shd-b01'),
+('drone_formation_f-01-tu'),
+('drone_formation_f-02-ar'),
+('drone_formation_f-03-la'),
+('drone_formation_f-04-st'),
+('drone_formation_f-05-pi'),
+('drone_formation_f-06-da'),
+('drone_formation_f-07-di'),
+('drone_formation_f-08-ch'),
+('drone_formation_f-09-mo'),
+('drone_formation_f-10-cr'),
+('drone_formation_f-11-he'),
+('drone_formation_f-12-ba'),
+('drone_formation_f-13-bt'),
+('resource_logfile'),
+('resource_booty-key'),
+('equipment_extra_repbot_rep-1'),
+('equipment_extra_repbot_rep-2'),
+('equipment_extra_repbot_rep-3'),
+('equipment_extra_repbot_rep-4'),
+('equipment_extra_cpu_rok-t01'),
+('equipment_extra_cpu_sle-01'),
+('equipment_extra_cpu_sle-02'),
+('equipment_extra_cpu_sle-03'),
+('equipment_extra_cpu_sle-04'),
+('equipment_extra_cpu_ish-01'),
+('equipment_extra_cpu_smb-01'),
+('equipment_extra_cpu_rllb-x'),
+('equipment_extra_cpu_aim-01'),
+('equipment_extra_cpu_aim-02'),
+('equipment_extra_cpu_jp-01'),
+('equipment_extra_cpu_jp-02'),
+('equipment_extra_cpu_gem-xi'),
+('equipment_extra_cpu_cl04k-xl'),
+('equipment_extra_cpu_cl04k-m'),
+('equipment_extra_cpu_cl04k-xs'),
+('equipment_extra_cpu_arol-x'),
+('equipment_extra_cpu_min-t01'),
+('equipment_extra_cpu_min-t02'),
+('equipment_extra_cpu_nc-rrb'),
+('equipment_extra_cpu_ajp-01'),
+('equipment_extra_cpu_dr-01'),
+('equipment_extra_cpu_dr-02'),
+('drone_designs_havoc'),
+('resource_booty-key-blue'),
+('resource_booty-key-red'),
+('ammunition_rocket_r-310'),
+('ammunition_rocket_plt-2026'),
+('ammunition_rocket_plt-2021'),
+('ammunition_rocket_plt-3030'),
+('ammunition_rocketlauncher_ECO-10'),
+('drone_zeus'),
+('drone_designs_hercules'),
+('pet_pet10'),
+('pet_fuel-100'),
+('pet_gear_g-kk1'),
+('pet_protocol_ai-lm1'),
+('pet_gear_g-al1'),
+('booster_qr-01'),
+('booster_bb-01'),
+('booster_hon-50'),
+('booster_ep-50'),
+('ammunition_specialammo_pld-8'),
+('ammunition_specialammo_dcr-250'),
+('ammunition_specialammo_wiz-x'),
+('ammunition_rocket_bdr-1211'),
+('ammunition_rocketlauncher_hstrm-01'),
+('ammunition_rocketlauncher_ubr-100'),
+('ammunition_rocketlauncher_sar-01'),
+('ammunition_rocketlauncher_sar-02'),
+('equipment_extra_hmd-07'),
+('booster_dmg-b02'),
+('booster_ep-b02'),
+('booster_hon-b02'),
+('booster_hp-b02'),
+('booster_rep-b02'),
+('booster_res-b02'),
+('pet_gear_cgm-02'),
+('pet_gear_csr-02'),
+('pet_gear_g-ar1'),
+('pet_gear_g-ex1'),
+('pet_gear_g-el1'),
+('pet_gear_g-pd1'),
+('pet_gear_g-rep1'),
+('pet_gear_g-rl1'),
+('pet_gear_g-tra1'),
+('pet_protocol_ai-aim1'),
+('pet_protocol_ai-cr1'),
+('pet_protocol_ai-e1'),
+('pet_protocol_ai-eco1'),
+('pet_protocol_ai-hp1'),
+('pet_protocol_ai-pm1'),
+('pet_protocol_ai-r1'),
+('pet_protocol_ai-s1'),
+('pet_protocol_ai-sm1');</value>
+  </data>
+  <data name="richTextBox8.Text" xml:space="preserve">
+    <value>1) Finding equal quest on translationQuests.php
+1.5) &lt;item name="quest_title_121"&gt;
+            &lt;![CDATA[Provoking the EIC (4)]]&gt;
+        &lt;/item&gt;
+2) ID is after title [121]
+3) Find description of same quest and copy it into DESCRIPTION row on DB
+Profit.</value>
+  </data>
+</root>

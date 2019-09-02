@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.objects;
@@ -11,12 +12,12 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class LabRefinementHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession.Player.UsingNewClient) return;
 
             var request = new LabRefinementRequest();
-            request.readCommand(bytes);
+            request.readCommand(buffer);
 
             var prometium = gameSession.Player.Information.Cargo.Prometium;
             var endurium = gameSession.Player.Information.Cargo.Endurium;
@@ -25,7 +26,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             var duranium = gameSession.Player.Information.Cargo.Duranium;
             var xeno = gameSession.Player.Information.Cargo.Xenomit;
 
-            var count = request.toProduce.count;
+            var count = Math.Abs(request.toProduce.count);
             switch (request.toProduce.oreType.typeValue)
             {
                 case OreTypeModule.PROMERIUM: // orange

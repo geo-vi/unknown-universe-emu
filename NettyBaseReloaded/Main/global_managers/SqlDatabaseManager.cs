@@ -24,12 +24,6 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public static void Initialize(bool remote = false)
         {
-            if (remote)
-            {
-                SERVER = "dtest.univ3rse.com";
-                UID = "remote";
-                PWD = "789456123gta";
-            }
             GenerateConnectionString();
             using (var client = GetClient())
             {

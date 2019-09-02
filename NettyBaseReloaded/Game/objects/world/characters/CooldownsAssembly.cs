@@ -44,22 +44,28 @@ namespace NettyBaseReloaded.Game.objects.world.characters
 
         private DateTime LastTick = new DateTime();
         private bool _sendAll = false;
+        private readonly object CooldownLock = new object();
         public void Tick()
         {
             if (LastTick.AddMilliseconds(100) > DateTime.Now) return;
-            foreach (var cooldown in CooldownDictionary.Values)
+            lock (CooldownLock)
             {
-                //if (_sendAll && Character is Player player)
-                //{
-                //    var session = player.GetGameSession();
-                //    if (session != null) cooldown.Send(session);
-                //}
-                if (cooldown.EndTime < DateTime.Now)
+                var cooldowns = CooldownDictionary.Values.ToList();
+                foreach (var cooldown in cooldowns)
                 {
-                    cooldown.OnFinish(Character);
-                    Remove(cooldown);
+                    //if (_sendAll && Character is Player player)
+                    //{
+                    //    var session = player.GetGameSession();
+                    //    if (session != null) cooldown.Send(session);
+                    //}
+                    if (cooldown.EndTime < DateTime.Now)
+                    {
+                        cooldown.OnFinish(Character);
+                        Remove(cooldown);
+                    }
                 }
             }
+
             LastTick = DateTime.Now;
         }
 

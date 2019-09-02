@@ -16,9 +16,10 @@ using NettyBaseReloaded.Game.objects.world.players.quests;
 using NettyBaseReloaded.Game.objects.world.players.quests.serializables;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
-using NettyBaseReloaded.Properties;
+using NettyBaseReloaded.Networking;
 using NettyBaseReloaded.Utils;
 using Newtonsoft.Json;
+using Server = NettyBaseReloaded.Properties.Server;
 
 namespace NettyBaseReloaded
 {
@@ -51,110 +52,13 @@ namespace NettyBaseReloaded
         {
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomainOnFirstChanceException;
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-            Application.ThreadException += new ThreadExceptionEventHandler(ApplicationOnThreadException);
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionTrapper);
+            Application.ThreadException += ApplicationOnThreadException;
+            AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionTrapper;
             Application.CurrentCulture = new CultureInfo("en-US");
     
-            //PrintJSON();
             InitiateConsole();
-            //InitiatePanel();
         }
-
-        public static void PrintJSON()
-        {
-            var root = new QuestRoot()
-            {
-                Elements = new List<QuestElement>
-                {
-                    new QuestElement
-                    {
-                        Case = new QuestRoot
-                        {
-                            Active = false,
-                            Elements = new List<QuestElement>{
-                                new QuestElement() {
-                                    Case = new QuestRoot()
-                                    {
-                                        Id = 0,
-                                        Active = false,
-                                        Elements = new List<QuestElement>(),
-                                        Mandatory = false,
-                                        MandatoryCount = 1,
-                                        Ordered = false
-                                    },
-                                    Condition = new QuestCondition()
-                                    {
-                                        Id = 10001,
-                                        Mandatory = true,
-                                        Matches = new List<int>(),
-                                        State = new QuestState { Active = false, Completed = false, CurrentValue = 0},
-                                        SubConditions = new List<QuestCondition>(),
-                                        Type = QuestConditions.COLLECT_BONUS_BOX,
-                                        TargetValue = 5
-                                    }
-                                },
-                                new QuestElement() {
-                                    Case = new QuestRoot()
-                                    {
-                                        Id = 0,
-                                        Active = false,
-                                        Elements = new List<QuestElement>(),
-                                        Mandatory = false,
-                                        MandatoryCount = 2,
-                                        Ordered = false
-                                    },
-                                    Condition = new QuestCondition()
-                                    {
-                                        Id = 10002,
-                                        Mandatory = true,
-                                        Matches = new List<int>(),
-                                        State = new QuestState { Active = false, Completed = false, CurrentValue = 0},
-                                        SubConditions = new List<QuestCondition>(),
-                                        Type = QuestConditions.VISIT_QUEST_GIVER,
-                                        TargetValue = 0
-                                    }
-                                }
-                            },
-                            Id = 105,
-                            Mandatory = true,
-                            MandatoryCount = 1,
-                            Ordered = false
-                        },
-                        Condition = new QuestCondition
-                        {
-                            Id = 10000,
-                            Mandatory = true,
-                            Matches = new List<int>(),
-                            State = new QuestState { Active = false, Completed = false, CurrentValue = 0},
-                            SubConditions = new List<QuestCondition>(),
-                            Type = QuestConditions.QUESTCASE,
-                            TargetValue = 0
-                        }
-                    },
-                    new QuestElement()
-                    {
-                        Case = new QuestRoot() { Id = 0, Active = false, Mandatory = false, Ordered = false, MandatoryCount = 0, Elements = new List<QuestElement>() },
-                        Condition = new QuestCondition()
-                        {
-                            Id = 10003,
-                            Mandatory = true,
-                            Matches = new List<int>{ 1 },
-                            State = new QuestState(){ Active = true, Completed = false, CurrentValue = 0},
-                            SubConditions = new List<QuestCondition>(),
-                            TargetValue = 10,
-                            Type = QuestConditions.KILL_NPC
-                        }
-                    }
-                },
-                Id = 1,
-                Active = true,
-                Mandatory = true,
-                Ordered = true,
-                MandatoryCount = 2
-            };
-            Debug.WriteLine(JsonConvert.SerializeObject(root));
-        }
-
+        
         private static void InitiateConsole()
         {
             Draw.Logo();
@@ -166,19 +70,11 @@ namespace NettyBaseReloaded
             }
 
 
-            //TODO: Add QuestBuilder();
             //RewardBuilder();
             InitiateSession();
             ConsoleUpdater();
             ConsoleCommands.Add();
             KeepAlive();
-        }
-
-        private static void InitiatePanel()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Controller());
         }
 
         public static void RewardBuilder()
@@ -236,7 +132,9 @@ namespace NettyBaseReloaded
         /// <param name="e"></param>
         static void UnhandledExceptionTrapper(object sender, UnhandledExceptionEventArgs e)
         {
-            Out.QuickLog(e.ExceptionObject as Exception);
+            var ex = e.ExceptionObject as Exception;
+            Debug.WriteLine("Unhandled Exception Trapper: " + ex?.Message);
+            //Out.QuickLog(ex);
             //new ExceptionLog("unhandled", $"Unhandled exception trapped and logged\nProgram terminated {e.IsTerminating}", e.ExceptionObject as Exception);
             //Environment.Exit(0);
             // TODO: Save everything and then fuck up
@@ -245,7 +143,8 @@ namespace NettyBaseReloaded
 
         private static void ApplicationOnThreadException(object sender, ThreadExceptionEventArgs threadExceptionEventArgs)
         {
-            Out.QuickLog(threadExceptionEventArgs.Exception);
+            Debug.WriteLine("Thread Exception: " + threadExceptionEventArgs.Exception.Message);
+            //Out.QuickLog(threadExceptionEventArgs.Exception);
             //new ExceptionLog("thread_exception", $"Unhandled thread exception trapped and logged", threadExceptionEventArgs.Exception);
             //Environment.Exit(0);
         }
@@ -258,9 +157,10 @@ namespace NettyBaseReloaded
         private static int BugsRecorded = 0;
         private static void CurrentDomainOnFirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
-            if (BugsRecorded >= 200) Exit();
-            Out.QuickLog(e.Exception);
-            BugsRecorded++;
+            //if (BugsRecorded >= 200) Exit();
+            Debug.WriteLine("Current Domain: " + e.Exception.Message);
+            //Out.QuickLog(e.Exception);
+            //BugsRecorded++;
         }
 
         private static void OnProcessExit(object sender, EventArgs e)
@@ -329,7 +229,7 @@ namespace NettyBaseReloaded
         /// </summary>
         static void LookForConfigFiles()
         {
-            Out.WriteLog("Looking for config files");
+            Console.WriteLine("Looking for config files");
             if (File.Exists(Directory.GetCurrentDirectory() + "/server.cfg")) ConfigFileReader.ReadServerConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/game.cfg")) ConfigFileReader.ReadGameConfig();
             if (File.Exists(Directory.GetCurrentDirectory() + "/mysql.cfg")) ConfigFileReader.ReadMySQLConfig();
@@ -368,19 +268,6 @@ namespace NettyBaseReloaded
             Logger.handlers.LogCreator.Initialize();
             Out.WriteLog("Logger succesfully loaded.");
             Logger.Logger._instance.Enqueue("log", "Testing... 1 2 3");
-        }
-
-        static void ParseXML()
-        {
-            var xml = XDocument.Load("http://univ3rse.com/flashinput/translationTitles.php");
-            foreach (var element in xml.Descendants())
-            {
-                var titleId = element.Attribute("name")?.Value;
-                var id = titleId?.Replace("title_", "");
-                Console.WriteLine($"INSERT INTO server_titles VALUES ('{id}', '{titleId}','{element.Value}','0','#FFF');");
-            }
-            Console.Read();
-            //INSERT INTO server_titles (KEY,TITLE_NAME,TITLE_COLOR_HEX) VALUES ("", "","#FFF");
         }
 
         public static void Exit()

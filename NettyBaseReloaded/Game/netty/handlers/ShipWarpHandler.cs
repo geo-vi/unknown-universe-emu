@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.controllers;
 using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.netty.packet;
@@ -16,7 +17,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
         private Player Player;
         private Hangar TargetHangar;
 
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession.Player.UsingNewClient) return;
 
@@ -24,7 +25,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
             return;
 
             var request = new ShipWarpRequest();
-            request.readCommand(bytes);
+            request.readCommand(buffer);
 
             Player = gameSession.Player;
             var shipType = request.shipType;

@@ -7,6 +7,7 @@ using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Main;
+using NettyBaseReloaded.Utils;
 using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Game.controllers
@@ -15,7 +16,16 @@ namespace NettyBaseReloaded.Game.controllers
     {
         public static void Initiate(GameSession gameSession)
         {
-            new LoginController(gameSession);
+            if (gameSession.Player == null)
+            {
+                Console.WriteLine("Something went wrong with logging in.");
+                return;
+            }
+
+            Profiler.Profile("Player profiler", 10, () =>
+            {
+                new LoginController(gameSession);
+            });
         }
 
         public GameSession _gameSession;
@@ -77,7 +87,7 @@ namespace NettyBaseReloaded.Game.controllers
             var player = _gameSession.Player;
             player.Storage.Clean();
             player.Range.Clean();
-            player.Controller.StopAll();
+            player.Invalidate();
         }
     }
 }

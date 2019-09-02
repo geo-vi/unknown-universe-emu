@@ -123,7 +123,7 @@ namespace NettyBaseReloaded.Chat.managers
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_data,server_chat_moderators WHERE player_data.PLAYER_ID=" + id);
+                    var queryRow = mySqlClient.ExecuteQueryRow("SELECT * FROM player_data WHERE player_data.PLAYER_ID=" + id);
                     string name = queryRow["PLAYER_NAME"].ToString();
                     string sessionId = queryRow["SESSION_ID"].ToString();
                     int clanId = intConv(queryRow["CLAN_ID"]);
@@ -184,9 +184,10 @@ namespace NettyBaseReloaded.Chat.managers
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Out.QuickLog("load Issue with chat");
+                Out.QuickLog(e);
             }
             return issues;
         }
@@ -199,14 +200,14 @@ namespace NettyBaseReloaded.Chat.managers
                 userId = player.GetSession().GetEquivilentGameSession().Player.GlobalId;
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var queryRow = mySqlClient.ExecuteQueryReader($"INSERT INTO player_chat_issues (USER_ID, PLAYER_ID, ISSUE_TYPE, ISSUED_BY, ISSUED_AT, EXPIRY, REASON) VALUES ('{userId}', '{player.Id}', '{Convert.ToInt32(issue.IssueType)}', '{issue.IssuedBy}', '{issue.IssuedAt:yyyy-MM-dd H:mm:ss}', '{issue.Expiry:yyyy-MM-dd H:mm:ss}', '{issue.Reason}')");
-                    issue.Id = intConv(queryRow["ID"]);
-                    player.Issues.Add(issue.Id, issue);
+                    mySqlClient.ExecuteNonQuery($"INSERT INTO player_chat_issues (USER_ID, PLAYER_ID, ISSUE_TYPE, ISSUED_BY, ISSUED_AT, EXPIRY, REASON) VALUES ('{userId}', '{player.Id}', '{Convert.ToInt32(issue.IssueType)}', '{issue.IssuedBy}', '{issue.IssuedAt:yyyy-MM-dd H:mm:ss}', '{issue.Expiry:yyyy-MM-dd H:mm:ss}', '{issue.Reason}')");
+                    player.Issues = LoadChatIssues(player);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Out.QuickLog("add Issue with chat exception");
+                Out.QuickLog(e);
             }
         }
     }

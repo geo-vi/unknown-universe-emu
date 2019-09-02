@@ -125,14 +125,22 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         private void UpdatePlayer(GameSession instance, Player player)
         {
-            if (instance != null && player != null && Members.Count > 1 && Members.ContainsKey(player.Id))
+            try
             {
-                Packet.Builder.GroupUpdateCommand(instance, player, GetStats(player));
+                if (instance != null && player != null && Members.Count > 1 && Members.ContainsKey(player.Id))
+                {
+                    Packet.Builder.GroupUpdateCommand(instance, player, GetStats(player));
+                }
+            }
+            catch
+            {
+
             }
         }
 
         private XElement GetStats(Player player)
         {
+
             return new XElement("stats",
                 new XAttribute("hp", player.CurrentHealth),
                 new XAttribute("hpM", player.MaxHealth),
@@ -143,13 +151,17 @@ namespace NettyBaseReloaded.Game.objects.world.players
                 new XAttribute("pos", $"{player.Position.X},{player.Position.Y}"),
                 new XAttribute("map", player.Spacemap.Id),
                 new XAttribute("lev", player.Information.Level.Id),
-                new XAttribute("fra", (int)player.FactionId),
+                new XAttribute("fra", (int) player.FactionId),
                 new XAttribute("act", Convert.ToInt32(true)), // active
                 new XAttribute("clk", Convert.ToInt32(player.Invisible)),
                 new XAttribute("shp", Convert.ToInt32(player.Hangar.Ship.Id)),
-                new XAttribute("fgt", Convert.ToInt32(player.Controller.Attack.Attacking || player.LastCombatTime.AddSeconds(3) > DateTime.Now)),
-                new XAttribute("lgo", Convert.ToInt32(!player.Controller.Active || player.Controller.StopController)),
+                new XAttribute("fgt",
+                    Convert.ToInt32(player.Controller.Attack.Attacking ||
+                                    player.LastCombatTime.AddSeconds(3) > DateTime.Now)),
+                new XAttribute("lgo",
+                    Convert.ToInt32(!player.Controller.Active || player.Controller.StopController)),
                 new XAttribute("tgt", (player.Selected?.Id).ToString()));
+
         }
 
         public void Ping(Vector position)

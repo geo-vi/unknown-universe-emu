@@ -371,5 +371,10 @@ namespace QuestBuilder
                 MessageBox.Show("NUMBERS ONLY!");
             }
         }
+
+        private void generalHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new CheatSheet().Show();
+        }
     }
 }

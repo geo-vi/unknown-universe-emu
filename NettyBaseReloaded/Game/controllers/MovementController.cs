@@ -95,7 +95,6 @@ namespace NettyBaseReloaded.Game.controllers
             //updates the actual position into the character
             character.Position = actualPosition;
 
-
             /*
              *  TODO: FIXING A BUG WHERE IT VISUALLY TELEPORTS PLAYER / PLAYER BECOMES INVSIBILE
              */

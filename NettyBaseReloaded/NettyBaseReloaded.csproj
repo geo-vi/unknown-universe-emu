@@ -43,7 +43,7 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\..\..\..\..\stable\</OutputPath>
@@ -59,6 +59,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -74,12 +75,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AdministratePlayers.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AdministratePlayers.Designer.cs">
-      <DependentUpon>AdministratePlayers.cs</DependentUpon>
-    </Compile>
     <Compile Include="Cachet\Cachet.cs" />
     <Compile Include="Cachet\handlers\CachetAuth.cs" />
     <Compile Include="Cachet\objects\metrics\Point.cs" />
@@ -117,15 +112,10 @@
     <Compile Include="Chat\packet\handlers\UserMessageHandler.cs" />
     <Compile Include="Chat\packet\Packet.cs" />
     <Compile Include="ConfigFileReader.cs" />
-    <Compile Include="Controller.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Controller.Designer.cs">
-      <DependentUpon>Controller.cs</DependentUpon>
-    </Compile>
     <Compile Include="Game\controllers\AbstractCharacterController.cs" />
     <Compile Include="Game\controllers\events\IEvent.cs" />
     <Compile Include="Game\controllers\implementable\Attack.cs" />
+    <Compile Include="Game\controllers\implementable\attack\DestructObject.cs" />
     <Compile Include="Game\controllers\implementable\Checkers.cs" />
     <Compile Include="Game\controllers\implementable\Damage.cs" />
     <Compile Include="Game\controllers\implementable\Destruction.cs" />
@@ -161,6 +151,7 @@
     <Compile Include="Game\controllers\player\Specials.cs" />
     <Compile Include="Game\controllers\player\structs\PlayerBeacon.cs" />
     <Compile Include="Game\managers\PortalSystemManager.cs" />
+    <Compile Include="Game\managers\ServerManager.cs" />
     <Compile Include="Game\netty\commands\new_client\ActivatePortalCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AddOreCommand.cs" />
     <Compile Include="Game\netty\commands\new_client\AmmunitionTypeModule.cs" />
@@ -377,6 +368,7 @@
     <Compile Include="Game\netty\commands\old_client\QuestPrivilegeCommand.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ClanMemberInvitationRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\LabUpdateRequest.cs" />
+    <Compile Include="Game\netty\commands\old_client\requests\LoginRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\ShipWarpRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\requests\TradeSellOreRequest.cs" />
     <Compile Include="Game\netty\commands\old_client\ShipDeselectionCommand.cs" />
@@ -552,10 +544,15 @@
     <Compile Include="Game\objects\world\events\BinaryBotGameEvent.cs" />
     <Compile Include="Game\objects\world\IAttackable.cs" />
     <Compile Include="Game\objects\world\map\collectables\EventBox.cs" />
+    <Compile Include="Game\objects\world\map\collectables\FakeHoneyBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\LootBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\PirateBooty.cs" />
+    <Compile Include="Game\objects\world\map\collectables\PixelBonusBox.cs" />
     <Compile Include="Game\objects\world\map\collectables\rewards\PotentialReward.cs" />
     <Compile Include="Game\objects\world\map\Firework.cs" />
+    <Compile Include="Game\objects\world\map\gg\BasicGalaxyGate.cs" />
+    <Compile Include="Game\objects\world\map\gg\GammaGate.cs" />
+    <Compile Include="Game\objects\world\map\gg\EpsilonGate.cs" />
     <Compile Include="Game\objects\world\map\mines\DDM01.cs" />
     <Compile Include="Game\objects\world\map\mines\EMPM01.cs" />
     <Compile Include="Game\objects\world\map\mines\PM00.cs" />
@@ -583,6 +580,7 @@
     <Compile Include="Game\objects\world\map\objects\assets\AssetTypes.cs" />
     <Compile Include="Game\objects\world\map\objects\Billboard.cs" />
     <Compile Include="Game\objects\world\map\objects\IClickable.cs" />
+    <Compile Include="Game\objects\world\map\objects\jumpgates\ExitGatePortal.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\GalaxyGatePortal.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\LowPortal.cs" />
     <Compile Include="Game\objects\world\map\objects\jumpgates\PirateGate.cs" />
@@ -618,10 +616,16 @@
     <Compile Include="Game\objects\world\OreBase.cs" />
     <Compile Include="Game\objects\world\pets\BuffPattern.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetCollectorGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetComboGuardGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetComboShipRepairGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetEnemyLocatorGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetGuardGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetKamikazeGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetPassiveGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetRepairGear.cs" />
     <Compile Include="Game\objects\world\pets\gears\PetResourceCollectorGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetResourceLocatorGear.cs" />
+    <Compile Include="Game\objects\world\pets\gears\PetTradePodGear.cs" />
     <Compile Include="Game\objects\world\pets\GearType.cs" />
     <Compile Include="Game\objects\world\pets\PetGear.cs" />
     <Compile Include="Game\objects\world\players\ammo\AmmoConverter.cs" />
@@ -733,6 +737,8 @@
     <Compile Include="Game\objects\world\players\quests\QuestTypes.cs" />
     <Compile Include="Game\objects\world\players\quests\serializables\QuestSerializableState.cs" />
     <Compile Include="Game\objects\world\players\quests\serializables\QuestSerializableReward.cs" />
+    <Compile Include="Game\objects\world\players\settings\Buttons.cs" />
+    <Compile Include="Game\objects\world\players\settings\Menus.cs" />
     <Compile Include="Game\objects\world\players\Skylab.cs" />
     <Compile Include="Game\objects\world\players\Storage.cs" />
     <Compile Include="Game\objects\world\players\PlayerBaseClass.cs" />
@@ -779,6 +785,7 @@
     <Compile Include="Logger\objects\LogFile.cs" />
     <Compile Include="Main\ChatCommands.cs" />
     <Compile Include="Main\commands\BanCommand.cs" />
+    <Compile Include="Main\commands\ButtonsCommand.cs" />
     <Compile Include="Main\commands\CleanCommand.cs" />
     <Compile Include="Main\commands\CloseCommand.cs" />
     <Compile Include="Main\commands\Command.cs" />
@@ -789,9 +796,11 @@
     <Compile Include="Main\commands\DestroyCommand.cs" />
     <Compile Include="Main\commands\DynRefresh.cs" />
     <Compile Include="Main\commands\EquipmentCommand.cs" />
+    <Compile Include="Main\commands\POICommand.cs" />
     <Compile Include="Main\commands\InfoCommand.cs" />
     <Compile Include="Main\commands\KickCommand.cs" />
     <Compile Include="Main\commands\KillCommand.cs" />
+    <Compile Include="Main\commands\MapCommand.cs" />
     <Compile Include="Main\commands\MuteCommand.cs" />
     <Compile Include="Main\commands\NpcCommand.cs" />
     <Compile Include="Main\commands\RconCommand.cs" />
@@ -843,15 +852,12 @@
     <Compile Include="Main\Global.cs" />
     <Compile Include="Main\objects\Clan.cs" />
     <Compile Include="Main\objects\State.cs" />
-    <Compile Include="MapEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MapEditor.Designer.cs">
-      <DependentUpon>MapEditor.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Networking\auth\GameSessionInitializer.cs" />
     <Compile Include="Networking\ChatClient.cs" />
     <Compile Include="Networking\DiscordClient.cs" />
     <Compile Include="Networking\GameClient.cs" />
+    <Compile Include="Networking\GameServer.cs" />
+    <Compile Include="Networking\handlers\GameMessageHandler.cs" />
     <Compile Include="Networking\PolicyClient.cs" />
     <Compile Include="Networking\Server.cs" />
     <Compile Include="Networking\XSocket.cs" />
@@ -866,27 +872,17 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Server.cs" />
-    <Compile Include="ServerEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ServerEditor.Designer.cs">
-      <DependentUpon>ServerEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="Utils\Decode.cs" />
-    <Compile Include="Utils\form\MapDrawing.cs" />
-    <Compile Include="Utils\form\TextboxPopup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Utils\form\TextboxPopup.Designer.cs">
-      <DependentUpon>TextboxPopup.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Utils\Profiler.cs" />
     <Compile Include="Utils\Random.cs" />
     <Compile Include="WebSocks\objects\Payload.cs" />
     <Compile Include="WebSocks\objects\Server.cs" />
     <Compile Include="WebSocks\objects\User.cs" />
     <Compile Include="WebSocks\packets\Handler.cs" />
+    <Compile Include="WebSocks\packets\handlers\ClanHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\ExternalClientHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\IHandler.cs" />
+    <Compile Include="WebSocks\packets\handlers\ShopHandler.cs" />
     <Compile Include="WebSocks\packets\handlers\UserHandler.cs" />
     <Compile Include="WebSocks\WebSocketReceiver.cs" />
     <Compile Include="WebSocks\WebSocketListener.cs" />
@@ -915,6 +911,18 @@
     <Reference Include="Discord.Net.WebSocket, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Net.WebSocket.2.0.1\lib\net46\Discord.Net.WebSocket.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetty.Buffers, Version=0.6.0.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetty.Buffers.0.6.0\lib\net45\DotNetty.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty.Codecs, Version=0.6.0.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetty.Codecs.0.6.0\lib\net45\DotNetty.Codecs.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty.Common, Version=0.6.0.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetty.Common.0.6.0\lib\net45\DotNetty.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetty.Transport, Version=0.6.0.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetty.Transport.0.6.0\lib\net45\DotNetty.Transport.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.7.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.7.0\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
@@ -927,6 +935,12 @@
     </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.1.1.1\lib\netstandard1.1\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.1.1.1\lib\netstandard1.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="MySql.Data, Version=8.0.15.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
@@ -969,6 +983,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
@@ -978,6 +995,9 @@
       <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.2\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.1\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -1013,29 +1033,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AdministratePlayers.resx">
-      <DependentUpon>AdministratePlayers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controller.resx">
-      <DependentUpon>Controller.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MapEditor.resx">
-      <DependentUpon>MapEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="ServerEditor.resx">
-      <DependentUpon>ServerEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Utils\form\TextboxPopup.resx">
-      <DependentUpon>TextboxPopup.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Game\objects\world\map\fireworks\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world.players.equipment.extras;
 
@@ -10,7 +11,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class TradeHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession.Player.UsingNewClient)
             {

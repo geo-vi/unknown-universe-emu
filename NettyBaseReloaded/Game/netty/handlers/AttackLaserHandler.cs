@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Utils;
 
@@ -6,7 +7,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class AttackLaserHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession == null) return;
             var targetId = 0;
@@ -14,13 +15,13 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (gameSession.Player.UsingNewClient)
             {
                 var cmd = new commands.new_client.requests.AttackLaserRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
                 targetId = cmd.selectedId;
             }
             else
             {
                 var cmd = new commands.old_client.requests.AttackLaserRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
                 targetId = cmd.targetId;
             }
 

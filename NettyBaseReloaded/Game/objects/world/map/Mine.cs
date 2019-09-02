@@ -29,16 +29,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
         public override void Tick()
         {
             if (Position == null) return;
-            var potential = Spacemap.Entities.OrderBy(x => x.Value.Position.DistanceTo(Position)).ToList();
-            if (potential.Count > 0)
+            var potential = Spacemap.Entities.OrderBy(x => x.Value.Position.DistanceTo(Position))
+                .FirstOrDefault(x => x.Value.Position.DistanceTo(Position) < 200 && x.Value is Player);
+            if (potential.Value is Player)
             {
-                var first = potential.FirstOrDefault(x =>
-                    x.Value.Position.DistanceTo(Position) < 200 && x.Value is Player);
-                var player = first.Value as Player;
-                if (player != null)
-                {
-                    Explode();
-                }
+                Explode();
             }
         }
 

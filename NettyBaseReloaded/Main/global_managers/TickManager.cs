@@ -15,8 +15,6 @@ namespace NettyBaseReloaded.Main.global_managers
 {
     class TickManager
     {
-        public static short TICKS_PER_SECOND = 64;
-
         /// <summary>
         /// ITick, Delay *TODO* 
         /// </summary>
@@ -32,11 +30,11 @@ namespace NettyBaseReloaded.Main.global_managers
                 else return i;
             }
         }
-        
+
         public void Add(ITick tick, out int id)
         {
             id = -1;
-            if (/*Tickables.Values.Contains(tick) ||*/ Tickables.ContainsKey(id))
+            if (Tickables.ContainsKey(id) || tick == null)
             {
                 return;
             }
@@ -52,6 +50,7 @@ namespace NettyBaseReloaded.Main.global_managers
             {
                 return;
             }
+
             Tickables.TryRemove(tick.GetId(), out output);
         }
 
@@ -66,10 +65,30 @@ namespace NettyBaseReloaded.Main.global_managers
         {
             while (true)
             {
-                foreach (var tickable in Tickables) { 
-                     await Task.Run(() => tickable.Value.Tick());
+                ITick current = null;
+                try
+                {
+                    foreach (var tickable in Tickables)
+                    {
+                        current = tickable.Value;
+                        tickable.Value.Tick();
+                    }
                 }
-                await Task.Delay(84);
+
+                catch (Exception e)
+                {
+                    if (current != null)
+                    {
+                        var id = current.GetId();
+                        Console.WriteLine("Error at tick " + id);
+                        Tickables.TryRemove(id, out _);
+                    }
+
+                    Console.WriteLine("Caught exception on Tick");
+                    Console.WriteLine(e);
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                }
             }
         }
     }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
+using Newtonsoft.Json;
 
 namespace NettyBaseReloaded.Utils
 {
@@ -121,6 +124,8 @@ namespace NettyBaseReloaded.Utils
         /// Credits to E*PVP
         /// </summary>
 
+        public IByteBuffer ByteBuffer;
+
         public byte[] byteArray { get; set; }
         public int byteCounter { get; set; }
         public List<byte> command { get; set; }
@@ -128,73 +133,56 @@ namespace NettyBaseReloaded.Utils
         public short Lenght;
         public short CMD_ID;
 
-        public ByteParser(byte[] byteArray)
+        public ByteParser(IByteBuffer buffer)
         {
-            this.byteArray = byteArray;
+            ByteBuffer = buffer;
+            this.CMD_ID = buffer.ReadShort();
             this.command = new List<byte>();
             byteCounter = 0;
-
-            this.Lenght = readShort();
-            this.CMD_ID = readShort();
         }
 
         //Reads the next short of the byteArray (2 bytes)
         public short readShort()
         {
-            short value = BitConverter.ToInt16(new byte[] { byteArray[byteCounter + 1], byteArray[byteCounter] }, 0);
-            byteCounter += 2;
-
-            return value;
+            return ByteBuffer.ReadShort();
         }
 
         //Reads the next int of the byteArray (4 bytes)
         public int readInt()
         {
-            int value = BitConverter.ToInt32(new byte[] { byteArray[byteCounter + 3], byteArray[byteCounter + 2], byteArray[byteCounter + 1], byteArray[byteCounter] }, 0);
-            byteCounter += 4;
-
-            return value;
+            return ByteBuffer.ReadInt();
         }
 
         //Reads the next long of the byteArray (8 bytes)
         public long readLong()
         {
-            long value = BitConverter.ToInt64(new byte[] { byteArray[byteCounter + 7], byteArray[byteCounter + 6], byteArray[byteCounter + 5], byteArray[byteCounter + 4], byteArray[byteCounter + 3], byteArray[byteCounter + 2], byteArray[byteCounter + 1], byteArray[byteCounter] }, 0);
-            byteCounter += 8;
-
-            return value;
+            return ByteBuffer.ReadLong();
         }
 
         //Reads the next double of the byteArray using BitConverter from readLong
         public double readDouble()
         {
-            return BitConverter.Int64BitsToDouble(readLong());
+            return ByteBuffer.ReadDouble();
         }
 
         // Reads the next float from the byteArray (4 bytes)
         public double readFloat()
         {
-            var value = BitConverter.ToSingle(new byte[] { byteArray[byteCounter + 3], byteArray[byteCounter + 2], byteArray[byteCounter + 1], byteArray[byteCounter] }, 0);
-            byteCounter += 4;
-            return value;
+            return ByteBuffer.ReadFloat();
         }
 
         //Reads the next String of the byteArray. The length of the String is given by one short before it.
         public string readUTF()
         {
             short stringLength = readShort();
-            string value = Encoding.UTF8.GetString(byteArray, byteCounter, stringLength);
-
-            byteCounter += stringLength;
-
+            var value = ByteBuffer.ReadString(stringLength, Encoding.UTF8);
             return value;
         }
 
         //Reads the next boolean (1 byte)
         public bool readBool()
         {
-            return byteArray[byteCounter++] == 1;
+            return ByteBuffer.ReadBoolean();
         }
-
     }
 }

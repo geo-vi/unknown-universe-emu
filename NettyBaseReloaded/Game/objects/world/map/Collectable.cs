@@ -21,11 +21,14 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         public Vector[] Limits;
 
-        protected Collectable(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits) : base(id, pos, map)
+        public bool HoneyBox { get; set; }
+
+        protected Collectable(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool honeyBox) : base(id, pos, map)
         {
             Hash = hash;
             Type = type;
             Limits = limits;
+            HoneyBox = honeyBox;
         }
 
         public virtual bool PetCanCollect(Player owner)
@@ -47,7 +50,14 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 if (character is Player _player)
                 {
                     player = _player;
-                    if (player.Position.DistanceTo(Position) > 200) return;
+                    if (HoneyBox)
+                    {
+                        // todo: cripple player
+                        Out.QuickLog("Cheater found::" + player.Id + ", " + player.Name + ";Collected HoneyBox: " + Hash + " AT " + DateTime.Now, "anticheat");
+                        World.DatabaseManager.AddToCheatList(_player);
+                        Console.WriteLine("Cheater found, logged.");
+                    }
+                    if (player.Position.DistanceTo(Position) > 150 || player.State.CollectingLoot) return;
                 }
                 else if (character is Pet pet)
                 {
@@ -56,9 +66,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
                 if (player == null) return;
                 if (this is CargoLoot && player.Information.Cargo.Full) return;
+                player.State.CollectingLoot = true;
                 player.QuestData.AddCollection(this);
                 Dispose();
                 Reward(player);
+                player.State.CollectingLoot = false;
             }
         }
 

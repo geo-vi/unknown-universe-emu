@@ -14,5 +14,11 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         }
 
         public bool Empty => Prometium + Endurium + Terbium + Prometid + Duranium + Promerium + Seprom + Palladium <= 0;
+
+        public DropableRewards Multiply(double p)
+        {
+            return new DropableRewards((int)(Prometium * p), (int)(Endurium * p), (int)(Terbium * p), (int)(Prometid * p), (int)(Duranium * p), (int)(Xenomit * p),
+                (int)(Promerium * p), (int)(Seprom * p), (int)(Palladium * p));
+        }
     }
 }

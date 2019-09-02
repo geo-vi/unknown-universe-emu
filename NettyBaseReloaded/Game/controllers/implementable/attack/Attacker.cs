@@ -13,10 +13,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable.attack
 
         public bool FadedToGray { get; set; }
 
+        public DateTime AttackStartTime { get; set; }
+
         public Attacker(Player player)
         {
             Player = player;
             LastRefresh = DateTime.Now;
+            AttackStartTime = DateTime.Now;
         }
 
         public void Damage(int dmg)

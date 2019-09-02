@@ -9,12 +9,13 @@ using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
     class KillScreenRepairRequestHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             if (gameSession.Player.UsingNewClient)
             {
@@ -27,7 +28,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
                 var player = gameSession.Player;
 
                 var cmd = new commands.old_client.requests.KillScreenRepairRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
 
                 short repairTypeValue = cmd.selection.repairTypeValue;
 

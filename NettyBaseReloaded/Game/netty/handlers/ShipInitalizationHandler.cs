@@ -8,6 +8,7 @@ using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Networking;
+using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
@@ -36,16 +37,16 @@ namespace NettyBaseReloaded.Game.netty.handlers
 
             if (sessionId != account.SessionId)
             {
-                Console.WriteLine("Breach attempt by " + client.IPAddress);
+                Console.WriteLine("Breach attempt by " + client.IpEndPoint);
                 return null; // Fucked up session
             }
             if (World.StorageManager.GameSessions.ContainsKey(userId))
             {
                 var gameSession = World.StorageManager.GameSessions[userId];
-                gameSession.Client?.Disconnect();
-                gameSession.Client = client;
-                gameSession.Player.UsingNewClient = usingNewClient;
-                return gameSession;
+                gameSession.Kick();
+//                account = gameSession.Player;
+//                account.SessionId = sessionId;
+//                account.UsingNewClient = usingNewClient;
             }
             return new GameSession(account) { Client = client };
         }

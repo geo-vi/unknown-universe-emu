@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
@@ -31,19 +33,19 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
       
         public string barStatus = "";
 
-        public void readCommand(byte[] bytes)
+        public void readCommand(IByteBuffer bytes)
         {
             var parser = new ByteParser(bytes);
-            clientResolutionId = parser.readShort();
-            windowSettings = parser.readUTF();
-            resizableWindows = parser.readUTF();
-            minimapScale = parser.readInt();
-            mainmenuPosition = parser.readUTF();
-            slotmenuPosition = parser.readUTF();
-            slotMenuOrder = parser.readUTF();
-            slotmenuPremiumPosition = parser.readUTF();
-            slotMenuPremiumOrder = parser.readUTF();
-            barStatus = parser.readUTF();
+            this.clientResolutionId = parser.readShort();
+            this.windowSettings = parser.readUTF();
+            this.resizableWindows = parser.readUTF();
+            this.minimapScale = parser.readInt();
+            this.mainmenuPosition = parser.readUTF();
+            this.slotmenuPosition = parser.readUTF();
+            this.slotMenuOrder = parser.readUTF();
+            this.slotmenuPremiumPosition = parser.readUTF();
+            this.slotMenuPremiumOrder = parser.readUTF();
+            this.barStatus = parser.readUTF();
         }
     }
 }

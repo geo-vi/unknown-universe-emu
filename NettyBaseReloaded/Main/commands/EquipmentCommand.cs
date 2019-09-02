@@ -22,7 +22,7 @@ namespace NettyBaseReloaded.Main.commands
 
         public override void Execute(ChatSession session, string[] args = null)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

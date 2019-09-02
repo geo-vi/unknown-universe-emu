@@ -81,6 +81,7 @@ namespace NettyBaseReloaded.Game.objects.world.players
             if (session != null)
             {
                 Packet.Builder.LegacyModule(session, "0|A|STD|" + text);
+                Packet.Builder.LegacyModule(session, "0|A|STD|" + (121 -(DateTime.Now - Properties.Server.RUNTIME).Minutes) + " minutes left until automatic restart!");
             }
 
             LastAnnouncedTextTime = DateTime.Now;

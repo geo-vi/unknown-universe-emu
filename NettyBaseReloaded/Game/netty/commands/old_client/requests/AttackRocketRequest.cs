@@ -1,4 +1,5 @@
-﻿using NettyBaseReloaded.Utils;
+﻿using DotNetty.Buffers;
+using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
 {
@@ -8,7 +9,7 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
 
         public int targetId;
 
-        public void readCommand(byte[] bytes)
+        public void readCommand(IByteBuffer bytes)
         {
             var parser = new ByteParser(bytes);
             targetId = parser.readInt();

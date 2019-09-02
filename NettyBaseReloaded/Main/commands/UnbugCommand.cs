@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NettyBaseReloaded.Chat.controllers;
 using NettyBaseReloaded.Chat.objects;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Game.netty;
@@ -96,6 +97,9 @@ namespace NettyBaseReloaded.Main.commands
                     break;
                 case "range":
                     gameSession.Player.Range.Clean();
+                    break;
+                case "stuck":
+                    Packet.Builder.LegacyModule(gameSession, "0|A|STD|Player stuck " + gameSession.Player.IsStuck());
                     break;
                 default:
                     Packet.Builder.LegacyModule(gameSession, "0|A|STD|Failed to unbug; Possible sequences - /unbug [player/map/ui/range]");

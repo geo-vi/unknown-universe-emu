@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.old_client
@@ -19,7 +20,7 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client
             this.remove = remove;
         }
 
-        public void readCommand(byte[] bytes)
+        public void readCommand(IByteBuffer bytes)
         {
             var parse = new ByteParser(bytes);
             var times = parse.readInt();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.managers;
 using NettyBaseReloaded.Game.netty;
@@ -23,6 +24,7 @@ namespace NettyBaseReloaded.Game
         public static managers.StorageManager StorageManager = new StorageManager();
         public static managers.DatabaseManager DatabaseManager = new DatabaseManager();
         public static managers.PortalSystemManager PortalSystemManager = new PortalSystemManager();
+        public static managers.ServerManager ServerManager = new ServerManager();
 
         public static void InitiateManagers()
         {
@@ -30,6 +32,7 @@ namespace NettyBaseReloaded.Game
             Packet.Handler.AddCommands();
             DatabaseManager.Initiate();
             Task.Factory.StartNew(InitiateWorld);
+            ServerManager.Start();
             Out.WriteLog(DateTime.Now - timeStarted + " : World loaded.");
         }
 
@@ -174,7 +177,22 @@ namespace NettyBaseReloaded.Game
                         map.Value.CreatePirateGate(Faction.VRU, new Vector(24400, 6400), 91, new Vector(38000, 18500), false);
                         break;
                     case 42: // ???
-                        map.Value.CreatePortal(16, 10400, 6400, 0, 0);
+                        for (var i = 0; i < 100; i++)
+                        {
+                            map.Value.CreateNpc(World.StorageManager.Ships[80], AILevels.MOTHERSHIP, true, 10,
+                                Vector.Random(map.Value, new Vector(0, 0), new Vector(20800, 12800)));
+                        }
+
+                        for (var i = 0; i < 150; i++)
+                        {
+                            map.Value.CreateNpc(World.StorageManager.Ships[81], AILevels.AGGRESSIVE, true, 10,
+                                Vector.Random(map.Value, new Vector(0, 0), new Vector(20800, 12800)));
+                        }
+
+                        for (int i = 0; i <= 500; i++)
+                        {
+                            map.Value.CreateUcbBox(Types.BONUS_BOX, Vector.Random(map.Value), new[] { map.Value.Limits[0], map.Value.Limits[1] });
+                        }
                         break;
                     case 91:
                         #region POI
@@ -416,7 +434,9 @@ namespace NettyBaseReloaded.Game
                 //map.Value.CreateAdvertisementBanner(0, new Vector(15800, 13500));                
                 if (BonusBoxMaps.Contains(map.Key))
                 {
-                    for (int i = 0; i <= BonusBox.SPAWN_COUNT; i++)
+                    var bbCount = BonusBox.SPAWN_COUNT;
+                    if (map.Value.Pvp) bbCount = BonusBox.PVP_SPAWN_COUNT;
+                    for (int i = 0; i <= bbCount; i++)
                     {
                         map.Value.CreateBox(Types.BONUS_BOX, Vector.Random(map.Value), new [] { map.Value.Limits[0], map.Value.Limits[1]});
                     }
@@ -448,9 +468,10 @@ namespace NettyBaseReloaded.Game
         private static void CreateHashes(Spacemap map)
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var stringChars = new char[4];
-            const int HASHES = 1000;
+            var stringChars = new char[5];
+            const int HASHES = 800;
 
+            int created = 0;
             var randomInstance = RandomInstance.getInstance(map);
             for (int entry = 0; entry < HASHES; entry++)
             {
@@ -460,13 +481,21 @@ namespace NettyBaseReloaded.Game
                     stringChars[i] = chars[randomInstance.Next(chars.Length)];
                 }
 
-                var hash = new String(stringChars);
-                if (map.HashedObjects.ContainsKey(hash))
+                var hash = new string(stringChars);
+                if (map.HashedObjects.ContainsKey(hash) || StorageManager.HoneyBoxes.Contains(hash))
                     goto NEWHASH;
-                map.HashedObjects.TryAdd(hash, null);
+                map.HashedObjects[hash] = null;
+                created++;
             }
+
+            foreach (var honeyBox in StorageManager.HoneyBoxes)
+            {
+                map.HashedObjects[honeyBox] = new FakeHoneyBox(honeyBox);
+                created++;
+            }
+
             map.Objects.TryAdd(0, null);
-            Debug.WriteLine($"Created {HASHES-1} hashes.");
+            Debug.WriteLine($"Created {created} hashes.");
         }
     }
 }

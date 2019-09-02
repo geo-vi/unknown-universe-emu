@@ -1,0 +1,22 @@
+namespace Server.Game.netty.commands
+{
+    enum Commands
+    {
+        LEGACY_MODULE,
+        SHIP_INITIALIZATION_COMMAND,
+        LOGIN_REQUEST,
+        VERSION_REQUEST,
+        USER_SETTINGS_COMMAND,
+        HOTKEYS_COMMAND,
+        SHIP_SETTINGS_COMMAND,
+        AMMUNITION_COUNT_UPDATE_COMMAND,
+        SHIP_CREATE_COMMAND,
+        SHIP_REMOVE_COMMAND,
+        MOVE_COMMAND,
+        SHIP_SELECT_COMMAND,
+        ATTACK_ABORT_COMMAND,
+        ATTACK_LASER_COMMAND,
+        ATTACK_HIT_COMMAND,
+        ATTACK_MISS_COMMAND
+    }
+}

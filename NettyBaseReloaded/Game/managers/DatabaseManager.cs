@@ -177,6 +177,18 @@ namespace NettyBaseReloaded.Game.managers
 
                 }
 
+                World.StorageManager.Spacemaps.Add(51, new Spacemap(51, "GG α", Faction.NONE, false, false, 0, new List<BaseNpc>(), 
+                    new List<PortalBase>()) { Disabled = true, RangeDisabled = true });
+
+                World.StorageManager.Spacemaps.Add(52, new Spacemap(52, "GG β", Faction.NONE, false, false, 0, new List<BaseNpc>(),
+                        new List<PortalBase>())
+                    { Disabled = true, RangeDisabled = true });
+
+                World.StorageManager.Spacemaps.Add(53, new Spacemap(53, "GG γ", Faction.NONE, false, false, 0, new List<BaseNpc>(),
+                        new List<PortalBase>())
+                    { Disabled = true, RangeDisabled = true });
+
+
                 World.StorageManager.Spacemaps.Add(200,
                     new Spacemap(200, "Lord of War", Faction.NONE, false, false, 0, new List<BaseNpc>(),
                         new List<PortalBase>())
@@ -537,7 +549,7 @@ namespace NettyBaseReloaded.Game.managers
         public Dictionary<int, Hangar> LoadHangar(Player player)
         {
             var drones = LoadDrones(player);
-            Dictionary<int, Hangar> hangars = new Dictionary<int, Hangar>();
+            var hangars = new Dictionary<int, Hangar>();
             try
             {
                 using (SqlDatabaseClient mySqlClient = SqlDatabaseManager.GetClient())
@@ -613,10 +625,9 @@ namespace NettyBaseReloaded.Game.managers
             return items;
         }
 
-        //SELECT * FROM player_drones WHERE PLAYER_ID=" + player.Id
         public Dictionary<int, Drone> LoadDrones(Player player)
         {
-            Dictionary<int, Drone> drones = new Dictionary<int, Drone>();
+            var drones = new Dictionary<int, Drone>();
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
@@ -743,7 +754,7 @@ namespace NettyBaseReloaded.Game.managers
                     var factionId = (Faction) intConv(querySet["FACTION_ID"]);
                     var rank = (Rank) (intConv(querySet["RANK"]));
                     var sessionId = stringConv(querySet["SESSION_ID"]);
-                    var clan = Global.StorageManager.Clans[intConv(querySet["CLAN_ID"])];
+                    var clan = Global.StorageManager.GetClan(intConv(querySet["CLAN_ID"]));
                     player = new Player(playerId, globalId, name, clan, factionId,
                          sessionId, rank, false);
                 }
@@ -827,7 +838,8 @@ namespace NettyBaseReloaded.Game.managers
 
         public Statistics LoadStatistics(Player player)
         {
-            return new Statistics(player);
+            var statistics = new Statistics(player);
+            return statistics;
         }
 
         public BaseInfo LoadInfo(Player player, BaseInfo baseInfo)
@@ -1952,6 +1964,24 @@ namespace NettyBaseReloaded.Game.managers
                             case 105:
                                 boosters.TryAdd(id, new EP50(id, player, endTime));
                                 break;
+                            case 115:
+                                boosters.TryAdd(id, new DMGB02(id, player, endTime));
+                                break;
+                            case 116:
+                                boosters.TryAdd(id, new EPB02(id, player, endTime));
+                                break;
+                            case 117:
+                                boosters.TryAdd(id, new HONB02(id, player, endTime));
+                                break;
+                            case 118:
+                                boosters.TryAdd(id, new HPB02(id, player, endTime));
+                                break;
+                            case 119:
+                                boosters.TryAdd(id, new REPB02(id, player, endTime));
+                                break;
+                            case 120:
+                                boosters.TryAdd(id, new RESB02(id, player, endTime));
+                                break;
                         }
                     }
                 }
@@ -2111,16 +2141,15 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
-        public void LoadPlayerGates(Player player)
+        public void LoadPlayerGates(PlayerGates gates)
         {
-            PlayerGates gates = new PlayerGates(player);
             try
             {
                 using (var mySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    var row = mySqlClient.ExecuteQueryRow("SELECT * FROM player_galaxy_gates WHERE PLAYER_ID=" + player.Id);
+                    var row = mySqlClient.ExecuteQueryRow("SELECT * FROM player_galaxy_gates WHERE PLAYER_ID=" + gates.Player.Id);
                     var completedGates = JsonConvert.DeserializeObject<int[]>(row["COMPLETED_GATES"].ToString());
-                    if (completedGates != null && completedGates.Length == 7)
+                    if (completedGates != null && completedGates.Length == 10)
                     {
                         gates.AlphaComplete = completedGates[0];
                         gates.BetaComplete = completedGates[1];
@@ -2129,16 +2158,34 @@ namespace NettyBaseReloaded.Game.managers
                         gates.EpsilonComplete = completedGates[4];
                         gates.ZetaComplete = completedGates[5];
                         gates.KappaComplete = completedGates[6];
+                        gates.KronosComplete = completedGates[7];
+                        gates.LambdaComplete = completedGates[8];
+                        gates.HadesComplete = completedGates[9];
                     }
 
+                    // ALPHA Gate
                     var alphaPrepared = Convert.ToBoolean(intConv(row["ALPHA_PREPARED"]));
                     gates.AlphaReady = alphaPrepared;
+                    var alphaWave = intConv(row["ALPHA_WAVE"]);
+                    gates.AlphaWave = alphaWave;
+                    var alphaLives = intConv(row["ALPHA_LIVES"]);
+                    gates.AlphaLives = alphaLives;
 
+                    // BETA Gate
                     var betaPrepared = Convert.ToBoolean(intConv(row["BETA_PREPARED"]));
                     gates.BetaReady = betaPrepared;
+                    var betaWave = intConv(row["BETA_WAVE"]);
+                    gates.BetaWave = betaWave;
+                    var betaLives = intConv(row["BETA_LIVES"]);
+                    gates.BetaLives = betaLives;
 
+                    // GAMMA Gate
                     var gammaPrepared = Convert.ToBoolean(intConv(row["GAMMA_PREPARED"]));
                     gates.GammaReady = gammaPrepared;
+                    var gammaWave = intConv(row["GAMMA_WAVE"]);
+                    gates.GammaWave = gammaWave;
+                    var gammaLives = intConv(row["GAMMA_LIVES"]);
+                    gates.GammaLives = gammaLives;
 
                     var deltaPrepared = Convert.ToBoolean(intConv(row["DELTA_PREPARED"]));
                     gates.DeltaReady = deltaPrepared;
@@ -2152,6 +2199,9 @@ namespace NettyBaseReloaded.Game.managers
                     var kappaPrepared = Convert.ToBoolean(intConv(row["KAPPA_PREPARED"]));
                     gates.KappaReady = kappaPrepared;
 
+                    var lambdaPrepared = Convert.ToBoolean(intConv(row["LAMBDA_PREPARED"]));
+                    gates.LambdaReady = lambdaPrepared;
+
                 }
             }
             catch (Exception e)
@@ -2160,6 +2210,34 @@ namespace NettyBaseReloaded.Game.managers
             }
         }
 
+        public void SaveGalaxyGates(PlayerGates gates)
+        {
+            try
+            {
+                using (var mysqlClient = SqlDatabaseManager.GetClient())
+                {
+                    var completedGates = new int[]
+                    {
+                        gates.AlphaComplete, gates.BetaComplete, gates.GammaComplete,
+                        gates.DeltaComplete, gates.EpsilonComplete, gates.ZetaComplete,
+                        gates.KappaComplete, gates.KronosComplete, gates.LambdaComplete,
+                        gates.HadesComplete
+                    };
+                    
+                    mysqlClient.ExecuteNonQuery(
+                        $"UPDATE player_galaxy_gates SET COMPLETED_GATES='" + JsonConvert.SerializeObject(completedGates) + "'," +
+                        $" ALPHA_PREPARED = {gates.AlphaReady}, ALPHA_WAVE = {gates.AlphaWave}, ALPHA_LIVES = {gates.AlphaLives}," +
+                        $" BETA_PREPARED = {gates.BetaReady}, BETA_WAVE = {gates.BetaWave}, BETA_LIVES = {gates.BetaLives}," +
+                        $" GAMMA_PREPARED = {gates.GammaReady}, GAMMA_WAVE = {gates.GammaWave}, GAMMA_LIVES = {gates.GammaLives}" +
+                        $" WHERE PLAYER_ID = {gates.Player.Id}");
+                }
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
+        
         public Dictionary<int, GameBan> LoadGameBans(Player player)
         {
             var gameBans = new Dictionary<int, GameBan>();
@@ -2186,6 +2264,28 @@ namespace NettyBaseReloaded.Game.managers
             }
 
             return gameBans;
+        }
+
+        public void AddToCheatList(Player player)
+        {
+            
+        }
+
+        public void AddPlayerLog(Player player, PlayerLogTypes logType, string log)
+        {
+            try
+            {
+                using (var mySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    mySqlClient.ExecuteNonQuery(
+                        $"INSERT INTO player_logs (`USER_ID`, `PLAYER_ID`, `LOG_TYPE`, `LOG_DESCRIPTION`, `LOG_DATE`) VALUES('{player.GlobalId}', '{player.Id}', '{(int)logType}', '{log}', '{DateTime.Now:yyyy-MM-dd H:mm:ss}')");
+
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }

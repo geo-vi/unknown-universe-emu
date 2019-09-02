@@ -27,8 +27,11 @@ namespace NettyBaseReloaded.Game.controllers
 
         public AILevels CustomSetAI = AILevels.NULL;
 
+        private object ThreadLock = new object();
+
         public override void Initiate()
         {
+
             AILevels ai;
             if (CustomSetAI == AILevels.NULL)
                 ai = (AILevels) Npc.Hangar.Ship.AI;
@@ -47,6 +50,7 @@ namespace NettyBaseReloaded.Game.controllers
                 case AILevels.GALAXY_GATES:
                 case AILevels.INVASION:
                     CurrentNpc = new Aggressive(this);
+                    Npc.IsRegenerating = false;
                     break;
                 case AILevels.MOTHERSHIP:
                     CurrentNpc = new Mothership(this, World.StorageManager.Ships[81]);
@@ -58,11 +62,16 @@ namespace NettyBaseReloaded.Game.controllers
                     CurrentNpc = new SpaceballAI(this);
                     break;
             }
+
             base.Initiate();
+            StopController = false;
+            Active = true;
+
             MovementController.Move(Npc, MovementController.ActualPosition(Npc));
             Checkers.Start();
             if (Npc is EventNpc eventNpc) eventNpc.Announce();
         }
+
 
         public new void Tick()
         {
@@ -75,9 +84,8 @@ namespace NettyBaseReloaded.Game.controllers
             var tickId = 0;
             TickId = tickId;
             Restarting = true;
-
-            Task.Factory.StartNew(() => {
-                Task.Delay(Npc.RespawnTime * 1000).Wait();
+            Task.Delay(Npc.RespawnTime * 1000).ContinueWith(x =>
+            {
                 if (!Restarting) return;
                 Restarting = false;
                 Restart();
@@ -86,14 +94,17 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void Restart()
         {
-            Restarting = false;
-            StopController = false;
-            if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
-                Character.Spacemap.AddEntity(Character);
-            var id = 0;
-            Global.TickManager.Add(Character, out id);
-            Character.SetTickId(id);
-            Initiate();
+            lock (ThreadLock)
+            {
+                Restarting = false;
+                StopController = false;
+                if (!Character.Spacemap.Entities.ContainsKey(Character.Id))
+                    Character.Spacemap.AddEntity(Character);
+                var id = 0;
+                Global.TickManager.Add(Character, out id);
+                Character.SetTickId(id);
+                Initiate();
+            }
         }
 
         public Type GetAI() => CurrentNpc.GetType();
@@ -106,7 +117,10 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void ExitAI()
         {
-            CurrentNpc.Exit();
+            lock (ThreadLock)
+            {
+                CurrentNpc.Exit();
+            }
         }
     }
 }

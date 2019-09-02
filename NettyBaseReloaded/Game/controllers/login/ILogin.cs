@@ -7,6 +7,7 @@ using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.netty.commands.old_client;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
+using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.collectables;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
@@ -14,6 +15,7 @@ using NettyBaseReloaded.Game.objects.world.map.objects.stations;
 using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.players.extra.techs;
 using NettyBaseReloaded.Game.objects.world.players.informations;
+using NettyBaseReloaded.Game.objects.world.players.settings;
 using Types = NettyBaseReloaded.Game.objects.world.map.pois.Types;
 
 namespace NettyBaseReloaded.Game.controllers.login
@@ -60,24 +62,17 @@ namespace NettyBaseReloaded.Game.controllers.login
             {
                 Packet.Builder.DronesCommand(GameSession, GameSession.Player);
                 //Packet.Builder.LegacyModule(GameSession, "0|n|t|" + GameSession.Player.Id + "|222|most_wanted");
-                Packet.Builder.LegacyModule(GameSession, "0|A|BK|" + GameSession.Player.Information.BootyKeys[0]); //green booty
-                Packet.Builder.LegacyModule(GameSession, "0|A|BKR|" + GameSession.Player.Information.BootyKeys[1]); //red booty
-                Packet.Builder.LegacyModule(GameSession, "0|A|BKB|" + GameSession.Player.Information.BootyKeys[2]); //blue booty
                 Packet.Builder.LegacyModule(GameSession, "0|A|CC|" + GameSession.Player.CurrentConfig); // Config
-               
+                GameSession.Player.Information.DisplayBootyKeys();
                 Packet.Builder.PetInitializationCommand(GameSession, GameSession.Player.Pet); // PET
                 Packet.Builder.HellstormStatusCommand(GameSession); // Rocket launcher
 
                 Packet.Builder.LegacyModule(GameSession, "0|A|ITM|" + GameSession.Player.Equipment.GetConsumablesPacket(), true);
                 GameSession.Player.Controller.CPUs.LoadCpus();
-                //MBA -> MenuButtonAccess
-                //DB -> Disable button
-                //EB -> Enable button
-                //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|7");
-                //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|6");
-                //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|2");
-                Packet.Builder.LegacyModule(GameSession, "0|UI|MV|HM|4", true);
-                //Packet.Builder.LegacyModule(GameSession, "0|UI|MBA|DB|5");
+              
+                GameSession.Player.Settings.Slotbar.HideMenu(MenuButtons.QUICK_BUY);
+                GameSession.Player.Settings.Slotbar.HideButton(Buttons.SELECTION_LASER_CBO100);
+                GameSession.Player.Settings.Slotbar.HideButton(Buttons.SELECTION_LASER_JOB100);
 
                 if (GameSession.Player.Group != null)
                     Packet.Builder.GroupInitializationCommand(GameSession); // group
@@ -91,7 +86,7 @@ namespace NettyBaseReloaded.Game.controllers.login
 
                 CreateFormations(GameSession); // Drone Formations
                 
-                CreateTechs(GameSession); // Techs
+                //CreateTechs(GameSession); // Techs
                 
                 CreateAbilities(GameSession); // Abilities
                 

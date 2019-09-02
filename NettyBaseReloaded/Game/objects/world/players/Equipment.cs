@@ -26,14 +26,15 @@ namespace NettyBaseReloaded.Game.objects.world.players
 
         public void LoadEquipment()
         {
-            CreateHangars();
+            var hangars = CreateHangars();
             LoadItems();
-            CreateConfigs();
+            CreateConfigs(hangars);
+            Hangars = hangars;
         }
 
-        private void CreateHangars()
+        private Dictionary<int, Hangar> CreateHangars()
         {
-            Hangars = World.DatabaseManager.LoadHangar(Player);
+            return World.DatabaseManager.LoadHangar(Player);
         }
 
         private void LoadItems()
@@ -41,9 +42,9 @@ namespace NettyBaseReloaded.Game.objects.world.players
             EquipmentItems = World.DatabaseManager.LoadEquipment(Player);
         }
 
-        private void CreateConfigs()
+        private void CreateConfigs(Dictionary<int, Hangar> hangars)
         {
-            foreach (var hangar in Hangars)
+            foreach (var hangar in hangars)
             {
                 hangar.Value.Configurations = ConfigParser(hangar.Value);
             }
@@ -157,16 +158,16 @@ namespace NettyBaseReloaded.Game.objects.world.players
                     switch (item.Item.Id)
                     {
                         case 5: // A01
-                            shield = UpgradeShield(1000, item.Level);
+                            shield = UpgradeShield(1000, item.Level, "c");
                             break;
                         case 7: // AO2
-                            shield = UpgradeShield(2000, item.Level);
+                            shield = UpgradeShield(2000, item.Level, "c");
                             break;
                         case 8: // AO3
-                            shield = UpgradeShield(5000, item.Level);
+                            shield = UpgradeShield(5000, item.Level, "c");
                             break;
                         case 9: // BO1
-                            shield = UpgradeShield(4000, item.Level);
+                            shield = UpgradeShield(8000, item.Level);
                             break;
                         case 6: // BO2
                             shield = UpgradeShield(10000, item.Level);
@@ -290,10 +291,24 @@ namespace NettyBaseReloaded.Game.objects.world.players
             return droneFormations.ToArray();
         }
 
-        public int LaserCount()
+        public int LaserCount(bool pet = false)
         {
-            return ActiveHangar.Configurations[Player.CurrentConfig - 1].EquippedItemsOnShip
-                .Count(x => x.Value.Item.Category == EquippedItemCategories.LASER);
+            if (!pet)
+            {
+                var hangar = ActiveHangar.Configurations[Player.CurrentConfig - 1];
+                var shipItems = hangar.EquippedItemsOnShip
+                    .Count(x => x.Value.Item.Category == EquippedItemCategories.LASER);
+                var droneItems = hangar.EquippedItemsOnDrones
+                    .Count(x => x.Value.Item2.Item.Category == EquippedItemCategories.LASER);
+                return shipItems + droneItems;
+            }
+            else
+            {
+                var hangar = Player.Pet.Hangar.Configurations[Player.CurrentConfig - 1];
+                var petItems = hangar.EquippedItemsOnShip
+                    .Count(x => x.Value.Item.Category == EquippedItemCategories.LASER);
+                return petItems;
+            }
         }
 
         public int LaserTypes()
@@ -361,6 +376,14 @@ namespace NettyBaseReloaded.Game.objects.world.players
             Player.Refresh();
             World.DatabaseManager.SavePlayerHangar(Player, activeHangar);
             World.DatabaseManager.SavePlayerHangar(Player, targetHangar);
+        }
+
+        public void Reload()
+        {
+            var oldConfig = Player.Hangar.Configurations;
+            LoadEquipment();
+            Player.Hangar.Configurations[0].CurrentShieldLeft = oldConfig[0].CurrentShieldLeft;
+            Player.Hangar.Configurations[1].CurrentShieldLeft = oldConfig[1].CurrentShieldLeft;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world;
 using NettyBaseReloaded.Game.objects.world.map.objects;
@@ -12,19 +13,19 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class ShipSelectionHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             int targetId = 0;
             if (!gameSession.Player.UsingNewClient)
             {
                 var cmd = new commands.old_client.requests.ShipSelectionRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
                 targetId = cmd.targetId;
             }
             else
             {
                 var cmd = new commands.new_client.requests.ShipSelectionRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
                 targetId = cmd.selectedId;
             }
 

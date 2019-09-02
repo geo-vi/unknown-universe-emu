@@ -1,4 +1,5 @@
-﻿using NettyBaseReloaded.Utils;
+﻿using DotNetty.Buffers;
+using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
 {
@@ -19,7 +20,7 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
         public const short ID = 552;
 
         public short petRequestType = 0;
-        public void readCommand(byte[] bytes)
+        public void readCommand(IByteBuffer bytes)
         {
             var parser = new ByteParser(bytes);
             petRequestType = parser.readShort();

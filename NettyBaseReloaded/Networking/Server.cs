@@ -29,7 +29,7 @@ namespace NettyBaseReloaded.Networking
             switch (Port)
             {
                 case GAME_PORT:
-                    new GameClient(xSocketArgs.XSocket);
+                    //new GameClient(xSocketArgs.XSocket);
                     break;
                 case CHAT_PORT:
                     new ChatClient(xSocketArgs.XSocket);

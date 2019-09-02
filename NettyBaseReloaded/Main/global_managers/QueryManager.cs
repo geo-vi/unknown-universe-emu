@@ -169,7 +169,8 @@ namespace NettyBaseReloaded.Main.global_managers
 
         public Clan GetClan(int id)
         {
-            return null;
+            RefreshClans();
+            return Global.StorageManager.Clans[id];
         }
 
         public void UpdateOnlinePlayers()
@@ -185,6 +186,12 @@ namespace NettyBaseReloaded.Main.global_managers
             {
 
             }
+        }
+
+        public void RefreshClans()
+        {
+            Global.StorageManager.Clans.Clear();
+            LoadClans();
         }
     }
 }

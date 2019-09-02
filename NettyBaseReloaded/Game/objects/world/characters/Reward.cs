@@ -14,6 +14,13 @@ namespace NettyBaseReloaded.Game.objects.world.characters
     {
         public List<object> Rewards = new List<object>();
 
+        #region Constructors 
+
+        public Reward()
+        {
+
+        }
+
         public Reward(RewardType type, int amount)
         {
             Rewards.Add((short) 0);
@@ -40,6 +47,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                 count++;
             }
         }
+
+        #endregion
 
         public double TotalAddedCre = 0;
         public double TotalAddedUri = 0;
@@ -69,15 +78,17 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                         RewardPlayer(player, rewardType, amount * boost);
                     }
                 }
+
                 paramNum++;
             }
+
             PerformBulkUpdate(player);
         }
 
         public void RewardPlayer(Player player, RewardType type, int amount)
         {
             if (amount == 0) return;
-            
+
             switch (type)
             {
                 case RewardType.CREDITS:
@@ -90,19 +101,20 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                     break;
                 case RewardType.EXPERIENCE:
                     amount = RewardMultiplyer(type, amount, player);
-                    amount += (int)(amount * player.BoostedExpReward);
+                    amount += (int) (amount * player.BoostedExpReward);
                     TotalAddedExp = amount;
                     break;
                 case RewardType.HONOR:
                     amount = RewardMultiplyer(type, amount, player);
-                    amount += (int)(amount * player.BoostedHonorReward);
+                    amount += (int) (amount * player.BoostedHonorReward);
                     TotalAddedHon = amount;
                     break;
                 case RewardType.ORE:
                     break;
                 case RewardType.GALAXY_GATES_ENERGY:
                     amount = RewardMultiplyer(type, amount, player);
-                    Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|STM|log_msg_gather_extra-energy_p|%COUNT%|" + amount);
+                    Packet.Builder.LegacyModule(player.GetGameSession(),
+                        "0|A|STM|log_msg_gather_extra-energy_p|%COUNT%|" + amount);
                     World.DatabaseManager.AddGGEnergy(player, amount);
                     break;
                 case RewardType.BOOSTER:
@@ -136,7 +148,8 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                         player.Information.Level.Id);
                     if (player.Pet != null && player.Pet.Controller.Active)
                     {
-                        Packet.Builder.PetExperiencePointsUpdateCommand(gameSession, player.Pet.Experience, player.Pet.GetMaxExp());
+                        Packet.Builder.PetExperiencePointsUpdateCommand(gameSession, player.Pet.Experience,
+                            player.Pet.GetMaxExp());
                     }
                 }
 
@@ -152,9 +165,10 @@ namespace NettyBaseReloaded.Game.objects.world.characters
         {
             if (type == RewardType.EXPERIENCE)
             {
-                amount = (int)(amount * player.Hangar.Ship.GetExpBonus(player));
+                amount = (int) (amount * player.Hangar.Ship.GetExpBonus(player));
             }
-            if (type == RewardType.HONOR) amount = (int)(amount * player.Hangar.Ship.GetHonorBonus(player));
+
+            if (type == RewardType.HONOR) amount = (int) (amount * player.Hangar.Ship.GetHonorBonus(player));
             return amount * Properties.Game.REWARD_MULTIPLYER; // TODO: Reward levels
         }
 
@@ -178,6 +192,7 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                         Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
                             "0|LM|ST|ROK|" + AmmoConverter.GetLootAmmoId(item.LootId) + "|" + amount);
                     }
+
                     break;
                 case RewardType.ITEM:
                     switch (item.Category)
@@ -188,11 +203,30 @@ namespace NettyBaseReloaded.Game.objects.world.characters
                         //    break;
                         default:
                             World.DatabaseManager.AddEquipmentItem(player, item);
-                            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id), "0|LM|ST|LOT|" + item.LootId + "|" + amount);
+                            Packet.Builder.LegacyModule(World.StorageManager.GetGameSession(player.Id),
+                                "0|LM|ST|LOT|" + item.LootId + "|" + amount);
                             break;
                     }
+
                     break;
             }
+        }
+
+        public Reward Multiply(double multiplier)
+        {
+            if (multiplier == 1 || multiplier == 0) return this;
+            var reward = new Reward();
+            foreach (var rewardValue in Rewards)
+            {
+                if (rewardValue is int value)
+                {
+                    reward.Rewards.Add(Convert.ToInt32(
+                        value * multiplier));
+                }
+                else reward.Rewards.Add(rewardValue);
+            }
+
+            return reward;
         }
     }
 }

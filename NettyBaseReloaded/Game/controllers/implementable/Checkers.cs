@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game.netty;
 using NettyBaseReloaded.Game.objects;
@@ -17,6 +18,8 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 {
     class Checkers : IAbstractCharacter
     {
+        public readonly object ThreadLock = new object();
+
         public int VisibilityRange { get; set; }
 
         public bool InVisibleZone => !Character.Range.Zones.Any(x => x.Value is PalladiumZone);
@@ -58,7 +61,7 @@ namespace NettyBaseReloaded.Game.controllers.implementable
         #region Character related
         private void AddCharacter(Character main, Character entity)
         {
-            try
+            lock (ThreadLock)
             {
                 if (entity.Id != main.Id && main.Range.AddEntity(entity))
                 {
@@ -76,17 +79,13 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                     TitleCheck(gameSession.Player, entity);
                 }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("addcharacter");
-                Console.WriteLine(e);
-            }
         }
 
         public void RemoveCharacter(Character main, Character entity)
         {
             //if (!entity.Controller.Active) return;
-            try
+
+            lock (ThreadLock)
             {
                 if (entity != null && main != null && entity.Id != main.Id && entity.Range.RemoveEntity(main))
                 {
@@ -102,11 +101,6 @@ namespace NettyBaseReloaded.Game.controllers.implementable
                         main.Selected = null;
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("removecharacter");
-                Console.WriteLine(e);
             }
         }
 
@@ -130,35 +124,40 @@ namespace NettyBaseReloaded.Game.controllers.implementable
 
         private void EntityCheck(Character entity)
         {
-            if (entity == Character || entity == null)
-                return;
-
-            if (entity is Player playerEntity)
+            lock (ThreadLock)
             {
-                if (playerEntity.GetGameSession() == null)
+                if (entity == Character || entity == null)
+                    return;
+
+                if (entity is Player playerEntity)
+                {
+                    if (playerEntity.GetGameSession() == null)
+                    {
+                        RemoveCharacter(entity, Character);
+                        return;
+                    }
+                }
+
+                if (entity.Controller == null ||
+                    (entity.Spacemap != Character.Spacemap || !Character.Spacemap.Entities.ContainsKey(entity.Id) ||
+                     entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
                 {
                     RemoveCharacter(entity, Character);
                     return;
                 }
-            }
 
-            if (entity.Controller == null || (entity.Spacemap != Character.Spacemap || !Character.Spacemap.Entities.ContainsKey(entity.Id) || entity.Controller.StopController) && entity.Range.Entities.ContainsKey(Character.Id))
-            {
-                RemoveCharacter(entity, Character);
-                return;
-            }
-
-            if (Character.InRange(entity, entity.RenderRange))
-            {
-                if (!Character.Range.Entities.ContainsKey(entity.Id))
+                if (Character.InRange(entity, entity.RenderRange))
                 {
-                    AddCharacter(Character, entity);
+                    if (!Character.Range.Entities.ContainsKey(entity.Id))
+                    {
+                        AddCharacter(Character, entity);
+                    }
                 }
-            }
-            else
-            {
-                if (Character.Range.Entities.ContainsKey(entity.Id))
-                    RemoveCharacter(entity, Character);
+                else
+                {
+                    if (Character.Range.Entities.ContainsKey(entity.Id))
+                        RemoveCharacter(entity, Character);
+                }
             }
         }
 

@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
 
         private const int COLLECTION_TIME = 3; // default 5 
 
-        public PirateBooty(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning) : base(id, hash, type, pos, map, limits)
+        public PirateBooty(int id, string hash, Types type, Vector pos, Spacemap map, Vector[] limits, bool respawning) : base(id, hash, type, pos, map, limits, false)
         {
             Respawning = respawning;
         }
@@ -61,11 +61,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
             }
             else if (num < 0.2)
             {
-                BoxReward = new Reward(new Dictionary<RewardType, int>{ {RewardType.GALAXY_GATES_ENERGY, 8}});
+                BoxReward = new Reward(new Dictionary<RewardType, int>{ {RewardType.GALAXY_GATES_ENERGY, 16}});
                 BoxReward.Rewards.Add((short)0);
                 BoxReward.Rewards.Add(RewardType.AMMO);
                 BoxReward.Rewards.Add(Item.Find("ammunition_laser_rsb-75"));
-                BoxReward.Rewards.Add(580);
+                BoxReward.Rewards.Add(1024);
             }
             else if (num < 0.3)
             {
@@ -73,7 +73,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 BoxReward.Rewards.Add((short)0);
                 BoxReward.Rewards.Add(RewardType.AMMO);
                 BoxReward.Rewards.Add(Item.Find("ammunition_laser_ucb-100"));
-                BoxReward.Rewards.Add(395);
+                BoxReward.Rewards.Add(500);
             }
             else
             {
@@ -81,11 +81,11 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 BoxReward.Rewards.Add((short)0);
                 BoxReward.Rewards.Add(RewardType.AMMO);
                 BoxReward.Rewards.Add(Item.Find("ammunition_rocketlauncher_sar-02"));
-                BoxReward.Rewards.Add(75);
+                BoxReward.Rewards.Add(150);
                 BoxReward.Rewards.Add((short)0);
                 BoxReward.Rewards.Add(RewardType.AMMO);
                 BoxReward.Rewards.Add(Item.Find("ammunition_rocketlauncher_hstrm-01"));
-                BoxReward.Rewards.Add(32);
+                BoxReward.Rewards.Add(64);
             }
         }
 
@@ -106,6 +106,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
             if (Collector != null || CollectionTimeStart.AddSeconds(4) > DateTime.Now) return;
             if (character is Player player)
             {
+                if (player.State.CollectingLoot) return;
                 if (player.Information.BootyKeys[0] <= 0)
                 {
                     //locked
@@ -113,6 +114,7 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                     return;
                 }
 
+                player.State.CollectingLoot = true;
                 CollectionTimeStart = DateTime.Now;
                 Packet.Builder.LegacyModule(player.GetGameSession(), "0|A|SLA|0|" + player.Id + "|" + COLLECTION_TIME);
                 Collector = character;
@@ -135,20 +137,25 @@ namespace NettyBaseReloaded.Game.objects.world.map.collectables
                 {
                     var session = player?.GetGameSession();
                     if (session != null)
+                    {
+                        player.State.CollectingLoot = false;
                         Packet.Builder.LegacyModule(session, "0|A|SLC|0|" + player.Id);
+                    }
 
                     Collector = null;
                     return;
                 }
 
                 if (CollectionTimeStart.AddSeconds(COLLECTION_TIME) > DateTime.Now || Disposed) return;
-                player.Information.UpdateBootyKeys();
+                player.Information.UpdateExtraData();
                 player.Information.BootyKeys[0] -= 1;
                 World.DatabaseManager.UpdateBootyKeys(player);
+                player.Information.DisplayBootyKeys();
                 RandomiseReward();
                 BoxReward.ParseRewards(player);
                 Dispose();
                 Collector = null;
+                player.State.CollectingLoot = false;
             }
 
             LastCollectionCheck = DateTime.Now;

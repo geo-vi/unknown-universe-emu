@@ -14,6 +14,7 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.characters.cooldowns;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
 using NettyBaseReloaded.Game.objects.world.players;
+using NettyBaseReloaded.Game.objects.world.players.killscreen;
 using NettyBaseReloaded.Main;
 using NettyBaseReloaded.Main.interfaces;
 using NettyBaseReloaded.Main.objects;
@@ -80,6 +81,8 @@ namespace NettyBaseReloaded.Game.objects.world
                 return null;
             }
         }
+
+        public virtual Reward Reward { get; set; }
 
         /************
          * POSITION *
@@ -220,38 +223,37 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 Clan = Global.StorageManager.Clans[0];
             }
-            
-            Ticked += AssembleTick;
         }
 
-        public virtual void AssembleTick(object sender, EventArgs eventArgs)
+        public override void Tick()
         {
-            Parallel.Invoke(() =>
+            lock (ThreadLock)
             {
+                Updaters.Tick();
                 Cooldowns.Tick();
                 RocketLauncher?.Tick();
                 TickVisuals();
-            });
+            }
         }
 
-        public EventHandler Ticked;
-        public override void Tick()
-        {
-            Ticked?.Invoke(this, EventArgs.Empty);
-        }
-
+        private object ThreadLock = new object();
         public virtual void Invalidate()
         {
-            try
+            lock (ThreadLock)
             {
-                Global.TickManager.Remove(this);
-                Controller.StopAll();
-                Range.Clean();
-                if (Spacemap.Entities.ContainsKey(Id))
-                    Spacemap.Entities.TryRemove(Id, out _);
-            }
-            catch (Exception)
-            {
+                try
+                {
+                    if (Controller == null || Controller != null && Controller.StopController) return;
+
+                    Selected = null;
+                    Global.TickManager.Remove(this);
+                    Controller.StopAll();
+                    Controller.RemoveFromMap();
+                    Range.Clean();
+                    if (Spacemap.Entities.ContainsKey(Id))
+                        Spacemap.Entities.TryRemove(Id, out _);
+                }
+                catch  { }
             }
         }
 
@@ -287,17 +289,25 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override void Destroy()
         {
-            Controller.Destruction.Destroy(this);
+            lock (DestroyLock)
+            {
+                Controller.Destruction.Destroy(this);
+            }
         }
 
+        private object DestroyLock = new object();
         public override void Destroy(Character destroyer)
         {
-            if (destroyer == null)
+            lock (DestroyLock)
             {
-                Destroy();
-                return;
+                if (destroyer == null)
+                {
+                    Destroy();
+                    return;
+                }
+
+                destroyer.Controller.Destruction.Destroy(this, DeathType.PLAYER);
             }
-            destroyer.Controller.Destruction.Destroy(this);
         }
 
         /// <summary>
@@ -345,7 +355,9 @@ namespace NettyBaseReloaded.Game.objects.world
             Selected = null;
             if (this is Player player)
             {
-                Packet.Builder.ShipSelectionCommand(player.GetGameSession(), SelectedCharacter);
+                var session = player.GetGameSession();
+                if (session != null)
+                    Packet.Builder.ShipSelectionCommand(session, null);
             }
         }
     }

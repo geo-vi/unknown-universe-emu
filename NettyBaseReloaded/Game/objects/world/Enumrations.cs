@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NettyBaseReloaded.Game.objects.world
+﻿namespace NettyBaseReloaded.Game.objects.world
 {
-    #pragma warning disable 1591
+#pragma warning disable 1591
     enum RewardType
     {
         CREDITS,
@@ -14,14 +8,14 @@ namespace NettyBaseReloaded.Game.objects.world
         EXPERIENCE,
         HONOR,
         ITEM,
-        GALAXY_GATES_ENERGY, 
+        GALAXY_GATES_ENERGY,
         BOOSTER,
         AMMO,
         ORE,
         DESIGN,
         SHIP
     }
-    
+
     /// <summary>
     /// Faction Ids
     /// </summary>
@@ -229,5 +223,52 @@ namespace NettyBaseReloaded.Game.objects.world
         ROCKET_PRECISSION,
         SHIELD_BUFF
     }
-    #pragma warning restore 1591
+
+    public enum PlayerLogTypes
+    {
+        DEBUG = 1,
+        SYSTEM,
+        NORMAL,
+        VOUCHER,
+        ACP,
+        CLAN
+    }
+
+    public enum GalaxyGates
+    {
+        ALPHA = 1,
+        BETA,
+        GAMMA,
+        DELTA,
+        EPSILON,
+        ZETA,
+        KAPPA,
+        KRONOS,
+        LAMBDA,
+        HADES
+    }
+
+    public enum AccountFlags
+    {
+        BOT_USER = 1,
+        RANKING_DISABLED,
+        EVENTS_ONLY_ACCOUNT,
+        AUCTION_DISABLED,
+        SHOP_DISABLED,
+        HANGAR_DISABLED,
+        EXCLUSIVE_ACCESS_ENABLED,
+        ACP_VIEW,
+        ACP_EDIT,
+        ACP_SUPPORT,
+        VOUCHERS_DISABLED,
+        PAYMENTS_DISABLED
+    }
+
+    public enum DonationTiers
+    {
+        DONATORS_CLUB = 1,
+        RICH_BOYS_CLUB = 2,
+        OFFICIAL_SUPPORTER = 3
+    }
+#pragma warning restore 1591
 }

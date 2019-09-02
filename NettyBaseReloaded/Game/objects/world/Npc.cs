@@ -56,19 +56,24 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public override int AttackRange => Hangar.Ship.GetAttackRange();
 
-        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int currentHealth, int currentNanoHull,
-            int maxShield, int damage, int respawnTime = 0, bool respawning = true, Npc motherShip = null)
+        public bool IsRegenerating;
+
+        public Npc(int id, string name, Hangar hangar, Faction factionId, Vector position, Spacemap spacemap, int maxHealth, int currentNanoHull,
+            int maxShield, int currentShield, int currentHealth, int damage, Reward reward, int respawnTime = 0, bool respawning = true, Npc motherShip = null)
             : base(id, name, hangar, factionId)
         {
-            CurrentHealth = currentHealth;
-            CurrentNanoHull = currentNanoHull;
-            Damage = damage;
-            CurrentShield = maxShield;
+            CurrentShield = currentShield;
             MaxShield = maxShield;
             ShieldAbsorption = 0.5;
+            MaxHealth = maxHealth;
+            CurrentNanoHull = currentNanoHull;
+            CurrentHealth = currentHealth;
+            Damage = damage;
             MotherShip = motherShip;
             RespawnTime = respawnTime;
             Respawning = respawning;
+            Reward = reward;
+            IsRegenerating = true;
         }
         
 

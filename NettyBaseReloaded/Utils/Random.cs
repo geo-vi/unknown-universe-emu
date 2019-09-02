@@ -73,6 +73,12 @@ namespace NettyBaseReloaded
         }
 
         /* int methods */
+        public int Next()
+        {
+            FixActivity();
+            return Random.Next();
+        }
+
         public int Next(int max)
         {
             FixActivity();

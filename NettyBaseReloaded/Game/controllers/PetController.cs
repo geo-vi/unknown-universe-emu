@@ -37,7 +37,7 @@ namespace NettyBaseReloaded.Game.controllers
 
         public new void Tick()
         {
-            if (ActiveChecker == null || Pet.ActiveGear == null || Pet.Spacemap != Pet.GetOwner().Spacemap)
+            if (ActiveChecker == null || Pet.ActiveGear == null || Pet.GetOwner() == null || Pet.Spacemap != Pet.GetOwner().Spacemap)
             {
                 Exit();
                 return;
@@ -60,6 +60,11 @@ namespace NettyBaseReloaded.Game.controllers
             var session = owner.GetGameSession();
 
             if (session == null) return;
+            if (Active)
+            {
+                Packet.Builder.PetStatusCommand(session, Pet);
+                return;
+            }
             if (Pet.Hangar.Configurations == null || Pet.Hangar.Configurations.Length != 2)
             {
                 Packet.Builder.LegacyModule(session,
@@ -80,9 +85,9 @@ namespace NettyBaseReloaded.Game.controllers
             Initiate();
             Pet.RefreshConfig();
 
-            var ownerSession = owner.GetGameSession();
-            Packet.Builder.PetHeroActivationCommand(ownerSession, Pet);
-            Packet.Builder.PetStatusCommand(ownerSession, Pet);
+            Packet.Builder.PetHeroActivationCommand(session, Pet);
+            Packet.Builder.PetStatusCommand(session, Pet);
+            
             SendGearsToOwner();
             SwitchGear(GearType.PASSIVE, 0);
             SendBuffs();
@@ -114,7 +119,7 @@ namespace NettyBaseReloaded.Game.controllers
         
         public void Deactivate()
         {
-            Exit();
+            Pet.Invalidate();
             var ownerSession = Pet.GetOwner().GetGameSession();
             Packet.Builder.PetDeactivationCommand(ownerSession, Pet);
         }
@@ -175,9 +180,8 @@ namespace NettyBaseReloaded.Game.controllers
                     gear.Value.End();
                 }
 
-                Global.TickManager.Remove(Pet);
+                Global.TickManager.Remove(this);
                 Pet.BasicSave();
-                RemoveFromMap();
             }
             catch (Exception e)
             {
@@ -198,6 +202,7 @@ namespace NettyBaseReloaded.Game.controllers
                 Packet.Builder.PetIsDestroyedCommand(ownerSession);
                 Packet.Builder.PetUIRepairButtonCommand(ownerSession, true, price);
             }
+            Pet.BasicSave();
         }
 
         public void SendResetGear()

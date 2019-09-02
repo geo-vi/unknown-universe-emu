@@ -53,7 +53,7 @@ namespace NettyBaseReloaded.Networking
         /// <summary>
         /// Socket object
         /// </summary>
-        private readonly System.Net.Sockets.Socket _socket;
+        private readonly Socket _socket;
         /// <summary>
         /// Socket remote ip
         /// </summary>
@@ -83,11 +83,10 @@ namespace NettyBaseReloaded.Networking
         /// </summary>
         public IPAddress RemoteHost => _socket.Connected ? ((IPEndPoint)_socket.RemoteEndPoint).Address : null;
 
-        public bool Connected => _socket != null && _socket.Connected;
-        
         public IPEndPoint IpEndPoint { get; private set; }
 
         private const int BufferSize = 1024 * 3;
+
         #endregion
 
         #region Constructors
@@ -96,7 +95,7 @@ namespace NettyBaseReloaded.Networking
         /// </summary>
         private XSocket()
         {
-            _socket = new System.Net.Sockets.Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             {
                 NoDelay = true
             };
@@ -135,7 +134,7 @@ namespace NettyBaseReloaded.Networking
         /// Creates a XSocket object using another socket
         /// </summary>
         /// <param name="socket"></param>
-        public XSocket(System.Net.Sockets.Socket socket)
+        public XSocket(Socket socket)
         {
             _socket = socket;
             IpEndPoint = (IPEndPoint)socket.RemoteEndPoint;
@@ -151,21 +150,15 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                _socket.Shutdown(SocketShutdown.Both);
-
                 if (_socket.IsBound && _clientsConnected.Count > 0)
                     foreach (var client in _clientsConnected)
-                        client._socket.Close();
+                        client.Close();
 
-                //_socket?.Close();
+                _socket.Shutdown(SocketShutdown.Both);
+                _socket.Close();
                 OnConnectionClosed();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Console.WriteLine(e.StackTrace);
-                /*ignored*/
-            }
+            catch { /*ignored*/ }
         }
 
         /// <summary>
@@ -266,18 +259,6 @@ namespace NettyBaseReloaded.Networking
         {
             Write(Encoding.UTF8.GetBytes(message + (char)0x00));
         }
-
-        public void SendFile(string file)
-        {
-            try
-            {
-                _socket.BeginSendFile(file, null, null);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Something went wrong sending file to the socket.\n" + e.Message);
-            }
-        }
         #endregion
 
         #region Callbacks
@@ -290,7 +271,7 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                var clientSocket = ((System.Net.Sockets.Socket)ar.AsyncState).EndAccept(ar);
+                var clientSocket = ((Socket)ar.AsyncState).EndAccept(ar);
                 OnAcceptConnection(clientSocket);
 
                 if (_socket.IsBound)
@@ -328,8 +309,6 @@ namespace NettyBaseReloaded.Networking
         {
             try
             {
-                if (_socket == null) return;
-
                 var bytesRead = _socket.EndReceive(ar);
 
                 if (bytesRead <= 0)
@@ -337,23 +316,14 @@ namespace NettyBaseReloaded.Networking
                     Close();
                     return;
                 }
-                /**
-                 * I thought the problem was this line because it triggers the command handler without checking if the packet
-                     is "complete" it only checks if "its not null"
-                 */
-                //Console.WriteLine("BytesRead: {0} | Packet Length: {1}", bytesRead, BitConverter.ToInt16(new byte[] {_readBuffer[1], _readBuffer[0]}, 0));
-                //if (BitConverter.ToInt16(new byte[] {_readBuffer[1], _readBuffer[0]}, 0) + 2 == bytesRead)
-                //{
-                //    OnReceiveData(_readBuffer);
-                //}// what happens if it's incomplete just ignores it and waits for the next packet.. i'm not sure if that should work as expected
+
                 OnReceiveData(_readBuffer);
-
-                //Setup over
                 _readBuffer = new byte[BufferSize];
-                _socket.BeginReceive(_readBuffer, 0, _readBuffer.Length, 0, OnReceiveCallback, this);
 
+                //Start over
+                _socket.BeginReceive(_readBuffer, 0, _readBuffer.Length, 0, OnReceiveCallback, this);
             }
-            catch (Exception) { Close(); }
+            catch { Close(); }
         }
 
         /// <summary>
@@ -380,7 +350,7 @@ namespace NettyBaseReloaded.Networking
                     OnReceiveData(content);
                 }
 
-                //Setup over
+                //Start over
                 _readBuffer = new byte[BufferSize];
                 _socket.BeginReceive(_readBuffer, 0, _readBuffer.Length, 0, OnReceiveBufferedCallback, this);
             }
@@ -423,6 +393,8 @@ namespace NettyBaseReloaded.Networking
             OnReceive?.Invoke(this, new StringArgs(packet));
         }
         #endregion
+
+
     }
 
     #region ArgsClasses

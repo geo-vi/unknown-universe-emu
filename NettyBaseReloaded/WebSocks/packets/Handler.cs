@@ -15,6 +15,8 @@ namespace NettyBaseReloaded.WebSocks.packets
         public static void AddHandlers()
         {
             HandledPackets.Add("user", new UserHandler());
+            HandledPackets.Add("shop", new ShopHandler());
+            HandledPackets.Add("clan", new ClanHandler());
             HandledPackets.Add("ext", new ExternalClientHandler());
         }
 

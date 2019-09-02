@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NettyBaseReloaded.Game.objects.world.map.pois;
 
 namespace NettyBaseReloaded.Game.objects.world.map
@@ -65,6 +66,46 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 cords.Add(cord.Y);
             }
             return cords;
+        }
+
+        public bool IsVectorInShape(Vector position)
+        {
+            switch (Shape)
+            {
+                case Shapes.RECTANGLE:
+                    var lowestY = ShapeCords.OrderByDescending(x => x.Y).First();
+                    var highestY = ShapeCords.OrderBy(x => x.Y).First();
+                    var lowestX = ShapeCords.OrderByDescending(x => x.X).First();
+                    var highestX = ShapeCords.OrderBy(x => x.X).First();
+
+                    // in terms check
+                    if (position.X > lowestX.X && position.X < highestX.X && position.Y > lowestY.Y &&
+                        position.Y < highestY.Y)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+
+            return false;
+        }
+
+        public Vector GetCenterVector()
+        {
+            switch (Shape)
+            {
+                case Shapes.RECTANGLE:
+                    var lowestY = ShapeCords.OrderByDescending(x => x.Y).First();
+                    var highestY = ShapeCords.OrderBy(x => x.Y).First();
+                    var lowestX = ShapeCords.OrderByDescending(x => x.X).First();
+                    var highestX = ShapeCords.OrderBy(x => x.X).First();
+
+                    // in terms check
+                    return new Vector((highestX.X + lowestX.X) / 2, (highestY.Y + lowestY.Y) / 2);
+                    break;
+            }
+
+            return ShapeCords[0];
         }
     }
 }

@@ -46,18 +46,30 @@ namespace NettyBaseReloaded.Game.controllers.npc
         }
 
         private DateTime LastActiveTime = new DateTime();
+
         public void Active()
         {
-            GameClient.SendToPlayerView(Controller.Npc, netty.commands.old_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
-            GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id));
+            var daughtersAlive = GetActiveDaughtersCount();
+            if (daughtersAlive >= 20)
+            {
+                return;
+            }
+
+            GameClient.SendToPlayerView(Controller.Npc,
+                netty.commands.old_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id), true);
+            GameClient.SendToPlayerView(Controller.Npc,
+                netty.commands.new_client.LegacyModule.write("0|n|s|start|" + Controller.Npc.Id), true);
             Opened = true;
 
-            for (int i = 0; i <= DaughterSpawnCount; i++)
+            for (int i = 0; i < 20 - daughtersAlive; i++)
             {
                 var minionId = Controller.Npc.Spacemap.CreateNpc(DaughterType, AILevels.DAUGHTER, Controller.Npc);
                 Mother.Children.TryAdd(minionId, Mother.Spacemap.Entities[minionId] as Npc);
-                GameClient.SendToPlayerView(Controller.Npc, netty.commands.old_client.NpcUndockCommand.write(Controller.Npc.Id, minionId));
+                GameClient.SendToPlayerView(Controller.Npc,
+                    netty.commands.old_client.NpcUndockCommand.write(Controller.Npc.Id, minionId), true);
+
             }
+
             LastActiveTime = DateTime.Now;
         }
 
@@ -80,12 +92,7 @@ namespace NettyBaseReloaded.Game.controllers.npc
                 GameClient.SendToPlayerView(Controller.Npc,
                     netty.commands.old_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
                 GameClient.SendToPlayerView(Controller.Npc, netty.commands.new_client.LegacyModule.write("0|n|s|end|" + Controller.Npc.Id));
-
-            }
-
-            if (Mother.Children.Count < 5)
-            {
-                Active();
+                Opened = false;
             }
 
             if (Controller.Npc.LastCombatTime > DateTime.Now.AddSeconds(10))
@@ -104,6 +111,16 @@ namespace NettyBaseReloaded.Game.controllers.npc
         public void Exit()
         {
             Opened = false;
+        }
+
+        public int GetActiveDaughtersCount()
+        {
+            if (Mother?.Children != null)
+            {
+                return Mother.Children.Count(x => x.Value.Controller.Active);
+            }
+
+            return 0;
         }
     }
 }

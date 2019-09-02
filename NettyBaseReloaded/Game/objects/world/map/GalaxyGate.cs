@@ -59,7 +59,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
         private async Task RunThread()
         {
-            while (!(Finished && Rewarded))
+            while (!Finished && !Rewarded)
             {
                 Tick();
                 await Task.Delay(100);
@@ -92,6 +92,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
                         {
                             PendingPlayers.TryRemove(pendingPlayer.Id, out removedCharacter);
                             JoinedPlayers.TryAdd(pendingPlayer.Id, pendingPlayer);
+                            PlayerJoinMap(pendingPlayer);
                         }
                     }
                 }
@@ -113,7 +114,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
 
                 if (Active)
                 {
-                    if (!VirtualMap.Entities.Any(pair => pair.Value is Npc))
+                    if (!VirtualMap.Entities.Any(pair => pair.Value is Npc) && WavesLeftTillEnd <= 0)
                         End();
                     else NpcChecker();
                     CheckOwnerActivity();
@@ -122,11 +123,11 @@ namespace NettyBaseReloaded.Game.objects.world.map
                 {
                     if (JoinedPlayers.Count > 0)
                     {
-                        CountdownEnd = DateTime.Now.AddSeconds(30);
+                        CountdownEnd = DateTime.Now.AddSeconds(25);
                         CountdownInProcess = true;
                     }
                 }
-                if (!Waves.ContainsKey(Wave + 1) && VirtualMap.Entities.Count(x => x.Value is Npc) == 0)
+                if (!Waves.ContainsKey(Wave) && VirtualMap.Entities.Count(x => x.Value is Npc) == 0)
                     Reward();
             }
             catch (Exception e)
@@ -180,11 +181,18 @@ namespace NettyBaseReloaded.Game.objects.world.map
             GGTask = Task.Factory.StartNew(RunThread);
         }
 
+        public virtual void CreateAssets() { }
+
+        public virtual void PlayerJoinMap(Player joinedPlayer) { }
+
         public abstract void Start();
 
         public abstract void SendWave();
 
         public abstract void End();
+
+        public virtual void RemoveLife() { }
+
         #endregion
 
         /// <summary>
@@ -213,11 +221,7 @@ namespace NettyBaseReloaded.Game.objects.world.map
             Spacemap vwMap;
             Spacemap.Duplicate(Spacemap, out vwMap);
             Spacemap.VirtualWorlds[VWID] = vwMap;
-            vwMap.CreateHealthStation(new Vector(10400, 6400));
-            vwMap.CreateRelayStation(new Vector(2500, 2000));
-            vwMap.CreateRelayStation(new Vector(6200, 11700));
-            vwMap.CreateRelayStation(new Vector(18300, 10900));
-            vwMap.CreateRelayStation(new Vector(18200, 4000));
+            CreateAssets();
             Initiate();
         }
 
@@ -321,11 +325,19 @@ namespace NettyBaseReloaded.Game.objects.world.map
             {
                 foreach (var entity in VirtualMap.Entities)
                 {
-                    entity.Value.Destroy();
+                    if (entity.Key == player.Id) continue;
+                    if (entity.Value is Npc npc)
+                    {
+                        npc.Controller.ExitAI();
+                        npc.Controller.Destruction.Kill();
+                    }
+                    VirtualMap.Entities.TryRemove(entity.Key, out _);
                 }
-                GalaxyGate removedGate = null;
-                player.OwnedGates.TryRemove(Id, out removedGate);
+                player.OwnedGates.TryRemove(Id, out _);
+                RemoveLife();
                 MoveOut(player);
+                Finished = true;
+                GGTask.Dispose();
             }
         }
 
@@ -336,6 +348,14 @@ namespace NettyBaseReloaded.Game.objects.world.map
             MovementController.Move(player, MovementController.ActualPosition(player));
             player.VirtualWorldId = 0;
             player.MoveToMap(tuple.Item2, tuple.Item1, 0);
+        }
+
+        public void RemoveAssets()
+        {
+            foreach (var asset in VirtualMap.Objects)
+            {
+                VirtualMap.RemoveObject(asset.Value);
+            }
         }
 
         #endregion

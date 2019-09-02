@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.new_client.requests
@@ -17,7 +18,7 @@ namespace NettyBaseReloaded.Game.netty.commands.new_client.requests
         public int var4 { get; set; }
         public int var5 { get; set; }
 
-        public void readCommand(byte[] bytes)
+        public void readCommand(IByteBuffer bytes)
         {
             var parser = new ByteParser(bytes);
             var2 = parser.readInt();

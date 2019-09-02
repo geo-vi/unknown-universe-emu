@@ -1,15 +1,16 @@
-﻿using NettyBaseReloaded.Game.netty.commands.old_client.requests;
+﻿using DotNetty.Buffers;
+using NettyBaseReloaded.Game.netty.commands.old_client.requests;
 using NettyBaseReloaded.Game.objects;
 
 namespace NettyBaseReloaded.Game.netty.handlers
 {
     class WindowSettingsHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             var playerWindowSettings = gameSession.Player.Settings.OldClientUserSettingsCommand.WindowSettingsModule;
             var cmd = new WindowSettingsRequest();
-            cmd.readCommand(bytes);
+            cmd.readCommand(buffer);
 
             playerWindowSettings.clientResolutionId = cmd.clientResolutionId;
             playerWindowSettings.barStatus = cmd.barStatus;

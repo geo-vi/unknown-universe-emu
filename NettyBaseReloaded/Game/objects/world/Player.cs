@@ -9,6 +9,7 @@ using NettyBaseReloaded.Game.objects.world.characters;
 using NettyBaseReloaded.Game.objects.world.map;
 using NettyBaseReloaded.Game.objects.world.map.objects;
 using NettyBaseReloaded.Game.objects.world.map.objects.assets;
+using NettyBaseReloaded.Game.objects.world.map.pois;
 using NettyBaseReloaded.Game.objects.world.players;
 using NettyBaseReloaded.Game.objects.world.players.equipment;
 using NettyBaseReloaded.Game.objects.world.players.extra;
@@ -32,6 +33,7 @@ namespace NettyBaseReloaded.Game.objects.world
          * BASICS *
          **********/
 
+        #region Basics Variables
         public int GlobalId;
 
         public string SessionId { get; set; }
@@ -39,10 +41,14 @@ namespace NettyBaseReloaded.Game.objects.world
         public Rank RankId { get; set; }
         public new PlayerController Controller { get; set; }
 
+        public override Reward Reward => Hangar.Ship.Reward;
+
+        #endregion
         /***************
          * INFORMATION *
          ***************/
 
+        #region Information Variables
         public Equipment Equipment { get; private set; }
 
         public Statistics Statistics { get; private set; }
@@ -52,7 +58,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public State State { get; private set; }
 
         public override Hangar Hangar => Equipment.ActiveHangar;
-
+        #endregion
         /*********
          * EXTRA *
          *********/
@@ -328,6 +334,9 @@ namespace NettyBaseReloaded.Game.objects.world
         public bool IsLoaded => Settings != null && Equipment != null && Storage != null && Controller != null &&
                                 !Controller.StopController && !Unloaded && State != null && !State.Jumping;
 
+        // ** THREAD LOCKER ** //
+        private readonly object ThreadLocker = new object();
+
         public Player(int id, int globalId, string name, Clan clan, Faction factionId, string sessionId, Rank rankId, bool usingNewClient = false) : base(id, name, null, factionId, clan)
         {
             InitializeClasses();
@@ -340,53 +349,81 @@ namespace NettyBaseReloaded.Game.objects.world
 
         private void InitializeClasses()
         {
-            Equipment = new Equipment(this);
-            Statistics = World.DatabaseManager.LoadStatistics(this);
-            Information = new Information(this);
-            State = new State(this);
-            Storage = new Storage(this);
-            Boosters = World.DatabaseManager.LoadBoosters(this);
-            Abilities = Hangar.Ship.Abilities(this);
-            Settings = new Settings(this);
-            Skylab = World.DatabaseManager.LoadSkylab(this);
-            Pet = World.DatabaseManager.LoadPet(this);
-            QuestData = new QuestPlayerData(this);
-            Announcements = new Announcements(this);
-            Gates = new PlayerGates(this);
-            World.DatabaseManager.SavePlayerHangar(this, Hangar);
-        }
-
-        public override void AssembleTick(object sender, EventArgs eventArgs)
-        {
-            if (GetGameSession() == null)
+            try
             {
-                Invalidate();
-                return;
+                Equipment = new Equipment(this);
+                Statistics = World.DatabaseManager.LoadStatistics(this);
+                Information = new Information(this);
+                State = new State(this);
+                Storage = new Storage(this);
+                Boosters = World.DatabaseManager.LoadBoosters(this);
+                Abilities = Hangar.Ship.Abilities(this);
+                Settings = new Settings(this);
+                Skylab = World.DatabaseManager.LoadSkylab(this);
+                Pet = World.DatabaseManager.LoadPet(this);
+                QuestData = new QuestPlayerData(this);
+                Announcements = new Announcements(this);
+                Gates = new PlayerGates(this);
+                World.DatabaseManager.SavePlayerHangar(this, Hangar);
             }
-            if (!Controller.Active || EntityState == EntityStates.DEAD)
-                return;
+            catch (Exception exception)
+            {
+                // getting rid of user
+                Console.WriteLine("Exception found.. Disconnecting user");
+                Console.WriteLine("Exception: " + exception + ";" + exception.StackTrace + ";" + exception.Message);
 
-            base.AssembleTick(sender, eventArgs);
-
-            LevelChecker();
-            TickBoosters();
-            AssembleEnemyWarn();
-            TickEvents();
-            TickTechs();
-            TickAbilities();
-            TickQuests();
-            TickAnnouncements();
-            Skylab.Tick();
+                var session = GetGameSession();
+                if (session != null)
+                {
+                    session.Kick();
+                }
+                else Invalidate();
+            }
         }
-        
+
+        public override void Tick()
+        {
+            lock (ThreadLocker)
+            {
+                if (GetGameSession() == null)
+                {
+                    Invalidate();
+                    return;
+                }
+
+                if (!Controller.Active || EntityState == EntityStates.DEAD)
+                    return;
+
+                base.Tick();
+
+                LevelChecker();
+                TickBoosters();
+                AssembleEnemyWarn();
+                TickEvents();
+                TickTechs();
+                TickAbilities();
+                TickQuests();
+                TickAnnouncements();
+                Skylab.Tick();
+                Gates.Tick();
+                State.Tick();
+                Information.Tick();
+            }
+        }
+
 
         public override void Invalidate()
         {
-            Unloaded = true;
-            base.Invalidate();
-            Controller.Exit();
-            Storage.Clean();
-            State.Reset();
+            lock (ThreadLocker)
+            {
+                Save();
+                Unloaded = true;
+                base.Invalidate();
+                Pet?.Invalidate();
+                Controller?.Exit();
+                Storage.Clean();
+                State.Reset();
+            }
         }
 
         private void TickTechs()
@@ -720,15 +757,15 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void BoostExpReward(double value)
         {
-            if (value + BoostedExpReward > 0.5)
-                BoostedExpReward = 0.5;
+            if (value + BoostedExpReward > 1)
+                BoostedExpReward = 1;
             else BoostedExpReward += value;
         }
 
         public void BoostHonReward(double value)
         {
-            if (value + BoostedHonorReward > 0.5)
-                BoostedHonorReward = 0.5;
+            if (value + BoostedHonorReward > 1)
+                BoostedHonorReward = 1;
             else BoostedHonorReward += value;
         }
         
@@ -759,15 +796,18 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public void MoveToMap(Spacemap map, Vector pos, int vwid)
         {
-            Pet?.Controller.Deactivate();
-            Spacemap.RemoveEntity(this);
-            ResetPlayer();
-            Spacemap = map;
-            Position = pos;
-            VirtualWorldId = vwid;
-            ChangePosition(Position);
-            Controller.AddToMap();
-            Refresh();
+            lock (ThreadLocker)
+            {
+                Pet?.Controller.Deactivate();
+                Spacemap.RemoveEntity(this);
+                ResetPlayer();
+                Spacemap = map;
+                Position = pos;
+                VirtualWorldId = vwid;
+                ChangePosition(Position);
+                Controller.AddToMap();
+                Refresh();
+            }
         }
 
         public void ResetPlayer()
@@ -845,6 +885,19 @@ namespace NettyBaseReloaded.Game.objects.world
             Global.TickManager.Remove(Controller);
             Setup();
             Controller.Setup();
+        }
+
+        public bool IsStuck()
+        {
+            foreach (var poiZone in Spacemap.POIs)
+            {
+                if (poiZone.Value.IsVectorInShape(Position))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -19,15 +19,17 @@ namespace NettyBaseReloaded.Game.managers
 {
     class StorageManager
     {
+        /* Primary / key = PlayerId (int) */
+        public readonly ConcurrentBag<int> PendingPlayers = new ConcurrentBag<int>();
+
+        /* Primary / key = PlayerId (int); Secondary = GameSession generated on login */
         public readonly ConcurrentDictionary<int, GameSession> GameSessions = new ConcurrentDictionary<int, GameSession>();
         
         public readonly Dictionary<int, Ship> Ships = new Dictionary<int, Ship>();
         
         public readonly Dictionary<int, Spacemap> Spacemaps = new Dictionary<int, Spacemap>();
 
-        public readonly Dictionary<int, Player> PlayerStorage = new Dictionary<int, Player>();
-
-        public readonly OrePrices OrePrices = new OrePrices(20, 30, 50, 400, 400, 0, 1000, 0, 5);
+        public readonly OrePrices OrePrices = new OrePrices(20, 30, 50, 400, 400, 0, 1000, 0, 1);
         
         public readonly Levels Levels = new Levels();
         
@@ -53,10 +55,17 @@ namespace NettyBaseReloaded.Game.managers
         public readonly Dictionary<int, Ship> NpcReferences = new Dictionary<int, Ship>();
         #endregion
 
-        /// <summary>
-        /// Handled purely by TickManager
-        /// </summary>
-        public readonly ConcurrentDictionary<int, Player> TickedPlayers = new ConcurrentDictionary<int, Player>();
+        public string[] HoneyBoxes = {
+            "ozims", "1604u", "znmjs", "bu9m9", "zel71", "q4knx", "ci7m0", "1ukl6", "1gtlm", "180fk", "13b44", "ntr63",
+            "1lmf1", "1r78f", "1oloo", "xixzz", "13jaa", "6dge9", "m79jj", "h0rbx", "n5cwr", "1hviz", "1g4pv", "1ss4t",
+            "1c2tu", "100vp", "rku9c", "1hd2h", "416n4", "1t5p4", "6ovbk", "3k2hr", "48chq", "lnkdf", "1usjy", "1scn2",
+            "usc1j", "qj4o9", "yyr28", "3mtlo", "hkw3g", "a2abg", "1fnxl", "1kjds", "9icg0", "13umf", "qtqry", "1ucay",
+            "puvoe", "1c3oi", "1nesl", "wl0wr", "sn8n9", "1v20m", "1g568", "1malf", "w27x1", "ov57p", "1ecek", "1my80",
+            "1srvg", "2u942", "103wa", "1srrl", "109xs", "6x1u8", "152g8", "5naot", "oeoud", "tbeuu", "13p97", "rckbt",
+            "1trob", "1fsi3", "v2qxb", "1szeq", "87k2a", "1bfcm", "fc9f7", "1g7du", "lqzp9", "wbku5", "1ts89", "1ag6n",
+            "10tv0", "49ol8", "1isk4", "1jyqj", "1e5au", "8v03f", "uy62u", "mk797", "1g65j", "hm27v", "hs940", "q0e4a",
+            "bv8wq", "1nad0", "1mc48", "1801q"
+        };
 
         public GameSession GetGameSession(int userId)
         {

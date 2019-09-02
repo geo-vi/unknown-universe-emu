@@ -23,8 +23,13 @@ namespace NettyBaseReloaded.Main.commands
             var gameSession = chatSession.GetEquivilentGameSession();
             if (gameSession != null)
             {
-                Packet.Builder.LegacyModule(gameSession, "0|A|STD|Relogging...");
-                Packet.Builder.SendErrorCommand(gameSession, Game.objects.world.SessionErrors.DISCONNECT);
+                var player = gameSession.Player;
+                //if (player.LastCombatTime < DateTime.Now.AddSeconds(3))
+                //{
+                //    Packet.Builder.LegacyModule(gameSession, "Relogs on");
+                //}
+                //Packet.Builder.LegacyModule(gameSession, "0|A|STD|Relogging...");
+                //Packet.Builder.SendErrorCommand(gameSession, Game.objects.world.SessionErrors.DISCONNECT);
             }
             chatSession.Kick("Relogging...");
         }

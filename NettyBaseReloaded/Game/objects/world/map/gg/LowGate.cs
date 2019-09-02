@@ -114,6 +114,15 @@ namespace NettyBaseReloaded.Game.objects.world.map.gg
             base.Initiate();
         }
 
+        public override void CreateAssets()
+        {
+            VirtualMap.CreateHealthStation(new Vector(10400, 6400));
+            VirtualMap.CreateRelayStation(new Vector(2500, 2000));
+            VirtualMap.CreateRelayStation(new Vector(6200, 11700));
+            VirtualMap.CreateRelayStation(new Vector(18300, 10900));
+            VirtualMap.CreateRelayStation(new Vector(18200, 4000));
+        }
+
         public override void Start()
         {
             WavesLeftTillEnd = 3;

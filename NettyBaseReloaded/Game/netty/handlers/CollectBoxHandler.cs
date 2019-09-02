@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.netty.commands;
 using NettyBaseReloaded.Game.objects;
 using NettyBaseReloaded.Game.objects.world.map;
@@ -12,7 +13,7 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class CollectBoxHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             var player = gameSession.Player;
             string hash = "";
@@ -20,13 +21,13 @@ namespace NettyBaseReloaded.Game.netty.handlers
             if (player.UsingNewClient)
             {
                 var cmd = new commands.new_client.requests.CollectBoxRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
                 hash = cmd.itemHash;
             }
             else
             {
                 var cmd = new commands.old_client.requests.CollectBoxRequest();
-                cmd.readCommand(bytes);
+                cmd.readCommand(buffer);
                 hash = cmd.itemHash;
             }
 

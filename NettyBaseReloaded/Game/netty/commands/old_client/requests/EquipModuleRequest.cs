@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Utils;
 
 namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
@@ -16,7 +17,7 @@ namespace NettyBaseReloaded.Game.netty.commands.old_client.requests
         public int slotId;
         public bool replace;
 
-        public void readCommand(byte[] bytes)
+        public void readCommand(IByteBuffer bytes)
         {
             var cmd = new ByteParser(bytes);
             battleStationId = cmd.readInt();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NettyBaseReloaded.Game;
 using NettyBaseReloaded.Main.global_managers;
@@ -21,11 +22,11 @@ namespace NettyBaseReloaded.Main
 
         public static State State = State.LOADING;
 
-        private static Server GameServer;
+        private static GameServer GameServer;
 
         public static void Start()
         {
-            InitiateStatusUpdater();
+            //InitiateStatusUpdater();
             InitiateGlobalQueries();
             InitiatePolicy();
             InitiateChat();
@@ -35,8 +36,9 @@ namespace NettyBaseReloaded.Main
             InitiateRandomResetTimer();
             //TODO -> ACP InitiateSocketty();
             State = State.READY;
-            var task = new Task(() => TickManager.Tick(), TaskCreationOptions.LongRunning);
-            task.Start();
+            Task.Factory.StartNew(() => {
+                TickManager.Tick();
+            }, TaskCreationOptions.LongRunning);
         }
 
         private static void InitiateStatusUpdater()
@@ -70,7 +72,8 @@ namespace NettyBaseReloaded.Main
         static void InitiateGame()
         {
             World.InitiateManagers();
-            GameServer = new Server(Server.GAME_PORT);
+            GameServer = new GameServer(8080, 10);
+            GameServer.StartAsync();
 
             Out.WriteLog("Game-Server started successfully and DB loaded!", "SUCCESS");
             Out.WriteLog("Game-Server started.");

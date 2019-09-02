@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DotNetty.Buffers;
 using NettyBaseReloaded.Game.netty.commands.new_client;
 using NettyBaseReloaded.Game.netty.commands.new_client.requests;
 using NettyBaseReloaded.Game.objects;
@@ -11,12 +12,12 @@ namespace NettyBaseReloaded.Game.netty.handlers
 {
     class command42JHandler : IHandler
     {
-        public void execute(GameSession gameSession, byte[] bytes)
+        public void execute(GameSession gameSession, IByteBuffer buffer)
         {
             const string STANDARD = "standardSlotBar";
             const string PREMIUM = "premiumSlotBar";
             var cmd = new commandHF();
-            cmd.readCommand(bytes);
+            cmd.readCommand(buffer);
 
             Console.WriteLine($"{cmd.targetSlotId} targetSlotId, {cmd.originSlotId} originSlotId, {cmd.targetSlotbar} targetSlotbar, {cmd.originSlotbar} originSlotbar, {cmd.itemId} itemId");
 

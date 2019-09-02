@@ -151,7 +151,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 };
                 gameSession.Client.Send(
                     commands.new_client.SlotbarsCommand
-                        .write(player.Settings.Slotbar.GetCategories(player), "50,85", slotbars)
+                        .write(player.Settings.Slotbar.GetCategories(), "50,85", slotbars)
                         .Bytes);
 
             }
@@ -256,7 +256,7 @@ namespace NettyBaseReloaded.Game.netty.packet
                 
                 Packet.Builder.LegacyModule(gameSession, "0|A|FWX|FWL|100|100|100", true);
 
-                player.Settings.Slotbar.GetCategories(player);
+                player.Settings.Slotbar.GetCategories();
                 gameSession.Client.Send(player.Settings.OldClientShipSettingsCommand.write().Bytes);
             }
         }

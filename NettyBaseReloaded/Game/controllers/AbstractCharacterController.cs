@@ -51,14 +51,19 @@ namespace NettyBaseReloaded.Game.controllers
 
         }
 
+        private object Locker = new object();
+
         public virtual void Initiate()
         {
-            Active = true;
-            StopController = false;
-            var id = -1;
-            Global.TickManager.Add(this, out id);
-            if (id != -1)
-                TickId = id;
+            lock (Locker)
+            {
+                Active = true;
+                StopController = false;
+                var id = -1;
+                Global.TickManager.Add(this, out id);
+                if (id != -1)
+                    TickId = id;
+            }
         }
 
         public int GetId()
@@ -70,12 +75,35 @@ namespace NettyBaseReloaded.Game.controllers
         {
             try
             {
-                if (StopController || Character.EntityState == EntityStates.DEAD)
-                {
-                    StopAll();
-                    Logger.Logger._instance.Enqueue("pact", "Escaped controller for ID " + Character.Id + ":" + Character.Name + " // StopController:" + StopController + " Is DEAD: " + (Character.EntityState == EntityStates.DEAD));
-                    return;
-                }
+                //if (StopController || Character.EntityState == EntityStates.DEAD)
+                //{
+                //    Character.Invalidate();
+                //    if (Character.EntityState != EntityStates.DEAD)
+                //    {
+                //        if (Character is Player player)
+                //        {
+                //            var session = player.GetGameSession();
+                //            if (session != null)
+                //            {
+                //                Packet.Builder.LegacyModule(session, "0|A|STD|Kicked because of bug that was found on your account");
+                //                session.Kick();
+                //            }
+                //        }
+
+                //        if (Character is Pet pet)
+                //        {
+                //            pet.Controller.Deactivate();
+                //            var petOwner = pet.GetOwner();
+                //            var petOwnerSession = petOwner?.GetGameSession();
+                //            if (petOwnerSession != null)
+                //            {
+                //                Packet.Builder.LegacyModule(petOwnerSession, "0|A|STD|P.E.T force deactivated by server - bug found on the account.");
+                //            }
+                //        }
+                //    }
+                //    return;
+                //}
+                if (StopController || Character.EntityState == EntityStates.DEAD) return;
 
                 TickClasses();
 
@@ -125,7 +153,6 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void RemoveFromMap()
         {
-            Character.Controller.StopAll();
             Character.RemoveSelection();
             DeselectFromShip();
             if (Character.Spacemap.Entities.ContainsKey(Character.Id))
@@ -173,11 +200,14 @@ namespace NettyBaseReloaded.Game.controllers
 
         public void StopAll()
         {
-            Global.TickManager.Remove(this);
-            StopController = true;
-            Active = false;
-            Checkers.Stop();
-            Attack.Stop();
+            lock (Locker)
+            {
+                Global.TickManager.Remove(this);
+                StopController = true;
+                Active = false;
+                Checkers.Stop();
+                Attack.Stop();
+            }
         }
     }
 }

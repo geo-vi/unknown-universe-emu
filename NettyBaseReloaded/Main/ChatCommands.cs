@@ -34,6 +34,8 @@ namespace NettyBaseReloaded.Main
             Commands.Add("kick", new KickCommand());
             Commands.Add("ban", new BanCommand());
             Commands.Add("mute", new MuteCommand());
+            Commands.Add("button", new ButtonsCommand());
+            Commands.Add("poi", new POICommand());
         }
 
         public static void Handle(ChatSession session, string txt)

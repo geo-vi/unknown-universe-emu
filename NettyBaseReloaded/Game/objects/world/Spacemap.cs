@@ -73,7 +73,7 @@ namespace NettyBaseReloaded.Game.objects.world
             Id = id;
             Name = name;
             Faction = faction;
-            Pvp = isPvp();
+            Pvp = IsPvp();
             Starter = starter;
             ParseLimits();
             Level = level;
@@ -94,9 +94,9 @@ namespace NettyBaseReloaded.Game.objects.world
             else Limits[1] = new Vector(20800, 12800);
         }
 
-        private bool isPvp()
+        private bool IsPvp()
         {
-            return Id == 16 || Id == 15 || Id == 14 || Id == 13;
+            return Id == 16 || Id == 15 || Id == 14 || Id == 13 || Id >= 29;
         }
 
         public int GetId()
@@ -107,8 +107,6 @@ namespace NettyBaseReloaded.Game.objects.world
         public void Tick()
         {
             ObjectsTicker();
-            //ZoneTicker();
-            //NpcTicker();
         }
 
         private DateTime LastTimeTicketObjects = new DateTime();
@@ -130,68 +128,7 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             return position.X < Limits[0].X || position.X > Limits[1].X || position.Y < Limits[0].Y || position.Y > Limits[1].Y;
         }
-
-        private DateTime LastTimeTickedPlayers = new DateTime();
-
-        public void PlayerTicker()
-        {
-            if (LastTimeTickedPlayers.AddSeconds(2) > DateTime.Now) return;
-
-            foreach (var entity in Entities)
-            {
-                var player = entity.Value as Player;
-                if (player != null && player.IsLoaded)
-                {
-                    if (player.Spacemap != this)
-                    {
-                        RemoveEntity(player);
-                        continue;
-                    }
-                    if (player.Storage.LoadedObjects.Count != Objects.Count)
-                    {
-                        var dicOne = player.Storage.LoadedObjects.ToList();
-                        var dicTwo = Objects;
-
-                        if (dicOne == null || dicTwo == null) continue;
-
-                        var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
-
-                        foreach (var differance in diff)
-                        {
-                            if (Objects.ContainsKey(differance.Key))
-                                player.LoadObject(differance.Value);
-                            else if (player.Storage.LoadedObjects.ContainsKey(differance.Key))
-                                player.UnloadObject(differance.Value);
-                        }
-                    }
-
-                    if (player.IsLoaded && player.Storage.LoadedPOI.Count != POIs.Count)
-                    {
-                        var dicOne = player.Storage.LoadedPOI;
-                        var dicTwo = POIs;
-                        var diff = dicOne.Except(dicTwo).Concat(dicTwo.Except(dicOne));
-
-                        foreach (var differance in diff)
-                        {
-                            player.Storage.LoadPOI(differance.Value);
-                        }
-                    }
-                }
-            }
-            LastTimeTickedPlayers = DateTime.Now;
-        }
-
-        public void NpcTicker()
-        {
-            if (Entities.Count > 0)
-            {
-                var entries = Entities.ToList().Where(x => x.Value is Npc);
-                foreach (var entry in entries)
-                {
-                    ((Npc)entry.Value).Tick();
-                }
-            }
-        }
+        
         #region Thread Safe Adds / Removes
 
         public bool AddEntity(Character character)
@@ -222,6 +159,7 @@ namespace NettyBaseReloaded.Game.objects.world
         public event EventHandler<Object> RemovedObject;
         public bool RemoveObject(Object obj)
         {
+            if (obj == null) return false;
             RemovedObject?.Invoke(this, obj);
             obj.Position = null;
             return Objects.TryRemove(obj.Id, out obj);
@@ -241,9 +179,9 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public int GetNextObjectId()
+        public int GetNextObjectId(int start = 0)
         {
-            var i = 0;
+            var i = start;
             while (true)
             {
                 if (Objects.ContainsKey(i))
@@ -297,15 +235,15 @@ namespace NettyBaseReloaded.Game.objects.world
                 {
                     npc = new Barracuda(id, ship.Name,
                         new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                        0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                        ship.Damage, 5);
+                        0, position, this, ship.Health, 0, ship.Shield,
+                        ship.Shield, ship.Health, ship.Damage, ship.Reward, 5);
                 }
                 else
                 {
                     npc = new Npc(id, ship.Name,
                         new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                        0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                        ship.Damage, 5);
+                        0, position, this, ship.Health, 0, ship.Shield,
+                        ship.Shield, ship.Health, ship.Damage, ship.Reward, 5);
                 }
                 CreateNpc(npc);
             }
@@ -317,21 +255,34 @@ namespace NettyBaseReloaded.Game.objects.world
             var position = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 5));
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 5));
         }
 
-        public void CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null, int vwId = 0)
+        public Npc CreateNpc(Ship ship, AILevels ai, bool respawning, int respawnTime, Vector pos = null, int vwId = 0, string namePrefix = "", Reward reward = null)
         {
             var id = GetNextAvailableId();
             ship.AI = (int)ai;
             if (pos == null)
                 pos = Vector.Random(this, new Vector(1000, 1000), new Vector(20000, 12000));
             else pos = Vector.GetPosOnCircle(pos, 100);
-            CreateNpc(new Npc(id, ship.Name,
-                new Hangar(0, ship, new Dictionary<int, Drone>(), pos, this, ship.Health, ship.Nanohull),
-                0, pos, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, respawnTime, respawning){VirtualWorldId = vwId});
+
+            var name = ship.Name;
+            if (namePrefix != "")
+            {
+                name += " " + namePrefix;
+            }
+
+            if (reward == null)
+                reward = ship.Reward;
+
+            var npc = new Npc(id, name,
+                    new Hangar(0, ship, new Dictionary<int, Drone>(), pos, this, ship.Health, ship.Nanohull),
+                    0, pos, this, ship.Health, 0, ship.Shield,
+                    ship.Shield, ship.Health, ship.Damage, reward, respawnTime, respawning)
+                {VirtualWorldId = vwId};
+            CreateNpc(npc);
+            return npc;
         }
 
         public int CreateNpc(Ship ship, AILevels ai, Npc motherShip)
@@ -341,8 +292,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var position = motherShip.Position;
             CreateNpc(new Npc(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 0, false, motherShip));
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 0, false, motherShip));
             return id;
         }
 
@@ -374,8 +325,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var ship = World.StorageManager.Ships[80];
             var npc = new Cubikon(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 25);
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 25);
 
             if (Entities.ContainsKey(npc.Id))
             {
@@ -402,8 +353,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var ship = World.StorageManager.Ships[designId];
             var npc = new Spaceball(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 90);
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 90);
 
             if (Entities.ContainsKey(npc.Id))
             {
@@ -433,8 +384,8 @@ namespace NettyBaseReloaded.Game.objects.world
             var ship = World.StorageManager.Ships[104];
             var npc = new EventNpc(id, ship.Name,
                 new Hangar(0, ship, new Dictionary<int, Drone>(), position, this, ship.Health, ship.Nanohull),
-                0, position, this, ship.Health, ship.Nanohull, ship.Shield,
-                ship.Damage, 90);
+                0, position, this, ship.Health, 0, ship.Shield,
+                ship.Shield, ship.Health, ship.Damage, ship.Reward, 90);
             if (santa)
             {
                 npc.Hangar.ShipDesign = World.StorageManager.Ships[32];
@@ -533,13 +484,51 @@ namespace NettyBaseReloaded.Game.objects.world
             {
                 case 1:
                     if (player.Gates.AlphaReady)
-                        AddObject(new GalaxyGatePortal(player, id, 1, new Vector(3500, 1500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                        AddObject(new GalaxyGatePortal(player, id, 1, new Vector(2700, 700), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
                     id = GetNextObjectId();
                     if (player.Gates.BetaReady)
-                        AddObject(new GalaxyGatePortal(player, id, 2, new Vector(3000, 3000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_2));
+                        AddObject(new GalaxyGatePortal(player, id, 2, new Vector(2300, 1800), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_2));
                     id = GetNextObjectId();
                     if (player.Gates.GammaReady)
-                        AddObject(new GalaxyGatePortal(player, id, 3, new Vector(1500, 3500), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
+                        AddObject(new GalaxyGatePortal(player, id, 3, new Vector(1500, 3000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
+                    id = GetNextObjectId();
+                    if (player.Gates.DeltaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 4, new Vector(4400, 3600), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_4));
+                    if (player.Gates.EpsilonReady)
+                        AddObject(new GalaxyGatePortal(player, id, 5, new Vector(4000, 1300), this, new Vector(10400, 6400), 51, PortalGraphics.EPSILON_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.ZetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 6, new Vector(2500, 3500), this, new Vector(10400, 6400), 51, PortalGraphics.ZETA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KappaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 7, new Vector(5200, 2600), this, new Vector(10400, 6400), 51, PortalGraphics.KAPPA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KronosReady)
+                        AddObject(new GalaxyGatePortal(player, id, 8, new Vector(7400, 4200), this, new Vector(10400, 6400), 51, PortalGraphics.KRONOS_GATE));
+                    break;
+                case 5:
+                    if (player.Gates.AlphaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 1, new Vector(17300, 1000), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                    id = GetNextObjectId();
+                    if (player.Gates.BetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 2, new Vector(18000, 2300), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_2));
+                    id = GetNextObjectId();
+                    if (player.Gates.GammaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 3, new Vector(19100, 3600), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_3));
+                    id = GetNextObjectId();
+                    if (player.Gates.DeltaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 4, new Vector(15100, 1700), this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_4));
+                    if (player.Gates.EpsilonReady)
+                        AddObject(new GalaxyGatePortal(player, id, 5, new Vector(18600, 4200), this, new Vector(10400, 6400), 51, PortalGraphics.EPSILON_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.ZetaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 6, new Vector(16200, 1600), this, new Vector(10400, 6400), 51, PortalGraphics.ZETA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KappaReady)
+                        AddObject(new GalaxyGatePortal(player, id, 7, new Vector(15900, 2800), this, new Vector(10400, 6400), 51, PortalGraphics.KAPPA_GATE));
+                    id = GetNextObjectId();
+                    if (player.Gates.KronosReady)
+                        AddObject(new GalaxyGatePortal(player, id, 8, new Vector(10114, 5800), this, new Vector(10400, 6400), 51, PortalGraphics.KRONOS_GATE));
                     break;
                 case 9:
                     if (player.Gates.AlphaReady)
@@ -569,9 +558,28 @@ namespace NettyBaseReloaded.Game.objects.world
             }
         }
 
-        public void CreateGalaxyGate(Player player, int ggId, Vector position, Vector destination, int destinationMapId, int gfxId)
+        public void CreateGalaxyGate(Player player, int ggId, Vector position)
         {
+            var id = GetNextObjectId();
+            switch (ggId)
+            {
+                case 1:
+                    AddObject(new GalaxyGatePortal(player, id, 1, position, this, new Vector(10400, 6400), 51, PortalGraphics.GALAXYGATE_1));
+                    break;
+                case 2:
+                    AddObject(new GalaxyGatePortal(player, id, 2, position, this, new Vector(10400, 6400), 52, PortalGraphics.GALAXYGATE_2));
+                    break;
+                case 3:
+                    AddObject(new GalaxyGatePortal(player, id, 3, position, this, new Vector(10400, 6400), 53, PortalGraphics.GALAXYGATE_3));
+                    break;
+            }
+        }
 
+        public void CreateExitGate(Player player, GalaxyGate gate, Vector position)
+        {
+            var id = GetNextObjectId();
+            var baseLocation = player.GetClosestStation(true);
+            AddObject(new ExitGatePortal(gate, id, position, this, baseLocation.Item1, baseLocation.Item2.Id));
         }
 
         public void CreateHiddenPortal(int map, Vector pos, Vector newPos, int vwId = 0)
@@ -698,10 +706,30 @@ namespace NettyBaseReloaded.Game.objects.world
         {
             var id = GetNextObjectId();
             var hash = HashedObjects.Keys.ToList()[id];
-            var box = new BonusBox(id, hash, type, pos, this, limits,true);
+            var honeyBox = HashedObjects[hash] is FakeHoneyBox;
+            if (honeyBox)
+            {
+                Debug.WriteLine("Honey box created: " + HashedObjects.Keys.ToList()[id]);
+            }
+            var box = new BonusBox(id, hash, type, pos, this, limits,true, honeyBox);
             HashedObjects[hash] = box;
             if (AddObject(box))
                 Out.WriteLog("Created Box[" + type + "] on mapId " + Id);
+        }
+
+        public void CreateUcbBox(Types type, Vector pos, Vector[] limits)
+        {
+            var id = GetNextObjectId();
+            var hash = HashedObjects.Keys.ToList()[id];
+            var honeyBox = HashedObjects[hash] is FakeHoneyBox;
+            if (honeyBox)
+            {
+                Debug.WriteLine("Honey box created: " + HashedObjects.Keys.ToList()[id]);
+            }
+            var box = new BonusBox(id, hash, type, pos, this, limits, true, honeyBox, new Reward(RewardType.AMMO, Item.Find("ammunition_laser_ucb-100"), 1000));
+            HashedObjects[hash] = box;
+            if (AddObject(box))
+                Out.WriteLog("Created UCB Box[" + type + "] on mapId " + Id);
         }
 
         public void CreateShipLoot(Vector position, DropableRewards content, Character killer)

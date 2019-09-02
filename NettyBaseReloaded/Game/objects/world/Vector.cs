@@ -20,7 +20,7 @@ namespace NettyBaseReloaded.Game.objects.world
 
         public double DistanceTo(Vector point)
         {
-            return Math.Sqrt(Math.Pow(point.X - X, 2) + Math.Pow(point.Y - Y, 2));
+            return Math.Sqrt(((point.X - X) * (point.X - X)) + ((point.Y - Y) * (point.Y - Y)));
         }
 
         public override string ToString()
