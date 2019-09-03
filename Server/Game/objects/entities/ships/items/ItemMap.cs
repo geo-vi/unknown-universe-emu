@@ -95,5 +95,10 @@ namespace Server.Game.objects.entities.ships.items
         {
             return lootId == LaserIds[6];
         }
+
+        public static bool IsSpecialRocket(string lootId)
+        {
+            return lootId == RocketIds[4] || lootId == RocketIds[5] || lootId == RocketIds[6];
+        }
     }
 }

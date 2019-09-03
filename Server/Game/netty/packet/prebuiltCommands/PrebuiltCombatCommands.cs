@@ -32,10 +32,6 @@ namespace Server.Game.netty.packet.prebuiltCommands
         /// </summary>
         public override void AddCommands()
         {
-            Packet.Builder.OldCommands.Add(Commands.ATTACK_ABORT_COMMAND, async (client, actionParams) =>
-            {
-                //await client.Send(commands.old_client.)
-            });
             Packet.Builder.OldCommands.Add(Commands.ATTACK_LASER_COMMAND, async (client, actionParams) =>
             {
                 ArgumentFixer(actionParams, 5, out actionParams);
@@ -98,6 +94,14 @@ namespace Server.Game.netty.packet.prebuiltCommands
                     pendingDamage.AttackType, attackerId, pendingDamage.Target.Id, pendingDamage.Target.CurrentHealth,
                     pendingDamage.Target.CurrentShield, pendingDamage.Target.CurrentNanoHull, pendingDamage.Damage + pendingDamage.AbsorbDamage);
             }
+        }
+
+        public void RocketAttack(PendingAttack attack, int rocketColor)
+        {
+            Packet.Builder.BuildToRange(attack.From, Commands.LEGACY_MODULE, new object[]
+            {
+                "0|v|" + attack.From.Id + "|" + attack.To.Id + "|H|" + rocketColor + "|1|0"
+            }, new object[0]);
         }
     }
 }

@@ -41,8 +41,6 @@ namespace Server.Game.controllers.players
         protected override void OnLaserCombat(AbstractAttackable target)
         {
             var currentLaserSelected = Player.Settings.GetSettings<SlotbarSettings>().SelectedLaserAmmo;
-
-            Console.WriteLine("OnLaserCombat: " + currentLaserSelected);
             
             CombatManager.Instance.CreateCombat(Player, target, AttackTypes.LASER, currentLaserSelected);
         }
@@ -86,6 +84,13 @@ namespace Server.Game.controllers.players
 
         private void OnConfigurationChanged(object sender, int newConfiguration)
         {
+        }
+
+        public override void OnRocketAttack(AbstractAttackable target)
+        {
+            var currentLaserSelected = Player.Settings.GetSettings<SlotbarSettings>().SelectedRocketAmmo;
+            
+            CombatManager.Instance.CreateCombat(Player, target, AttackTypes.ROCKET, currentLaserSelected);
         }
     }
 }

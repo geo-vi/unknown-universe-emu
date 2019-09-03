@@ -22,6 +22,7 @@ namespace Server.Game.controllers
             OverrideControlledInstance<CharacterMovementController, PlayerMovementController>();
             OverrideControlledInstance<CharacterCombatController, PlayerCombatController>();
             OverrideControlledInstance<CharacterDamageController, PlayerDamageController>();
+            OverrideControlledInstance<CharacterCooldownController, PlayerCooldownController>();
             CreateControlledInstance<AbilityController>();
             CreateControlledInstance<BoosterController>();
             CreateControlledInstance<CargoController>();

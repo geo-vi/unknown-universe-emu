@@ -89,6 +89,12 @@ namespace Server.Game.controllers.characters
             }
         }
         
+        /// <summary>
+        /// Upon laser ammo event is called
+        /// </summary>
+        /// <param name="sender">Character</param>
+        /// <param name="lootId">LootId</param>
+        /// <exception cref="Exception">Event exists after attack ended</exception>
         public void OnLaserAmmunitionChanged(object sender, string lootId)
         {
             if (!InLaserCombat)
@@ -98,16 +104,41 @@ namespace Server.Game.controllers.characters
             }
 
             var secondaryAmmo = ItemMap.IsSecondaryAmmunition(lootId);
-            
-            if (CooldownManager.Instance.Exists(Character, CooldownTypes.LASER_SHOT_COOLDOWN) && !secondaryAmmo)
+
+            var sendCombat = false;
+
+            if (secondaryAmmo)
             {
-                CooldownManager.Instance.Get(Character, CooldownTypes.LASER_SHOT_COOLDOWN).SetOnCompleteAction(() => OnLaserCombat(Character.Selected));
-            }
-            else if (CooldownManager.Instance.Exists(Character, CooldownTypes.SECONDARY_LASER_SHOT_COOLDOWN) && secondaryAmmo)
-            {
-                CooldownManager.Instance.Get(Character, CooldownTypes.SECONDARY_LASER_SHOT_COOLDOWN).SetOnCompleteAction(() => OnLaserCombat(Character.Selected));
+                if (CooldownManager.Instance.Exists(Character, CooldownTypes.LASER_SHOT_COOLDOWN))
+                {
+                    CooldownManager.Instance.Get(Character, CooldownTypes.LASER_SHOT_COOLDOWN).SetOnCompleteAction(null);
+                    sendCombat = true;
+                }
+                
+                if (CooldownManager.Instance.Exists(Character, CooldownTypes.SECONDARY_LASER_SHOT_COOLDOWN))
+                {
+                    CooldownManager.Instance.Get(Character, CooldownTypes.SECONDARY_LASER_SHOT_COOLDOWN).SetOnCompleteAction(() => 
+                        OnLaserCombat(Character.Selected));
+                    sendCombat = false;
+                }
             }
             else
+            {
+                if (CooldownManager.Instance.Exists(Character, CooldownTypes.SECONDARY_LASER_SHOT_COOLDOWN))
+                {
+                    CooldownManager.Instance.Get(Character, CooldownTypes.SECONDARY_LASER_SHOT_COOLDOWN).SetOnCompleteAction(null);
+                    sendCombat = true;
+                }
+
+                if (CooldownManager.Instance.Exists(Character, CooldownTypes.LASER_SHOT_COOLDOWN))
+                {
+                    CooldownManager.Instance.Get(Character, CooldownTypes.LASER_SHOT_COOLDOWN).SetOnCompleteAction(
+                        () => OnLaserCombat(Character.Selected));
+                    sendCombat = false;
+                }
+            }
+            
+            if (sendCombat)
             {
                 OnLaserCombat(Character.Selected);
             }
@@ -124,9 +155,9 @@ namespace Server.Game.controllers.characters
         }
         
         //todo: ...
-        public void OnRocketAttack(AbstractAttackable target)
+        public virtual void OnRocketAttack(AbstractAttackable target)
         {
-            
+            CombatManager.Instance.CreateCombat(Character, target, AttackTypes.ROCKET);
         }
 
         //todo: ...

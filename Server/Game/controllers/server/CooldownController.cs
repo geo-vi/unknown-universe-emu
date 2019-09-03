@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using Server.Game.controllers.characters;
 using Server.Game.controllers.implementable;
+using Server.Game.objects.entities;
 using Server.Game.objects.enums;
 using Server.Game.objects.implementable;
 using Server.Game.objects.server;
@@ -13,6 +15,10 @@ namespace Server.Game.controllers.server
     class CooldownController : ServerImplementedController
     {
         private readonly ConcurrentQueue<Cooldown> _cooldowns = new ConcurrentQueue<Cooldown>();
+
+        public event EventHandler<Cooldown> OnCooldownAdded;
+
+        public event EventHandler<Cooldown> OnCooldownFinish;
         
         public override void OnFinishInitiation()
         {
@@ -37,10 +43,8 @@ namespace Server.Game.controllers.server
                     _cooldowns.Enqueue(cooldown);
                     continue;
                 }
-                
-                cooldown.OnFinishCooldown();
-                Console.WriteLine(cooldown.Type + " Cooldown finished " + cooldown.Created + " : " + cooldown.Started +
-                                  " : " + DateTime.Now + " : " + cooldown.TotalMilliseconds);
+
+                FinishCooldown(cooldown);
             }
         }
 
@@ -56,6 +60,15 @@ namespace Server.Game.controllers.server
                 throw new Exception("Same cooldown already exists, failed adding");
             }
             _cooldowns.Enqueue(cooldown);
+
+            OnCooldownAdded?.Invoke(this, cooldown);
+        }
+
+        private void FinishCooldown(Cooldown cooldown)
+        {
+            cooldown.OnFinishCooldown();
+
+            OnCooldownFinish?.Invoke(this, cooldown);
         }
 
         /// <summary>
@@ -89,6 +102,12 @@ namespace Server.Game.controllers.server
             {
                 Out.QuickLog("Something went wrong while getting the cooldown", LogKeys.ERROR_LOG);
                 throw new Exception("Sender is null, something went wrong while getting cooldown");
+            }
+
+            if (_cooldowns.Count(x => x.Owner == sender && x.Type == cooldownType) > 1)
+            {
+                Out.QuickLog("More than one cooldown found");
+                throw new Exception("Something went wrong with the cooldown, more than 1 record found");
             }
 
             return _cooldowns.FirstOrDefault(x => x.Owner == sender && x.Type == cooldownType);

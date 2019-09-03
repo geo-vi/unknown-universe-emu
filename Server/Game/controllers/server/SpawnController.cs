@@ -66,8 +66,6 @@ namespace Server.Game.controllers.server
                 Out.QuickLog("Something went wrong when trying to spawn character", LogKeys.ERROR_LOG);
                 throw new Exception("Something went wrong when trying to spawn character");
             }
-
-            CharacterStateManager.Instance.RemoveState(character, CharacterStates.LOGIN);
         }
         
         /// <summary>

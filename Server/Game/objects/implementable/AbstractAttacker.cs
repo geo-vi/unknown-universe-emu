@@ -7,6 +7,8 @@ namespace Server.Game.objects.implementable
     {
         public event EventHandler<PendingAttack> OnLaserShot;
 
+        public event EventHandler<PendingAttack> OnRocketShot;
+
         public event EventHandler<string> OnLaserAmmunitionChange;
         
         public virtual int Damage { get; set; }
@@ -41,6 +43,15 @@ namespace Server.Game.objects.implementable
         public void OnLaserAmmoChange(string lootId)
         {
             OnLaserAmmunitionChange?.Invoke(this, lootId);
+        }
+
+        /// <summary>
+        /// Once rocket is shot it will strike the event
+        /// </summary>
+        /// <param name="pendingAttack">Attack that was used when striking</param>
+        public void OnRocketShoot(PendingAttack pendingAttack)
+        {
+            OnRocketShot?.Invoke(this, pendingAttack);
         }
     }
 }

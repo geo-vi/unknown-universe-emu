@@ -4,6 +4,10 @@ namespace Server.Game.objects.enums
     {
         LASER_SHOT_COOLDOWN,
         SECONDARY_LASER_SHOT_COOLDOWN,
-        EMP_COOLDOWN
+        EMP_COOLDOWN,
+        ROCKET_COOLDOWN,
+        PLASMA_COOLDOWN,
+        DECELERATION_COOLDOWN,
+        WIZARD_COOLDOWN
     }
 }

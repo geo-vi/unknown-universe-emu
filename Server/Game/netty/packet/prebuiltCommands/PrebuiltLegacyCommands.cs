@@ -49,7 +49,7 @@ namespace Server.Game.netty.packet.prebuiltCommands
         {
             if (GetSession(player, out var session))
             {
-                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "STD", message);
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, ServerCommands.SET_ATTRIBUTE, ServerCommands.SERVER_MSG, message);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Server.Game.netty.packet.prebuiltCommands
         {
             if (GetSession(player, out var session))
             {
-                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "CC",
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, ServerCommands.SET_ATTRIBUTE, ServerCommands.UPDATE_CONFIGURATION_COUNT,
                     player.CurrentConfig);
             }
         }
@@ -88,11 +88,11 @@ namespace Server.Game.netty.packet.prebuiltCommands
         {
             if (GetSession(player, out var session))
             {
-                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BK",
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, ServerCommands.SET_ATTRIBUTE, ServerCommands.BOOTY_KEYS_UPDATE,
                     player.Information.BootyKeys[0]);
-                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BKR",
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, ServerCommands.SET_ATTRIBUTE, ServerCommands.BOOTY_KEYS_RED_UPDATE,
                     player.Information.BootyKeys[1]);
-                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "A", "BKB",
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, ServerCommands.SET_ATTRIBUTE, ServerCommands.BOOTY_KEYS_BLUE_UPDATE,
                     player.Information.BootyKeys[2]);
             }
         }
@@ -106,18 +106,15 @@ namespace Server.Game.netty.packet.prebuiltCommands
                 //Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "g", "a", "b,1000,1,10000.0 ");
             }
         }
-        
-        public void ConfigurationCommand(Player player)
-        {
-            if (GetSession(player, out var session))
-            {
-                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, "0|A|CC|" + player.CurrentConfig); // Config
-            }
-        }
 
         public void SendCooldown(Player player, string cooldownType, int totalSeconds)
         {
-            
+            //0|A|CLD|RSB|3
+            if (GetSession(player, out var session))
+            {
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, ServerCommands.SET_ATTRIBUTE, ServerCommands.SET_COOLDOWN,
+                    cooldownType, totalSeconds);
+            }
         }
     }
 }

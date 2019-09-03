@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using NettyBaseReloaded.Game.netty.commands;
 using Server.Game.managers;
+using Server.Game.netty.commands;
 using Server.Game.netty.handlers;
 using Server.Main.objects;
 using Server.Networking.clients;
@@ -16,8 +17,8 @@ namespace Server.Game.netty.packet
          * TODO: 
          *        Find command 18706
          *        Find why by default no keybindings show!!!
-         *
-         *
+         *        Find how to stop attack
+         *        Find quickbuy packet
          *
          *
          *
@@ -44,6 +45,7 @@ namespace Server.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.SelectRocketRequest.ID, new SelectRocketHandler());
             
             LegacyCommands.Add(ClientCommands.SELECT, new LegacySelectHandler());
+            LegacyCommands.Add(ServerCommands.ROCKET_ATTACK, new AttackRocketLegacyHandler());
             Out.QuickLog($"Successfully added {LegacyCommands.Count} legacy packet handlers to Handler");
             Out.QuickLog($"Successfully added {OldClientCommands.Count} old client handlers to Handler");
             Out.QuickLog($"Successfully added {NewClientCommands.Count} new client handlers to Handler");

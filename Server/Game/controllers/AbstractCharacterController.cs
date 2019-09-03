@@ -45,6 +45,7 @@ namespace Server.Game.controllers
             CreateControlledInstance<CharacterMovementController>();
             CreateControlledInstance<CharacterCombatController>();
             CreateControlledInstance<CharacterDamageController>();
+            CreateControlledInstance<CharacterCooldownController>();
         }
 
         private void RemoveControllers()

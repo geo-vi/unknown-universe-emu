@@ -24,6 +24,12 @@ namespace Server.Game.objects.server
         
         private Action OnStartAction { get; set; }
         
+        /// <summary>
+        /// Base constructor
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="type"></param>
+        /// <param name="span"></param>
         public Cooldown(AbstractAttacker sender, CooldownTypes type, int span)
         {
             Owner = sender;
@@ -32,34 +38,62 @@ namespace Server.Game.objects.server
             Created = DateTime.Now;
         }
         
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="type"></param>
+        /// <param name="span"></param>
+        /// <param name="onCooldownFinish"></param>
         public Cooldown(AbstractAttacker sender, CooldownTypes type, int span, Action onCooldownFinish) : this(sender, type, span)
         {
             OnCompleteAction = onCooldownFinish;
         }
 
-        private Cooldown(AbstractAttacker sender, CooldownTypes type, int span, Action onStartAction, Action onFinishAction) :
+        /// <summary>
+        /// Secondary constructor
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="type"></param>
+        /// <param name="span"></param>
+        /// <param name="onStartAction"></param>
+        /// <param name="onFinishAction"></param>
+        public Cooldown(AbstractAttacker sender, CooldownTypes type, int span, Action onStartAction, Action onFinishAction) :
             this(sender, type, span, onFinishAction)
         {
             OnStartAction = onStartAction;
         }
-
+        
+        /// <summary>
+        /// Starting the cooldown
+        /// </summary>
         public void Start()
         {
             Started = DateTime.Now;
             OnStartAction?.Invoke();
         }
         
+        /// <summary>
+        /// Upon cooldown finish, strike event
+        /// </summary>
         public void OnFinishCooldown()
         {
             OnCompleteAction?.Invoke();
         }
 
+        /// <summary>
+        /// Cooldown on complete action
+        /// </summary>
+        /// <param name="action">Function to be executed</param>
         public void SetOnCompleteAction(Action action)
         {
-            Console.WriteLine("Setting on Complete Action");
             OnCompleteAction = action;
         }
 
+        /// <summary>
+        /// Setting on start action
+        /// </summary>
+        /// <param name="action">Function to be executed on start of cooldown</param>
         public void SetOnStartAction(Action action)
         {
             OnStartAction = action;

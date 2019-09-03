@@ -39,6 +39,11 @@ namespace Server.Game.controllers.server
                     throw new Exception("Failed dequeue attack");
                 }
 
+                if (pendingAttack.From.Position.DistanceTo(pendingAttack.To.Position) > pendingAttack.From.AttackRange)
+                {
+                    return;
+                }
+
                 switch (pendingAttack.AttackType)
                 {
                     case AttackTypes.LASER:
@@ -106,7 +111,6 @@ namespace Server.Game.controllers.server
                 default:
                     laserColor = pendingAttack.From.LaserColor;
                     damage = pendingAttack.From.Damage;
-                    absorbDamage = 0;
                     break;
             }
 
@@ -131,9 +135,106 @@ namespace Server.Game.controllers.server
 
         private void PendingRocketAttack(PendingAttack pendingAttack)
         {
+            var specialRocket = ItemMap.IsSpecialRocket(pendingAttack.LootId);
             
+            if (CooldownManager.Instance.Exists(pendingAttack.From, CooldownTypes.ROCKET_COOLDOWN) && !specialRocket)
+            {
+                return;
+            }
+            
+            var damage = 0;
+            var absorbDamage = 0;
+            var rocketColor = 0;
+            var rocketShot = true;
+            
+            switch (pendingAttack.LootId)
+            {
+                case "ammunition_rocket_r-310":
+                    rocketColor = 1;
+                    damage = pendingAttack.From.RocketDamage;
+                    break;
+                case "ammunition_rocket_plt-2026":
+                    rocketColor = 2;
+                    damage = pendingAttack.From.RocketDamage * 2;
+                    break;
+                case "ammunition_rocket_plt-2021":
+                    rocketColor = 3;
+                    damage = pendingAttack.From.RocketDamage * 3;
+                    break;
+                case "ammunition_rocket_plt-3030":
+                    rocketColor = 4;
+                    damage = pendingAttack.From.RocketDamage * 4; 
+                    break;
+                case "ammunition_specialammo_pld-8":
+                    rocketColor = 5;
+                    PlasmaAttack(pendingAttack, out rocketShot);
+                    break;
+                case "ammunition_specialammo_dcr-250":
+                    rocketColor = 6;
+                    DecelerationAttack(pendingAttack, out rocketShot);
+                    break;
+                case "ammunition_specialammo_wiz-x":
+                    rocketColor = 8;
+                    WizardAttack(pendingAttack, out rocketShot);
+                    break;
+                default:
+                    rocketColor = 1;
+                    damage = pendingAttack.From.RocketDamage;
+                    break;
+            }
+
+            if (!rocketShot) return;
+            
+            PrebuiltCombatCommands.Instance.RocketAttack(pendingAttack, rocketColor);
+
+            if (!specialRocket)
+            {
+                CooldownManager.Instance.CreateCooldown(new Cooldown(pendingAttack.From,
+                    CooldownTypes.ROCKET_COOLDOWN, 3000));
+
+                ServerController.Get<DamageController>().EnforceDamage(pendingAttack.To, pendingAttack.From,
+                    damage, absorbDamage, DamageCalculationTypes.RANDOMISED, AttackTypes.ROCKET);
+            }
+
+            pendingAttack.From.OnRocketShoot(pendingAttack);
         }
 
+        private void PlasmaAttack(PendingAttack pendingAttack, out bool rocketShot)
+        {
+            if (CooldownManager.Instance.Exists(pendingAttack.From, CooldownTypes.PLASMA_COOLDOWN))
+            {
+                rocketShot = false;
+                return;
+            }
+            
+            rocketShot = true;
+            CooldownManager.Instance.CreateCooldown(new Cooldown(pendingAttack.From, CooldownTypes.PLASMA_COOLDOWN, 30000));
+        }
+
+        private void DecelerationAttack(PendingAttack pendingAttack, out bool rocketShot)
+        {
+            if (CooldownManager.Instance.Exists(pendingAttack.From, CooldownTypes.DECELERATION_COOLDOWN))
+            {
+                rocketShot = false;
+                return;
+            }
+
+            rocketShot = true;
+            CooldownManager.Instance.CreateCooldown(new Cooldown(pendingAttack.From, CooldownTypes.DECELERATION_COOLDOWN, 30000));
+        }
+
+        private void WizardAttack(PendingAttack pendingAttack, out bool rocketShot)
+        {
+            if (CooldownManager.Instance.Exists(pendingAttack.From, CooldownTypes.WIZARD_COOLDOWN))
+            {
+                rocketShot = false;
+                return;
+            }
+
+            rocketShot = true;
+            CooldownManager.Instance.CreateCooldown(new Cooldown(pendingAttack.From, CooldownTypes.WIZARD_COOLDOWN, 30000));
+        }
+        
         private void PendingRocketLauncherAttack(PendingAttack pendingAttack)
         {
             
