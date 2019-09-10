@@ -124,7 +124,17 @@ namespace Server.Game.netty.packet
 
         public void BuildToAllConnections(Commands key, object[] oldClientParameters, object[] newClientParameters)
         {
-            
+            foreach (var gameSession in GameStorageManager.Instance.GameSessions)
+            {
+                if (gameSession.Value.Player.UsingNewClient)
+                {
+                    BuildCommand(gameSession.Value.GameClient, key, true, newClientParameters);
+                }
+                else
+                {
+                    BuildCommand(gameSession.Value.GameClient, key, false, oldClientParameters);
+                }
+            }
         }
     }
 }

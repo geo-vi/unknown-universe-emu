@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using Server.Game.objects.entities;
 using Server.Utils;
@@ -24,6 +25,29 @@ namespace Server.Game.objects.implementable
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Vector vector)
+            {
+                return Equals(vector);
+            }
+
+            return false;
+        }
+
+        private bool Equals(Vector other)
+        {
+            return X == other.X && Y == other.Y;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (X * 397) ^ Y;
+            }
         }
 
         public static bool IsPositionInCircle(Vector position, Vector circleCenter, float radius)

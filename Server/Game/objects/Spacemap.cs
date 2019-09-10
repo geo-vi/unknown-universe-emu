@@ -19,7 +19,6 @@ namespace Server.Game.objects
          * BASICS *
          **********/
         public int Id { get; }
-        private int TickId { get; set; }
         public string Name { get; }
         public Factions Faction { get; }
         public bool Pvp { get; }
@@ -30,8 +29,8 @@ namespace Server.Game.objects
         public bool RangeDisabled { get; set; }
 
         #region Base Storages [DB]
-        private List<PortalBase> PortalBase { get; set; }
-        private List<BaseNpc> Npcs;
+        public List<PortalBase> PortalBase { get; set; }
+        public List<BaseNpc> Npcs;
         #endregion
 
         public Dictionary<int, Zone> Zones = new Dictionary<int, Zone>();
@@ -60,9 +59,6 @@ namespace Server.Game.objects
             Level = level;
             PortalBase = portals;
             Npcs = npcs;
-
-            var tickId = -1;
-            TickId = tickId;
         }
     }
 }

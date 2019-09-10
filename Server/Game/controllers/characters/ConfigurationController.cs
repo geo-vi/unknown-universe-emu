@@ -23,10 +23,12 @@ namespace Server.Game.controllers.characters
             firstConfiguration.TotalDamageCalculated = Character.Hangar.Ship.Damage;
             firstConfiguration.TotalShieldCalculated = Character.Hangar.Ship.Shield;
             firstConfiguration.TotalSpeedCalculated = Character.Hangar.Ship.Speed;
+            firstConfiguration.Initiate();
             var secondConfiguration = new Configuration(2);
             secondConfiguration.TotalDamageCalculated = Character.Hangar.Ship.Damage;
             secondConfiguration.TotalShieldCalculated = Character.Hangar.Ship.Shield;
             secondConfiguration.TotalSpeedCalculated = Character.Hangar.Ship.Speed;
+            secondConfiguration.Initiate();
             return new[] { firstConfiguration, secondConfiguration };
         }
 

@@ -101,9 +101,8 @@ namespace Server.Game.netty.packet.prebuiltCommands
         {
             if (GetSession(player, out var session))
             {
-
-                //~TODO: Create quickbuy packet
-                //Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "g", "a", "b,1000,1,10000.0 ");
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, 0, "g",
+                    "a", "b,1000,1,10000.0,C,2,500.0,C,3,1000.0,U,4,1.0,U,5,1000.0,U", "r,100,1,10000,C,2,50000,C,3,500.0,U,4,700.0,");
             }
         }
 

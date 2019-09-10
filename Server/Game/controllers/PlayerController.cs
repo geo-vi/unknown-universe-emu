@@ -23,12 +23,15 @@ namespace Server.Game.controllers
             OverrideControlledInstance<CharacterCombatController, PlayerCombatController>();
             OverrideControlledInstance<CharacterDamageController, PlayerDamageController>();
             OverrideControlledInstance<CharacterCooldownController, PlayerCooldownController>();
+            OverrideControlledInstance<CharacterRegenerationController, PlayerRegenerationController>();
+            OverrideControlledInstance<RocketLauncherController, PlayerRocketLauncherController>();
+            OverrideControlledInstance<DroneController, PlayerDroneController>();
+            OverrideControlledInstance<CharacterDestructionController, PlayerDestructionController>();
             CreateControlledInstance<AbilityController>();
             CreateControlledInstance<BoosterController>();
             CreateControlledInstance<CargoController>();
             CreateControlledInstance<CollectableController>();
             CreateControlledInstance<CpuController>();
-            CreateControlledInstance<DroneController>();
             CreateControlledInstance<GalaxyGateController>();
             CreateControlledInstance<InformationController>();
             CreateControlledInstance<ItemController>();

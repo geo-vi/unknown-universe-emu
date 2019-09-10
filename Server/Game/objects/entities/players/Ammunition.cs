@@ -11,6 +11,21 @@ namespace Server.Game.objects.entities.players
     {
         public Dictionary<string, Item> Ammo = new Dictionary<string, Item>();
 
+        public event EventHandler<AmmunitionItem> OnAmmunitionCreated;
+        public event EventHandler<AmmunitionItem> OnAmmunitionChanged;
+
+        public event EventHandler<AmmunitionItem> OnAmmunitionRemoved;
+
+        public void UpdateAmmunition(AmmunitionItem item)
+        {
+            OnAmmunitionChanged?.Invoke(this, item);
+        }
+
+        public void RemoveAmmunition(AmmunitionItem item)
+        {
+            OnAmmunitionRemoved?.Invoke(this, item);
+        }
+        
         public void AddAmmunition(string lootId, int amount)
         {
             if (amount < 0)
@@ -61,6 +76,8 @@ namespace Server.Game.objects.entities.players
             
             var item = new AmmunitionItem(lootId, amount);
             Ammo.Add(lootId, item);
+            
+            OnAmmunitionCreated?.Invoke(this, item);
         }
     }
 }

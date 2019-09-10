@@ -1,4 +1,5 @@
 ﻿using System;
+using Server.Game.managers;
 using Server.Utils;
 
 namespace Server.Main.commands.server
@@ -13,7 +14,7 @@ namespace Server.Main.commands.server
         {
             Out.WriteLog("Current server runtime is: " + (DateTime.Now - Program.ServerStartTime), "SERVER");
             Out.WriteLog("Running stable ; 0 errors; 0 warnings", "SERVER");
-            Out.WriteLog("Game: 0 sessions; Chat: 0 sessions; Web: 0 sessions; Helper: Not Connected", "SERVER");
+            Out.WriteLog("Game: " + GameStorageManager.Instance.GameSessions.Count + " sessions; Chat: 0 sessions; Web: 0 sessions; Helper: Not Connected", "SERVER");
         }
     }
 }

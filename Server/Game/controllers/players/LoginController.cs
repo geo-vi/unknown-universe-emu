@@ -54,8 +54,7 @@ namespace Server.Game.controllers.players
         
         protected void OnLoginSetupFinish()
         {
-            GameSession.GameClient.Initialized = true;
-            GameSession.LoginTime = DateTime.Now;
+            GameSession.OnLoginProcessFinish();
         }
 
         /// <summary>
@@ -71,6 +70,9 @@ namespace Server.Game.controllers.players
             PrebuiltLegacyCommands.Instance.SendBootyKeys(GameSession.Player);
             PrebuiltLegacyCommands.Instance.SendQuickbuyPriceMenu(GameSession.Player);
             PrebuiltLegacyCommands.Instance.UpdateConfigurations(GameSession.Player);
+            PrebuiltPlayerCommands.Instance.RocketLauncherStatus(GameSession.Player);
+            PrebuiltPlayerCommands.Instance.DroneFormationCommand(GameSession.Player);
+            PrebuiltPlayerCommands.Instance.DronesCommand(GameSession.Player);
         }
 
         /// <summary>

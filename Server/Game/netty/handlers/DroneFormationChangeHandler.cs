@@ -1,21 +1,19 @@
 ﻿using DotNetty.Buffers;
+using Server.Game.managers;
 using Server.Game.netty.commands.old_client.requests;
+using Server.Game.objects;
 
 namespace Server.Game.netty.handlers
 {
     class DroneFormationChangeHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
-            var formationId = 0;
-            if (!gameSession.Player.UsingNewClient)
-            {
-                var cmd = new DroneFormationChangeRequest();
-                cmd.readCommand(buffer);
-                formationId = cmd.selectedFormationId;
-            }
-            
-            gameSession.Player.Controller.Miscs.UseItem(Slotbar.Items.FormationIds[formationId]);
+            var cmd = new DroneFormationChangeRequest();
+            cmd.readCommand(buffer);
+            var formationId = cmd.selectedFormationId;
+
+            DroneManager.Instance.ChangeDroneFormation(gameSession.Player, formationId);
         }
     }
 }

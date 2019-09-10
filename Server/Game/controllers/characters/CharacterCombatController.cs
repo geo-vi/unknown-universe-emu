@@ -30,6 +30,7 @@ namespace Server.Game.controllers.characters
 
             Character.OnLaserShot += OnLaserShotComplete;
             Character.OnLaserAmmunitionChange += OnLaserAmmunitionChanged;
+            Character.OnCombatFinished += OnLaserCombatFinished;
             InLaserCombat = true;
 
             OnLaserCombat(target);
@@ -41,6 +42,11 @@ namespace Server.Game.controllers.characters
         /// <param name="target"></param>
         protected virtual void OnLaserCombat(AbstractAttackable target)
         {
+            if (!InLaserCombat)
+            {
+                return;
+            }
+            
             CombatManager.Instance.CreateCombat(Character, target, AttackTypes.LASER);
         }
 
@@ -147,11 +153,12 @@ namespace Server.Game.controllers.characters
         /// <summary>
         /// After laser attack has ended, unsubscribe from event
         /// </summary>
-        public void OnLaserAttackEnded()
+        public void OnLaserCombatFinished(object sender, EventArgs e)
         {
             InLaserCombat = false;
             Character.OnLaserShot -= OnLaserShotComplete;
             Character.OnLaserAmmunitionChange -= OnLaserAmmunitionChanged;
+            Character.OnCombatFinished -= OnLaserCombatFinished;
         }
         
         //todo: ...

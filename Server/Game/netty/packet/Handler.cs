@@ -29,7 +29,7 @@ namespace Server.Game.netty.packet
         private Dictionary<short, IHandler> OldClientCommands = new Dictionary<short, IHandler>();
         private Dictionary<short, IHandler> NewClientCommands = new Dictionary<short, IHandler>();
         private Dictionary<string, ILegacyHandler> LegacyCommands = new Dictionary<string, ILegacyHandler>();
-        
+
         public void AddCommands()
         {
             OldClientCommands.Add(commands.old_client.requests.QualitySettingsRequest.ID, new QualitySettingsHandler());
@@ -43,9 +43,14 @@ namespace Server.Game.netty.packet
             OldClientCommands.Add(commands.old_client.requests.AttackLaserRequest.ID, new AttackLaserHandler());
             OldClientCommands.Add(commands.old_client.requests.SelectBatteryRequest.ID, new SelectBatteryHandler());
             OldClientCommands.Add(commands.old_client.requests.SelectRocketRequest.ID, new SelectRocketHandler());
+            OldClientCommands.Add(commands.old_client.requests.HellstormSelectRocketRequest.ID, new HellstormSelectRocketHandler());
+            OldClientCommands.Add(commands.old_client.requests.HellstormLaunchRequest.ID, new HellstormLaunchHandler());
+            OldClientCommands.Add(commands.old_client.requests.HellstormLoadRequest.ID, new HellstormLoadHandler());
+            OldClientCommands.Add(commands.old_client.requests.DroneFormationChangeRequest.ID, new DroneFormationChangeHandler());
             
             LegacyCommands.Add(ClientCommands.SELECT, new LegacySelectHandler());
             LegacyCommands.Add(ServerCommands.ROCKET_ATTACK, new AttackRocketLegacyHandler());
+            LegacyCommands.Add(ClientCommands.LASER_STOP, new AttackAbortLaserHandler());
             Out.QuickLog($"Successfully added {LegacyCommands.Count} legacy packet handlers to Handler");
             Out.QuickLog($"Successfully added {OldClientCommands.Count} old client handlers to Handler");
             Out.QuickLog($"Successfully added {NewClientCommands.Count} new client handlers to Handler");

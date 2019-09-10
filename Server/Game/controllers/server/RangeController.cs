@@ -50,7 +50,7 @@ namespace Server.Game.controllers.server
         /// <summary>
         /// Removing the target character from all entities's screen
         /// </summary>
-        /// <param name="character">Target Character which will be removed</param>
+        /// <param name="targetCharacter">Target Character which will be removed</param>
         public void RemoveCharacter(Character targetCharacter)
         {
             var entities = targetCharacter.Spacemap.Entities;

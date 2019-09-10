@@ -42,7 +42,7 @@ namespace Server.Networking.clients
             get
             {
                 var session = GameStorageManager.Instance.GetGameSession(UserId);
-                return session.Player;
+                return session?.Player;
             }
         }
 

@@ -20,7 +20,7 @@ namespace Server.Game.controllers.players
                 return session;
             }
         }
-        
+
         public override void OnTick()
         {
             CalculateActivity();
@@ -37,7 +37,10 @@ namespace Server.Game.controllers.players
             var loginTimePoints = (int)((DateTime.Now - Session.LoginTime).TotalMilliseconds) * 0.0001;
             var movementTimePoints = (int)((DateTime.Now - Session.LastMovementTime).TotalMilliseconds) * 0.001;
             var combatTimePoints = (int)((DateTime.Now - Session.LastCombatTime).TotalMilliseconds) * 0.001;
-
+            var logoutPoints = CharacterStateManager.Instance.IsInState(Character, CharacterStates.NO_CLIENT_CONNECTED)
+                ? 1000
+                : 0;
+            
             if (loginTimePoints < 0)
             {
                 //yet waiting to login
@@ -48,7 +51,7 @@ namespace Server.Game.controllers.players
             {
                 InactivityKick();
             }
-            else if (loginTimePoints + movementTimePoints + combatTimePoints > 1000)
+            else if (loginTimePoints + logoutPoints + movementTimePoints + combatTimePoints > 1000)
             {
                 if (movementTimePoints < 100 || combatTimePoints < 50)
                 {
@@ -90,6 +93,7 @@ namespace Server.Game.controllers.players
             
             Player.Controller.Dispose();
             Task.Run(Session.GameClient.Disconnect);
+            GameStorageManager.Instance.GameSessions.TryRemove(Player.Id, out _);
         }
     }
 }

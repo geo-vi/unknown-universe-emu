@@ -75,8 +75,19 @@ namespace Server.Game.managers
                     {
                         CharacterStates.ON_JUMPGATE, CharacterStates.ON_COLLECTABLE, CharacterStates.IN_EQUIPMENT_AREA,
                         CharacterStates.ON_BATTLESTATION, CharacterStates.SLEEPING, CharacterStates.JUMPING, CharacterStates.SHOOTING,
-                        CharacterStates.HOME_MAP, CharacterStates.CLOAKED, CharacterStates.MOVING,
+                        CharacterStates.HOME_MAP, CharacterStates.CLOAKED, CharacterStates.MOVING, CharacterStates.DEAD,
                         CharacterStates.NO_CLIENT_CONNECTED, CharacterStates.FULLY_DISCONNECTED
+                    }
+                },
+                new StateMap
+                {
+                    from = new []
+                    {
+                        CharacterStates.DEAD 
+                    }, 
+                    to = new []
+                    {
+                        CharacterStates.NO_CLIENT_CONNECTED, CharacterStates.FULLY_DISCONNECTED, CharacterStates.SLEEPING
                     }
                 },
                 new StateMap

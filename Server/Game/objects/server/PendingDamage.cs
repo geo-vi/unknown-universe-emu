@@ -13,7 +13,7 @@ namespace Server.Game.objects.server
         
         public int AbsorbDamage { get; set; }
         
-        public DamageCalculationTypes CalculationType { get; set; }
+        public CalculationTypes CalculationType { get; set; }
         
         public AttackTypes AttackType { get; set; }
         
@@ -31,7 +31,7 @@ namespace Server.Game.objects.server
         /// <param name="calculationType"></param>
         /// <param name="attackType"></param>
         public PendingDamage(AbstractAttackable target, AbstractAttacker attacker, int damage, int absorbDamage,
-            DamageCalculationTypes calculationType, AttackTypes attackType) : 
+            CalculationTypes calculationType, AttackTypes attackType) : 
             this(target, damage, absorbDamage, calculationType, attackType)
         {
             Attacker = attacker;
@@ -45,7 +45,7 @@ namespace Server.Game.objects.server
         /// <param name="absorbDamage"></param>
         /// <param name="calculationType"></param>
         /// <param name="attackType"></param>
-        public PendingDamage(AbstractAttackable target, int damage, int absorbDamage, DamageCalculationTypes calculationType, 
+        public PendingDamage(AbstractAttackable target, int damage, int absorbDamage, CalculationTypes calculationType, 
             AttackTypes attackType)
         {
             Target = target;
@@ -64,7 +64,7 @@ namespace Server.Game.objects.server
         /// <param name="absorbDamage"></param>
         /// <param name="calculationType"></param>
         /// <param name="attackType"></param>
-        public PendingDamage(int affectedDistance, int damage, int absorbDamage, DamageCalculationTypes calculationType,
+        public PendingDamage(int affectedDistance, int damage, int absorbDamage, CalculationTypes calculationType,
             AttackTypes attackType)
         {
             AffectedDistance = affectedDistance;
@@ -85,7 +85,7 @@ namespace Server.Game.objects.server
         /// <param name="calculationType"></param>
         /// <param name="attackType"></param>
         public PendingDamage(AbstractAttacker attacker, int affectedDistance, int damage, int absorbDamage,
-            DamageCalculationTypes calculationType, AttackTypes attackType) : this(affectedDistance, damage, absorbDamage, calculationType, attackType)
+            CalculationTypes calculationType, AttackTypes attackType) : this(affectedDistance, damage, absorbDamage, calculationType, attackType)
         {
             Attacker = attacker;
         }

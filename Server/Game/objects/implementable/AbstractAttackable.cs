@@ -8,7 +8,7 @@ using Server.Utils;
 
 namespace Server.Game.objects.implementable
 {
-    abstract class AbstractAttackable
+    abstract class AbstractAttackable : IGameEntity
     {
         public int Id { get; }
 
@@ -57,6 +57,12 @@ namespace Server.Game.objects.implementable
 
         public event EventHandler<PendingDamage> OnDamageReceived;
         
+        public event EventHandler<PendingHeal> OnHealReceived;
+
+        public event EventHandler<PendingDestruction> OnDestroyed; 
+
+        public event EventHandler OnRevived;
+
         protected AbstractAttackable(int id)
         {
             Id = id;
@@ -98,6 +104,21 @@ namespace Server.Game.objects.implementable
         public void OnDamaged(PendingDamage pendingDamage)
         {
             OnDamageReceived?.Invoke(this, pendingDamage);
+        }
+
+        public void OnHealed(PendingHeal pendingHeal)
+        {
+            OnHealReceived?.Invoke(this, pendingHeal);
+        }
+
+        public void OnDestroy(PendingDestruction pendingDestruction)
+        {
+            OnDestroyed?.Invoke(this, pendingDestruction);
+        }
+
+        public void OnRevive()
+        {
+            OnRevived?.Invoke(this, EventArgs.Empty);
         }
     }
 }

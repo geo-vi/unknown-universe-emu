@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Server.Game.objects.entities.ships.equipment;
 using Server.Game.objects.enums;
@@ -30,6 +31,20 @@ namespace Server.Game.objects.entities.ships
 
         public int UpgradeLevel { get; set; }
         
+        public int AssignedDroneDesign { get; set; }
+
+        /*********
+         * EVENTS *
+         *********/
+
+        /// <summary>
+        /// On Drone level-up
+        /// parameter = new level
+        /// </summary>
+        public event EventHandler<Level> OnDroneLevelChange;
+
+        public event EventHandler OnDroneDamaged;
+        
         public Drone(int id, DroneTypes droneType, Level level, int experience, int damage,
             int upgradeLevel)
         {
@@ -41,16 +56,44 @@ namespace Server.Game.objects.entities.ships
             UpgradeLevel = upgradeLevel;
         }
 
+        /// <summary>
+        /// Getting drone boost
+        /// </summary>
+        /// <returns></returns>
         public double GetDamageBoost()
         {
             var percentage = 10;
             return 1 + (percentage / 100);
         }
         
+        /// <summary>
+        /// Getting shield boost
+        /// </summary>
+        /// <returns></returns>
         public double GetShieldBoost()
         {
             var percentage = 20;
             return 1 + (percentage / 100);
+        }
+
+        /// <summary>
+        /// Setting drone damage
+        /// </summary>
+        /// <param name="damage">Damage from 1-100</param>
+        public void SetDroneDamage(int damage)
+        {
+            Damage = damage;
+            OnDroneDamaged?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Setting new drone level
+        /// </summary>
+        /// <param name="level">Level</param>
+        public void SetDroneLevel(Level level)
+        {
+            Level = level;
+            OnDroneLevelChange?.Invoke(this, level);
         }
     }
 }

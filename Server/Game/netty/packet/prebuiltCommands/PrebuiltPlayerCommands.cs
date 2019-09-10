@@ -6,6 +6,8 @@ using Server.Game.netty.commands;
 using Server.Game.netty.commands.old_client;
 using Server.Game.objects.entities;
 using Server.Game.objects.entities.players.settings;
+using Server.Game.objects.entities.ships.items;
+using Server.Game.objects.enums;
 using Server.Main.objects;
 using Server.Utils;
 
@@ -99,6 +101,31 @@ namespace Server.Game.netty.packet.prebuiltCommands
                 var ammoList = actionParams[0] as List<AmmunitionCountModule> ?? new List<AmmunitionCountModule>();
 
                 await client.Send(commands.old_client.AmmunitionCountUpdateCommand.write(ammoList).Bytes);
+            });
+            
+            Packet.Builder.OldCommands.Add(Commands.ATTRIBUTE_SHIELD_UPDATE_COMMAND,  async (client, actionParams) =>
+            {
+                ArgumentFixer(actionParams, 2, out actionParams);
+                await client.Send(commands.old_client.AttributeShieldUpdateCommand.write(Convert.ToInt32(actionParams[0]),
+                    Convert.ToInt32(actionParams[1])).Bytes);
+            });
+            
+            Packet.Builder.OldCommands.Add(Commands.ROCKET_LAUNCHER_STATUS_COMMAND, async (client, actionParams) =>
+            {
+                ArgumentFixer(actionParams, 3, out actionParams);
+                var rocketLaunchers = actionParams[0] as List<int> ?? new List<int>();
+
+                await client.Send(commands.old_client.HellstormStatusCommand.write(rocketLaunchers,
+                    new commands.old_client.AmmunitionTypeModule(Convert.ToInt16(actionParams[1])),
+                    Convert.ToInt32(actionParams[2])).Bytes);
+            });
+            
+            Packet.Builder.OldCommands.Add(Commands.DRONE_FORMATIONS_AVAILABLE_COMMAND, async (client, actionParams) =>
+            {
+                ArgumentFixer(actionParams, 1, out actionParams);
+                var droneFormations = actionParams[0] as List<int> ?? new List<int>();
+                
+                await client.Send(commands.old_client.DroneFormationAvailableFormationsCommand.write(droneFormations).Bytes);
             });
         }
 
@@ -212,6 +239,58 @@ namespace Server.Game.netty.packet.prebuiltCommands
                 Packet.Builder.BuildCommand(session.GameClient, Commands.AMMUNITION_COUNT_UPDATE_COMMAND,
                     player.UsingNewClient, ammoList);
             }
+        }
+
+        public void UpdateShieldCommand(Player player)
+        {
+            if (GetSession(player, out var session))
+            {
+                Packet.Builder.BuildCommand(session.GameClient, Commands.ATTRIBUTE_SHIELD_UPDATE_COMMAND, player.UsingNewClient,
+                     player.CurrentShield, player.MaxShield);
+            }
+        }
+
+        public void RocketLauncherStatus(Player player)
+        {
+            if (GetSession(player, out var session))
+            {
+                var launchers = new List<int>();
+                foreach (var launcher in player.RocketLauncher.Launchers)
+                {
+                    launchers.Add(Convert.ToInt32(launcher));
+                }
+                Packet.Builder.BuildCommand(session.GameClient, Commands.ROCKET_LAUNCHER_STATUS_COMMAND, player.UsingNewClient,
+                launchers, AmmoConvertManager.ToAmmoType(player.Settings.GetSettings<SlotbarSettings>().SelectedHellstormRocketAmmo).type, 
+                player.RocketLauncher.LoadedRockets);
+            }
+        }
+
+        public void DroneFormationCommand(Player player)
+        {
+            if (GetSession(player, out var session))
+            {
+                var droneFormations = GameItemManager.Instance.GetAllByCategory(player, GeneralItemCategories.DRONE_FORMATION);
+                var droneFormationIds = new List<int> { 0 };
+
+                foreach (var droneFormation in droneFormations)
+                {
+                    var index = Array.IndexOf(ItemMap.FormationIds, droneFormation.LootId);
+                    droneFormationIds.Add(index);
+                }
+                
+                Packet.Builder.BuildCommand(session.GameClient, Commands.DRONE_FORMATIONS_AVAILABLE_COMMAND, player.UsingNewClient,
+                    droneFormationIds);
+            }
+        }
+
+        public void DronesCommand(Player player)
+        {
+            PrebuiltRangeCommands.Instance.DronesCommand(player, player);
+        }
+
+        public void ChangeDroneFormationCommand(Player player)
+        {
+            
         }
     }
 }

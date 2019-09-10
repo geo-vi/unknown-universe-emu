@@ -44,13 +44,19 @@ namespace Server.Game.objects.entities.ships
 
         public RocketLauncher RocketLauncher { get; set; }
 
-        public double ShieldAbsorb => GetShieldAbs();
+        public double ShieldAbsorb { get; set; }
 
         public Configuration(int id)
         {
             Id = id;
         }
 
+        public void Initiate()
+        {
+            ShieldAbsorb = GetShieldAbs();
+            RocketLauncher = GetRocketLauncher();
+        }
+        
         private double GetShieldAbs()
         {
             return 0.5;
@@ -77,24 +83,26 @@ namespace Server.Game.objects.entities.ships
             return lasers.Length > 1 ? 1 : 0;
         }
 
-        public RocketLauncher GetRocketLauncher(Player player)
+        public RocketLauncher GetRocketLauncher()
         {
-//            var launchers = new List<RocketLaunchers>();
-//            foreach (var equippedItem in EquippedItemsOnShip.Where(x => x.Value.Item.Category == EquippedItemCategories.ROCKET_LAUNCHER))
-//            {
-//                if (equippedItem.Value.Item.Id == 25)
-//                {
-//                    launchers.Add(RocketLaunchers.HST_02);
-//                }
-//                else if (equippedItem.Value.Item.Id == 26)
-//                {
-//                    launchers.Add(RocketLaunchers.HST_01);
-//                }
-//            }
-//            var rocketLauncher = new RocketLauncher(player, launchers.ToArray());
-//            RocketLauncher = rocketLauncher;
-//            return rocketLauncher;
-            return null;
+            var launchers = new List<RocketLaunchers>();
+            foreach (var equippedItem in EquippedItemsOnShip.Where(x => x.Value.GeneralCategory == GeneralItemCategories.ROCKET_LAUNCHER))
+            {
+                if (equippedItem.Value.Id == 25)
+                {
+                    launchers.Add(RocketLaunchers.HST_02);
+                    Console.WriteLine("HST-2 added");
+                }
+                else if (equippedItem.Value.Id == 26)
+                {
+                    launchers.Add(RocketLaunchers.HST_01);
+                    Console.WriteLine("HST-1 added");
+                }
+            }
+
+            var rocketLauncher = new RocketLauncher(launchers.ToArray());
+            RocketLauncher = rocketLauncher;
+            return rocketLauncher;
         }
     }
 }

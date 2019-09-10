@@ -21,12 +21,12 @@ namespace Server.Game.controllers.server
         /// <summary>
         /// Start movement when possible
         /// </summary>
-        private ConcurrentQueue<PendingMovement> PendingMovements = new ConcurrentQueue<PendingMovement>();
+        private readonly ConcurrentQueue<PendingMovement> _pendingMovements = new ConcurrentQueue<PendingMovement>();
         
         /// <summary>
         /// Update range every tick about movement
         /// </summary>
-        private ConcurrentDictionary<Character, PendingMovement> MovementsInProgress = new ConcurrentDictionary<Character, PendingMovement>();
+        private readonly ConcurrentDictionary<Character, PendingMovement> _movementsInProgress = new ConcurrentDictionary<Character, PendingMovement>();
 
         public override void OnFinishInitiation()
         {
@@ -45,18 +45,18 @@ namespace Server.Game.controllers.server
         /// <exception cref="Exception">Caused by duplicate movement OR dequeue failed</exception>
         private void ProcessQueue()
         {
-            while (!PendingMovements.IsEmpty)
+            while (!_pendingMovements.IsEmpty)
             {
-                if (PendingMovements.TryDequeue(out var dequeued))
+                if (_pendingMovements.TryDequeue(out var dequeued))
                 {
-                    if (MovementsInProgress.ContainsKey(dequeued.ParentCharacter))
+                    if (_movementsInProgress.ContainsKey(dequeued.ParentCharacter))
                     {
                         Out.QuickLog("Duplicate movement during dequeue tick", LogKeys.ERROR_LOG);
                         throw new Exception("Duplicate movement during dequeue tick");
                     }
 
-                    MovementsInProgress.TryAdd(dequeued.ParentCharacter, dequeued);
-                    dequeued.ParentCharacter.OnConfigurationChanged += OnMovementRateChange;
+                    _movementsInProgress.TryAdd(dequeued.ParentCharacter, dequeued);
+                    dequeued.ParentCharacter.OnConfigurationChanged += MovementRateChange;
                     dequeued.ParentCharacter.Controller.GetInstance<CharacterMovementController>().OnMovementStarted();
                 }
                 else
@@ -72,13 +72,13 @@ namespace Server.Game.controllers.server
         /// </summary>
         private void ProcessMovements()
         {
-            foreach (var movement in MovementsInProgress)
+            foreach (var movement in _movementsInProgress)
             {
                 var character = movement.Value.ParentCharacter;
                 if (movement.Value.EndPosition == character.Position)
                 {
-                    MovementsInProgress.TryRemove(movement.Key, out var pendingMovement);
-                    OnMovementFinished(pendingMovement);
+                    _movementsInProgress.TryRemove(movement.Key, out var pendingMovement);
+                    MovementFinished(pendingMovement);
                     continue;
                 }
 
@@ -112,7 +112,7 @@ namespace Server.Game.controllers.server
         /// </summary>
         /// <param name="pendingMovement"></param>
         /// <exception cref="Exception"></exception>
-        private void OnMovementFinished(PendingMovement pendingMovement)
+        private void MovementFinished(PendingMovement pendingMovement)
         {
             var character = pendingMovement.ParentCharacter;
             if (character == null)
@@ -121,7 +121,7 @@ namespace Server.Game.controllers.server
                 throw new Exception("Something went wrong during movement finishing");
             }
             
-            character.OnConfigurationChanged -= OnMovementRateChange;
+            character.OnConfigurationChanged -= MovementRateChange;
             character.Controller.GetInstance<CharacterMovementController>().OnMovementFinished();
             Out.WriteLog("Movement finished for character", LogKeys.ALL_CHARACTER_LOG, character.Id);
         }
@@ -202,9 +202,9 @@ namespace Server.Game.controllers.server
         /// <param name="destination">Destination Vector (x;y)</param>
         public void CreateMovement(Character character, Vector destination)
         {
-            if (MovementsInProgress.ContainsKey(character))
+            if (_movementsInProgress.ContainsKey(character))
             {
-                var movement = MovementsInProgress[character];
+                var movement = _movementsInProgress[character];
                 movement.EndPosition = destination;
                 movement.MovementRendered = false;
                 Out.WriteLog("Changing destination for character", LogKeys.ALL_CHARACTER_LOG, character.Id);
@@ -229,12 +229,12 @@ namespace Server.Game.controllers.server
                 throw new Exception("Something went totally wrong with movement state of character");    
             }
             
-            if (PendingMovements.Contains(movement))
+            if (_pendingMovements.Contains(movement))
             {
                 Out.QuickLog("Trying to create a duplicate movement", LogKeys.ERROR_LOG);
                 throw new Exception("Trying to create a duplicate movement, something went wrong");
             }
-            PendingMovements.Enqueue(movement);
+            _pendingMovements.Enqueue(movement);
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace Server.Game.controllers.server
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnMovementRateChange(object sender, int e)
+        private void MovementRateChange(object sender, int e)
         {
             if (!(sender is Character character))
             {
@@ -250,13 +250,13 @@ namespace Server.Game.controllers.server
                 throw new ArgumentException("Something went wrong while updating movement rate, sender is not a character");
             }
 
-            if (!MovementsInProgress.ContainsKey(character))
+            if (!_movementsInProgress.ContainsKey(character))
             {
                 Out.QuickLog("Character is not moving, something went wrong", LogKeys.ERROR_LOG);
                 throw new Exception("Character is not moving, event not removed");
             }
             
-            var foundMoveEntry = MovementsInProgress[character];
+            var foundMoveEntry = _movementsInProgress[character];
             foundMoveEntry.MovementRendered = false;
         }
     }

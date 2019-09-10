@@ -1,13 +1,17 @@
 ﻿using DotNetty.Buffers;
+using Server.Game.managers;
+using Server.Game.objects;
+using Server.Game.objects.entities.players.settings;
+using Server.Game.objects.enums;
 
 namespace Server.Game.netty.handlers
 {
     class HellstormLaunchHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
-            if (gameSession.Player.RocketLauncher != null)
-                gameSession.Player.Controller.Attack.LaunchRocketLauncher();
+            CombatManager.Instance.CreateCombat(gameSession.Player, gameSession.Player.Selected, AttackTypes.ROCKET_LAUNCHER, 
+                gameSession.Player.Settings.GetSettings<SlotbarSettings>().SelectedHellstormRocketAmmo);
         }
     }
 }

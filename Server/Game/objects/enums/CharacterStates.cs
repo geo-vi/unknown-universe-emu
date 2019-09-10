@@ -16,6 +16,7 @@ namespace Server.Game.objects.enums
         MOVING,
         CLOAKED,
         NO_CLIENT_CONNECTED,
-        FULLY_DISCONNECTED
+        FULLY_DISCONNECTED,
+        DEAD
     }
 }

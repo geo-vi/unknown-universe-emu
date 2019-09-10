@@ -36,5 +36,12 @@ namespace Server.Game.objects
         {
             GameClient = gameClient;
         }
+
+        public void OnLoginProcessFinish()
+        {
+            LoginTime = DateTime.Now;
+            GameClient.Initialized = true;
+            Player.OnLogin();
+        }
     }
 }

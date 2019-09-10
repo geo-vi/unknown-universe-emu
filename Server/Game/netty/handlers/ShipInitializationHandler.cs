@@ -87,27 +87,26 @@ namespace Server.Game.netty.handlers
             {
                 return false;
             }
+
+            if (CharacterStateManager.Instance.IsInState(session.Player, CharacterStates.NO_CLIENT_CONNECTED))
+            {
+                session.GameClient = Client;
+            }
             else
             {
-                if (CharacterStateManager.Instance.IsInState(session.Player, CharacterStates.NO_CLIENT_CONNECTED))
-                {
-                    session.GameClient = Client;
-                    CharacterStateManager.Instance.RequestStateChange(session.Player, CharacterStates.LOGIN, out _);
-                }
-                else
-                {
-                    //step 1 :: gtfo
-                    Task.Run(session.GameClient.Disconnect);
+                //step 1 :: gtfo
+                Task.Run(session.GameClient.Disconnect);
                     
-                    CharacterStateManager.Instance.RequestStateChange(session.Player, CharacterStates.NO_CLIENT_CONNECTED, out _);
-
-                    //step 2 :: takeover
-                    session.GameClient = Client;
-                    
-                    CharacterStateManager.Instance.RequestStateChange(session.Player, CharacterStates.LOGIN, out _);
-                }
-                return true;
+                CharacterStateManager.Instance.RequestStateChange(session.Player, CharacterStates.NO_CLIENT_CONNECTED, out _);
+                
+                //step 2 :: takeover
+                session.GameClient = Client;
             }
+            
+            CharacterStateManager.Instance.ForceStateChange(session.Player, CharacterStates.LOGIN);
+            
+            session.Player.OnReconnect();
+            return true;
         }
     }
 }

@@ -107,5 +107,13 @@ namespace Server.Game.managers
             stateController.RemoveState(state);
             Out.WriteLog("Removed state for character " + state, LogKeys.ALL_CHARACTER_LOG, character.Id);
         }
+
+        public void ForceStateChange(Character character, CharacterStates state)
+        {
+            WipeStates(character);
+            var stateController = character.Controller.GetInstance<StateController>();
+            stateController.AddState(state);
+            Out.WriteLog("Forced a state change to " + state, LogKeys.ALL_CHARACTER_LOG, character.Id);
+        }
     }
 }

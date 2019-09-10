@@ -19,6 +19,7 @@ namespace Server.Main.managers
             RegisteredConsoleCommands.Add("msg", new MsgCommand());
             RegisteredConsoleCommands.Add("logout", new LogoutCommand());
             RegisteredConsoleCommands.Add("whereami", new WhereAmICommand());
+            RegisteredConsoleCommands.Add("test", new TestCommand());
             Out.QuickLog("Successfully added " + RegisteredConsoleCommands.Count + " console commands", LogKeys.SERVER_LOG);
         }
 

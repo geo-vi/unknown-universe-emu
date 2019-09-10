@@ -3,7 +3,7 @@ using Server.Game.objects.implementable;
 
 namespace Server.Game.objects.maps
 {
-    abstract class GameObject
+    abstract class GameObject : IGameEntity
     {
         public int Id { get; }
         public Vector Position { get; set; }

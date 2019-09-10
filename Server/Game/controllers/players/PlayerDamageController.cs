@@ -18,18 +18,10 @@ namespace Server.Game.controllers.players
             }
         }
 
-        protected override void OnDamageReceived(object sender, PendingDamage e)
+        protected override void DamageReceived(object sender, PendingDamage e)
         {
+            base.DamageReceived(sender, e);
             PrebuiltCombatCommands.Instance.DamageCommand(Player, e);
-            var selectors = Player.Controller.GetInstance<CharacterSelectionController>().FindAllSelectors();
-            
-            foreach (var selector in selectors)
-            {
-                if (selector is Player playerSelector)
-                {
-                    PrebuiltCombatCommands.Instance.DamageCommand(playerSelector, e);
-                }
-            }
         }
     }
 }

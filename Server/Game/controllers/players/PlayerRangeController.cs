@@ -1,3 +1,4 @@
+using System;
 using Server.Game.controllers.characters;
 using Server.Game.managers;
 using Server.Game.netty.packet.prebuiltCommands;
@@ -20,6 +21,29 @@ namespace Server.Game.controllers.players
             }
         }
 
+        public override void OnAdded()
+        {
+            Player.OnReconnected += PlayerOnReconnected;
+        }
+        
+        public override void OnRemoved()
+        {
+            Player.OnReconnected -= PlayerOnReconnected;
+        }
+
+        private void PlayerOnReconnected(object sender, EventArgs e)
+        {
+            foreach (var targetCharacter in Character.RangeView.CharactersInRenderRange.Values)
+            {
+                PrebuiltRangeCommands.Instance.CreateShipCommand(Player, targetCharacter);
+                PrebuiltRangeCommands.Instance.DronesCommand(Player, targetCharacter);
+                if (CharacterStateManager.Instance.IsInState(targetCharacter, CharacterStates.MOVING))
+                {
+                    PrebuiltRangeCommands.Instance.MoveCommand(Player, targetCharacter);
+                }
+            }
+        }
+
         /// <summary>
         /// After loaded, sending packet
         /// </summary>
@@ -28,6 +52,7 @@ namespace Server.Game.controllers.players
         {
             base.LoadCharacter(targetCharacter);
             PrebuiltRangeCommands.Instance.CreateShipCommand(Player, targetCharacter);
+            PrebuiltRangeCommands.Instance.DronesCommand(Player, targetCharacter);
             if (CharacterStateManager.Instance.IsInState(targetCharacter, CharacterStates.MOVING))
             {
                 PrebuiltRangeCommands.Instance.MoveCommand(Player, targetCharacter);

@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using Server.Game.managers;
 using Server.Game.netty.commands;
 using Server.Game.objects.entities;
+using Server.Game.objects.enums;
 using Server.Game.objects.implementable;
 using Server.Game.objects.server;
 
@@ -55,6 +58,22 @@ namespace Server.Game.netty.packet.prebuiltCommands
                     new commands.old_client.AttackTypeModule(Convert.ToInt16(actionParams[0])),
                     Convert.ToInt32(actionParams[1]), Convert.ToInt32(actionParams[2])).Bytes);
             });
+
+            Packet.Builder.OldCommands.Add(Commands.ATTACK_ROCKET_LAUNCHER_COMMAND, async (client, actionParams) =>
+            {
+                ArgumentFixer(actionParams, 5, out actionParams);
+                await client.Send(commands.old_client.HellstormAttackCommand.write(Convert.ToInt32(actionParams[0]),
+                    Convert.ToInt32(actionParams[1]), Convert.ToBoolean(actionParams[2]),
+                    Convert.ToInt32(actionParams[3]),
+                    new commands.old_client.AmmunitionTypeModule(Convert.ToInt16(actionParams[4]))).Bytes);
+            });
+            
+            Packet.Builder.OldCommands.Add(Commands.SHIP_DESTROY_COMMAND, async (client, actionParams) =>
+            {
+                ArgumentFixer(actionParams, 5, out actionParams);
+                await client.Send(commands.old_client.ShipDestroyedCommand.write(Convert.ToInt32(actionParams[0]),
+                    Convert.ToInt32(actionParams[1])).Bytes);
+            });
         }
 
         public void AbortAttackCommand(Player player)
@@ -102,6 +121,52 @@ namespace Server.Game.netty.packet.prebuiltCommands
             {
                 "0|v|" + attack.From.Id + "|" + attack.To.Id + "|H|" + rocketColor + "|1|0"
             }, new object[0]);
+        }
+
+        public void RocketLauncherAttack(PendingAttack attack, int rockets)
+        {
+            Packet.Builder.BuildToRange(attack.From, Commands.ATTACK_ROCKET_LAUNCHER_COMMAND, new object[]
+                {
+                    attack.From.Id, attack.To.Id, true, rockets, AmmoConvertManager.ToAmmoType(attack.LootId).type
+                }, 
+                new object[0]);
+        }
+
+        public void HealCommand(Player player, PendingHeal pendingHeal)
+        {
+            var healerId = 0;
+            if (pendingHeal.From != null)
+            {
+                healerId = pendingHeal.From.Id;
+            }
+
+            if (GetSession(player, out var session))
+            {
+                switch (pendingHeal.HealingType)
+                {
+                    case HealingTypes.HEALTH:
+                    case HealingTypes.HEALTH_AREA:
+                        Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, "0|A|HL|" + healerId + "|" + pendingHeal.To.Id + "|HPT|" + pendingHeal.To.CurrentHealth + "|" +
+                                                                                                     pendingHeal.Amount);
+                        break;
+                    case HealingTypes.SHIELD:
+                    case HealingTypes.SHIELD_AREA:
+                        Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, "0|A|HL|" + healerId + "|" + pendingHeal.To.Id + "|SHD|" + pendingHeal.To.CurrentShield + "|" +
+                                                                                                     pendingHeal.Amount);
+                        break;
+                }
+            }
+        }
+
+        public void DestructionCommand(PendingDestruction pendingDestruction)
+        {
+            Packet.Builder.BuildToRange(pendingDestruction.Target, Commands.SHIP_DESTROY_COMMAND, new object[]
+            {
+                pendingDestruction.Target.Id, 1
+            }, new object[]
+            {
+                
+            });
         }
     }
 }

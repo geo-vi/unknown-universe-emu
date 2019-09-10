@@ -10,6 +10,8 @@ namespace Server.Game.objects.implementable
         public event EventHandler<PendingAttack> OnRocketShot;
 
         public event EventHandler<string> OnLaserAmmunitionChange;
+
+        public event EventHandler OnCombatFinished;
         
         public virtual int Damage { get; set; }
 
@@ -52,6 +54,14 @@ namespace Server.Game.objects.implementable
         public void OnRocketShoot(PendingAttack pendingAttack)
         {
             OnRocketShot?.Invoke(this, pendingAttack);
+        }
+
+        /// <summary>
+        /// Once combat is finished it will strike the event
+        /// </summary>
+        public void OnCombatFinish()
+        {
+            OnCombatFinished?.Invoke(this, EventArgs.Empty);
         }
     }
 }

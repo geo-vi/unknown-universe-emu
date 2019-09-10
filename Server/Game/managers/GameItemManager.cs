@@ -78,6 +78,11 @@ namespace Server.Game.managers
             item = GameStorageManager.Instance.FindItem(lootId);
             return item != null;
         }
+
+        public bool ExistInInventory(Player player, string lootId)
+        {
+            return player.Equipment.Items.Any(x => x.Value.LootId == lootId);
+        }
         
         public bool ExistOnConfiguration(Player player, string lootId)
         {
@@ -147,6 +152,11 @@ namespace Server.Game.managers
                              x => x.Value.Item2.GeneralCategory == GeneralItemCategories.LASER);
 
             return lasers;
+        }
+
+        public EquipmentItem[] GetAllByCategory(Player player, GeneralItemCategories category)
+        {
+            return player.Equipment.Items.Values.Where(x => x.GeneralCategory == category).ToArray();
         }
     }
 }

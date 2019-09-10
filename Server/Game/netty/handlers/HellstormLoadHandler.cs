@@ -1,14 +1,15 @@
 ﻿using DotNetty.Buffers;
+using Server.Game.controllers.characters;
+using Server.Game.controllers.players;
+using Server.Game.objects;
 
 namespace Server.Game.netty.handlers
 {
     class HellstormLoadHandler : IHandler
     {
-        public void execute(GameSession gameSession, IByteBuffer buffer)
+        public void Execute(GameSession gameSession, IByteBuffer buffer)
         {
-            var player = gameSession.Player;
-            if (player.RocketLauncher != null)
-                player.RocketLauncher.Loading = true;
+            gameSession.Player.Controller.GetInstance<PlayerRocketLauncherController>().StartLoading();
         }
     }
 }

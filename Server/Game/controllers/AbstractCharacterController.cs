@@ -46,9 +46,11 @@ namespace Server.Game.controllers
             CreateControlledInstance<CharacterCombatController>();
             CreateControlledInstance<CharacterDamageController>();
             CreateControlledInstance<CharacterCooldownController>();
+            CreateControlledInstance<CharacterRegenerationController>();
+            CreateControlledInstance<CharacterDestructionController>();
         }
 
-        private void RemoveControllers()
+        public void RemoveControllers()
         {
             foreach (var controller in _abstractedSubControllers)
             {
@@ -124,6 +126,28 @@ namespace Server.Game.controllers
                 };
 
             controller.OnAdded();
+        }
+
+        /// <summary>
+        /// Removes a controller, used for instances like RocketLauncher (npcs which don't have launcher)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        protected void RemoveControlledInstance<T>() where T : AbstractedSubController
+        {
+            var controller = _abstractedSubControllers.FirstOrDefault(x => x is T);
+            if (controller == null)
+            {
+                //nothing to remove
+                return;
+            }
+
+            _abstractedSubControllers =
+                new ConcurrentBag<AbstractedSubController>(_abstractedSubControllers.Except(new[] { controller }))
+                {
+                    controller
+                };
+
+            controller.OnRemoved();
         }
 
         /// <summary>

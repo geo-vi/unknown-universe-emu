@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using Server.Game.controllers.characters;
 using Server.Game.controllers.implementable;
-using Server.Game.objects.entities;
 using Server.Game.objects.enums;
 using Server.Game.objects.implementable;
 using Server.Game.objects.server;
@@ -64,6 +62,10 @@ namespace Server.Game.controllers.server
             OnCooldownAdded?.Invoke(this, cooldown);
         }
 
+        /// <summary>
+        /// Once a cooldown finishes, execute it
+        /// </summary>
+        /// <param name="cooldown">Cooldown</param>
         private void FinishCooldown(Cooldown cooldown)
         {
             cooldown.OnFinishCooldown();

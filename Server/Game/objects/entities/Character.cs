@@ -191,6 +191,8 @@ namespace Server.Game.objects.entities
         public event EventHandler OnMovementStarted;
 
         public event EventHandler OnMovementFinished;
+
+        public event EventHandler<DroneFormation> OnFormationChange;
         
         protected Character(int id, string name, Hangar hangar, Factions factionId,
             Clan clan = null) : base(id)
@@ -252,6 +254,12 @@ namespace Server.Game.objects.entities
             MovementTime = 0;
             Destination = Position;
             OnMovementFinished?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ChangeDroneFormation(DroneFormation newFormation)
+        {
+            Formation = newFormation;
+            OnFormationChange?.Invoke(this, newFormation);
         }
     }
 }

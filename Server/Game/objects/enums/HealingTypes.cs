@@ -3,6 +3,8 @@
     enum HealingTypes
     {
         HEALTH,
-        SHIELD
+        SHIELD,
+        HEALTH_AREA,
+        SHIELD_AREA
     }
 }

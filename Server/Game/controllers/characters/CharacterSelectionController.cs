@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Server.Game.managers;
 using Server.Game.objects.entities;
 using Server.Game.objects.implementable;
+using Server.Game.objects.server;
 using Server.Main.objects;
 using Server.Utils;
 
@@ -9,6 +11,21 @@ namespace Server.Game.controllers.characters
 {
     class CharacterSelectionController : AbstractedSubController
     {
+        public override void OnAdded()
+        {
+            Character.OnDestroyed += CharacterOnDestroyed;
+        }
+
+        public override void OnOverwritten()
+        {
+            Character.OnDestroyed -= CharacterOnDestroyed;
+        }
+
+        public override void OnRemoved()
+        {
+            Character.OnDestroyed -= CharacterOnDestroyed;
+        }
+
         /// <summary>
         /// Trying to select an attackable
         /// </summary>
@@ -37,6 +54,7 @@ namespace Server.Game.controllers.characters
                 throw new Exception("Selection is already null");
             }
             
+            CombatManager.Instance.CancelCombat(Character);
             Character.Selected = null;
         }
 
@@ -44,6 +62,15 @@ namespace Server.Game.controllers.characters
         {
             return Character.RangeView.CharactersInRenderRange.Values.Where(x => x.SelectedCharacter == Character)
                 .ToArray();
+        }
+        
+        private void CharacterOnDestroyed(object sender, PendingDestruction e)
+        {
+            var selectors = FindAllSelectors();
+            foreach (var selector in selectors)
+            {
+                selector.Controller.GetInstance<CharacterSelectionController>().EndSelection();
+            }
         }
     }
 }

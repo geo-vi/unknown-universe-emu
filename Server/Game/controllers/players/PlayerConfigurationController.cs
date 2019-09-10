@@ -24,16 +24,21 @@ namespace Server.Game.controllers.players
             }
         }
 
+        /// <summary>
+        /// Creating and initiating the config
+        /// </summary>
+        /// <returns>Returning configs as array</returns>
         protected override Configuration[] Create()
         {
             var hangar = Player.Hangar;
             var hangarId = hangar.Id;
-            
+
             Configuration[] configurations = {new Configuration(1), new Configuration(2)};
 
             if (Player.Equipment.Items.Any(x => x.Value.GeneralCategory == GeneralItemCategories.HM7))
             {
-                var equippedItem = Player.Equipment.Items.FirstOrDefault(x => x.Value.GeneralCategory == GeneralItemCategories.HM7);
+                var equippedItem =
+                    Player.Equipment.Items.FirstOrDefault(x => x.Value.GeneralCategory == GeneralItemCategories.HM7);
                 configurations[0].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
                 configurations[1].EquippedItemsOnShip.Add(equippedItem.Key, equippedItem.Value);
             }
@@ -57,7 +62,8 @@ namespace Server.Game.controllers.players
                     var indexOf = equippedItem.Value.OnDroneId1.Hangars.IndexOf(hangarId);
                     var droneId = equippedItem.Value.OnDroneId1.DroneIds[indexOf];
                     var drone = hangar.Drones[droneId];
-                    configurations[0].EquippedItemsOnDrones.Add(equippedItem.Key, new Tuple<Drone, EquipmentItem>(drone, equippedItem.Value));
+                    configurations[0].EquippedItemsOnDrones.Add(equippedItem.Key,
+                        new Tuple<Drone, EquipmentItem>(drone, equippedItem.Value));
                     CalculateItemStats(configurations[0], equippedItem.Value, drone);
                 }
 
@@ -66,18 +72,30 @@ namespace Server.Game.controllers.players
                     var indexOf = equippedItem.Value.OnDroneId2.Hangars.IndexOf(hangarId);
                     var droneId = equippedItem.Value.OnDroneId2.DroneIds[indexOf];
                     var drone = hangar.Drones[droneId];
-                    configurations[1].EquippedItemsOnDrones.Add(equippedItem.Key, new Tuple<Drone, EquipmentItem>(drone, equippedItem.Value));
+                    configurations[1].EquippedItemsOnDrones.Add(equippedItem.Key,
+                        new Tuple<Drone, EquipmentItem>(drone, equippedItem.Value));
                     CalculateItemStats(configurations[1], equippedItem.Value, drone);
                 }
 
                 hangar.Items.Add(equippedItem.Key, equippedItem.Value);
             }
 
-            Out.WriteLog($"Created 2 configurations, 1:: {configurations[0].TotalDamageCalculated} damage, {configurations[0].TotalShieldCalculated} shield, {configurations[0].TotalSpeedCalculated} speed," +
-                         $" 2:: {configurations[1].TotalDamageCalculated} damage, {configurations[1].TotalShieldCalculated} shield, {configurations[1].TotalSpeedCalculated} speed", LogKeys.PLAYER_LOG, Player.Id);
+            configurations[0].Initiate();
+            configurations[1].Initiate();
+            
+            Out.WriteLog(
+                $"Created 2 configurations, 1:: {configurations[0].TotalDamageCalculated} damage, {configurations[0].TotalShieldCalculated} shield, {configurations[0].TotalSpeedCalculated} speed," +
+                $" 2:: {configurations[1].TotalDamageCalculated} damage, {configurations[1].TotalShieldCalculated} shield, {configurations[1].TotalSpeedCalculated} speed",
+                LogKeys.PLAYER_LOG, Player.Id);
             return configurations;
         }
-        
+
+        /// <summary>
+        /// Calculating the item's stats for damage shield etc
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="item"></param>
+        /// <param name="drone"></param>
         private void CalculateItemStats(Configuration config, EquipmentItem item, Drone drone = null)
         {
             switch (item.GeneralCategory) 
@@ -208,6 +226,9 @@ namespace Server.Game.controllers.players
             return -1;
         }
 
+        /// <summary>
+        /// Switching configurations
+        /// </summary>
         public override void Switch()
         {
             base.Switch();

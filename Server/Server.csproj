@@ -61,14 +61,10 @@
     <Compile Remove="Game\netty\handlers\ClientResolutionChangeHandler.cs" />
     <Compile Remove="Game\netty\handlers\CollectBoxHandler.cs" />
     <Compile Remove="Game\netty\handlers\command42JHandler.cs" />
-    <Compile Remove="Game\netty\handlers\DroneFormationChangeHandler.cs" />
     <Compile Remove="Game\netty\handlers\ExchangePalladiumHandler.cs" />
     <Compile Remove="Game\netty\handlers\ForceInitHandler.cs" />
     <Compile Remove="Game\netty\handlers\GroupSystemHandler.cs" />
     <Compile Remove="Game\netty\handlers\HarvestHandler.cs" />
-    <Compile Remove="Game\netty\handlers\HellstormLaunchHandler.cs" />
-    <Compile Remove="Game\netty\handlers\HellstormSelectRocketHandler.cs" />
-    <Compile Remove="Game\netty\handlers\HellstormLoadHandler.cs" />
     <Compile Remove="Game\netty\handlers\ItemSelectionHandler.cs" />
     <Compile Remove="Game\netty\handlers\JumpRequestHandler.cs" />
     <Compile Remove="Game\netty\handlers\JumpCPUHandler.cs" />

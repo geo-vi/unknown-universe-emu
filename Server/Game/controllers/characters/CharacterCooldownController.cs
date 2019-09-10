@@ -14,6 +14,12 @@ namespace Server.Game.controllers.characters
             ServerController.Get<CooldownController>().OnCooldownFinish += OnCooldownFinish;
         }
 
+        public override void OnOverwritten()
+        {
+            ServerController.Get<CooldownController>().OnCooldownAdded -= OnCooldownAdded;
+            ServerController.Get<CooldownController>().OnCooldownFinish -= OnCooldownFinish;
+        }
+
         /// <summary>
         /// Removing event handles
         /// </summary>

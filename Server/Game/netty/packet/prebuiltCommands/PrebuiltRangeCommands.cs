@@ -5,8 +5,6 @@ using Server.Game.netty.commands;
 using Server.Game.netty.commands.old_client;
 using Server.Game.objects.entities;
 using Server.Game.objects.enums;
-using Server.Main.objects;
-using Server.Utils;
 
 namespace Server.Game.netty.packet.prebuiltCommands
 {
@@ -114,6 +112,22 @@ namespace Server.Game.netty.packet.prebuiltCommands
                     targetCharacter.Id, targetCharacter.Hangar.Ship.Id,
                     targetCharacter.CurrentShield, targetCharacter.MaxShield, targetCharacter.CurrentHealth, targetCharacter.MaxHealth,
                     targetCharacter.CurrentNanoHull, targetCharacter.MaxNanoHull);
+            }
+        }
+        
+        public void DronesCommand(Player player, Character targetCharacter)
+        {
+            if (GetSession(player, out var session))
+            {
+                if (targetCharacter.Hangar.Drones.Count <= 0) return;
+                var command = "0|n|d|" + targetCharacter.Id + "|" + (int) targetCharacter.Formation;
+
+                foreach (var d in targetCharacter.Hangar.Drones.Values)
+                {
+                    command += "|" + (int) d.DroneType + "|" + d.Level.Id + "|" + d.AssignedDroneDesign;
+                }
+
+                Packet.Builder.BuildLegacyCommand(session.GameClient, player.UsingNewClient, command);
             }
         }
     }

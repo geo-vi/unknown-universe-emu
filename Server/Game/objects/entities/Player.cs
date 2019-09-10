@@ -161,13 +161,20 @@ namespace Server.Game.objects.entities
         public override int AttackRange => 800;
 
         public int MapWarningLevel { get; set; }
-
+        
         /// <summary>
         /// This is a for the multi-client support.
         /// - Work in progress -
         /// </summary>
         public bool UsingNewClient { get; set; }
         
+        /** EVENTS ** /
+         */
+
+        public event EventHandler OnLoggedIn;
+        
+        public event EventHandler OnReconnected;
+
         public Player(int id, int globalId, string name, Clan clan, Factions factionId, string sessionId, Ranks rankId, bool usingNewClient = false) : base(id, name, null, factionId, clan)
         {
             GlobalId = globalId;
@@ -187,6 +194,16 @@ namespace Server.Game.objects.entities
         {
             //Get from statistics
             return false;
+        }
+
+        public void OnLogin()
+        {
+            OnLoggedIn?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnReconnect()
+        {
+            OnReconnected?.Invoke(this, EventArgs.Empty);
         }
     }
 }

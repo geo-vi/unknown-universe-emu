@@ -53,6 +53,9 @@ namespace Server.Game.managers
                 case AttackTypes.ROCKET:
                     amount = 1;
                     break;
+                case AttackTypes.ROCKET_LAUNCHER:
+                    amount = attacker.RocketLauncher.LoadedRockets;
+                    break;
             }
             
             CreateCombat(attacker, target, type, lootId, amount);
@@ -84,6 +87,46 @@ namespace Server.Game.managers
         public PendingAttack[] GetActiveCombatsForAttacker(AbstractAttacker attacker)
         {
             return ServerController.Get<AttackController>().GetActiveAttacksByAttacker(attacker);
+        }
+
+        public void CancelCombat(AbstractAttacker attacker)
+        {
+            ServerController.Get<AttackController>().RemoveCombat(attacker);
+            attacker.OnCombatFinish();
+        }
+
+        public void Destroy(AbstractAttackable target)
+        {
+            
+        }
+
+        public void Destroy(AbstractAttackable target, AbstractAttacker attacker)
+        {
+            ServerController.Get<DestructionController>().CreateDestroyRecord(new PendingDestruction(
+                target, attacker, DestructionTypes.PLAYER, ExplosionTypes.DEFAULT));
+        }
+
+        public void DamageAttackable(AbstractAttackable target, int amount, DamageTypes damageType,
+            CalculationTypes calculationType)
+        {
+            
+        }
+
+        public void DamageAttackable(AbstractAttackable target, AbstractAttacker attacker, int amount,
+            DamageTypes damageType, CalculationTypes calculationType)
+        {
+
+        }
+
+        public void HealArea(IGameEntity origin, int distance, int amount, HealingTypes healingType, CalculationTypes calculationType)
+        {
+            ServerController.Get<HealingController>().EnforcePendingHeal(new PendingHeal(origin,
+                distance, amount, calculationType, healingType));
+        }
+        
+        public void HealAttackable(IGameEntity origin, AbstractAttackable target, int amount, HealingTypes healingType, CalculationTypes calculationType)
+        {
+            
         }
     }
 }

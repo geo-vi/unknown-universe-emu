@@ -21,7 +21,7 @@ namespace Server.Game.controllers.players
                 return player;
             }
         }
-        
+ 
         /// <summary>
         /// Selecting an attackable
         /// </summary>

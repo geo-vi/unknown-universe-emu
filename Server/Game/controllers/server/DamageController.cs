@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Server.Game.controllers.characters;
 using Server.Game.controllers.implementable;
-using Server.Game.netty.packet.prebuiltCommands;
-using Server.Game.objects.entities;
+using Server.Game.managers;
 using Server.Game.objects.enums;
 using Server.Game.objects.implementable;
 using Server.Game.objects.server;
-using Server.Main;
 using Server.Main.objects;
 using Server.Utils;
 
@@ -28,7 +25,7 @@ namespace Server.Game.controllers.server
             {
                 _pendingDamages.TryDequeue(out var pendingDamage);
 
-                if (pendingDamage.CalculationType == DamageCalculationTypes.RANDOMISED)
+                if (pendingDamage.CalculationType == CalculationTypes.RANDOMISED)
                 {
                     RandomiseDamage(pendingDamage);
                 }
@@ -236,6 +233,12 @@ namespace Server.Game.controllers.server
                 {
                     target.CurrentHealth -= hpDamage; //Full dmg to health
                 }
+                
+            }
+            
+            if (target.CurrentHealth <= 0)
+            {
+                CombatManager.Instance.Destroy(target, attacker);        
             }
         }
 
@@ -254,7 +257,7 @@ namespace Server.Game.controllers.server
         /// <param name="calculationType">Calculation type (defined or percentage)</param>
         /// <param name="attackType">Type of attack</param>
         public void EnforceDamage(AbstractAttackable target, AbstractAttacker attacker, int damage, int absorbDamage,
-            DamageCalculationTypes calculationType, AttackTypes attackType)
+            CalculationTypes calculationType, AttackTypes attackType)
         {
             if (target == null)
             {
@@ -285,7 +288,7 @@ namespace Server.Game.controllers.server
         /// <param name="absorbDamage">Damage absorb = shield transfer (if percentage 1-100)</param>
         /// <param name="calculationType">Calculation type (defined or percentage)</param>
         /// <param name="attackType">Type of attack</param>
-        public void EnforceDamage(AbstractAttackable target, int damage, int absorbDamage, DamageCalculationTypes calculationType,
+        public void EnforceDamage(AbstractAttackable target, int damage, int absorbDamage, CalculationTypes calculationType,
             AttackTypes attackType)
         {
             if (target == null)

@@ -5,11 +5,11 @@ namespace Server.Game.objects.server
 {
     class PendingAttack
     {
-        public AbstractAttacker From { get; set; }
+        public AbstractAttacker From { get; }
 
-        public AbstractAttackable To { get; set; }
+        public AbstractAttackable To { get; }
         
-        public AttackTypes AttackType { get; set; }
+        public AttackTypes AttackType { get; }
 
         public string LootId { get; set; }
 
